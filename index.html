@@ -7051,6 +7051,7 @@ const BEH = {
                 if (!b.done) {
                     b.done = 1;
                     floatText("fresh", p.x, GY - R * 2.2, "#ffd76a");
+                    possumCookieAt = performance.now(); // one put aside for the possum (possum.js)
                 }
             }
             if (ta > 4.5 && !bake)
@@ -16372,6 +16373,12 @@ function possumName() {
    propeller), walk, eat, sit, dead. x is the middle; in hang/lower/raise
    hy is the sprite's top, otherwise fy is where its feet are */
 const possum = { talkUntil: 0, chat: false, goal: "garden", goalUntil: 0, ready: false, room: "garden", x: 0, fy: 0, hy: 0, tx: 0, ty: 0, dir: 1, ph: "hang", until: 0, meal: null, ate: 0, said: false, fed: null };
+/* when the tray comes out, Mite puts one cookie aside for the possum, by the oven, for a few minutes: so it gets
+   one even if it wasn't there yet when the tray came out (it was asleep up on its beam, say) */
+let possumCookieAt = 0;
+function cookieSetAside() {
+    return possumCookieAt > 0 && performance.now() - possumCookieAt < 4 * 60e3;
+}
 let possumHit = null, possumSummonAt = performance.now() + 60e3; // (the next summoning, not before)
 /* the summoning's over: sometimes it works (a bit of rubbish in the circle, which it eats), mostly it doesn't */
 function possumSummonEnd(p, now) {
@@ -16485,7 +16492,7 @@ function messPos(m) {
 }
 /* cookies in the oven (or just out of it, and it hasn't had one yet): the possum comes and waits */
 function possumCookies() {
-    return own("oven") && (!!ovenJob || (pet.beh === "bakeOut" && pet.b !== possum.fed));
+    return own("oven") && (!!ovenJob || (pet.beh === "bakeOut" && pet.b !== possum.fed) || cookieSetAside());
 }
 function possumOvenX() {
     return stoveX() - R * 1.2; // on the near side of the oven (Mite takes the tray out from the other side)
@@ -16631,8 +16638,9 @@ function possumTick(dt, now) {
             possumSummonEnd(p, now);
             return;
         case "beg": // by the oven; the moment the tray comes out, a cookie for the possum
-            if (pet.beh === "bakeOut" && pet.b.done && pet.b !== p.fed) { // Mite hands it a cookie
-                p.fed = pet.b;
+            if ((pet.beh === "bakeOut" && pet.b.done && pet.b !== p.fed) || cookieSetAside()) { // Mite hands it a cookie (or the one put aside)
+                p.fed = pet.beh === "bakeOut" ? pet.b : p.fed;
+                possumCookieAt = 0;
                 if (roomVisible("room"))
                     setTimeout(() => say("possumcookie"), 900);
                 if (possumAwake()) { // awake: eats it right here
