@@ -5715,7 +5715,14 @@ const BEH = {
             b.act = rnd(14, 24);
             b.bookCol = choice(["#b6543c", "#3f6fa8", "#5b8a4a", "#8a4fa0", "#c99a3a", "#2e4a5a"]);
         }, step(b, p, t, po, dt) {
-            const g = gardenGeo(), ta = goTo(b, p, po, dt, g.chX, -1, b.act);
+            const g = gardenGeo();
+            if (b.arr === undefined && Math.abs(p.x - g.chX) < R * 1.6 && catMakeRoom()) { // Midnightcat's in it: she moves up onto the back first
+                p.dir = -1;
+                po.lookOverride = { x: -.3, y: -.4 };
+                po.mouth = "o";
+                return;
+            }
+            const ta = goTo(b, p, po, dt, g.chX, -1, b.act);
             if (ta < 0)
                 return;
             if (b.onReveal && !b.revealed && ta >= (b.revealAt || 0)) {
@@ -5758,6 +5765,12 @@ const BEH = {
                 return;
             }
             if (b.ph === "read") {
+                if (b.ra === undefined && Math.abs(p.x - g.chX) < R * 1.6 && catMakeRoom()) { // waits for Midnightcat to move up
+                    po.prop = "book";
+                    po.bookCol = "#365a2c";
+                    po.noArms = true;
+                    return;
+                }
                 if (!walkTo(p, po, g.chX, R * 1.8, dt, 3)) { // carrying it to the chair: the book's own paws hold it
                     po.prop = "book";
                     po.bookCol = "#365a2c";
@@ -14670,7 +14683,8 @@ const catSize = () => R * .68;
    by the fire, and next to the crystal cabinet */
 function catSpots(room) {
     if (room === "garden") { // the armchair, mostly; the floor of the nook now and then
-        const g = gardenGeo(), seat = { x: g.chX - R * .3, g: g.chH }, top = { x: g.drX + g.drW * .18, g: g.drH + R * .02 }, floor = { x: W * .5, g: 0 };
+        const g = gardenGeo(), top = { x: g.drX + g.drW * .18, g: g.drH + R * .02 }, floor = { x: W * .5, g: 0 };
+        const seat = miteInChair() ? catHeadrest() : { x: g.chX - R * .3, g: g.chH }; // (Mite's in the chair: up on its back instead)
         return [hasChair() ? seat : floor, hasChair() ? seat : floor, hasDrawers() ? top : floor, floor]; // (or on top of the drawers)
     }
     if (room === "archive") {
@@ -14711,6 +14725,30 @@ function catHeadroom() {
         return 1e9;
     return GY - m.g - (lg.balY + Math.max(4, R * .12)) - 2;
 }
+/* the chesterfield: Mite reading in it (or on its way to), her place on top of its back, and moving up there */
+function miteInChair() {
+    return view === "garden" && (pet.beh === "armread" || (pet.beh === "fbookchair" && pet.b && pet.b.ph === "read"));
+}
+function catHeadrest() {
+    const g = gardenGeo();
+    return { x: g.chX + R * .78, g: g.chH + R * 1.3 * .6 + R * .02 }; // at the end of the back, so she peeks out beside Mite
+}
+function catOnSeat() {
+    const g = gardenGeo();
+    return hasChair() && cat.room === "garden" && Math.abs(cat.g - g.chH) < R * .15 && Math.abs(cat.x - (g.chX - R * .3)) < R * .6;
+}
+/* Mite wants the chair: if she's on the seat she hops up onto the back first. True while she's still in the way */
+function catMakeRoom() {
+    const now = performance.now();
+    if (cat.ph === "jump" && cat.room === "garden" && cat.tg > gardenGeo().chH + R * .3)
+        return true; // on her way up
+    if (!catOnSeat())
+        return false;
+    const h = catHeadrest();
+    Object.assign(cat, { ph: "jump", t0: now, g0: cat.g, tg: h.g, after: null, until: now + 60e3, dir: 1 });
+    cat.x = h.x;
+    return true;
+}
 /* night: she goes to the nook and sleeps on the chesterfield (or on the drawers, if Mite's in the chair) */
 function catNight() {
     return S.lightsOut || isLate(new Date().getHours());
@@ -14736,7 +14774,7 @@ function catNext(now) {
         return;
     }
     if (night && cat.room === "garden") { // curled up on the seat (the top of the drawers if Mite's reading there)
-        const sp = catSpots("garden")[pet.beh === "armread" || !hasChair() ? 2 : 0];
+        const sp = catSpots("garden")[!hasChair() ? 2 : 0];
         Object.assign(cat, { tx: sp.x, tg: sp.g, tz: 0, ph: "walk" });
         return;
     }
