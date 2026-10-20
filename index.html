@@ -8331,12 +8331,25 @@ function drawHat(id, x, y, r) {
         cx.fillStyle = "#6e4626";
         cx.fillRect(-r * .03, -r * .42, r * .06, r * .14);
     }
-    if (id === "beret") {
-        cx.fillStyle = "#b84a3a";
+    if (id === "beret") { // a soft purple beret: a puffed disc worn at a slant, drooping over one side, a snug band, the little stalk on top
+        cx.rotate(-.18);
+        cx.fillStyle = "#5e3470"; // the band, snug on the head
         cx.beginPath();
-        cx.ellipse(r * .08, -r * .14, r * .5, r * .18, -.15, 0, 7);
+        cx.ellipse(0, -r * .06, r * .34, r * .08, 0, 0, 7);
         cx.fill();
-        cx.fillRect(r * .05, -r * .38, r * .05, r * .12);
+        cx.fillStyle = "#8a4fa0"; // the crown: wide and puffy, spilling over to the right
+        cx.beginPath();
+        cx.ellipse(r * .1, -r * .2, r * .56, r * .19, .08, 0, 7);
+        cx.fill();
+        cx.beginPath();
+        cx.ellipse(r * .42, -r * .12, r * .2, r * .12, .5, 0, 7); // the droop over the side
+        cx.fill();
+        cx.fillStyle = "#a877c0"; // light on the top of the puff
+        cx.beginPath();
+        cx.ellipse(-r * .04, -r * .28, r * .3, r * .07, .08, 0, 7);
+        cx.fill();
+        cx.fillStyle = "#5e3470"; // the stalk
+        cx.fillRect(-r * .02, -r * .46, r * .05, r * .1);
     }
     if (id === "leaves") {
         for (let i = -3; i <= 3; i++) {
