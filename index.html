@@ -486,6 +486,8 @@ body.pixel .cabclose{border-radius:0;font-family:var(--f-display);font-size:22px
 body.pixel .cabglim{border-radius:0;font-family:var(--f-display);font-size:18px;line-height:18px;border:2px solid #ffe9a8}
 .dlg.crystal{border-color:#4a3a66}.dlg.crystal b{background:#4a3a66}
 .pinbox{aspect-ratio:96/60}
+.eyelist li{display:flex;gap:10px;align-items:flex-start}
+.eyepic{width:72px;height:48px;flex:0 0 auto;image-rendering:pixelated;image-rendering:crisp-edges;background:#2f2420;border-radius:4px}
 .fbooklist{list-style:none;margin:0;padding:0;max-height:52vh;overflow:auto}.fbooklist li{padding:8px 0;border-bottom:1px dashed rgba(58,44,34,.25)}
 .fdot{display:inline-block;width:10px;height:10px;margin-right:6px;border:2px solid #3a2c22;vertical-align:-1px}.fbook.odd b{color:#6b4a84}
 .pinadd{border:0;cursor:pointer;color:#ffe9a8}
@@ -5522,9 +5524,9 @@ function nearestHit(p, list) {
  */
 /* behaviours Mite may do while up on the balcony; starting any other one up there walks Mite down first (see pet.start) */
 /* in the sleeping nook; anything else walks Mite back to the wagon first. GARDEN_ONLY: things that only happen there */
-const GARDEN_OK = new Set(["answerphone", "opendrawer", "armread", "readletter", "possumchat", "write", "snailchat", "idle", "wander", "curious", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "stare", "bow", "dizzy", "gwater", "catvisit", "fromGarden", "eat", "drink", "admire", "descend", "nookup", "gpin", "gpossum", "chairSit", "gsmell", "gfread", "fbookchair", "ghang"]);
+const GARDEN_OK = new Set(["answerphone", "opendrawer", "armread", "readletter", "possumchat", "write", "snailchat", "idle", "wander", "curious", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "stare", "bow", "dizzy", "gwater", "catvisit", "fromGarden", "eat", "drink", "admire", "descend", "nookup", "gpin", "gpossum", "chairSit", "gsmell", "gfread", "fbookchair", "ghang", "ndoorlisten"]);
 const GARDEN_ONLY = new Set(["gwater", "write", "armread", "readletter", "opendrawer", "gsmell", "gfread", "fbookchair"]);
-const LOFT_OK = new Set(["ghang", "gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow"]);
+const LOFT_OK = new Set(["ndoorlisten", "ghang", "gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow"]);
 /*
  * Mite's live state.
  *   x, dir       where Mite is and which way it faces
@@ -6026,6 +6028,16 @@ const BEH = {
             if (ta - b.doneAt > 2.5)
                 p.bt = p.dur;
         } }),
+    /* up on the nook's platform, an ear to the night door (Strangeness on) */
+    ndoorlisten: nookUp({ act: () => rnd(5, 8), at: () => ndoorX() + R * .85, face: -1, fn(b, p, ta, po) {
+            po.rot = -.3;
+            po.pivot = "feet";
+            po.lookOverride = { x: -1, y: .2 };
+            po.eyes = "half";
+            po.mouth = "flat";
+            if (Math.random() < .006)
+                floatText(choice(["…footsteps?", "…knocking?", "…someone humming"]), p.x - R, GY - (p.ground || 0) - R * 1.8, "#fff");
+        } }),
     gpossum: nookUp({ act: () => 6, at: (b, p) => possum.x + (p.x > possum.x ? 1 : -1) * R * .95, fn(b, p, ta, po) {
             p.dir = possum.x > p.x ? 1 : -1;
             po.lookOverride = { x: p.dir * .6, y: -.9 }; // up at the possum, hanging asleep from its beam
@@ -6387,11 +6399,6 @@ const BEH = {
         } },
     listen: { d: [60, 60], w: c => c.strange > 0 ? .5 * c.strange * (c.dark > .5 ? 2 : 1) : 0, init(b) {
             b.act = rnd(4, 7);
-            if (own("ndoor") && view === "garden") { // the night door is in the nook
-                const st = standBy(OBJX.ndoor(), R * .85, 1);
-                b.tx = st.x;
-                b.face = st.face;
-            }
         },
         step(b, p, t, po, dt) {
             if (b.tx !== undefined) {
@@ -7369,7 +7376,7 @@ function chooseGardenBeh() {
         return pet.start("sleep");
     if (performance.now() - gardenSince > rnd(70e3, 140e3))
         return pet.start("fromGarden");
-    const opts = [["idle", 3], ["wander", 1.4], ["gwater", .9], ["write", BEH.write.w(c)], ["armread", BEH.armread.w(c)], ["readletter", BEH.readletter.w(c)], ["lookAround", .6], ["stretch", .3], ["yawn", c.dark > .5 ? .8 : .3], ["catvisit", BEH.catvisit.w(c) * 2], ["listen", own("ndoor") ? BEH.listen.w(c) * 1.5 : 0], ["nookup", .5], ["fbookchair", BEH.fbookchair.w(c)]].filter(([k, w]) => BEH[k] && w > 0 && k !== pet.beh);
+    const opts = [["idle", 3], ["wander", 1.4], ["gwater", BEH.gwater.w(c)], ["write", BEH.write.w(c)], ["armread", BEH.armread.w(c)], ["readletter", BEH.readletter.w(c)], ["lookAround", .6], ["stretch", .3], ["yawn", c.dark > .5 ? .8 : .3], ["catvisit", BEH.catvisit.w(c) * 2], ["ndoorlisten", own("ndoor") ? BEH.listen.w(c) * 1.5 : 0], ["listen", BEH.listen.w(c) * .5], ["nookup", .5], ["fbookchair", BEH.fbookchair.w(c)]].filter(([k, w]) => BEH[k] && w > 0 && k !== pet.beh);
     let r = Math.random() * opts.reduce((a, o) => a + o[1], 0);
     for (const [k, w] of opts)
         if ((r -= w) <= 0)
@@ -15947,8 +15954,8 @@ function drawGarden(now, dt) {
             }
             gardenHits.plants.push({ x: sp.x - R * .4, y: sp.y - R * .3, w: R * .8, h: R * .9, cx: sp.x });
         }
-        if (own("ndoor")) // the night door, at the far end of the wagon (draw-world.js)
-            drawNightDoor(dk, ndoorX(), sky);
+        if (own("ndoor")) // the night door, up on the platform beside the pinboard (draw-world.js)
+            drawNightDoor(dk, ndoorX(), sky, nookLoftGeo().balY);
         // the little writing desk under the window: drawer, inkpot and quill, a letter, a candle
         {
             const { dx0, dx1, dTop } = g, lw = Math.max(PX * 2, R * .1);
@@ -16216,9 +16223,10 @@ function chesterfieldOverMite(now) {
     if (cat.room === "garden" && cat.g > 0) // Midnightcat on the chair (or the drawers) stays in front of it, and of Mite
         withRoomLight("garden", () => drawCat(sceneDark(), now));
 }
-/* where the night door is: at the far end of the nook, the far end of the whole wagon */
+/* where the night door is: up on the nook's platform, just left of the pinboard */
 function ndoorX() {
-    return Math.max(R * .4, Math.min(R * .62, gardenGeo().dx0 - R * .4));
+    const g = gardenGeo(), lg = nookLoftGeo();
+    return Math.max(lg.balL + R * .5, g.bx0 - R * .6);
 }
 /* where the candle's flame is, on the side table by the chesterfield */
 function gardenCandle(g) {
@@ -17098,7 +17106,7 @@ function lookSpots(rm) {
             add("sidetable", "look_sidetable", { x: g.tableX - R * .4, y: GY - R * 1.5, w: R * .8, h: R * 1.5 });
         add("beam", "look_beam", { x: 0, y: g.glassY - R * .3, w: W, h: R * .45 });
         if (own("ndoor"))
-            add("ndoor", "look_ndoor", { x: ndoorX() - R * .3, y: GY - R * 1.45, w: R * .6, h: R * 1.45 });
+            add("ndoor", "look_ndoor", { x: ndoorX() - R * .3, y: nookLoftGeo().balY - R * 1.45, w: R * .6, h: R * 1.45 });
         add("greenrug", "look_greenrug", rug, true);
     }
     else if (rm === "archive") {
@@ -18398,9 +18406,86 @@ function drawEyeJars(dk, t, xRight, yTop) {
 function showEyeJars() {
     const have = (S.eyes || []).map(s => ({ s, e: EYES.find(e => e.id === s.k) })).filter(x => x.e);
     const from = { ghost: "left by the ghost", door: "through a door", dream: "from the dream archive" };
-    const body = have.length ? `<ul class="fbooklist">${have.map(x => `<li><b>${esc(x.e.name)}</b> <span class="sub">${esc(from[x.s.from] || "found")} · ${esc(dmy(new Date(x.s.at)))}</span><br>${esc(x.e.note)}</li>`).join("")}</ul>` : "";
+    const body = have.length ? `<ul class="fbooklist eyelist">${have.map(x => `<li><canvas class="eyepic" width="24" height="16" data-eye="${esc(x.e.id)}" aria-hidden="true"></canvas><span><b>${esc(x.e.name)}</b> <span class="sub">${esc(from[x.s.from] || "found")} · ${esc(dmy(new Date(x.s.at)))}</span><br>${esc(x.e.note)}</span></li>`).join("")}</ul>` : "";
     openRitual("The eye jars", have.length ? `${have.length} of ${EYES.length} eyes, for reference. They're only looking.` : "An empty jar, waiting. Mite keeps an eye out. Ha.", body, [["Close", "primary", closeRitual]]);
     sfx("card");
+    animateEyePics();
+}
+/* the pictures on the card: each eye up close, looking about and blinking, while the card is open */
+function animateEyePics() {
+    const pics = [...document.querySelectorAll("#ritBody canvas.eyepic")].map((c, i) => ({ c, g: c.getContext("2d"), e: EYES.find(x => x.id === c.dataset.eye), i, lx: 0, ly: 0, tx: 0, ty: 0, next: 0, blinkAt: 1500 + Math.random() * 4000 }));
+    if (!pics.length)
+        return;
+    const t0 = performance.now();
+    const frame = now => {
+        if ($("ritual").hidden || !pics[0].c.isConnected)
+            return;
+        const t = now - t0;
+        for (const p of pics)
+            drawEyePic(p, t);
+        requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+}
+function drawEyePic(p, t) {
+    const { g, e } = p, W2 = 24, H2 = 16, cx0 = 12, cy0 = 8;
+    if (t > p.next) { // somewhere new to look, every second or few
+        p.tx = Math.round(rnd(-3, 3));
+        p.ty = Math.round(rnd(-1.5, 1.5));
+        p.next = t + rnd(800, 3200);
+    }
+    p.lx += (p.tx - p.lx) * .12;
+    p.ly += (p.ty - p.ly) * .12;
+    if (t > p.blinkAt + 220)
+        p.blinkAt = t + rnd(2000, 6000);
+    const bk = t > p.blinkAt ? Math.sin(clamp((t - p.blinkAt) / 220, 0, 1) * Math.PI) : 0; // 0 open, 1 shut
+    g.clearRect(0, 0, W2, H2);
+    const inEye = (x, y) => ((x + .5 - cx0) / 10.5) ** 2 + ((y + .5 - cy0) / 6.5) ** 2 <= 1;
+    const px = (x, y, c) => {
+        g.fillStyle = c;
+        g.fillRect(x, y, 1, 1);
+    };
+    if (e.glow) { // a faint halo
+        g.fillStyle = e.glow;
+        g.globalAlpha = .35;
+        g.fillRect(1, 1, 22, 14);
+        g.globalAlpha = 1;
+    }
+    const ix = Math.round(cx0 + p.lx), iy = Math.round(cy0 + p.ly), ir = e.id === "moth" ? 7 : 5;
+    for (let y = 0; y < H2; y++)
+        for (let x = 0; x < W2; x++) {
+            if (!inEye(x, y))
+                continue;
+            const d = Math.hypot(x + .5 - (ix + .5), (y + .5 - (iy + .5)) * 1.1);
+            let c = e.paper ? ((x + y) % 7 === 0 ? "#d8ccb0" : "#f4ecd8") : "#f4efe6"; // white (paper for the ghost's)
+            if (d < ir)
+                c = d > ir - 1 ? shade(e.ring, -.35) : e.ring; // the coloured part, darker round its rim
+            if (e.id === "moth" && d < ir) // hundreds of little eyes in one
+                c = (x + y) % 2 ? "#3a3a58" : "#20203a";
+            const pu = e.pupil, dx = x - ix, dy = y - iy;
+            if ((pu === "round" && d < 2) || (pu === "slit" && Math.abs(dx) < 1 && Math.abs(dy) < 4) || (pu === "bar" && Math.abs(dy) < 1 && Math.abs(dx) < 3))
+                c = "#100c10";
+            if (pu === "star" && d < 2.4)
+                c = (dx === 0 || dy === 0) ? "#fff6d0" : "#100c10";
+            if (pu !== "none" && pu !== "star" && dx === -1 && dy === -1 && d < ir)
+                c = "#ffffff"; // a glint
+            px(x, y, c);
+        }
+    // the lids: close from the top (and a little from the bottom) when it blinks
+    const shut = Math.round(bk * 7);
+    for (let y = 0; y < H2; y++)
+        for (let x = 0; x < W2; x++)
+            if (inEye(x, y) && (y < 1 + shut + (cy0 - 7) || y > H2 - 2 - Math.round(bk * 5)))
+                px(x, y, e.paper ? "#c8bca0" : "#b88a7a");
+    for (let y = 0; y < H2; y++) // a dark outline
+        for (let x = 0; x < W2; x++)
+            if (!inEye(x, y) && (inEye(x - 1, y) || inEye(x + 1, y) || inEye(x, y - 1) || inEye(x, y + 1)))
+                px(x, y, "#2a1c16");
+}
+/* a colour a little darker (k < 0) or lighter (k > 0) */
+function shade(hex, k) {
+    const n = parseInt(hex.slice(1), 16), f = c => Math.round(clamp(k < 0 ? c * (1 + k) : c + (255 - c) * k, 0, 255));
+    return `rgb(${f(n >> 16 & 255)},${f(n >> 8 & 255)},${f(n & 255)})`;
 }
 /* Midnightcat's ritual in the circle: one eye from the jar floats above her, glowing green */
 function drawRitualEye(t) {
@@ -18973,9 +19058,9 @@ function drawCloset(dk, x) {
         cx.fillRect(ix + q, GY - q * 2, iw - q * 2, q);
     }
 }
-/* the night door, at x (at the far end of the nook); it glows more the darker the sky */
-function drawNightDoor(dk, x, sky) {
-    const w = R * .55, h = R * 1.15, y = GY;
+/* the night door, at x, standing on y (up on the nook's platform, left of the pinboard); it glows more the darker the sky */
+function drawNightDoor(dk, x, sky, y = GY) { // (y: what it stands on)
+    const w = R * .55, h = R * 1.15;
     cx.fillStyle = "#120e16";
     cx.fillRect(x - w / 2, y - h, w, h);
     cx.beginPath();
