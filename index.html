@@ -11758,6 +11758,8 @@ function archiveTap(p) {
         resolveAnom();
         return true;
     }
+    if (postitTap(p, "archive"))
+        return true;
     if (sweepAt(p.x, p.y, "archive")) // mess on the archive floor
         return true;
     if (circleTap(p)) // the chalk circle: Mite looks back into the past (circle.js)
@@ -16305,6 +16307,8 @@ function gardenTap(p) {
         requestObj("gdesk", gardenHits.desk.cx, gardenHits.desk.y);
         return;
     }
+    if (postitTap(p, "garden"))
+        return;
     if (sweepAt(p.x, p.y, "garden")) // mess on the nook's floor
         return;
     if (lookTap(p, "garden")) // the window, the side table, the beam... (looks.js)
@@ -18096,6 +18100,36 @@ const SKETCHES = ["a snail, from the side", "the moon, slightly wrong", "Midnigh
 function pastimeOk(c) { // not in the middle of the night, not when it's sleep time
     return !c.late;
 }
+/* a free bit of wall near Mite for a sticky note: not over the calendar, a wall piece, the window or another note */
+function postitSpot(p) {
+    const s = R * .5, y0 = GY - (p.ground || 0) - R * 2.15, busy = [];
+    if (view === "room") {
+        if (calHit)
+            busy.push(calHit);
+        busy.push(...wallHits);
+        const rm = room();
+        busy.push({ x: rm.wx - rm.wr * 1.4, y: rm.wy - rm.wr, w: rm.wr * 2.8, h: rm.wr * 2 });
+    }
+    if (view === "garden" && gardenHits.boardAll)
+        busy.push(gardenHits.boardAll);
+    busy.push(...postits.filter(n => n.room === view).map(n => ({ x: n.x - s, y: n.y - s, w: s * 2, h: s * 2 })));
+    const free = (x, y) => x > s && x < W - s && !busy.some(b => x + s / 2 > b.x - 4 && x - s / 2 < b.x + b.w + 4 && y + s / 2 > b.y - 4 && y - s / 2 < b.y + b.h + 4);
+    for (const dx of [0, .4, -.4, .8, -.8, 1.2, -1.2, 1.6, -1.6])
+        for (const dy of [0, -.3, .25]) {
+            const x = p.x + dx * R, y = y0 + dy * R;
+            if (free(x, y))
+                return { x, y };
+        }
+    return null; // no room on the wall here: it goes in Mite's pocket instead
+}
+/* a tap on a sticky note: Mite reads it out */
+function postitTap(pt, room) {
+    const s = R * .46, n = postits.slice().reverse().find(q => q.room === room && Math.abs(pt.x - q.x) < s * .8 && Math.abs(pt.y - q.y) < s * .8);
+    if (!n)
+        return false;
+    speak(choice([`The note says: "${n.text}".`, `"${n.text}". I wrote that. I stand by it.`, `It says "${n.text}". Good note.`]), { ms: 4000 });
+    return true;
+}
 Object.assign(BEH, {
     sorttiny: { d: [10, 14], w: c => pastimeOk(c) ? .55 : 0, init(b) {
             b.order = TINY.map((c, i) => i).sort(() => Math.random() - .5); // where each one starts
@@ -18127,7 +18161,9 @@ Object.assign(BEH, {
                     const mine = postits.filter(n => n.room === view);
                     if (mine.length >= POSTIT_MAX)
                         postits.splice(postits.indexOf(mine[0]), 1);
-                    postits.push({ room: view, x: p.x + rnd(-R * .3, R * .3), y: GY - (p.ground || 0) - R * 2.15 + rnd(-R * .15, R * .1), at: performance.now(), rot: rnd(-.15, .15), col: choice(["#f2d06b", "#f4a9b8", "#a8d8a0", "#a9c8f0"]), text: b.text });
+                    const spot = postitSpot(p);
+                    if (spot)
+                        postits.push({ room: view, x: spot.x, y: spot.y, at: performance.now(), rot: (Math.random() < .5 ? -1 : 1) * rnd(.1, .28), curl: Math.random() < .6, tape: Math.random() < .5, sz: rnd(.85, 1.15), col: choice(["#f2d06b", "#f4a9b8", "#a8d8a0", "#a9c8f0"]), text: b.text });
                     sfx("soft");
                     floatText(b.text, p.x, GY - R * 2.6, "#fff6c8");
                 }
@@ -18246,15 +18282,41 @@ function drawPastimes(dt) {
     postits = postits.filter(n => now - n.at < POSTIT_LIFE);
     for (const n of postits)
         withRoomLight(n.room, () => {
-            const s = R * .32, q = PX;
+            const s = R * .46 * (n.sz || 1), q = PX, sw = Math.sin(performance.now() / 1300 + n.x) * .03; // (a little flutter)
             cx.save();
             cx.translate(n.x, n.y);
-            cx.rotate(n.rot);
+            cx.rotate((n.rot || 0) + sw);
+            cx.fillStyle = "rgba(20,12,8,.25)"; // its shadow on the wall
+            cx.fillRect(-s / 2 + q, -s / 2 + q, s, s);
             cx.fillStyle = mix(n.col, "#2a2420", dk * .55);
-            cx.fillRect(-s / 2, -s / 2, s, s);
-            cx.fillStyle = mix("#6a5a48", "#1a1612", dk * .5);
+            cx.beginPath(); // the note, with one corner curling up
+            cx.moveTo(-s / 2, -s / 2);
+            cx.lineTo(s / 2, -s / 2);
+            cx.lineTo(s / 2, n.curl ? s / 2 - s * .3 : s / 2);
+            cx.lineTo(n.curl ? s / 2 - s * .3 : s / 2, s / 2);
+            cx.lineTo(-s / 2, s / 2);
+            cx.closePath();
+            cx.fill();
+            if (n.curl) { // the curled-up corner: its paler back
+                cx.fillStyle = mix("#fff6dc", "#3a3630", dk * .55);
+                cx.beginPath();
+                cx.moveTo(s / 2, s / 2 - s * .3);
+                cx.lineTo(s / 2 - s * .3, s / 2);
+                cx.lineTo(s / 2 - s * .24, s / 2 - s * .24);
+                cx.closePath();
+                cx.fill();
+            }
+            cx.fillStyle = mix("#6a5a48", "#1a1612", dk * .5); // scribbles
             for (let l = 0; l < 2; l++)
-                cx.fillRect(-s / 2 + q, -s / 2 + q * (2 + l * 2), s - q * (2 + l), Math.max(1, q / 2));
+                cx.fillRect(-s / 2 + q, -s / 2 + q * (2 + l * 2), s - q * (2 + l) - (l ? s * .2 : 0), Math.max(1, q / 2));
+            if (n.tape) { // a bit of tape across the top, or a pin
+                cx.fillStyle = "rgba(240,236,220,.7)";
+                cx.fillRect(-s * .22, -s / 2 - q, s * .44, q * 1.5);
+            }
+            else {
+                cx.fillStyle = mix("#b6343c", "#3a1414", dk * .5);
+                cx.fillRect(-q / 2, -s / 2 - q / 2, q, q);
+            }
             cx.restore();
         });
     paperBirds = paperBirds.filter(bd => bd.t < 4);
@@ -19813,6 +19875,12 @@ cv.addEventListener("pointerdown", e => {
         return;
     }
     if (origamiTap(p) || festTap(p) || drifterTap(p))
+        return;
+    if (calHit && hitIn(p, calHit) && notOnMite(p)) { // the calendar first: nothing on the wall covers it
+        requestObj("calendar", calHit.cx, calHit.y);
+        return;
+    }
+    if (postitTap(p, "room")) // a sticky note Mite put up (pastimes.js)
         return;
     if (possumHit && possumHit.room === "room" && hitIn(p, possumHit) && notOnMite(p)) {
         possumTap();
