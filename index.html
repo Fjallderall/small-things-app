@@ -23153,7 +23153,9 @@ function showIncidents() {
         : `<p class="ritmeta">${S.incidents ? "The reports are missing. That's its own kind of incident." : "Nothing yet. When something odd shows up in the wagon, tap it."}</p>`;
     openRitual("Incident log", `${S.incidents} incident${S.incidents === 1 ? "" : "s"} on file. All handled. Mostly by ${S.settings.pet}.`, body, [["Close", "primary", closeRitual]]);
 }
+let ritOpenedAt = 0;
 function openRitual(title, line, bodyHTML, buttons, onClose) {
+    ritOpenedAt = performance.now();
     ritOpener = document.activeElement;
     ritClose = onClose || null;
     $("ritTitle").textContent = title;
@@ -23199,7 +23201,7 @@ setInterval(() => {
         fetchWeather();
 }, 20 * 60e3);
 $("ritual").addEventListener("click", e => {
-    if (e.target === $("ritual")) {
+    if (e.target === $("ritual") && performance.now() - ritOpenedAt > 500) { // (not the click that comes with the tap that opened it: on a touch screen that lands on the backdrop)
         const f = ritClose;
         closeRitual();
         if (f)
