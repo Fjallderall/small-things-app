@@ -203,6 +203,9 @@ textarea{width:100%;min-height:220px;border:1px solid var(--line);border-radius:
 .toasts{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:6px;z-index:10;max-width:calc(100% - 32px)}
 .toast{background:var(--ink);color:var(--bg);padding:8px 12px;border-radius:10px;font-size:13.5px;display:flex;gap:10px;align-items:center;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .toast button{background:transparent;border:1px solid currentColor;border-radius:6px;padding:1px 8px;color:inherit;font-size:12.5px}
+.toast{position:relative;padding-right:30px}
+.toast button.toastx{position:absolute;top:0;right:0;border:0;padding:0;min-width:28px;min-height:26px;font-size:16px;line-height:1;opacity:.75}
+.toast button.toastx:hover{opacity:1}
 .toast.ach{background:var(--accent);color:var(--accent-ink)}
 .sync{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
 .files{display:flex;flex-direction:column;gap:8px}
@@ -5236,6 +5239,12 @@ function toast(text, { undo, cls, act } = {}) {
         };
         el.appendChild(b);
     }
+    const x = document.createElement("button"); // a little × to close it straight away
+    x.className = "toastx";
+    x.textContent = "×";
+    x.setAttribute("aria-label", "Close");
+    x.onclick = () => el.remove();
+    el.appendChild(x);
     $("toasts").appendChild(el);
     setTimeout(() => el.remove(), (undo || act) ? 9000 : 4500);
     while ($("toasts").children.length > 4)
