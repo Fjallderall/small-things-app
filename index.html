@@ -17617,10 +17617,13 @@ function drawCircle(dk, tsec) {
     ring(c.rx, c.ry, Math.max(1.5, q * .75)); // two rings with the signs between them
     ring(c.rx * .86, c.ry * .86, 1.5);
     ring(c.rx * .42, c.ry * .42, 1.5); // and a small one in the middle
-    // a unicursal hexagram, in one line: top, lower right, upper left, bottom, upper right, lower left, top
-    const hv = a => [c.x + Math.cos(a) * c.rx * .84, c.y + Math.sin(a) * c.ry * .84], D = Math.PI / 180;
-    const pts = [hv(-90 * D), hv(30 * D), hv(-150 * D), hv(90 * D), hv(-30 * D), hv(150 * D)];
-    cx.lineWidth = 1.5;
+    // a unicursal hexagram, in one line: top, the inner lower right point, the outer upper left, bottom, the outer
+    // upper right, the inner lower left, back to the top (the two lower points sit inside: that's what makes it
+    // unicursal and not two triangles)
+    const hp = (u, v) => [c.x + u * c.rx * .84, c.y + v * c.ry * .84];
+    const pts = [hp(0, -1), hp(.62, .47), hp(-.87, -.5), hp(0, 1), hp(.87, -.5), hp(-.62, .47)];
+    cx.globalAlpha = 1; // the sign itself in full chalk, so it reads on the rug
+    cx.lineWidth = Math.max(1.5, PX * .8);
     cx.beginPath();
     pts.concat([pts[0]]).forEach((p, i) => i ? cx.lineTo(p[0], p[1]) : cx.moveTo(p[0], p[1]));
     cx.stroke();
