@@ -16311,17 +16311,18 @@ const POSSUM_SPRITES = { // small: about the size of Midnightcat's head and shou
         "p.gggggggg..wp",
         "p.gg....gg....",
         ".p.pp....pp..."],
-    hang: [ // upside down from the beam, asleep (a tail, a round little body, the face at the bottom)
-        "...pp..",
-        "...p...",
-        "..ppp..",
-        "..ggg..",
-        ".glllg.",
-        ".glllg.",
-        "p.ggg.p",
-        ".wwwww.",
-        ".-wpw-.",
-        "k.www.k"],
+    hang: [ // upside down from the beam, asleep: tail at the top, round body, the face at the bottom
+        "....p....",
+        "....p....",
+        "...ggg...",
+        "..gglgg..",
+        ".gglllgg.",
+        ".gglllgg.",
+        "p.ggggg.p",
+        "..wwwww..",
+        ".ww-w-ww.",
+        "..wwpww..",
+        ".k.www.k."],
     beg: [ // sitting up by the oven, paws up, waiting for a cookie
         "..kk.kk.",
         "..wwwww.",
@@ -16637,7 +16638,7 @@ function drawPossum(dk, now) {
     const px = c => x0 + (flip ? cols - 1 - c : c) * u;
     drawLayered(() => {
         if (p.ph === "hang" || p.ph === "lower" || p.ph === "raise") { // the tail's hold on the beam
-            const tx = px(3);
+            const tx = px(4);
             cx.fillStyle = col.p;
             for (let y = Math.floor(gardenGeo().glassY / PX) * PX; y < y0; y += u)
                 cx.fillRect(tx, y, u, u);
