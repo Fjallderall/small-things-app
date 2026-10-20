@@ -16813,7 +16813,7 @@ function lookSpots(rm) {
             add("ladder", "look_ladder", { x: archLadder.x - R * .35, y: g.rail, w: R * 1.4, h: GY - g.rail });
         add("desklamp", "look_desklamp", { x: g.deskX1 - R * .9, y: GY - R * 1.95, w: R * .7, h: R * 1 });
         if (own("closet"))
-            add("closet", "look_closet", { x: closetX() - R * .42, y: GY - R * 1.7, w: R * .84, h: R * 1.7 });
+            add("closet", "look_closet", { x: closetX() - R * .46, y: GY - R * 1.95, w: R * .92, h: R * 1.95 });
         add("bluerug", "look_bluerug", rug, true);
     }
     for (const m of mossSpots())
@@ -18582,25 +18582,85 @@ function drawLanterns(s, dk) {
     }
 }
 /* the bigger-inside closet, standing at x (in the archive, between the reading desk and the shelves) */
+/* the bigger-inside closet (in the archive): a tall walnut wardrobe in the same wood and brass as the archive, a
+   carved top, a brass label card and keyhole, a line of light under the door. Open (OA.closet), the inside goes
+   back and back: shelves of filing drawers, receding to a lamp somewhere very far away */
 function drawCloset(dk, x) {
-    const w = R * .78, h = R * 1.65, y0 = GY - h;
-    cx.fillStyle = mix("#6a5a74", "#2a2433", dk);
-    cx.fillRect(x - w / 2 - 3, y0 - 3, w + 6, h + 3);
-    cx.fillStyle = "#0b0a10";
-    cx.fillRect(x - w / 2, y0, w, h);
-    for (let i = 1; i < 7; i++) {
-        const k = 1 - i * .13;
-        cx.strokeStyle = `rgba(255,214,160,${.4 - i * .05})`;
-        cx.lineWidth = 1;
-        cx.strokeRect(x - w / 2 * k + w * .12 * (1 - k), y0 + h / 2 - h * k / 2, w * k, h * k);
+    const q = PX, w = Math.round(R * .86 / q) * q, h = Math.round(R * 1.72 / q) * q, x0 = Math.round((x - w / 2) / q) * q, y0 = GY - h;
+    const wood = mix("#7a4e30", "#24170e", dk), woodD = mix("#4e321f", "#140d08", dk), woodL = mix("#a8744a", "#2e1f14", dk);
+    const brass = mix("#c9a24a", "#4a3a1a", dk * .7), brassL = mix("#f2d38a", "#6a5a30", dk * .7), t = performance.now() / 1000;
+    // the body, with feet and a carved crown
+    cx.fillStyle = woodD;
+    cx.fillRect(x0 - q, y0, w + q * 2, h);
+    cx.fillRect(x0 + q, GY - q, q * 2, q); // (feet show under the body)
+    cx.fillRect(x0 + w - q * 3, GY - q, q * 2, q);
+    cx.fillStyle = wood;
+    cx.fillRect(x0 - q * 2, y0 - q * 2, w + q * 4, q * 2); // the cornice
+    cx.fillStyle = woodL;
+    cx.fillRect(x0 - q * 2, y0 - q * 2, w + q * 4, q);
+    cx.fillStyle = wood; // a little pediment, with a brass eye of a finial
+    cx.fillRect(x0 + w / 2 - q * 3, y0 - q * 4, q * 6, q * 2);
+    cx.fillRect(x0 + w / 2 - q, y0 - q * 5, q * 2, q);
+    cx.fillStyle = brass;
+    cx.fillRect(x0 + w / 2 - q / 2, y0 - q * 3.5, q, q);
+    // the opening: the inside, going back and back
+    const ix = x0 + q, iy = y0 + q, iw = w - q * 2, ih = h - q * 3, open = OA.closet || 0;
+    cx.fillStyle = "#0a0910";
+    cx.fillRect(ix, iy, iw, ih);
+    if (open > 0) {
+        const vx = ix + iw / 2, vy = iy + ih * .42;
+        for (let k = 0; k < 7; k++) { // frames of shelving, each smaller and dimmer
+            const f = Math.pow(.72, k), fw = iw * f, fh = ih * f, fx = vx - fw / 2, fy = vy - fh * .42;
+            const a = (.85 - k * .11) * open;
+            cx.globalAlpha = Math.max(0, a);
+            cx.fillStyle = mix("#6a4630", "#1a110b", dk * .5 + k * .08);
+            cx.fillRect(fx, fy, Math.max(q, fw * .14), fh); // shelves on both walls
+            cx.fillRect(fx + fw - Math.max(q, fw * .14), fy, Math.max(q, fw * .14), fh);
+            cx.fillStyle = mix("#e8c88a", "#4a3a20", dk * .5); // drawer labels, glinting
+            for (let r = 1; r < 4; r++) {
+                cx.fillRect(Math.round((fx + fw * .05) / q) * q, Math.round((fy + fh * r / 4) / q) * q, Math.max(1, q * f), Math.max(1, q * f));
+                cx.fillRect(Math.round((fx + fw * .89) / q) * q, Math.round((fy + fh * r / 4) / q) * q, Math.max(1, q * f), Math.max(1, q * f));
+            }
+        }
+        cx.globalAlpha = 1;
+        glow(vx, vy, 1.4 + Math.sin(t * 1.3) * .2, `rgba(255,214,150,${.8 * open})`); // a lamp, very far in
+        softGlow(x, y0 + h * .5, w * 1.5 * open, "rgba(200,190,255,.25)");
     }
-    if (OA.closet)
-        softGlow(x, y0 + h * .5, w * 1.4 * OA.closet, "rgba(200,190,255,.3)");
-    const dw = w * .5 * (1 - .75 * OA.closet);
-    cx.fillStyle = mix("#8a7896", "#3a3245", dk);
-    cx.fillRect(x - w / 2, y0, dw, h);
-    cx.fillStyle = "#d9c38a";
-    cx.fillRect(x - w / 2 + dw - w * .1, y0 + h * .5, w * .06, w * .06);
+    // the door: raised panels, a brass label card and a keyhole; it swings open to the left
+    const dw = Math.max(q * 2, Math.round(iw * (1 - .82 * open) / q) * q);
+    cx.fillStyle = wood;
+    cx.fillRect(ix, iy, dw, ih);
+    if (dw > q * 5) {
+        cx.fillStyle = woodD; // two sunken panels
+        cx.fillRect(ix + q * 2, iy + q * 2, dw - q * 4, Math.round(ih * .38 / q) * q);
+        cx.fillRect(ix + q * 2, iy + Math.round(ih * .52 / q) * q, dw - q * 4, Math.round(ih * .4 / q) * q);
+        cx.fillStyle = woodL;
+        cx.fillRect(ix + q * 2, iy + q * 2, dw - q * 4, q);
+        cx.fillRect(ix + q * 2, iy + Math.round(ih * .52 / q) * q, dw - q * 4, q);
+        cx.fillStyle = brass; // the label card holder, a card in it
+        const lx = ix + Math.round(dw / 2 / q) * q - q * 2, ly = iy + Math.round(ih * .44 / q) * q;
+        cx.fillRect(lx, ly, q * 4, q * 2);
+        cx.fillStyle = mix("#f1e6cc", "#5a5040", dk);
+        cx.fillRect(lx + q / 2 > lx ? lx + q / 2 : lx, ly + q / 2, q * 3, q);
+        cx.fillStyle = brassL; // the knob and the keyhole plate, on the opening edge
+        cx.fillRect(ix + dw - q * 2, iy + Math.round(ih * .5 / q) * q, q, q * 2);
+        cx.fillStyle = "#120c08";
+        cx.fillRect(ix + dw - q * 2, iy + Math.round(ih * .5 / q) * q + q, q, q / 2 > 1 ? q / 2 : 1);
+    }
+    else { // edge-on, swung right open
+        cx.fillStyle = woodL;
+        cx.fillRect(ix, iy, q, ih);
+    }
+    // brass hinges, and a line of light under the door when it's shut
+    cx.fillStyle = brass;
+    cx.fillRect(ix - q, iy + q * 3, q, q * 2);
+    cx.fillRect(ix - q, iy + ih - q * 5, q, q * 2);
+    cx.fillStyle = woodD; // the plinth
+    cx.fillRect(x0, GY - q * 2, w, q);
+    if (open < .05) {
+        cx.fillStyle = Math.sin(t * .9) > -.6 ? "#ffd696" : "#e8b070"; // (it flickers, now and then: someone's walking about in there)
+        cx.fillRect(ix + q, GY - q * 2, iw - q * 2, q);
+    }
 }
 /* the night door, at x (at the far end of the nook); it glows more the darker the sky */
 function drawNightDoor(dk, x, sky) {
