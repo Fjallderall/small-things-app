@@ -3736,6 +3736,8 @@ const wdmy = v => {
     return d.toLocaleDateString("en-GB", { weekday: "short" }) + " " + dmy(d);
 };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* today as a whole number of local days (for "once a day" counters kept in S.flags, which merge by the highest) */
+const dayNum = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 60e3) / 864e5);
 const dayKey = (d = new Date()) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 const uidGen = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 function fmt(n) {
@@ -5555,7 +5557,7 @@ function scopeBase() {
     const rm = room();
     return { x: rm.wx + rm.wr * 1.15, y: GY, up: false };
 }
-const OBJX = { books: () => Math.max(R * 1.05, W * .03 + R * .63), kettle: () => stoveX(), scopeEye: () => scopeBase().x + R * .25, window: () => room().wx, jar: () => jarX(), vault: () => W * .02 + R * .65, closet: () => closetX(), ndoor: () => ndoorX(), circle: () => W * .5 }; // (the moss: mossSpots in draw-world.js)
+const OBJX = { books: () => Math.max(R * 1.05, W * .03 + R * .63), kettle: () => stoveX(), scopeEye: () => scopeBase().x + R * .25, window: () => room().wx, jar: () => jarX(), vault: () => W * .02 + R * .65, closet: () => closetX(), ndoor: () => ndoorX() }; // (the moss: mossSpots in draw-world.js)
 function standBy(ox, gap, pref = 1) {
     let side = pref, x = ox + side * gap;
     if (x < R * 1.05 || x > W - R * 1.05) {
@@ -5636,7 +5638,6 @@ let waterAt = performance.now() - 15 * 60e3; // (the first one a little while af
 function watered() {
     return performance.now() - waterAt > 25 * 60e3;
 }
-const dayNum = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 60e3) / 864e5);
 function nookUp(o) {
     return { d: [60, 60], w: o.w || (c => 0), init(b, p) {
             b.act = o.act();
@@ -6372,8 +6373,8 @@ const BEH = {
         } },
     ward: { d: [60, 60], w: c => c.strange > 0 && (c.dark > .5 || isFull(c.moonP)) ? .4 * c.strange : 0, init(b) {
             b.act = rnd(7, 10);
-            if (own("circle") && view === "archive")
-                b.tx = OBJX.circle();
+            if (own("circle") && view === "archive") // (the circle's in the archive)
+                b.tx = circleGeo().x;
         }, step(b, p, t, po, dt) {
             let ta = t;
             if (b.tx !== undefined) {
@@ -11270,10 +11271,6 @@ function nookLoftGeo() {
     const balL = R * .45, balR = W - R * .3, run = Math.min(rise * .42, W * .5);
     return { balY, rise, balL, balR, stX0: balR - run, stX1: balR, nook: true };
 }
-/* is Mite up on the platform (or the balcony) in its room? */
-function petUp() {
-    return (view === "garden" || (view === "room" && own("loft"))) && (pet.ground || 0) >= loftGeo().rise - 1;
-}
 let loftDk = 0;
 function loftCols(dk) {
     return ({ wood: mix("#a8743f", "#3a2716", dk), dark: mix("#2e1d12", "#0c0805", dk), lite: mix("#d29a5c", "#4a3420", dk), u: 1 / DPR });
@@ -11427,7 +11424,7 @@ function routeDown(p) {
 let view = "room", archHits = [], archiveSince = 0;
 const archLadder = { x: -1, tx: -1 };
 /* behaviours that may run in the archive; anything else walks Mite back to the wagon first */
-const ARCHIVE_OK = new Set(["scry", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "chairSit", "stare", "bow", "dizzy"]);
+const ARCHIVE_OK = new Set(["scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "chairSit", "stare", "bow", "dizzy"]);
 /* interactions that live in the archive; asking for one from the wagon walks Mite there first */
 function isArchiveKind(kind) {
     return kind === "capsule" || kind.startsWith("refl:") || kind.startsWith("box:");
@@ -11781,13 +11778,11 @@ function drawTiffany(dk, t, x, top) {
         cx.fillRect(x - w / 2 + cw * Math.max(0, 2 - r), y0 + r * rh, w - cw * Math.max(0, 2 - r) * 2, 1);
     cx.fillRect(x - w / 2 - q / 2, y0 + rows * rh, w + q, q);
     cx.fillRect(Math.round(x / q) * q - q / 2, y0 - q, q, q); // the finial
-    tiffanyAt = { x, y: y0 + rows * rh, w, top: y0 };
 }
-let tiffanyAt = null;
 /* the lamp's light at night: faint clouds of coloured specks on the wall around it, like a nebula, slowly
    drifting (pixels, not a gradient, so they keep their colour in the palette) */
 function archNebula(now) { // (loop.js: after the night's darkening, so its colours stay)
-    const d = new Date(), dk = clamp(skyAt(d.getHours() + d.getMinutes() / 60).dark * .6 + (S.lightsOut ? .25 : 0), 0, 1);
+    const dk = sceneDark();
     if (dk > .35 && roomVisible("archive")) {
         const g = archGeo();
         drawNebula(g.deskX1 - R * .55, GY - R * 1.75, dk, now / 1000);
@@ -11829,7 +11824,7 @@ function drawDeskChair(dk, g) {
     cx.fillRect(x - sw / 2 + q * 2, backTop + R * .22, sw - q * 4, q);
     cx.fillRect(x - sw / 2 - q, seat, sw + q * 2, q * 2); // the seat
     cx.fillStyle = mix("#b8844e", "#3a2616", dk);
-    cx.fillRect(x - sw / 2 - q, seat, sw + q * 2, q / 2 > 1 ? q / 2 : 1);
+    cx.fillRect(x - sw / 2 - q, seat, sw + q * 2, Math.max(1, q / 2));
     cx.fillStyle = woodD;
     cx.fillRect(x - sw / 2 + q, seat + q * 2, q * 2, GY - seat - q * 2); // the front legs
     cx.fillRect(x + sw / 2 - q * 3, seat + q * 2, q * 2, GY - seat - q * 2);
@@ -15866,7 +15861,7 @@ function drawGarden(now, dt) {
                 cx.fillRect(x, y, nw, nw * .9);
                 cx.fillStyle = mix("#7a5a44", "#2a201a", dk * .6);
                 for (let l = 0; l < 2; l++)
-                    cx.fillRect(x + PX, y + PX * (2 + l * 2), nw - PX * 2, PX * .5 > 1 ? PX * .5 : 1);
+                    cx.fillRect(x + PX, y + PX * (2 + l * 2), nw - PX * 2, Math.max(1, PX * .5));
                 cx.fillStyle = mix("#b6343c", "#3a1414", dk * .5);
                 cx.fillRect(x + nw / 2 - PX / 2, y - PX / 2, PX, PX);
             });
@@ -16020,7 +16015,7 @@ function chesterfieldOverMite(now) {
     const lg = nookLoftGeo(), gr = pet.ground || 0;
     if (view !== "garden" || gr <= 0 || gr >= lg.rise - 1 || !hasChair())
         return;
-    const d = new Date(), dk = clamp(skyAt(d.getHours() + d.getMinutes() / 60).dark * .6 + (S.lightsOut ? .25 : 0), 0, 1);
+    const dk = sceneDark();
     withRoom("garden", () => drawLayered(() => drawChesterfield(gardenGeo(), dk, reduced ? 0 : now / 1000, mix("#8a6040", "#241810", dk), mix("#5e3e28", "#160f0a", dk))));
     if (cat.room === "garden" && cat.g > 0) // Midnightcat on the chair (or the drawers) stays in front of it, and of Mite
         withRoomLight("garden", () => drawCat(sceneDark(), now));
@@ -18034,7 +18029,7 @@ Object.assign(BEH, {
 });
 /* drawn after Mite, in Mite's room (and the notes on any wall on screen) */
 function drawPastimes(dt) {
-    const now = performance.now(), d = new Date(), dk = clamp(skyAt(d.getHours() + d.getMinutes() / 60).dark * .6 + (S.lightsOut ? .25 : 0), 0, 1);
+    const now = performance.now(), dk = sceneDark();
     postits = postits.filter(n => now - n.at < POSTIT_LIFE);
     for (const n of postits)
         withRoomLight(n.room, () => {
@@ -18748,11 +18743,11 @@ function drawCloset(dk, x) {
         const lx = ix + Math.round(dw / 2 / q) * q - q * 2, ly = iy + Math.round(ih * .44 / q) * q;
         cx.fillRect(lx, ly, q * 4, q * 2);
         cx.fillStyle = mix("#f1e6cc", "#5a5040", dk);
-        cx.fillRect(lx + q / 2 > lx ? lx + q / 2 : lx, ly + q / 2, q * 3, q);
+        cx.fillRect(lx + q / 2, ly + q / 2, q * 3, q);
         cx.fillStyle = brassL; // the knob and the keyhole plate, on the opening edge
         cx.fillRect(ix + dw - q * 2, iy + Math.round(ih * .5 / q) * q, q, q * 2);
         cx.fillStyle = "#120c08";
-        cx.fillRect(ix + dw - q * 2, iy + Math.round(ih * .5 / q) * q + q, q, q / 2 > 1 ? q / 2 : 1);
+        cx.fillRect(ix + dw - q * 2, iy + Math.round(ih * .5 / q) * q + q, q, Math.max(1, q / 2));
     }
     else { // edge-on, swung right open
         cx.fillStyle = woodL;
