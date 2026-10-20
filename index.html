@@ -11404,7 +11404,7 @@ let archWparts = [], archWinHit = null;
 /* the bigger-inside closet stands in the shelving itself, at the left-hand end of the bottom shelves */
 function closetX() {
     const g = archGeo();
-    return g.x0 + R * .43 + R * .18;
+    return g.x0 + R * .43 + R * .48; // (a little in from the side of the shelving)
 }
 /* where a shelf row starts: after the closet, for the rows beside it */
 function rowX0(g, row) {
