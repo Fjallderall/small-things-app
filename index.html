@@ -490,6 +490,8 @@ body.pixel .cabglim{border-radius:0;font-family:var(--f-display);font-size:18px;
 .dlg.crystal{border-color:#4a3a66}.dlg.crystal b{background:#4a3a66}
 .pinbox{aspect-ratio:96/60}
 .eyelist li{display:flex;gap:10px;align-items:flex-start}
+.pressedlist li{display:flex;gap:10px;align-items:flex-start}
+.pressed{width:50px;height:60px;flex:0 0 auto;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .eyepic{width:72px;height:48px;flex:0 0 auto;image-rendering:pixelated;image-rendering:crisp-edges;background:#2f2420;border-radius:4px}
 .fbooklist{list-style:none;margin:0;padding:0;max-height:52vh;overflow:auto}.fbooklist li{padding:8px 0;border-bottom:1px dashed rgba(58,44,34,.25)}
 .fdot{display:inline-block;width:10px;height:10px;margin-right:6px;border:2px solid #3a2c22;vertical-align:-1px}.fbook.odd b{color:#6b4a84}
@@ -699,8 +701,12 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div class="shop" id="plantShop"></div>
       <div><h3>Crystals</h3><p class="sub">For the crystal shelf on the wall. Tap the shelf to look at them up close and see your glimmers.</p></div>
       <div class="shop" id="crystalShop"></div>
-      <div><h3>On the wall</h3><p class="sub">Posters, certificates and rariteiten. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p></div>
+      <div><h3>On the wall</h3><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p></div>
       <div class="shop" id="wallShop"></div>
+      <div><h3>Something special</h3><p class="sub">A treat for the wagon, for one day. Then it's gone, and you can pick another.</p></div>
+      <div class="shop" id="splurgeShop"></div>
+      <div><h3>The raccoon's barter</h3></div>
+      <div class="shop" id="barterShop"></div>
       <div><h3>Lessons</h3><p class="sub">Only finished tasks unlock these. Each one teaches Mite something new to do.</p></div>
       <ul class="lessons" id="lessons"></ul>
     </div>
@@ -878,7 +884,7 @@ const POOL_INFO = {
     buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", friction: "Friction noted ({item})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
-    trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
+    trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -1861,6 +1867,41 @@ const DEF = {
             "It had my shape and somebody else's eyes. It went back into the wall like it lived there.",
             "I waved. It waved. A second later. I don't like that second.",
             "Another moss. Greyer. It didn't blink once. I'm going to blink extra today, to make up for it."
+        ],
+        splurge_ice: [
+            "An ice sculpture. Of me! I look very cool. Literally. Don't stand too close, I'm melting. It is, I mean.",
+            "It's me, in ice. I didn't know my ears were that pointy. I'll enjoy it while it lasts. Which is today."
+        ],
+        splurge_ice_tap: [
+            "It's a bit smaller than this morning. So am I, emotionally.",
+            "Drip, drip. It's turning into a puddle shaped like a memory of me.",
+            "The snail came to look at it. It said I was 'a good likeness, but colder'."
+        ],
+        splurge_balloons: [
+            "Balloons! Six of them. I'm going to name every one and be sad about each of them later.",
+            "Look how they bob. The cat's already planning something. I can see it in her eyes."
+        ],
+        splurge_balloons_tap: [
+            "They're getting tired. Balloons get tired. Same as everyone.",
+            "One of them squeaked when I touched it. I said sorry.",
+            "By tonight they'll be low enough to have a conversation with."
+        ],
+        splurge_cake: [
+            "A cake! Three floors! It's a cake building! Nobody touch it. Except me. And the possum. And probably the cat.",
+            "That's the biggest cake I've ever seen indoors. Outdoors too, actually."
+        ],
+        splurge_cake_tap: [
+            "Someone's had a slice. There are crumbs leading to the nook. And a small upside-down shape on the beam, chewing.",
+            "It's getting shorter. Like a candle, but delicious.",
+            "The cherry's gone. I'm not saying who. It was me."
+        ],
+        splurge_fireworks: [
+            "Fireworks! For tonight. I'll keep the curtains open. Well, we don't have curtains. I'll keep my eyes open.",
+            "When it's dark, look at the windows. I've arranged a sky."
+        ],
+        splurge_fireworks_tap: [
+            "Wait till it's dark. Then: sparkles.",
+            "Pop. Pop. Fizz. That's the forecast for tonight."
         ],
         catritual: [
             "Not now. A warlock is calling. I'll be right back.",
@@ -3010,7 +3051,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, splurge: { k: "", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3167,6 +3208,11 @@ function sanitizeState(raw) {
     o.possumAt = num(s.possumAt); // when it was named (two devices: the first name given is the one that stays)
     // the notes on the pinboard (pinboard.js): text, when pinned, when taken down (0: still up). A save from before
     // the notes existed gets the first few
+    o.splurge = { k: s.splurge && ["ice", "balloons", "cake", "fireworks"].includes(s.splurge.k) ? s.splurge.k : "", at: num(s.splurge && s.splurge.at) }; // the day's treat (splurge.js)
+    { // the raccoon's barter: this week's stock and what's been traded (barter.js)
+        const b = s.barter && typeof s.barter === "object" ? s.barter : {};
+        o.barter = { wk: dkey(b.wk) || "", stock: arr(b.stock, 4).map(x => ({ k: ["trinket", "altered", "eye"].includes(x.k) ? x.k : "trinket", id: str(x.id, 80), price: clamp(Math.round(num(x.price, 20)), 1, 999) })).filter(x => x.id), got: (Array.isArray(b.got) ? b.got : []).slice(0, 4).map(x => str(x, 80)).filter(Boolean) };
+    }
     o.eyes = arr(s.eyes, 24).map(e => ({ k: sid(e.k).slice(0, 12), at: num(e.at), from: str(e.from, 20) })).filter(e => e.k); // the eye jars (eyes.js)
     o.glimpses = arr(s.glimpses, 300).map(g => ({ k: str(g && g.k, 80), at: num(g && g.at) })).filter(g => g.k); // what the chalk circle has shown (circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 40).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
@@ -3393,6 +3439,14 @@ function mergeStates(a, b) {
             }
         }
         o.quotes = [...m.values()].map(q => Object.assign(q, { off: q.off > q.at ? q.off : 0 })).sort((x, y) => x.at - y.at).slice(-40);
+    }
+    o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
+    { // the barter: the newer week wins; the same week keeps one stock and everything traded on either side
+        const ba = a.barter || {}, bb = b.barter || {};
+        if ((ba.wk || "") !== (bb.wk || ""))
+            o.barter = JSON.parse(JSON.stringify((ba.wk || "") > (bb.wk || "") ? ba : bb));
+        else
+            o.barter = { wk: ba.wk || "", stock: ((ba.stock || []).length ? ba.stock : bb.stock || []).slice(0, 4), got: [...new Set([...(ba.got || []), ...(bb.got || [])])].slice(0, 4) };
     }
     { // the eye jars: each eye once, the first time it was found
         const m = new Map();
@@ -5324,39 +5378,63 @@ const G7 = { A: "01110100011000111111100011000110001", B: "111101000110001111101
 let TQ = [];
 const propLayer = document.createElement("canvas"), plx = propLayer.getContext("2d", { willReadFrequently: true });
 function hardenLayer(c, w, h) {
-    // faint antialiased slivers become solid pixels; every shape gets a 1px dark rim
+    // faint antialiased slivers become solid pixels; every shape gets a 1px dark rim. Only the part that was drawn
+    // on is processed and written back (most layers are one small object), which keeps it quick
     const im = c.getImageData(0, 0, w, h), d = im.data;
-    let any = false;
-    for (let i = 3; i < d.length; i += 4) {
-        if (d[i] > 36) {
-            d[i] = 255;
-            any = true;
+    let x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (let y = 0, i = 3; y < h; y++)
+        for (let x = 0; x < w; x++, i += 4) {
+            if (d[i] > 36) {
+                d[i] = 255;
+                if (x < x0)
+                    x0 = x;
+                if (x > x1)
+                    x1 = x;
+                if (y < y0)
+                    y0 = y;
+                y1 = y;
+            }
+            else
+                d[i] = 0;
         }
-        else
-            d[i] = 0;
-    }
-    if (!any)
-        return;
-    const rim = new Uint8Array(w * h);
-    for (let y = 0; y < h; y++)
-        for (let x = 0; x < w; x++) {
+    if (x1 < 0)
+        return false;
+    x0 = Math.max(0, x0 - 1);
+    y0 = Math.max(0, y0 - 1);
+    x1 = Math.min(w - 1, x1 + 1);
+    y1 = Math.min(h - 1, y1 + 1);
+    const bw = x1 - x0 + 1, rim = new Uint8Array(bw * (y1 - y0 + 1)), A = k => d[k * 4 + 3];
+    for (let y = y0; y <= y1; y++)
+        for (let x = x0; x <= x1; x++) {
             const k = y * w + x;
-            if (d[k * 4 + 3])
+            if (A(k))
                 continue;
-            if ((x > 0 && d[(k - 1) * 4 + 3]) || (x < w - 1 && d[(k + 1) * 4 + 3]) || (y > 0 && d[(k - w) * 4 + 3]) || (y < h - 1 && d[(k + w) * 4 + 3]))
-                rim[k] = 1;
+            if ((x > 0 && A(k - 1)) || (x < w - 1 && A(k + 1)) || (y > 0 && A(k - w)) || (y < h - 1 && A(k + w)))
+                rim[(y - y0) * bw + (x - x0)] = 1;
         }
-    for (let k = 0; k < rim.length; k++)
-        if (rim[k]) {
-            const i = k * 4, x = k % w;
-            const n = [k - 1, k + 1, k - w, k + w].find(j => j >= 0 && j < w * h && Math.abs((j % w) - x) <= 1 && d[j * 4 + 3] && !rim[j]);
-            const j = (n === undefined ? k : n) * 4;
+    for (let y = y0; y <= y1; y++)
+        for (let x = x0; x <= x1; x++) {
+            if (!rim[(y - y0) * bw + (x - x0)])
+                continue;
+            const k = y * w + x, i = k * 4;
+            let j = k; // take the colour of a solid neighbour (not another rim pixel), darkened
+            const isSolid = (n, nx, ny) => nx >= x0 && nx <= x1 && ny >= y0 && ny <= y1 && A(n) && !rim[(ny - y0) * bw + (nx - x0)];
+            if (x > 0 && isSolid(k - 1, x - 1, y))
+                j = k - 1;
+            else if (x < w - 1 && isSolid(k + 1, x + 1, y))
+                j = k + 1;
+            else if (y > 0 && isSolid(k - w, x, y - 1))
+                j = k - w;
+            else if (y < h - 1 && isSolid(k + w, x, y + 1))
+                j = k + w;
+            j *= 4;
             d[i] = Math.round(d[j] * .5 + 20);
             d[i + 1] = Math.round(d[j + 1] * .5 + 12);
             d[i + 2] = Math.round(d[j + 2] * .5 + 8);
             d[i + 3] = 255;
         }
-    c.putImageData(im, 0, 0);
+    c.putImageData(im, 0, 0, x0, y0, bw, y1 - y0 + 1);
+    return { x0, y0, w: bw, h: y1 - y0 + 1 };
 }
 function drawTextQueue() {
     if (!TQ.length)
@@ -8664,6 +8742,7 @@ function drawWindow(rm, sky, d, hf, tsec, dt, dk, arr = wparts, shutters = true)
             cx.stroke();
         }
     }
+    drawFireworks(wx - wr, wy - wr, wr * 2, wr * 1.4, tsec, sky.dark); // fireworks over the hills, the evening you bought them (splurge.js)
     if (spaceOn()) // the detour: space outside (space.js)
         drawSpace(wx - wr, wy - wr, wr * 2, wr * 2, tsec);
     cx.restore();
@@ -11857,33 +11936,41 @@ function archNebula(now) { // (loop.js: after the night's darkening, so its colo
         drawLampLight(g.deskX1 - R * .55, GY - R * 1.72, dk, now / 1000);
     }
 }
+let lampCache = { key: "", c: null };
 function drawLampLight(x, y, dk, t) {
-    const k = clamp((dk - .35) / .35, 0, 1), q = PX, cols = ["#e8a33c", "#3f9e9a", "#6aa84f", "#c2453a", "#3f9e9a", "#e8a33c", "#8a4fa0", "#6aa84f"];
-    const segs = 12, a0 = Math.PI * .95, a1 = Math.PI * 2.05; // a wide fan, up and out to both sides (above the shade)
-    const r0 = R * .55, r1 = R * 2.3, flick = .92 + Math.sin(t * 1.1) * .04 + Math.sin(t * 3.7) * .02;
-    cx.save();
-    for (let sg = 0; sg < segs; sg++) {
-        const sa = a0 + (a1 - a0) * sg / segs, ea = a0 + (a1 - a0) * (sg + .82) / segs; // (a dark gap: the lead between panels)
-        cx.fillStyle = cols[sg % cols.length];
-        for (let ry = Math.floor((y - r1) / q) * q; ry < y + R * .2; ry += q)
-            for (let rx = Math.floor((x - r1 * 1.3) / q) * q; rx < x + r1 * 1.3; rx += q) {
-                const dx = (rx - x) / 1.3, dy = ry - y, d = Math.hypot(dx, dy);
-                if (d < r0 || d > r1)
+    const k = clamp((dk - .35) / .35, 0, 1), q = PX, r0 = R * .55, r1 = R * 2.3, ox = Math.floor((x - r1 * 1.3) / q) * q, oy = Math.floor((y - r1) / q) * q;
+    const key = [W, R, q, Math.round(k * 8), x - ox, y - oy].join("|");
+    if (lampCache.key !== key) { // the pattern only changes with the size of the room and how dark it is: drawn once, then reused
+        const cw = Math.ceil(r1 * 2.6 / q + 2) * q, ch = Math.ceil((r1 + R * .2) / q + 2) * q, c = lampCache.c || document.createElement("canvas");
+        c.width = cw;
+        c.height = ch;
+        const g = c.getContext("2d"), cols = ["#e8a33c", "#3f9e9a", "#6aa84f", "#c2453a", "#3f9e9a", "#e8a33c", "#8a4fa0", "#6aa84f"];
+        const segs = 12, a0 = Math.PI * .95, a1 = Math.PI * 2.05, lx = x - ox, ly = y - oy; // a wide fan, up and out to both sides
+        for (let ry = 0; ry < ch; ry += q)
+            for (let rx = 0; rx < cw; rx += q) {
+                const dx = (rx - lx) / 1.3, dy = ry - ly, d = Math.hypot(dx, dy);
+                if (d < r0 || d > r1 || dy > R * .2)
                     continue;
                 let a = Math.atan2(dy, dx);
                 if (a < 0)
                     a += Math.PI * 2;
                 if (a < Math.PI * .5)
                     a += Math.PI * 2;
-                if (a < sa || a > ea)
+                const f = (a - a0) / (a1 - a0) * segs, sg = Math.floor(f);
+                if (sg < 0 || sg >= segs || f - sg > .82) // (a dark gap: the lead between panels)
                     continue;
                 const fall = 1 - (d - r0) / (r1 - r0); // brighter near the lamp
-                if (((rx / q + ry / q) & 1) && fall < .55) // a checker further out, solid closer in: soft edges
+                if ((((rx + ox) / q + (ry + oy) / q) & 1) && fall < .55) // a checker further out, solid closer in: soft edges
                     continue;
-                cx.globalAlpha = k * flick * (.14 + .42 * fall);
-                cx.fillRect(rx, ry, q, q);
+                g.globalAlpha = k * (.14 + .42 * fall);
+                g.fillStyle = cols[sg % cols.length];
+                g.fillRect(rx, ry, q, q);
             }
+        lampCache = { key, c };
     }
+    cx.save();
+    cx.globalAlpha = .92 + Math.sin(t * 1.1) * .04 + Math.sin(t * 3.7) * .02; // a faint flicker
+    cx.drawImage(lampCache.c, ox, oy);
     cx.restore();
 }
 /* a small wooden chair tucked in at the desk, seen from the front */
@@ -12314,8 +12401,16 @@ function guestOut() {
 }
 function drawLayered(fn) {
     const host = cx;
-    propLayer.width = pc.width;
-    propLayer.height = pc.height;
+    if (propLayer.width !== pc.width || propLayer.height !== pc.height) {
+        propLayer.width = pc.width;
+        propLayer.height = pc.height;
+    }
+    else { // (clearing is cheaper than resizing; reset everything a draw function may have changed)
+        plx.setTransform(1, 0, 0, 1, 0, 0);
+        plx.globalAlpha = 1;
+        plx.globalCompositeOperation = "source-over";
+        plx.clearRect(0, 0, propLayer.width, propLayer.height);
+    }
     plx.setTransform(cx.getTransform());
     cx = plx;
     try {
@@ -12324,10 +12419,12 @@ function drawLayered(fn) {
     finally {
         cx = host;
     }
-    hardenLayer(plx, propLayer.width, propLayer.height);
+    const bb = hardenLayer(plx, propLayer.width, propLayer.height);
+    if (!bb)
+        return; // nothing drawn
     cx.save();
     cx.setTransform(1, 0, 0, 1, 0, 0);
-    cx.drawImage(propLayer, 0, 0);
+    cx.drawImage(propLayer, bb.x0, bb.y0, bb.w, bb.h, bb.x0, bb.y0, bb.w, bb.h);
     cx.restore();
 }
 function drawGuest(g, now) {
@@ -15901,6 +15998,7 @@ function drawGarden(now, dt) {
             cx.fillStyle = "rgba(255,255,255,.7)";
             cx.fillRect(wx0 + (i * 41.1 + Math.sin(t + i) * 6) % ww, wy0 + ((t * 18 + i * 37) % wh), 2, 2);
         }
+    drawFireworks(wx0, wy0, ww, wh * .8, t, sky.dark);
     if (spaceOn()) // the detour: space outside (space.js)
         drawSpace(wx0, wy0, ww, wh, t);
     cx.restore();
@@ -16779,6 +16877,10 @@ function possumTick(dt, now) {
     }
     switch (p.ph) {
         case "hang":
+            if (p.carry) { // home with the cookie (by the stairs or flying up): eaten upside down, then sleep
+                p.carry = false;
+                p.cookie = now + 7000;
+            }
             if (possumCookies() || possumHungry() || (possumAwake() && now > p.until)) {
                 if (Math.random() < .4) { // the propeller
                     Object.assign(p, { ph: "fly", fy: p.hy + flyH });
@@ -17654,40 +17756,7 @@ function flowerFrame(now) {
         for (let yy = y + 2; yy < 30; yy++)
             px("#4f7d3c", x + Math.round((28 - x) * (yy - y) / (30 - y) * .5), yy);
         const c = v.c, dark = mix(c, "#000000", .3), lite = mix(c, "#ffffff", .35);
-        const s = fx.find(f => FLOWER_SHAPES.includes(f)) || "daisy";
-        if (s === "daisy") {
-            px(c, x - 2, y, 5, 1);
-            px(c, x, y - 2, 1, 5);
-            px(c, x - 1, y - 1, 3, 3);
-            px("#f2c14e", x, y, 1, 1);
-        }
-        else if (s === "tulip") {
-            px(dark, x - 2, y - 3, 5, 4);
-            px(c, x - 1, y - 3, 3, 4);
-            px(lite, x - 1, y - 4, 1, 1);
-            px(lite, x + 1, y - 4, 1, 1);
-        }
-        else if (s === "sprig" || s === "herb") {
-            for (let k = 0; k < 4; k++)
-                px(k % 2 ? c : dark, x + (k % 2 ? 1 : -1), y - 3 + k * 2, 1, 2);
-        }
-        else if (s === "bell") {
-            px(c, x - 1, y - 2, 3, 3);
-            px(dark, x - 2, y + 1, 5, 1);
-            px("#fff0b8", x, y + 2, 1, 1);
-        }
-        else if (s === "poppy") { // four round petals and a dark middle
-            px(c, x - 1, y - 2, 3, 5);
-            px(c, x - 2, y - 1, 5, 3);
-            px(dark, x - 1, y, 3, 1);
-            px("#120c0a", x, y, 1, 1);
-        }
-        else { // bud: round, with a curl of light
-            px(dark, x - 1, y - 2, 3, 5);
-            px(dark, x - 2, y - 1, 5, 3);
-            px(c, x - 1, y - 1, 3, 3);
-            px(lite, x, y - 1, 1, 1);
-        }
+        flowerHead(px, x, y, fx.find(f => FLOWER_SHAPES.includes(f)) || "daisy", c, dark, lite);
         if (fx.includes("eye") && i === 1) { // it's looking at you
             const blink = (t % 3.7) < .15;
             px("#fbf1d9", x - 1, y - 1, 3, blink ? 1 : 2);
@@ -17706,11 +17775,76 @@ function flowerFrame(now) {
             px(v.c, 16 + i * 7, 26 - ((t * 6 + i * 9) % 26));
     requestAnimationFrame(flowerFrame);
 }
+/* one flower head in pixels (s: its shape), centred on x, y; px(colour, x, y, w, h) draws */
+function flowerHead(px, x, y, s, c, dark, lite) {
+    if (s === "daisy") {
+        px(c, x - 2, y, 5, 1);
+        px(c, x, y - 2, 1, 5);
+        px(c, x - 1, y - 1, 3, 3);
+        px("#f2c14e", x, y, 1, 1);
+    }
+    else if (s === "tulip") {
+        px(dark, x - 2, y - 3, 5, 4);
+        px(c, x - 1, y - 3, 3, 4);
+        px(lite, x - 1, y - 4, 1, 1);
+        px(lite, x + 1, y - 4, 1, 1);
+    }
+    else if (s === "sprig" || s === "herb") {
+        for (let k = 0; k < 4; k++)
+            px(k % 2 ? c : dark, x + (k % 2 ? 1 : -1), y - 3 + k * 2, 1, 2);
+    }
+    else if (s === "bell") {
+        px(c, x - 1, y - 2, 3, 3);
+        px(dark, x - 2, y + 1, 5, 1);
+        px("#fff0b8", x, y + 2, 1, 1);
+    }
+    else if (s === "poppy") { // four round petals and a dark middle
+        px(c, x - 1, y - 2, 3, 5);
+        px(c, x - 2, y - 1, 5, 3);
+        px(dark, x - 1, y, 3, 1);
+        px("#120c0a", x, y, 1, 1);
+    }
+    else { // bud: round, with a curl of light
+        px(dark, x - 1, y - 2, 3, 5);
+        px(dark, x - 2, y - 1, 5, 3);
+        px(c, x - 1, y - 1, 3, 3);
+        px(lite, x, y - 1, 1, 1);
+    }
+}
+/* a flower pressed flat on a page of the book: its stem, two leaves and the head, the colours a little faded */
+function drawPressed(cv, f) {
+    const g = cv.getContext("2d"), w = cv.width, h = cv.height, fx = String(f.s || "").split(" ");
+    const px = (c, x, y, ww = 1, hh = 1) => {
+        g.fillStyle = c;
+        g.fillRect(Math.round(x), Math.round(y), ww, hh);
+    };
+    px("#f1e6cc", 0, 0, w, h); // the page
+    px("#e2d4b4", 0, 0, 1, h);
+    const c0 = /^#[0-9a-f]{6}$/i.test(f.c) ? f.c : "#e8a0b0", c = mix(c0, "#a08060", .25), dark = mix(c0, "#3a2a20", .45), lite = mix(c0, "#fff6e0", .35), stem = "#6a8a4a";
+    const hx = w * .58, hy = h * .32;
+    for (let k = 0; k < 13; k++) // a stem, drawn diagonally across the page
+        px(stem, hx - k * .55, hy + 2 + k);
+    px("#7a9a56", hx - 4, hy + 7, 3, 1); // two leaves
+    px("#7a9a56", hx - 5, hy + 8, 2, 1);
+    px("#7a9a56", hx - 3, hy + 11, 3, 1);
+    px("#7a9a56", hx - 1, hy + 12, 2, 1);
+    flowerHead(px, Math.round(hx), Math.round(hy), fx.find(s => FLOWER_SHAPES.includes(s)) || "daisy", c, dark, lite);
+    if (f.odd) { // strange ones keep a bit of their strangeness
+        if (fx.includes("eye")) {
+            px("#fbf1d9", hx - 1, hy - 1, 3, 2);
+            px("#33456e", hx, hy - 1, 1, 1);
+        }
+        px("#c9a8e8", 3, 3);
+        px("#c9a8e8", w - 4, h - 5);
+    }
+    px("rgba(160,120,80,.25)", 2, h - 3, w - 4, 1); // a line of tape across the stem
+}
 /* the dried flower book, open: every flower so far */
 function showFlowerBook() {
     const list = (S.flowerBook || []).slice().sort((a, b) => a.at - b.at);
-    const rows = list.map(f => `<li class="fbook${f.odd ? " odd" : ""}"><span class="fdot" style="background:${/^#[0-9a-f]{6}$/i.test(f.c) ? f.c : "#e8a0b0"}"></span><b>${esc(f.n)}</b>${f.odd ? " ✦" : ""}<br><span class="sub">${f.at > 1e9 ? esc(dmy(new Date(f.at))) : "from the start"}${f.from ? " · " + esc(f.from === "a walk" ? "picked on a walk" : f.from) : ""}</span>${f.note ? `<br>${esc(f.note)}` : ""}</li>`).join("");
-    openRitual("The dried flower book", `${list.length} pressed so far. The strange ones are marked ✦.`, `<ul class="fbooklist">${rows || "<li>Nothing pressed yet.</li>"}</ul>`, [["Close", "primary", closeRitual]]);
+    const rows = list.map((f, i) => `<li class="fbook${f.odd ? " odd" : ""}"><canvas class="pressed" width="20" height="24" data-fb="${i}" aria-hidden="true"></canvas><span><b>${esc(f.n)}</b>${f.odd ? " ✦" : ""}<br><span class="sub">${f.at > 1e9 ? esc(dmy(new Date(f.at))) : "from the start"}${f.from ? " · " + esc(f.from === "a walk" ? "picked on a walk" : f.from) : ""}</span>${f.note ? `<br>${esc(f.note)}` : ""}</span></li>`).join("");
+    openRitual("The dried flower book", `${list.length} pressed so far. The strange ones are marked ✦.`, `<ul class="fbooklist pressedlist">${rows || "<li>Nothing pressed yet.</li>"}</ul>`, [["Close", "primary", closeRitual]]);
+    document.querySelectorAll("#ritBody canvas.pressed").forEach(c => drawPressed(c, list[+c.dataset.fb] || {}));
     sfx("card");
     return 2;
 }
@@ -18488,15 +18622,15 @@ function animateEyePics() {
     if (!pics.length)
         return;
     const t0 = performance.now();
-    const frame = now => {
+    const tick = now => {
         if ($("ritual").hidden || !pics[0].c.isConnected)
             return;
         const t = now - t0;
         for (const p of pics)
             drawEyePic(p, t);
-        requestAnimationFrame(frame);
+        requestAnimationFrame(tick);
     };
-    requestAnimationFrame(frame);
+    requestAnimationFrame(tick);
 }
 function drawEyePic(p, t) {
     const { g, e } = p, W2 = 24, H2 = 16, cx0 = 12, cy0 = 8;
@@ -18683,6 +18817,180 @@ function spaceEnd(a) {
     else
         setTimeout(() => speak("And we're back. Same as before, but with a bit more sky in us.", { ms: 4000 }), 1200);
     afterChange();
+}
+
+</script>
+<script>/* js/scene/splurge.js */
+"use strict";
+/*
+ * splurge.js - Something special, for 100 glimmers: a treat for the wagon that lasts one day and then is gone.
+ * One at a time (S.splurge: { k, at }); buying another replaces it.
+ *   ice        an ice sculpture of Mite on the wagon floor, melting into a puddle over the day
+ *   balloons   a bunch of balloons tied to a little weight; by evening they've sagged and drifted down
+ *   cake       a towering cake on a stand; slices go missing through the day (nobody admits anything)
+ *   fireworks  that evening, small fireworks over the hills in every window
+ * splurgeLeft() is how much of the day's left (1 fresh .. 0 gone).
+ */
+const SPLURGE_PRICE = 100, SPLURGE_DAY = 864e5;
+const SPLURGES = [
+    { id: "ice", name: "Ice sculpture", note: "A sculpture of Mite in clear ice, on the wagon floor. It melts away over a day. Mite is very flattered and slightly worried." },
+    { id: "balloons", name: "Bunch of balloons", note: "Six balloons tied to a little weight. Over the day they sag, and drift, and in the end there's just the string." },
+    { id: "cake", name: "Towering cake", note: "Three tiers on a stand. Slices go missing through the day. Nobody knows who. Everybody knows who." },
+    { id: "fireworks", name: "Fireworks", note: "That evening, tiny fireworks over the hills in every window. Bought now, they go off when it's dark." }
+];
+let splurgeHit = null;
+function splurgeOn() {
+    const s = S.splurge;
+    return s && s.k && Date.now() - num(s.at) < SPLURGE_DAY ? s.k : "";
+}
+function splurgeLeft() {
+    return splurgeOn() ? clamp(1 - (Date.now() - num(S.splurge.at)) / SPLURGE_DAY, 0, 1) : 0;
+}
+function buySplurge(id) {
+    const it = SPLURGES.find(x => x.id === id);
+    if (!it || S.g < SPLURGE_PRICE)
+        return;
+    S.g -= SPLURGE_PRICE;
+    S.splurge = { k: id, at: Date.now() };
+    sfx("coin");
+    note(`Splurged: ${it.name.toLowerCase()}, for a day.`);
+    speak(compose("splurge_" + id) || "Oh! For me? For us. For today.", { ms: 6000 });
+    afterChange();
+}
+/* in the wagon (drawWorld), after the floor: the day's treat */
+function drawSplurge(dk, t) {
+    splurgeHit = null;
+    const k = splurgeOn(), left = splurgeLeft(), q = PX;
+    if (!k || k === "fireworks")
+        return;
+    const x = Math.round(W * .66 / q) * q;
+    if (k === "ice") { // Mite in ice: round, two ears, a sprout; lower and smaller as it melts, the puddle grows
+        const h = R * 1.5 * (.25 + .75 * left), w = R * 1.1 * (.45 + .55 * left), base = GY;
+        cx.fillStyle = "rgba(160,205,235,.55)"; // the puddle
+        cx.beginPath();
+        cx.ellipse(x, base + q, R * (.5 + 1.1 * (1 - left)), R * (.08 + .12 * (1 - left)), 0, 0, 7);
+        cx.fill();
+        drawLayered(() => {
+            cx.fillStyle = "#cfe8f5";
+            cx.fillRect(x - w * .55, base - R * .14, w * 1.1, R * .14); // the plinth of ice
+            cx.beginPath();
+            cx.ellipse(x, base - R * .14 - h * .45, w * .5, h * .45, 0, 0, 7);
+            cx.fill();
+            if (left > .35) { // ears and sprout, until they've melted off
+                for (const sd of [-1, 1]) {
+                    cx.beginPath();
+                    cx.moveTo(x + sd * w * .28, base - R * .14 - h * .8);
+                    cx.lineTo(x + sd * w * .48, base - R * .14 - h * 1.02);
+                    cx.lineTo(x + sd * w * .46, base - R * .14 - h * .6);
+                    cx.fill();
+                }
+                cx.fillRect(x - q / 2, base - R * .14 - h * 1.05, q, h * .14);
+            }
+            cx.fillStyle = "#ffffff"; // shine
+            cx.fillRect(Math.round((x - w * .25) / q) * q, Math.round((base - R * .14 - h * .7) / q) * q, q, Math.max(q, h * .25));
+            cx.fillStyle = "#9cc8e4"; // eyes, carved
+            cx.fillRect(x - w * .2, base - R * .14 - h * .55, q, q);
+            cx.fillRect(x + w * .2 - q, base - R * .14 - h * .55, q, q);
+        });
+        if (Math.random() < .05) // a drip
+            addP({ type: "spark", x: x + rnd(-w * .4, w * .4), y: base - R * .2, vx: 0, vy: 20, g: 200, max: .5, col: "#cfe8f5", size: 2, room: "room" });
+        splurgeHit = { x: x - w * .6, y: base - R * .14 - h * 1.05, w: w * 1.2, h: h * 1.05 + R * .14, cx: x };
+    }
+    else if (k === "balloons") { // tied to a little weight; the bunch hangs lower and limper as the day goes
+        const top = GY - R * (1.2 + 2.2 * left), cols = ["#c2453a", "#e8a33c", "#3f9e9a", "#8a4fa0", "#6aa84f", "#f4a9b8"], n = Math.max(2, Math.round(6 * (.35 + .65 * left)));
+        cx.fillStyle = mix("#5a4030", "#1e150f", dk);
+        cx.fillRect(x - q * 2, GY - q * 2, q * 4, q * 2); // the weight
+        cx.strokeStyle = mix("#e8e0d0", "#4a4640", dk * .5);
+        cx.lineWidth = 1;
+        for (let i = 0; i < n; i++) {
+            const a = (i - (n - 1) / 2) * .35, bx = x + Math.sin(a) * R * .9 + Math.sin(t * .8 + i) * R * .06, by = top + Math.abs(a) * R * .5 + Math.cos(t + i) * q;
+            cx.beginPath();
+            cx.moveTo(x, GY - q * 2);
+            cx.quadraticCurveTo(x + (bx - x) * .3, (by + GY) / 2, bx, by + R * .25);
+            cx.stroke();
+            const s = R * (.22 + .06 * left);
+            drawLayered(() => {
+                cx.fillStyle = mix(cols[i], "#2a2020", dk * .5);
+                cx.beginPath();
+                cx.ellipse(bx, by, s * .85, s, 0, 0, 7);
+                cx.fill();
+                cx.fillRect(bx - q / 2, by + s - q / 2, q, q); // the knot
+                cx.fillStyle = "rgba(255,255,255,.55)";
+                cx.fillRect(Math.round((bx - s * .35) / q) * q, Math.round((by - s * .45) / q) * q, q, q);
+            });
+        }
+        splurgeHit = { x: x - R * 1.3, y: top - R * .4, w: R * 2.6, h: GY - top + R * .4, cx: x };
+    }
+    else if (k === "cake") { // three tiers on a stand; slices vanish from the top tier down
+        const eaten = 1 - left, tiers = [[R * 1.05, R * .32], [R * .8, R * .3], [R * .55, R * .28]];
+        drawLayered(() => {
+            cx.fillStyle = mix("#c9a24a", "#4a3a1a", dk * .6); // the stand
+            cx.fillRect(x - q, GY - R * .5, q * 2, R * .5);
+            cx.fillRect(x - R * .6, GY - R * .54, R * 1.2, q * 1.5);
+            cx.fillRect(x - R * .3, GY - q, R * .6, q);
+            let y = GY - R * .54;
+            tiers.forEach(([w, h], i) => {
+                const gone = clamp(eaten * 3 - (2 - i), 0, 1); // the top goes first
+                if (gone >= 1)
+                    return;
+                const ww = w * (1 - gone * .8);
+                cx.fillStyle = mix("#f4ecd8", "#4a463c", dk * .55); // icing
+                cx.fillRect(x - w / 2, y - h, ww, h);
+                cx.fillStyle = mix("#e3a0b2", "#3a2430", dk * .55); // the pink layer
+                cx.fillRect(x - w / 2, y - h * .55, ww, h * .2);
+                if (gone > 0) { // the cut face
+                    cx.fillStyle = mix("#c98a4a", "#3a2414", dk * .55);
+                    cx.fillRect(x - w / 2 + ww - q, y - h, q, h);
+                }
+                y -= h;
+            });
+            if (eaten < .33) { // a cherry on top
+                cx.fillStyle = "#c2453a";
+                cx.fillRect(x - q, y - q * 2, q * 2, q * 2);
+            }
+        });
+        splurgeHit = { x: x - R * .6, y: GY - R * 1.6, w: R * 1.2, h: R * 1.6, cx: x };
+    }
+}
+/* fireworks over the hills, in a window (room.js, garden.js: inside the window's clip), once it's dark */
+function drawFireworks(x0, y0, w, h, t, dark) {
+    if (splurgeOn() !== "fireworks" || dark < .4)
+        return;
+    const q = PX, cols = ["#ffd76a", "#f4a9b8", "#9dffa8", "#bcd8ff", "#e8a33c"];
+    for (let i = 0; i < 3; i++) {
+        const per = 2.6 + i * .7, ph = ((t + i * 1.3) % per) / per, seed = Math.floor((t + i * 1.3) / per) * 7 + i;
+        const bx = x0 + w * (.2 + ((seed * 37) % 60) / 100), by = y0 + h * (.18 + ((seed * 23) % 30) / 100), col = cols[seed % cols.length];
+        if (ph < .25) { // going up
+            cx.fillStyle = "#fff6d0";
+            cx.fillRect(Math.round(bx / q) * q, Math.round((y0 + h * .8 - (y0 + h * .8 - by) * ph / .25) / q) * q, q, q);
+            continue;
+        }
+        const k = (ph - .25) / .75, rr = Math.min(w, h) * .22 * Math.sqrt(k);
+        cx.fillStyle = col;
+        cx.globalAlpha = 1 - k;
+        for (let s = 0; s < 10; s++) {
+            const a = s / 10 * Math.PI * 2;
+            cx.fillRect(Math.round((bx + Math.cos(a) * rr) / q) * q, Math.round((by + Math.sin(a) * rr + k * k * h * .08) / q) * q, q, q);
+        }
+        cx.globalAlpha = 1;
+    }
+}
+/* a tap on the treat: Mite says something about it */
+function splurgeTap(p) {
+    if (!splurgeHit || !hitIn(p, splurgeHit, 10))
+        return false;
+    const k = splurgeOn();
+    speak(compose("splurge_" + k + "_tap") || compose("splurge_" + k) || "Ours, for today.", { ms: 5000 });
+    return true;
+}
+/* the shop: something special, a hundred glimmers, one day */
+function renderSplurges() {
+    const el = $("splurgeShop");
+    if (!el)
+        return;
+    const on = splurgeOn(), left = splurgeLeft();
+    el.innerHTML = SPLURGES.map(s => `<div class="bld"><div style="min-width:0"><b>${esc(s.name)}</b><span class="own">${on === s.id ? `today, ${Math.max(1, Math.round(left * 24))} hours left` : ""}</span><p>${esc(s.note)}</p></div><span class="bacts"><button class="btn amber" data-splurge="${esc(s.id)}" ${S.g < SPLURGE_PRICE ? "disabled" : ""} aria-label="Buy ${esc(s.name)} for ${SPLURGE_PRICE} glimmers, for one day">${SPLURGE_PRICE} ◆</button></span></div>`).join("");
+    el.querySelectorAll("[data-splurge]").forEach(b => b.onclick = () => buySplurge(b.dataset.splurge));
 }
 
 </script>
@@ -18889,6 +19197,7 @@ function drawWorld(now, dt) {
     }
     guestTick(dt, performance.now());
     drawMess(dk, "room"); // mess on the floor (any room: drawMess)
+    drawSplurge(dk, now / 1000); // the day's treat, if there is one (splurge.js)
     // ball
     if (ball) {
         ball.vy += 700 * dt;
@@ -19445,8 +19754,13 @@ function drawMess(dk, room) {
  * bubbles and side panel. Also Mite's remarks out of the blue and invented words.
  */
 let last = performance.now(), uiAcc = 0, talkAt = performance.now() + rnd(25e3, 45e3);
-/* one frame (about 60 a second): time, Mite, the scene, bubbles, the side panel now and then */
+/* one frame (about 30 a second): time, Mite, the scene, bubbles, the side panel now and then */
+const FRAME_MS = 1000 / 31; // the scene runs at about 30 frames a second (plenty for pixel art, and half the work on a phone); swiping gets every frame
 function frame(now) {
+    if (now - last < FRAME_MS - 2 && !camDrag) {
+        requestAnimationFrame(frame);
+        return;
+    }
     const dt = Math.min(.1, (now - last) / 1000);
     last = now;
     // economy
@@ -19881,6 +20195,8 @@ cv.addEventListener("pointerdown", e => {
         return;
     }
     if (postitTap(p, "room")) // a sticky note Mite put up (pastimes.js)
+        return;
+    if (splurgeTap(p)) // the day's treat (splurge.js)
         return;
     if (possumHit && possumHit.room === "room" && hitIn(p, possumHit) && notOnMite(p)) {
         possumTap();
@@ -20504,6 +20820,8 @@ function renderShop() {
     $("shopBal").textContent = `You have ${S.g} glimmer${S.g === 1 ? "" : "s"}.`;
     const n = doneCount();
     $("lessons").innerHTML = LESSONS.map(l => `<li class="${n >= l.n ? "got" : ""}">${n >= l.n ? esc(l.name) : "Lesson " + (LESSONS.indexOf(l) + 1)}<small>${n >= l.n ? "learned" : `${n}/${l.n} tasks`}</small></li>`).join("");
+    renderBarter(); // this week's things from the raccoon (barter.js)
+    renderSplurges(); // a treat for a day (splurge.js)
     updateShopAfford();
 }
 function updateShopAfford() {
@@ -20573,6 +20891,84 @@ function buy(b) {
     else if (Math.random() < .15)
         say("buy", { item: b.name.toLowerCase() });
     burst("spark", 6);
+    afterChange();
+}
+
+</script>
+<script>/* js/ui/barter.js */
+"use strict";
+/*
+ * barter.js - The raccoon's barter, in the shop: once the raccoon friend has come by, it brings three odd
+ * things each week to trade for glimmers. They're things for the collections you don't have yet: a small thing
+ * for the Cabinet, an altered item, an eye for the jars. The week's stock is fixed the first time you look
+ * (S.barter: { wk, stock: [{ k, id, price }], got: [id] }); what you trade is yours, the rest goes back in
+ * the raccoon's sack at the end of the week.
+ */
+const BARTER_PRICE = { trinket: 18, altered: 45, eye: 70 };
+/* the week's stock: picked once per week from what you haven't got */
+function barterStock() {
+    const wk = weekKey(Date.now());
+    if (!S.barter || S.barter.wk !== wk) {
+        const pick = (list, n) => list.sort(() => Math.random() - .5).slice(0, n);
+        const tr = pick(trinketList().filter(t => !S.trinkets[t.name]).map(t => ({ k: "trinket", id: t.name })), 1);
+        const al = pick(alteredList().filter(t => !S.altered[t.name]).map(t => ({ k: "altered", id: t.name })), 1);
+        const have = new Set((S.eyes || []).map(e => e.k));
+        const ey = (S.eyes || []).length < EYES_PER_JAR * EYE_JARS ? pick(EYES.filter(e => !have.has(e.id)).map(e => ({ k: "eye", id: e.id })), 1) : [];
+        let stock = [...tr, ...al, ...ey];
+        if (stock.length < 3) // fill up with more small things, if some collection's complete
+            stock = stock.concat(pick(trinketList().filter(t => !S.trinkets[t.name] && !stock.some(s => s.id === t.name)).map(t => ({ k: "trinket", id: t.name })), 3 - stock.length));
+        S.barter = { wk, stock: stock.map(s => Object.assign(s, { price: BARTER_PRICE[s.k] })), got: [] };
+        saveSoon();
+    }
+    return S.barter;
+}
+/* what one offer is, for showing */
+function barterInfo(s) {
+    if (s.k === "eye") {
+        const e = EYES.find(x => x.id === s.id);
+        return e ? { name: e.name, note: e.note, kind: "for the eye jars" } : null;
+    }
+    if (s.k === "altered") {
+        const a = alteredList().find(x => x.name === s.id);
+        return a ? { name: a.name, note: a.note, kind: "altered item, " + a.cls } : null;
+    }
+    const t = trinketList().find(x => x.name === s.id);
+    return t ? { name: t.name, note: t.note, kind: "for the Cabinet" } : null;
+}
+function renderBarter() {
+    const el = $("barterShop");
+    if (!el)
+        return;
+    if (!S.raccoonAt) {
+        el.innerHTML = `<p class="sub">Some evenings a raccoon friend comes by. After its first visit it brings things to barter, every week.</p>`;
+        return;
+    }
+    const b = barterStock(), who = esc(raccoonName());
+    const rows = b.stock.map((s, i) => {
+        const info = barterInfo(s);
+        if (!info)
+            return "";
+        const got = b.got.includes(s.id);
+        return `<div class="bld"><div style="min-width:0"><b>${esc(info.name)}</b><span class="own">${esc(info.kind)}</span><p>${esc(info.note)}</p></div><span class="bacts">${got ? `<span class="owned">Traded</span>` : `<button class="btn amber" data-barter="${i}" ${S.g < s.price ? "disabled" : ""} aria-label="Trade ${esc(String(s.price))} glimmers for ${esc(info.name)}">${s.price} ◆</button>`}</span></div>`;
+    }).join("");
+    el.innerHTML = rows ? `<p class="sub">This week ${who} brought these, from bins, attics and lost-property boxes. New things every week.</p>${rows}` : `<p class="sub">${who} has nothing you don't have already. It's very impressed.</p>`;
+    el.querySelectorAll("[data-barter]").forEach(bt => bt.onclick = () => barterTrade(+bt.dataset.barter));
+}
+function barterTrade(i) {
+    const b = barterStock(), s = b.stock[i], info = s && barterInfo(s);
+    if (!info || b.got.includes(s.id) || S.g < s.price)
+        return;
+    S.g -= s.price;
+    b.got.push(s.id);
+    if (s.k === "trinket")
+        S.trinkets[s.id] = (S.trinkets[s.id] || 0) + 1;
+    else if (s.k === "altered")
+        S.altered[s.id] = (S.altered[s.id] || 0) + 1;
+    else
+        S.eyes = (S.eyes || []).concat([{ k: s.id, at: Date.now(), from: "raccoon" }]);
+    sfx("coin");
+    note(`Traded ${s.price} glimmers with ${raccoonName()} for ${info.name.toLowerCase()}.`);
+    speak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, `${info.name}! I'll put it ${s.k === "eye" ? "in the jar" : s.k === "altered" ? "with the altered items, carefully" : "in the Cabinet"}.`]), { ms: 5000 });
     afterChange();
 }
 
