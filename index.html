@@ -11401,10 +11401,14 @@ function isArchiveKind(kind) {
 }
 let archWparts = [], archWinHit = null;
 /* where the bigger-inside closet stands: in the gap between the reading desk and the shelves */
-/* the bigger-inside closet stands in the shelving itself, at the right-hand end of the bottom shelves */
+/* the bigger-inside closet stands in the shelving itself, at the left-hand end of the bottom shelves */
 function closetX() {
     const g = archGeo();
-    return g.x1 - R * .43 - R * .2;
+    return g.x0 + R * .43 + R * .18;
+}
+/* where a shelf row starts: after the closet, for the rows beside it */
+function rowX0(g, row) {
+    return row < closetRows(g) ? closetX() + R * .43 + R * .12 : g.x0;
 }
 /* how many of the bottom shelf rows the closet takes up, and where those rows stop (for the boxes) */
 function closetRows(g) {
@@ -11442,7 +11446,7 @@ function archWeeks() {
 function archLayout(g) {
     const slots = [], rows = [];
     const per = Math.max(2, Math.floor((g.x1 - g.x0 - g.tag - 6) / g.pitch));
-    const cr = closetRows(g), perC = Math.max(1, Math.floor((closetX() - R * .55 - g.x0 - g.tag - 6) / g.pitch)); // (rows beside the closet are shorter)
+    const cr = closetRows(g), perC = Math.max(1, Math.floor((g.x1 - rowX0(g, 0) - g.tag - 6) / g.pitch)); // (rows beside the closet are shorter)
     let row = 0, hidden = 0;
     for (const w of archWeeks()) {
         let i = 0;
@@ -11454,7 +11458,7 @@ function archLayout(g) {
             if (i === 0)
                 rows.push({ row, week: w });
             for (let c = 0, n = row < cr ? perC : per; c < n && i < w.tasks.length; c++, i++)
-                slots.push({ t: w.tasks[i], week: w, row, x: g.x0 + g.tag + 4 + (c + .5) * g.pitch, y: GY - row * g.rh - (row ? 3 : 0) });
+                slots.push({ t: w.tasks[i], week: w, row, x: rowX0(g, row) + g.tag + 4 + (c + .5) * g.pitch, y: GY - row * g.rh - (row ? 3 : 0) });
             row++;
         }
     }
@@ -11501,8 +11505,9 @@ function drawArchiveRoom(now, dt) {
     for (const r of L.rows) {
         const y = GY - r.row * g.rh - (r.row ? 3 : 0);
         cx.fillStyle = mix("#7a5232", "#2a1c12", dk * .8);
-        cx.fillRect(g.x0 + 3, y - g.bw * .62, g.tag - 2, g.bw * .5);
-        ctext(String(r.week.n), g.x0 + 3 + (g.tag - 2) / 2, y - g.bw * .2, { col: "#f7ecd2", size: 9, behind: true });
+        const tx = rowX0(g, r.row);
+        cx.fillRect(tx + 3, y - g.bw * .62, g.tag - 2, g.bw * .5);
+        ctext(String(r.week.n), tx + 3 + (g.tag - 2) / 2, y - g.bw * .2, { col: "#f7ecd2", size: 9, behind: true });
     }
     for (const s of L.slots) {
         const r = drawBox(s.t, s.x, s.y, g.bw, dk);
@@ -11518,11 +11523,11 @@ function drawArchiveRoom(now, dt) {
         ctext(L.hidden ? `ARCHIVE +${L.hidden}` : "ARCHIVE", px + pw / 2, py - g.rh * .32, { col: "#f7ecd2", size: 10, behind: true });
     }
     if (!L.slots.length)
-        ctext("empty, for now", (g.x0 + (own("closet") ? closetX() - R * .5 : g.x1)) / 2, GY - g.rh * 1.5, { col: "#f0e6cd", behind: true }); // (left of the closet)
+        ctext("empty, for now", (rowX0(g, 0) + g.x1) / 2, GY - g.rh * 1.5, { col: "#f0e6cd", behind: true }); // (right of the closet)
     // the rolling ladder, hooked on the rail; it slides to wherever it's needed
     if (archLadder.x < 0)
         archLadder.x = archLadder.tx = g.x1 - R * .8;
-    archLadder.tx = clamp(archLadder.tx, g.x0 + R * .4, own("closet") ? closetX() - R * 1.05 : g.x1 - R * .4); // (not in front of the closet)
+    archLadder.tx = clamp(archLadder.tx, own("closet") ? rowX0(g, 0) + R * .2 : g.x0 + R * .4, g.x1 - R * .4); // (not in front of the closet)
     const lxd = archLadder.tx - archLadder.x;
     archLadder.x += Math.sign(lxd) * Math.min(Math.abs(lxd), R * 2.2 * dt);
     { // in the balconies' wood: a thin dark edge, the wood, a light top edge on each rung (not hardened: that's too dark)
@@ -11566,7 +11571,7 @@ function drawArchiveRoom(now, dt) {
         drawTiffany(dk, tsec, dx1 - R * .55, top); // the stained-glass lamp
     });
     drawLayered(() => drawDeskChair(dk, g)); // a small chair, tucked in at the desk
-    if (own("closet")) // the bigger-inside closet, built into the right end of the shelves (draw-world.js)
+    if (own("closet")) // the bigger-inside closet, built into the left end of the shelves (draw-world.js)
         drawLayered(() => drawCloset(dk, closetX()));
     softGlow(g.deskX1 - R * .55, GY - R * 1.65, R * 1.6, `rgba(255,190,110,${.16 + .18 * dk})`);
     drawKeepsakesOn(g.deskX1 - R * .95, GY - R * .95, dk, tsec);
