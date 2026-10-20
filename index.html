@@ -18658,25 +18658,38 @@ function drawWorld(now, dt) {
             cx.fillRect(x - R * .32, GY - R * .4, R * .07, R * .4);
             cx.fillRect(x + R * .25, GY - R * .4, R * .07, R * .4);
         }
-        const ky = kettleY();
-        cx.save();
-        cx.translate(x, ky);
-        cx.rotate(OA.tilt);
-        cx.translate(-x, -ky);
-        cx.fillStyle = mix("#9aa3a8", "#3c4248", dk * .6);
-        cx.beginPath();
-        cx.ellipse(x, ky - R * .26, R * .32, R * .26, 0, 0, 7);
-        cx.fill();
-        cx.fillRect(x - R * .07, ky - R * .62, R * .14, R * .09);
-        cx.beginPath();
-        cx.moveTo(x + R * .26, ky - R * .3);
-        cx.lineTo(x + R * .5, ky - R * .48);
-        cx.lineWidth = R * .07;
-        cx.strokeStyle = cx.fillStyle;
-        cx.stroke();
-        cx.restore();
+        const ky = kettleY(), q = PX;
+        drawLayered(() => { // an outlined, shaded copper kettle: body, lid with its knob sitting on it, spout and handle
+            cx.save();
+            cx.translate(x, ky);
+            cx.rotate(OA.tilt);
+            cx.translate(-x, -ky);
+            const body = mix("#b8592f", "#4a2414", dk * .6), dark = mix("#7a3a20", "#2a140a", dk * .6), lite = mix("#f2b07a", "#6a4028", dk * .6); // (copper)
+            cx.strokeStyle = body; // the spout and the handle first, so the body sits over their ends
+            cx.lineWidth = Math.max(q, R * .07);
+            cx.beginPath();
+            cx.moveTo(x + R * .24, ky - R * .28);
+            cx.lineTo(x + R * .48, ky - R * .46);
+            cx.stroke();
+            cx.strokeStyle = dark;
+            cx.beginPath();
+            cx.arc(x, ky - R * .5, R * .22, Math.PI * 1.1, Math.PI * 1.9);
+            cx.stroke();
+            cx.fillStyle = body;
+            cx.beginPath();
+            cx.ellipse(x, ky - R * .26, R * .32, R * .26, 0, 0, 7);
+            cx.fill();
+            cx.fillStyle = dark; // the bottom in shadow
+            cx.fillRect(x - R * .28, ky - R * .12, R * .56, R * .1);
+            cx.fillStyle = lite; // a shine on the side
+            cx.fillRect(Math.round((x - R * .2) / q) * q, Math.round((ky - R * .38) / q) * q, q, Math.max(q, R * .12));
+            cx.fillStyle = dark; // the lid, and its knob resting on it
+            cx.fillRect(x - R * .16, ky - R * .52, R * .32, Math.max(q, R * .05));
+            cx.fillRect(x - R * .05, ky - R * .52 - Math.max(q, R * .07), R * .1, Math.max(q, R * .07));
+            cx.restore();
+        });
         if (Math.random() < .04)
-            addP({ type: "steam", x: x + R * .5, y: ky - R * .52, vy: -16, vx: rnd(-3, 6), max: 2.2, size: R * .1, bg: 1 });
+            addP({ type: "steam", x: x + R * .5, y: ky - R * .5, vy: -16, vx: rnd(-3, 6), max: 2.2, size: R * .1, bg: 1 });
     }
     // the doorway to the archive on the right; filed boxes fly out through it
     const { sx0, rowH, bw } = rm;
@@ -19190,12 +19203,15 @@ function drawParts(dt, layer = "fg") {
                 cx.arc(0, 0, 1.4, 0, 7);
                 cx.fill();
                 break;
-            case "steam":
-                cx.fillStyle = "rgba(255,255,255,.35)";
-                cx.beginPath();
-                cx.arc(0, 0, p.size * (1 + p.life), 0, 7);
-                cx.fill();
+            case "steam": { // a little wisp of pixels that curls and thins out, not a growing grey ball
+                const q = PX, s2 = Math.max(q, Math.round(p.size * .55 / q) * q), wig = Math.round(Math.sin(p.life * 7 + p.x) * q * 1.5 / q) * q;
+                cx.fillStyle = "#efebe2";
+                cx.globalAlpha *= .55;
+                cx.fillRect(wig - s2 / 2, -s2 / 2, s2, s2);
+                if (p.life < .55 * (p.max || 2))
+                    cx.fillRect(wig - s2 / 2 + (wig > 0 ? -q : q), -s2 / 2 - q, q, q);
                 break;
+            }
             case "text":
                 cx.restore();
                 ctext(p.text, p.x, p.y, { col: p.col, alpha: Math.min(1, a * 3.3), size: p.size || 15 });
