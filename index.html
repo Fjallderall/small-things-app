@@ -11448,7 +11448,7 @@ function drawArchiveRoom(now, dt) {
     drawCeiling(dk, "archive");
     drawPlankFloor(dk);
     drawMoss(dk, "archive"); // (draw-world.js)
-    drawRug(dk, "#425a85", "#10142a", "#9ab9d7", "#1e2848", own("circle") > 0);
+    drawRug(dk, "#425a85", "#10142a", "#9ab9d7", "#1e2848");
     drawCircle(dk, tsec); // the chalk circle on the blue rug (circle.js)
     drawMess(dk, "archive"); // (between two palette colours: the same woven dither as the red one) // a blue rug, the same shape as the wagon's red one
     // a small round window above the reading desk, with its share of the plants on the sill (easel.js)
@@ -12724,7 +12724,7 @@ function anomTick(a, dt, now) {
                 addP({ type: "spark", x: a.x, y: a.y, vx: rnd(-8, 8), vy: rnd(-4, 10), g: 10, max: .9, col: "#f3e2b0", size: 2 });
         }
         else {
-            a.x = a.cx0 + Math.sin(a.t * .9) * R * 1.1;
+            a.x = clamp(a.cx0 + Math.sin(a.t * .9) * R * 1.1, R * .6, W - R * .6); // (stays on screen: the nook's candle is near the edge)
             a.y = a.cy0 + Math.sin(a.t * 1.7) * R * .35;
         }
     }
@@ -17617,13 +17617,11 @@ function drawCircle(dk, tsec) {
     cx.globalAlpha = .85;
     ring(c.rx, c.ry, Math.max(1.5, q * .75)); // two rings with the signs between them
     ring(c.rx * .86, c.ry * .86, 1.5);
-    // a unicursal hexagram, in one line: top, the inner lower right point, the outer upper left, bottom, the outer
-    // upper right, the inner lower left, back to the top (the two lower points sit inside: that's what makes it
-    // unicursal and not two triangles)
-    const hp = (u, v) => [c.x + u * c.rx * .84, c.y + v * c.ry * .84];
-    const pts = [hp(0, -1), hp(.62, .47), hp(-.87, -.5), hp(0, 1), hp(.87, -.5), hp(-.62, .47)];
-    cx.globalAlpha = 1; // the sign itself in full chalk, so it reads on the rug
-    cx.lineWidth = Math.max(2.5, PX * 1.35);
+    ring(c.rx * .42, c.ry * .42, 1.5); // and a small one in the middle
+    // a unicursal hexagram, in one line: top, lower right, upper left, bottom, upper right, lower left, top
+    const hv = a => [c.x + Math.cos(a) * c.rx * .84, c.y + Math.sin(a) * c.ry * .84], D = Math.PI / 180;
+    const pts = [hv(-90 * D), hv(30 * D), hv(-150 * D), hv(90 * D), hv(-30 * D), hv(150 * D)];
+    cx.lineWidth = 1.5;
     cx.beginPath();
     pts.concat([pts[0]]).forEach((p, i) => i ? cx.lineTo(p[0], p[1]) : cx.moveTo(p[0], p[1]));
     cx.stroke();
@@ -18638,7 +18636,7 @@ function drawCeiling(dk, room) {
         drawRoof(dk, room);
 }
 /* the round rug in the middle of a room's floor (each room has its own colours; the wagon's is red) */
-function drawRug(dk, col, colDark, trim, trimDark, plain) { // plain: no inner rings (the chalk circle goes on it)
+function drawRug(dk, col, colDark, trim, trimDark) {
     const ry = GY + (H - GY) * .42;
     cx.fillStyle = mix(col, colDark, dk);
     cx.beginPath();
@@ -18649,8 +18647,6 @@ function drawRug(dk, col, colDark, trim, trimDark, plain) { // plain: no inner r
     cx.beginPath();
     cx.ellipse(W * .5, ry, R * 2.1, (H - GY) * .22, 0, 0, 7);
     cx.stroke();
-    if (plain)
-        return;
     cx.beginPath();
     cx.ellipse(W * .5, ry, R * 1.2, (H - GY) * .12, 0, 0, 7);
     cx.stroke();
