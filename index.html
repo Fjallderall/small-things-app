@@ -370,6 +370,10 @@ body.game .kbd{bottom:calc(env(safe-area-inset-bottom,0px) + 130px)}
 .ritlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:14px}
 .ritlist li::before{content:"▪ ";color:var(--accent)}
 .ritmeta{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+p.glimpse{font-family:var(--f-read,var(--f-body));font-size:16px;line-height:1.5;margin:0 0 10px;font-style:italic}
+.glimpses details{border-bottom:1px dashed var(--line,#c9bfa8);padding:6px 0}
+.glimpses summary{cursor:pointer;font-weight:700}
+.glimpses p{margin:6px 0 6px 12px;font-size:14px;line-height:1.45}
 .wk{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
 .wk summary{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;cursor:pointer}
 .wk-h{font-family:var(--f-display);font-weight:700}
@@ -461,6 +465,8 @@ body.pixel.game .stage{border:0}
 .evecard{background:#efe8f5;border:2px solid #8a6fb0;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .evecard p{margin:0;font-size:15px;line-height:1.4}
 .evecard[hidden]{display:none}
+.bkcard{background:#eef3e6;border-color:#6f8f4e}
+.credits-list{margin:6px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.45}
 .addform.bottom{position:sticky;bottom:0;z-index:2;margin-top:4px;border-top:2px solid var(--line);box-shadow:0 -6px 12px rgba(0,0,0,.06)}
 .addform.bottom input[type=text]{min-height:44px;font-size:16px}
 .addchips{display:flex;flex-wrap:wrap;gap:6px}
@@ -619,6 +625,10 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 
     <div class="pane" id="tab-tasks" role="tabpanel">
       <div class="tk-head"><h2>Today</h2><span class="sync" id="syncTxt"></span></div>
+      <div class="evecard bkcard" id="bkCard" hidden>
+        <p><strong>Back up today?</strong> Everything in one small file. Send it to yourself (a messenger, email) or keep it in your files.</p>
+        <div class="row"><button class="btn primary" type="button" id="bkSend">Send to…</button><button class="btn" type="button" id="bkSave">Download</button><button class="btn ghost" type="button" id="bkLater">Not today</button></div>
+      </div>
       <div class="evecard" id="eveCard" hidden>
         <p><strong>Done for today?</strong> Mite files the pile and carries it to the archive.</p>
         <div class="row"><button class="btn primary" type="button" id="endBtn">End the day</button><button class="btn ghost" type="button" id="eveLater">Later</button></div>
@@ -706,6 +716,8 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div class="drawers" id="drawers"></div>
       <div><h3>Altered items</h3><p class="sub">Recovered from anomalies. Contained, mostly.</p></div>
       <div class="drawers" id="altered"></div>
+      <div><h3>Seen in the chalk circle</h3><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p></div>
+      <div class="glimpses" id="glimpseList"></div>
       <div><h3>Adorbigami</h3><p class="sub">Folded by the ghost at the window. They hang above it on a string.</p></div>
       <div class="words" id="origamiList"></div>
       <div><h3>Knitted things</h3><p class="sub">Everything Mite has knitted. One project at a time, a few evenings each.</p></div>
@@ -745,12 +757,14 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div class="grid2">
         <label class="field">Your name<input id="setYou" maxlength="30"></label>
         <label class="field">Pet name<input id="setPet" maxlength="20"></label>
+        <label class="field">The possum's name<input id="setPossum" maxlength="30"></label>
         <label class="field">App name<input id="setApp" maxlength="30"></label>
         <label class="field">Work ends at (hour)<input id="setDoneBy" type="number" min="12" max="23"></label>
         <label class="field">Bedtime (hour)<input id="setBed" type="number" min="0" max="23"></label>
         <label class="field">Strangeness<select id="setStrange"><option value="0">Off: just cosy</option><option value="1">Some: the odd door</option><option value="2">A lot: thin place</option></select></label>
         <label class="field">Weather location (lat, lon)<input id="setLoc" maxlength="30" placeholder="e.g. 48.86, 2.35" inputmode="decimal"></label>
         <label class="field">Talk speed<select id="setTalk"><option value="0">Slow</option><option value="1">Normal</option><option value="2">Fast</option></select></label>
+        <label class="field">Backup reminder<select id="setBackup"><option value="1">Every morning</option><option value="2">Once a week</option><option value="0">Off</option></select></label>
         <label class="field">Home<select id="setHome"><option value="wagon">A travelling wagon</option><option value="burrow">A burrow</option></select></label>
       </div>
       <div class="field">Workdays<div class="days" id="setWork"></div></div>
@@ -797,7 +811,13 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div><h2>AI usage</h2><p class="sub">Every AI call is logged here. Counts are estimates from text length (about 3.6 characters per token); the real number is somewhat higher because the platform adds its own framing to each call.</p></div>
       <div class="usage" id="usage"></div>
 
-      <div><h2>Backup</h2><p class="sub">Your pet saves to your Claude account when that's available, and to this browser either way. Copy the whole save to keep it somewhere safe or to move it.</p></div>
+      <div><h2>Backup</h2><p class="sub">Your pet saves to your Claude account when that's available, and to this browser either way. Keep a copy somewhere safe, or use it to move to another device: send the file to yourself, download it, or copy it.</p></div>
+      <div class="row">
+        <button class="btn primary" id="bkSend2">Send backup to…</button>
+        <button class="btn" id="bkSave2">Download backup</button>
+        <button class="btn" id="bkOpen">Open a backup file</button>
+        <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
+      </div>
       <div class="row">
         <button class="btn" id="exportBtn">Copy save</button>
         <button class="btn" id="exportContentBtn">Copy lines only</button>
@@ -852,8 +872,8 @@ const POOL_INFO = {
     late: "After bedtime", after_work: "After work hours on a workday", day_off: "On non-workdays",
     buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
-    uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", friction: "Friction noted ({item})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
-    trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the archive's desk lamp", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
+    uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", friction: "Friction noted ({item})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
+    trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -1224,6 +1244,12 @@ const DEF = {
             "Well rested. It shows. Mostly in me."
         ],
         uncanny: [
+            "The clock in the archive struck thirteen. Then it said 'sorry' and struck eleven to make up for it.",
+            "Somebody slipped a calling card under the door. It just says 'later'. Very good card stock.",
+            "The candle went out, then lit itself again, slightly embarrassed.",
+            "I heard a polite cough behind the bookshelf. I said 'bless you'. It said 'thank you'. We left it there.",
+            "There's a draught from a door we don't have. It smells of rain on stone and old books.",
+            "My reflection was a second late today. It looked like it had been somewhere nice.",
             "[night] The hallway is longer at night. I've measured.",
             "Did you hear that? No? Good. Me neither.",
             "[night] Tonight's moon: {moon}. I check every night.",
@@ -1451,6 +1477,12 @@ const DEF = {
             "A tree in that forest had a tiny door. We didn't knock. It was late.",
             "[autumn] That forest in autumn. Like walking through a fire that's only pretending.",
         ],
+        pin_space: [
+            "The postcard from our detour. I drew it from memory. The planet was bigger. And more orange.",
+            "Space. We went there for about a minute. I'd go again. I'd bring a scarf.",
+            "The stars were going by sideways. I tried to draw that. It's hard to draw sideways.",
+            "[night] I look at the space postcard at night and think: that's out there right now. Just above the roof."
+        ],
         pin_lighthouse: [
             "The lighthouse. The keeper's cat writes to me sometimes.",
             "We stayed by the lighthouse for three nights. It blinked at us. We blinked back.",
@@ -1516,6 +1548,10 @@ const DEF = {
             "[strange] Dear {penpal}, a door appeared in the wall again. I knocked. It knocked back. More soon.",
         ],
         possum: [
+            "Sometimes I live in a bin. Sometimes I live in a wagon. Both have good snacks.",
+            "I played dead at a dinner party once. Nobody noticed. Good party.",
+            "Upside down, everything's a ceiling. Very peaceful.",
+            "I found a button. I'm keeping it. It's my button now.",
             "Hhh.",
             "Hsss. ...That was friendly. You couldn't tell.",
             "I eat what nobody wants. Somebody has to.",
@@ -1756,6 +1792,53 @@ const DEF = {
             "I knocked on the night door once. Something knocked back, very politely.",
             "[strange] There's a note under the night door. It says 'not yet'. Fair enough.",
         ],
+        catritual: [
+            "Not now. A warlock is calling. I'll be right back.",
+            "One moment. Somebody's bargaining with me in a cellar three towns over. I'll be right back.",
+            "Shh. I'm seeing a warlock. He wants a favour. They always want a favour. Back in a minute.",
+            "I'm at work. A young warlock has drawn my circle badly and I'm being polite about it. Back soon.",
+            "Patron business. Somewhere a candle's gone green and someone's asking for me by my real name. I'll be right back.",
+            "Hold my place. A warlock owes me three secrets and is paying in instalments.",
+            "Busy. A pact renewal. The fine print is mine, so it's very fine. Back shortly."
+        ],
+        glimpses: [
+            "{pet} | A great-great-grandmoss grew on the north side of a standing stone for three hundred years. Travellers touched it for luck. It kept count of every one of them, in rings.",
+            "{pet} | {pet}'s grandmother was a cushion of moss in a monastery bell tower. Every time the bell rang she shook a little dew loose. She called it applause.",
+            "{pet} | One of {pet}'s ancestors was carried off in a crow's nest and lived on a church roof for a whole summer. She came down with the first frost, full of opinions about pigeons.",
+            "{pet} | Long ago a moss in {pet}'s family was pressed into a book by a botanist, by accident. It stayed between pages 112 and 113 for sixty years and read them both a thousand times.",
+            "{pet} | The first moss to live in a wagon was {pet}'s great-uncle. He came aboard on a muddy boot and refused to leave. The wagon has had a moss ever since.",
+            "{cat} | {cat}'s great-grandmother kept the keys of a lighthouse. Not the keeper's keys: her own set, which opened rooms the keeper never found.",
+            "{cat} | {cat} comes from a long line of library cats. One of them was given a reader's card, in her own name. The fines were paid in mice, on time.",
+            "{cat} | In the circle, a black cat sits on a windowsill in the rain, hundreds of years ago, watching a road. She's waiting for a wagon. She has {cat}'s eyes exactly.",
+            "{cat} | {cat}'s grandmother once sat in the middle of a chalk circle that wasn't hers, and the witch who drew it simply sat down next to her and asked her advice.",
+            "{cat} | Every cat in {cat}'s family has known the same thirteen words of a very old language. Nobody taught them. They just say them at midnight, once a year.",
+            "{possum} | {possum}'s grandparents lived in the rafters of a bakery. They were paid in crusts and given a name each Christmas. The bakery is gone; the names are still carved in a beam.",
+            "{possum} | A possum in {possum}'s family once played dead for a whole afternoon at a village fair and won second prize in the vegetable show. Nobody ever explained how.",
+            "{possum} | {possum}'s great-great-grandmother hung upside down from the mast of a ship for an entire crossing. She saw the whole sea the wrong way up and liked it better.",
+            "{possum} | The circle shows a long line of possums, each hanging from a branch under the one before. A family tree. A real one. The smallest one at the bottom looks like {possum}.",
+            "{snail} | {snail}'s family has carried the post since before there were stamps. An ancestor once delivered a love letter forty years late. The couple were still waiting. They married that spring.",
+            "{snail} | Somewhere in {snail}'s family there was a snail who crossed an entire garden wall, top to bottom, to be at a wedding. She arrived for the first anniversary and was the guest of honour.",
+            "{snail} | {snail}'s grandfather's shell had a tiny map scratched on it from the inside. Nobody knows what it leads to. {snail} has the same spiral, turning the same way.",
+            "{raccoon} | {raccoon}'s great-grandmother ran a lost-and-found under a bridge. She returned everything, eventually, except one silver spoon, which she said had asked to stay.",
+            "{raccoon} | Raccoons in {raccoon}'s family wash things before they give them away. It's not about clean. It's to wash off who it belonged to, so it can start again.",
+            "{raccoon} | An ancestor of {raccoon}'s once found a golden ring in a river and wore it on her tail for twenty years. It's still in the family. It goes round and round.",
+            "the ghost at the window | Before it was a ghost it was a girl who folded paper animals for her little brother on a night train, long ago. She never stopped folding. She's still on her way somewhere.",
+            "the ghost at the window | The ghost's family had a house with a round window. Each winter they put a candle in it for anyone travelling at night. The window's gone, but the ghost still looks for candles.",
+            "the ghost at the window | The ghost had a great-aunt who taught the whole family to fold cranes. A thousand of them, she said, and you get a wish. The ghost is on crane nine hundred and something.",
+            "the wagon | The wagon was built by a carpenter who made exactly one wagon in her whole life. She put a coin under every floorboard. Nobody has ever lifted the boards to count them.",
+            "the wagon | The wagon's first owners were a family of travelling clockmenders. The cuckoo clock that's always wrong was theirs. It's not wrong. It's set to wherever they are now.",
+            "the wagon | Once, long ago, the wagon was painted blue and pulled by a very old horse called Patience. In the circle there's a horseshoe nailed above the door, the right way up, still catching luck.",
+            "the wagon | The wagon's wheels came from an older wagon, and that one's from an older one still. If you count back far enough the wheels are older than roads.",
+            "the fireflies | The fireflies in the jar are descended from a swarm that lit a whole wedding in a meadow, a hundred summers ago. They still light up a little brighter when somebody laughs.",
+            "the fireflies | Every firefly in the jar's family has flashed the same pattern at midnight on midsummer: long, short, long. {pet} looked it up. It isn't a code anyone knows. Yet.",
+            "the visitors | The mice and rats who visit are all cousins, somehow, going back to two travellers who met in a granary during a flood and shared one dry sack of oats. They've shared ever since.",
+            "the visitors | A rat in the visitors' family once stowed away in a hatbox and saw a coronation from inside a very tall hat. The family still argues about whether the king noticed.",
+            "the Bureau of Small Things | The Bureau was founded in a single drawer by a clerk who thought someone should keep track of buttons, keys and lost gloves. The drawer is still the head office.",
+            "the Bureau of Small Things | The Bureau's first director was a woman with very small handwriting and a very large magnifying glass. Her signature is on File 001. It's the size of a grain of rice.",
+            "the night door | Before it was the night door it was the back door of a cottage at the edge of a wood. The family who lived there left it unlocked every night, for whoever might need it.",
+            "the night door | The night door has opened onto the same place once before: a kitchen, centuries ago, where an old woman was setting out a second cup of tea, just in case.",
+            "the kettle | The kettle's great-grandkettle sang on a stove in a farmhouse for sixty years. It sang for births, harvests and one very long winter. It always knew when someone was coming home."
+        ],
         look_circle: [
             "The chalk circle. I sweep around it, never across. Manners.",
             "[night] The candles in the circle make the shadows go round and round.",
@@ -1796,6 +1879,7 @@ const DEF = {
             "I lost a button on this rug once. It's still in there somewhere. The rug's keeping it.",
         ],
         look_archwindow: [
+            "The archive window looks out on the same view as the others. But it always looks like it's remembering it.",
             "The archive's little window. Just enough light to read the labels by.",
             "[rainy] Rain sounds nicer in the archive. Something about all the paper.",
             "[night] The little window's dark. The archive likes that. It's a night room.",
@@ -1803,11 +1887,14 @@ const DEF = {
             "[strange] The view from the archive window runs a few minutes behind the rest of the wagon.",
         ],
         look_nameplate: [
+            "ARCHIVE, in brass. Somebody polishes it at night. It isn't me.",
             "ARCHIVE, says the plate. In case I forget where I am. I do sometimes.",
             "The plate's brass. I polish it on Fridays, and whenever I'm proud of you.",
             "[strange] Yesterday the plate said ARCHIVES. Plural. I've decided not to look for the other one.",
         ],
         look_bulb: [
+            "The bulb hums a single note. If you hum it back, it gets a bit brighter. Shy, but friendly.",
+            "[night] At night the bulb's the only sun in here. It's doing its best.",
             "The bare bulb hums a little. I think it's the archive's heartbeat.",
             "Dust in the bulb's light. It looks very busy. It isn't.",
             "[night] At night the bulb is the only sun the boxes get.",
@@ -1820,9 +1907,11 @@ const DEF = {
             "[strange] The ladder was at the other end this morning. I didn't move it. The archive must have been looking for something.",
         ],
         look_desklamp: [
-            "The desk lamp bends over the desk like it's reading along.",
-            "[evening] The desk lamp's warm. Good for reading old notes.",
-            "I turned the desk lamp to the wall. Now there's a small moon on the wall.",
+            "The lamp's shade is made of a hundred bits of coloured glass. Someone very patient made it. Or a hundred people, a bit each.",
+            "[evening] The lamp's warm. The glass makes the desk look like the bottom of a pond in summer.",
+            "[night] At night the lamp paints the wall with little clouds of colour. Like a map of somewhere very far up.",
+            "There's a dragonfly in the lamp's glass if you look long enough. Every night it's in a different panel.",
+            "[strange] I counted the stars the lamp makes on the wall. Then I counted again. There was one more. It's fine.",
         ],
         look_bluerug: [
             "The blue rug. The colour of the archive at night.",
@@ -1935,6 +2024,12 @@ const DEF = {
             "[strange] I counted the seedlings. One more than yesterday. I didn't plant one.",
         ],
         midnightcat: [
+            "I have been to the bottom of the stairs that aren't there. The tea is terrible.",
+            "Every cat keeps one secret from every other cat. Mine is about the moon.",
+            "Bargains are like yarn. Pull the wrong end and you're tangled for a hundred years.",
+            "I took tea with a duchess once. She was a moth. Lovely woman.",
+            "Never trust a candle that burns without being lit. Trust me instead. I'm much more reliable.",
+            "The keys on that rack open more than you think. Don't try them. Fine, try one.",
             "Mrrp.",
             "Mew.",
             "Mrrrow. ...Yes. That was the whole message.",
@@ -2002,6 +2097,8 @@ const DEF = {
             "[strange] It whispered a direction. Not one I know. Up and slightly sideways.",
         ],
         drift_page: [
+            "A loose page: 'Chapter Nine, in which the clerk finds a door in the filing.' I want chapter ten.",
+            "A page from a ledger. Every line says 'paid in full'. Lovely feeling, even secondhand.",
             "A page escaped from the shelf. It says “and then, quite suddenly, it was Tuesday.”",
             "Loose page. Chapter seven. I don't have a chapter six. I'll make one up.",
             "This one's all footnotes. My favourite kind of page.",
@@ -2056,6 +2153,9 @@ const DEF = {
             "REMINDER: Anything that hums is not to be unplugged. Anything that ████ is to be left alone entirely."
         ],
         phone: [
+            "A very old voice asks if the line is secure. I say it's a wagon. It says 'even better' and hangs up.",
+            "Someone reads out a list of lost umbrellas. Number forty-two is ours. We've never had an umbrella.",
+            "A voice asks for the night porter. I say there isn't one. It says 'not yet' and hangs up.",
             "A voice says your oldest task, '{oldest}', very slowly. Then hangs up.",
             "Static. Far away, a kettle. Then nothing.",
             "Someone asks if {pet} is there. I listen, nod, hang up. Wrong wagon.",
@@ -2321,6 +2421,10 @@ const DEF = {
             "{name} and I have an understanding. I don't know what it is yet."
         ],
         hearth: [
+            "The fire's telling a story. It's mostly about logs. Riveting, if you're a log.",
+            "I left a chestnut by the fire. It's thinking about it.",
+            "The smoke goes up the chimney and out into the night. I like to think it visits the stars and comes back with news.",
+            "The fire makes the dark corners friendlier. Even the one with the cobweb.",
             "The fire said 'pop'. I said 'pop' back. We're getting on well.",
             "Warm paws. That's the whole plan.",
             "I like how a fire never tries to be anything else.",
@@ -2412,6 +2516,31 @@ const DEF = {
             "Petal Tisane | Someone's garden, steeped. They don't know. | #e7b3c3 float=petal cup=teacup"
         ],
         bookshelf: [
+            "A Gentleman's Guide to Polite Haunting | Chapter one: knock first. Chapter two: knock again, quieter.",
+            "The Lamplighter's Almanac | Tide tables for a sea nobody's seen. Very precise.",
+            "Etiquette for Dining with Things That Do Not Eat | Mostly about where to put the spare fork.",
+            "Correspondence with a Bat, Volume II | Volume I was eaten. By the bat. It apologised in Volume II.",
+            "On the Proper Storage of Secrets | Recommends jars. Recommends labels. Strongly recommends not reading the labels aloud.",
+            "The Clerk Who Filed Himself | A cautionary tale. He's in the drawer under 'H'. He's comfortable.",
+            "Mushrooms of the Lower Cellars | Each one has a little drawing and a little warning.",
+            "A Short History of Candles That Burn Backwards | It gets longer every time I read it.",
+            "Rules for Card Games Played in the Dark | Rule one: no peeking. Rule two: you have already lost.",
+            "The Unreliable Map of Underneath | North is marked 'probably'.",
+            "Tea with a Duchess (and Her Shadow) | The shadow has better manners. The duchess knows.",
+            "Seventeen Uses for a Spare Key | The seventeenth is 'don't'.",
+            "The Moth Parliament: Minutes | Very long. Mostly about lamps.",
+            "Gloves: A Social History | Why one always goes missing. The answer is upsetting and in the footnotes.",
+            "Letters Never Sent, Collected | Someone sent them all at once, in the end. Lovely ending.",
+            "A Treatise on Umbrellas Indoors | Against. Firmly. With diagrams of what happens.",
+            "The Gaslight Cookbook | Recipes for things that glow. I'd skip page 40.",
+            "Notes from a Lighthouse Below the Ground | Nobody knows who it's warning. It keeps warning anyway.",
+            "How to Bargain with a Cat | Short. The cat wins on page two.",
+            "Dreams Pressed Flat | Like flowers in a book. Some of them still smell of somewhere.",
+            "The Night Porter's Ledger | Every name signed in. Not all signed out. Very neat handwriting.",
+            "Small Hours: A Field Guide | Three o'clock is the shyest. Four is the most honest.",
+            "A Bestiary of Very Polite Monsters | They all say thank you. Some of them say it twice, which is the dangerous kind.",
+            "The Velvet Society: Rules and Customs | Rule one is a secret. So is rule two. I'm on rule nine. Rule nine is lovely.",
+            "Fog, and What It Hides | Mostly lampposts. Not always lampposts.",
             "The Lusty Argonian Maid, Volume 1 | Borrowed from a very cold province. I'm only reading it for the plot.",
             "The Real Barenziah | Five volumes. The unofficial edition. I've hidden it behind the dictionary.",
             "36 Lessons of Vivec | I've read lesson one thirty-six times. Still on lesson one.",
@@ -2507,8 +2636,8 @@ const DEF = {
             "Sea glass | Green, smooth, older than me.",
             "Bent paper clip | Bent into a rabbit.",
             "Dried petal | Smells of someone's garden.",
-            "Unused stamp | Not eaten. Yet.",
-            "Pencil stub | Two centimetres of potential.",
+            "Postmark | Cut from a letter. From a town that isn't on any map.",
+            "Crayon end | Two centimetres of potential. Green, naturally.",
             "Brass grommet | Very official.",
             "Marble | Has a galaxy inside.",
             "Feather | From a bird with excellent taste.",
@@ -2525,12 +2654,12 @@ const DEF = {
             "Ribbon | Was on a present once.",
             "Holed pebble | Look through it for luck.",
             "Mini die | Always rolls a four.",
-            "Cork | From a celebration.",
+            "Wire cage from a bottle | From a celebration. Bent into a very small chair.",
             "Watch gear | Still wants to turn.",
             "Pressed clover | Three leaves. Lucky enough.",
             "Amber bead | A glimmer that stopped moving.",
-            "Tiny envelope | Sealed. I won't open it.",
-            "Library card | Overdue since 1987.",
+            "Folded note | Sealed with a thumbprint of moss. I won't open it.",
+            "Overdue notice | From 1987, addressed to the wagon. We've never been to that library.",
             "Golden firefly wing | Very rare. Still warm."
         ],
         meanings: [
@@ -2707,14 +2836,15 @@ const FESTIVALS = [
 const BUILDINGS = [
     { id: "jar", name: "Firefly jar", price: 4, max: 6, note: "A jar of slow, friendly light." },
     { id: "moss", name: "Moss patch", price: 6, max: 14, note: "Soft, green, quietly thriving." },
-    { id: "books", name: "Tiny library", price: 9, max: 14, note: "Every book is about something small." },
+    { id: "books", name: "Tiny library", price: 9, max: 14, note: "Every book is about something small. The first one comes with a chair to read it in." },
     { id: "lantern", name: "Lantern string", price: 10, max: 9, note: "Paper lanterns along the ceiling." },
     { id: "kettle", name: "Tea kettle", price: 18, max: 1, note: "Always just about to boil." },
     { id: "snail", name: "Snail courier", price: 30, max: 1, note: "Brings the post. Slowly. Reliably." },
     { id: "scope", name: "Observatory", price: 45, max: 1, note: "A brass telescope for very distant things." },
     { id: "vault", name: "Dream archive", price: 60, max: 1, note: "Drawers full of carefully filed dreams." },
+    { id: "rental", name: "Renter's chest & pressed flowers", price: 20, max: 1, note: "For the nook: a chest of drawers whose drawers are let out to tenants, a vase on top, and a book for drying what's been in the vase." },
     { id: "closet", name: "Bigger-inside closet", price: 80, max: 1, note: "Measured from the inside, it doesn't end. Stands in the archive, by the reading desk." },
-    { id: "circle", name: "Chalk circle", price: 100, max: 1, note: "Chalk, candles and very good intentions." },
+    { id: "circle", name: "Chalk circle", price: 100, max: 1, note: "Chalked onto the blue rug in the archive, with candles and old signs. Tap it and Mite looks back into the past: a little of everyone's family history. Midnightcat likes to sit in the middle." },
     { id: "ndoor", name: "Night door", price: 130, max: 1, note: "Opens onto somewhere else. At the far end of the nook." },
     { id: "hearth", name: "Fireplace", price: 35, max: 1, note: "A small stone hearth. Crackles. Takes the edge off grey days." },
     { id: "oven", name: "Little oven", price: 28, max: 1, note: "Cast iron, four legs, one small door. The kettle sits on top. Bakes things, some of them normal." },
@@ -2810,10 +2940,10 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
-        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, strange: 1, sound: 0, ai: 0, talk: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
-        mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
+        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
+        mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
 }
 let S = defaultState();
 let db = null, uid = null, sample = null;
@@ -2872,7 +3002,7 @@ const flagMap = o => {
 };
 function sanitizeState(raw) {
     const s = cleanJSON(raw) || {}, o = {};
-    ["v", "created", "savedAt", "lastSeen", "g", "gTotal", "mom", "xp", "pats", "flies", "motes", "incidents", "clSeen", "lessonsSeen", "lvlSeen", "fedUntil", "lightsAt", "stats_total", "doneTotal", "settingsAt", "contentAt"].forEach(k => {
+    ["v", "created", "savedAt", "lastSeen", "g", "gTotal", "mom", "xp", "pats", "flies", "motes", "incidents", "clSeen", "lessonsSeen", "lvlSeen", "fedUntil", "lightsAt", "backupAt", "stats_total", "doneTotal", "settingsAt", "contentAt"].forEach(k => {
         if (k in s)
             o[k] = Math.max(0, num(s[k]));
     });
@@ -2963,9 +3093,12 @@ function sanitizeState(raw) {
     o.vase = s.vase === undefined ? defaultState().vase : fl(s.vase);
     o.flowerBook = Array.isArray(s.flowerBook) ? arr(s.flowerBook, 80).map(fl).filter(Boolean) : defaultState().flowerBook;
     o.ndoorFlowers = dkey(s.ndoorFlowers) || "";
+    o.possumSet = num(s.possumSet); // when you renamed it in Settings (a rename always wins)
     o.possumAt = num(s.possumAt); // when it was named (two devices: the first name given is the one that stays)
     // the notes on the pinboard (pinboard.js): text, when pinned, when taken down (0: still up). A save from before
     // the notes existed gets the first few
+    o.eyes = arr(s.eyes, 24).map(e => ({ k: sid(e.k).slice(0, 12), at: num(e.at), from: str(e.from, 20) })).filter(e => e.k); // the eye jars (eyes.js)
+    o.glimpses = arr(s.glimpses, 300).map(g => ({ k: str(g && g.k, 80), at: num(g && g.at) })).filter(g => g.k); // what the chalk circle has shown (circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 40).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
     // the chest of drawers for rent in the nook: when it arrived, and who Mite last knew was living in it (sig)
     o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240) };
@@ -3018,7 +3151,7 @@ function sanitizeState(raw) {
                 o.selfcare[k] = numMap(s.selfcare[k]);
         });
     o.gamesDay = { d: dkey(s.gamesDay && s.gamesDay.d), n: num(s.gamesDay && s.gamesDay.n) };
-    o.mess = arr(s.mess, 14).map(m => ({ x: clamp(num(m.x, .5), 0, 1), y: clamp(num(m.y, .5), 0, 1), t: ["dust", "leaf", "paper", "crumb"].includes(m.t) ? m.t : "dust", r: clamp(num(m.r, 1), .5, 2), rot: num(m.rot) }));
+    o.mess = arr(s.mess, 14).map(m => ({ room: ["room", "garden", "archive"].includes(m.room) ? m.room : "room", x: clamp(num(m.x, .5), 0, 1), y: clamp(num(m.y, .5), 0, 1), t: ["dust", "leaf", "paper", "crumb"].includes(m.t) ? m.t : "dust", r: clamp(num(m.r, 1), .5, 2), rot: num(m.rot) }));
     o.plan = { d: dkey(s.plan && s.plan.d), ids: (s.plan && Array.isArray(s.plan.ids) ? s.plan.ids : []).slice(0, 3).map(sid) };
     o.rit = { morning: dkey(s.rit && s.rit.morning), evening: dkey(s.rit && s.rit.evening) };
     o.del = {};
@@ -3050,6 +3183,8 @@ function sanitizeState(raw) {
         o.settings.sound = clamp(num(st.sound), 0, 3);
     if ("talk" in st) // talk speed: 0 slow, 1 normal, 2 fast
         o.settings.talk = clamp(Math.round(num(st.talk, 1)), 0, 2);
+    if ("backup" in st) // the backup reminder: 0 off, 1 every morning, 2 once a week
+        o.settings.backup = clamp(Math.round(num(st.backup, 1)), 0, 2);
     if ("home" in st)
         o.settings.home = st.home === "burrow" ? "burrow" : "wagon";
     if ("wloc" in st) {
@@ -3085,7 +3220,7 @@ function mergeStates(a, b) {
         return b;
     const nw = (b.savedAt || 0) > (a.savedAt || 0) ? b : a, od = nw === a ? b : a;
     const o = JSON.parse(JSON.stringify(nw));
-    ["g", "gTotal", "xp", "doneTotal", "pats", "flies", "motes", "incidents", "clSeen", "lessonsSeen", "lvlSeen", "fedUntil", "lightsAt", "mom"].forEach(k => o[k] = Math.max(num(a[k]), num(b[k])));
+    ["g", "gTotal", "xp", "doneTotal", "pats", "flies", "motes", "incidents", "clSeen", "lessonsSeen", "lvlSeen", "fedUntil", "lightsAt", "backupAt", "mom"].forEach(k => o[k] = Math.max(num(a[k]), num(b[k])));
     o.created = Math.min(a.created || Date.now(), b.created || Date.now());
     o.lastDay = (a.lastDay || "") > (b.lastDay || "") ? a.lastDay : b.lastDay;
     const mmax = (x, y) => {
@@ -3168,6 +3303,11 @@ function mergeStates(a, b) {
         const first = an && bn ? (an <= bn ? a : b) : an ? a : bn ? b : null;
         o.possumName = first ? first.possumName : od.possumName || nw.possumName || "";
         o.possumAt = first ? num(first.possumAt) : num(od.possumAt) || num(nw.possumAt);
+        o.possumSet = Math.max(num(a.possumSet), num(b.possumSet));
+        if (o.possumSet) { // renamed in Settings: the latest rename is its name, on every device
+            const r = num(a.possumSet) >= num(b.possumSet) ? a : b;
+            o.possumName = r.possumName || o.possumName;
+        }
     }
     { // the pinboard notes: every note from either side; taken down if either side took it down after it went up
         const m = new Map();
@@ -3183,6 +3323,20 @@ function mergeStates(a, b) {
             }
         }
         o.quotes = [...m.values()].map(q => Object.assign(q, { off: q.off > q.at ? q.off : 0 })).sort((x, y) => x.at - y.at).slice(-40);
+    }
+    { // the eye jars: each eye once, the first time it was found
+        const m = new Map();
+        for (const e of [...(a.eyes || []), ...(b.eyes || [])])
+            if (e && e.k && (!m.has(e.k) || num(e.at) < m.get(e.k).at))
+                m.set(e.k, { k: e.k, at: num(e.at), from: str(e.from, 20) });
+        o.eyes = [...m.values()].sort((x, y) => x.at - y.at).slice(0, 24);
+    }
+    { // the chalk circle's glimpses: each one once, the first time it was seen
+        const m = new Map();
+        for (const g of [...(a.glimpses || []), ...(b.glimpses || [])])
+            if (g && g.k && (!m.has(g.k) || num(g.at) < m.get(g.k).at))
+                m.set(g.k, { k: g.k, at: num(g.at) });
+        o.glimpses = [...m.values()].sort((x, y) => x.at - y.at).slice(-300);
     }
     { // the drawers: the earliest arrival counts (so both sides agree who lives there); the newer side's news
         const da = a.drawers || {}, db = b.drawers || {}, ats = [num(da.at), num(db.at)].filter(x => x > 0);
@@ -3608,7 +3762,7 @@ function trinketList() {
     return pool("trinkets").map(l => {
         const [n, ...r] = l.split("|");
         return { name: n.trim(), note: r.join("|").trim() };
-    }).filter(t => t.name);
+    }).filter((t, i, all) => t.name && all.findIndex(x => x.name.toLowerCase() === t.name.toLowerCase()) === i); // one drawer per name (your own lines can repeat one)
 }
 const STRANGE_PERSONA = " The wagon is a quietly uncanny place, a thin place, loosely watched by a fictional Bureau of Small Things. Doors appear in the walls, phones ring, things are bigger on the inside. {pet} treats strange events matter-of-factly and protectively, never frighteningly.";
 function strangeness() {
@@ -5297,9 +5451,9 @@ function nearestHit(p, list) {
  */
 /* behaviours Mite may do while up on the balcony; starting any other one up there walks Mite down first (see pet.start) */
 /* in the sleeping nook; anything else walks Mite back to the wagon first. GARDEN_ONLY: things that only happen there */
-const GARDEN_OK = new Set(["opendrawer", "armread", "readletter", "possumchat", "write", "snailchat", "idle", "wander", "curious", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "stare", "bow", "dizzy", "gwater", "catvisit", "fromGarden", "eat", "drink", "admire", "descend", "nookup", "gpin", "gpossum", "chairSit", "gsmell", "gfread", "fbookchair"]);
+const GARDEN_OK = new Set(["answerphone", "opendrawer", "armread", "readletter", "possumchat", "write", "snailchat", "idle", "wander", "curious", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "stare", "bow", "dizzy", "gwater", "catvisit", "fromGarden", "eat", "drink", "admire", "descend", "nookup", "gpin", "gpossum", "chairSit", "gsmell", "gfread", "fbookchair", "ghang"]);
 const GARDEN_ONLY = new Set(["gwater", "write", "armread", "readletter", "opendrawer", "gsmell", "gfread", "fbookchair"]);
-const LOFT_OK = new Set(["gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow"]);
+const LOFT_OK = new Set(["ghang", "gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow"]);
 /*
  * Mite's live state.
  *   x, dir       where Mite is and which way it faces
@@ -5445,6 +5599,12 @@ function doorWalk(o) {
 /* a behaviour up on the nook's platform (loft.js): up the stairs (or along, if Mite's up there already), over
    to o.at(b, p), then o.fn every frame for o.act() seconds. Mite stays up afterwards; whatever comes next walks
    it back down if it has to (pet.start) */
+/* watering by itself: not more than once in a while (a tap on a plant always works) */
+let waterAt = performance.now() - 15 * 60e3; // (the first one a little while after opening)
+function watered() {
+    return performance.now() - waterAt > 25 * 60e3;
+}
+const dayNum = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 60e3) / 864e5);
 function nookUp(o) {
     return { d: [60, 60], w: o.w || (c => 0), init(b, p) {
             b.act = o.act();
@@ -5520,7 +5680,7 @@ const BEH = {
         } },
     /* at the writing desk under the window: Mite writes a letter to one of its penpals, line by line; when it's
        done it goes in the notebook */
-    write: { d: [60, 60], w: c => view === "garden" && !c.late ? .7 : 0, init(b, p) {
+    write: { d: [60, 60], w: c => view === "garden" && !c.late && num(S.flags.letterDay) < dayNum() ? .25 : 0, init(b, p) { // one letter a day, by itself (tap the desk for more)
             const g = gardenGeo();
             b.tx = clamp(g.wcx, R * 1.05, W - R * 1.05);
             b.act = rnd(16, 24);
@@ -5544,13 +5704,14 @@ const BEH = {
                 b.sealed = 1;
                 const line = fillText(compose("letters") || "Dear {penpal}, all well here. The moss sends regards.", Object.assign(ctx(), { penpal: b.to }));
                 note(`Wrote a letter to ${b.to}: “${line}”`);
+                S.flags.letterDay = dayNum();
                 postSent(b.to); // a reply may come in a few days (post.js)
                 floatText("sealed", p.x, GY - R * 2.3, "#ffd76a");
                 sfx("soft");
             }
         } },
     /* in the armchair in the nook with a book (a tap on the chair: Mite says what it's reading, bookshelf.js) */
-    armread: { d: [60, 60], w: c => view === "garden" ? (c.dark > .45 ? 1.2 : .6) : 0, init(b) {
+    armread: { d: [60, 60], w: c => view === "garden" && hasChair() ? (c.dark > .45 ? 1.2 : .6) : 0, init(b) {
             b.act = rnd(14, 24);
             b.bookCol = choice(["#b6543c", "#3f6fa8", "#5b8a4a", "#8a4fa0", "#c99a3a", "#2e4a5a"]);
         }, step(b, p, t, po, dt) {
@@ -5574,7 +5735,7 @@ const BEH = {
         } },
     /* very now and then: Mite fetches the dried flower book from the desk, reads it in the chair, and puts it back
        (so you find out it's there: flowers.js) */
-    fbookchair: { d: [60, 60], w: c => view === "garden" && (S.flowerBook || []).length ? .06 : 0, init(b) {
+    fbookchair: { d: [60, 60], w: c => view === "garden" && hasChair() && hasDrawers() && (S.flowerBook || []).length ? .06 : 0, init(b) {
             b.act = rnd(12, 18);
             b.ph = "fetch";
         }, step(b, p, t, po, dt) {
@@ -5664,7 +5825,8 @@ const BEH = {
             po.mouth = ta % 3 < 1.5 ? "o" : "smile";
         } },
     /* watering the greenhouse plants (the one you tapped, or one of them) */
-    gwater: { d: [60, 60], w: c => view === "garden" ? .9 : 0, init(b, p) {
+    gwater: { d: [60, 60], w: c => view === "garden" && watered() ? .3 : 0, init(b, p) {
+            waterAt = performance.now();
             const spots = gardenPlantSpots(), sp = gardenPlantAt ? spots.reduce((a, s) => Math.abs(s.x - gardenPlantAt) < Math.abs(a.x - gardenPlantAt) ? s : a) : choice(spots);
             gardenPlantAt = 0;
             const st = standBy(sp.x, R * 1.25, p.x > sp.x ? 1 : -1);
@@ -5751,6 +5913,34 @@ const BEH = {
             po.lookOverride = { x: 0, y: -1 }; // up at the snapshot
             po.mouth = "o";
             po.eyes = ta > 1 && ta < 1.4 ? "happy" : "open";
+        } }),
+    ghang: nookUp({ act: () => 10, at: () => { const g = gardenGeo(); return (g.bx0 + g.bx1) / 2; }, face: 0, fn(b, p, ta, po) { // pinning up the first postcards
+            const g = gardenGeo(), k = boardHung();
+            if (k < BOARD_FIRST) {
+                po.lookOverride = { x: 0, y: -1 };
+                po.arms = Math.sin(ta * 9) > 0 ? [-2.6, -.3] : [-.3, -2.6]; // reaching up, paw over paw
+                po.mouth = "o";
+                if (ta > .8 + k * 1.5) { // one more card, pinned
+                    S.flags.boardN = k + 1;
+                    sfx("tock");
+                    const n = BOARD_FIRST, x = g.bx0 + (k + .5) * (g.bx1 - g.bx0) / n;
+                    for (let i = 0; i < 5; i++)
+                        addP({ type: "spark", x: x + rnd(-R * .2, R * .2), y: g.by0 + R * .4, vx: rnd(-30, 30), vy: rnd(-40, -10), g: 80, max: .6, col: "#f4ecd8", size: 2 });
+                    if (k + 1 === BOARD_FIRST) {
+                        b.doneAt = ta;
+                        speak(choice(["There. The sea, the hills, the forest and the lighthouse. Places we've stood. Now the board knows where we've been.", "Four postcards up. It's a pinboard now, not just a cork rectangle. Tap it again to look closer, and pin your own."]), { ms: 6500 });
+                        saveSoon();
+                    }
+                }
+                return;
+            }
+            po.lookOverride = { x: 0, y: -.8 };
+            po.mouth = "smile";
+            po.eyes = "happy";
+            if (b.doneAt === undefined)
+                b.doneAt = ta;
+            if (ta - b.doneAt > 2.5)
+                p.bt = p.dur;
         } }),
     gpossum: nookUp({ act: () => 6, at: (b, p) => possum.x + (p.x > possum.x ? 1 : -1) * R * .95, fn(b, p, ta, po) {
             p.dir = possum.x > p.x ? 1 : -1;
@@ -6136,7 +6326,7 @@ const BEH = {
         } },
     ward: { d: [60, 60], w: c => c.strange > 0 && (c.dark > .5 || isFull(c.moonP)) ? .4 * c.strange : 0, init(b) {
             b.act = rnd(7, 10);
-            if (own("circle"))
+            if (own("circle") && view === "archive")
                 b.tx = OBJX.circle();
         }, step(b, p, t, po, dt) {
             let ta = t;
@@ -6153,6 +6343,22 @@ const BEH = {
             po.mouth = "o";
             po.feet = false;
             po.sy = -.05;
+        } },
+    /* at the edge of the chalk circle, looking back into the past (circle.js: showGlimpse) */
+    scry: { d: [60, 60], w: c => 0, init(b) {
+            b.act = 9;
+        }, step(b, p, t, po, dt) {
+            const ta = goTo(b, p, po, dt, circleGeo().x, 0, b.act);
+            if (ta < 0)
+                return;
+            po.ward = clamp(ta / 1.5, 0, 1);
+            po.eyes = ta < 2.2 ? "closed" : "open";
+            po.arms = [-1.6, -1.6];
+            po.mouth = "o";
+            po.feet = false;
+            po.sy = -.05;
+            if (Math.random() < .08)
+                addP({ type: "spark", x: p.x + rnd(-R * 1.2, R * 1.2), y: GY + rnd(0, (H - GY) * .4), vx: 0, vy: -rnd(8, 20), g: -4, max: 1.2, col: "#e8f0ff", size: 2 });
         } },
     stare: { d: [4, 6], w: c => c.strange > 0 ? .35 * c.strange : 0, init(b) {
             b.side = Math.random() < .5 ? -1 : 1;
@@ -6680,7 +6886,8 @@ const BEH = {
                 p.bt = p.dur;
             }
         } },
-    water: { d: [60, 60], w: c => PLANTS.some(p => own(p.id)) ? .35 : 0, init(b, p) {
+    water: { d: [60, 60], w: c => PLANTS.some(p => own(p.id)) && watered() ? .3 : 0, init(b, p) {
+            waterAt = performance.now();
             b.act = rnd(5, 7);
             const rm = room(), sx = rm.wx + rm.wr * .3;
             b.sp = { x: sx, y: rm.wy + rm.wr * .93 - rm.wr * .62 };
@@ -6995,6 +7202,24 @@ const BEH = {
             po.lookOverride = { x: b.down ? p.dir * .4 : 0, y: b.down ? .8 : -1 }; // (down: something on the floor)
             po.mouth = "o";
             po.eyes = ta > 1 && ta < 1.4 ? "happy" : "open";
+        } },
+    answerphone: { d: [60, 60], w: c => 0, init(b) { // the red phone: receiver to the ear (the handset is drawn by the phone, anomalies.js)
+            b.act = 14;
+        },
+        step(b, p, t, po, dt) {
+            const ta = goTo(b, p, po, dt, b.tx, b.face, b.act);
+            if (ta < 0)
+                return;
+            const ph = b.ph;
+            if (!ph || anom !== ph || ph.done) { // hung up (or it went away)
+                if (ta > 1)
+                    p.bt = p.dur;
+                return;
+            }
+            po.arms = b.face < 0 ? [-2.3, -.25] : [-.25, -2.3]; // the paw on the phone's side up at the ear
+            po.lookOverride = { x: b.face * .3, y: .1 };
+            po.eyes = Math.sin(ta * 1.3) > .85 ? "happy" : "open";
+            po.mouth = "o";
         } },
     jarvisit: { d: [60, 60], w: c => (own("jar") || 0) > 0 ? .6 : 0, init(b) {
             b.act = rnd(5, 7);
@@ -7954,7 +8179,9 @@ function drawPet(po) {
     }
     cx.restore();
     if (po.fly) {
-        glow(po.fly.x, po.fly.y, 6, "#fff3b0");
+        glow(po.fly.x, po.fly.y, po.fly.dim ? 2.5 : 6, po.fly.dim ? "rgba(255,243,176,.45)" : "#fff3b0"); // (dim: hiding)
+        cx.fillStyle = "#fff8d0";
+        cx.fillRect(Math.round(po.fly.x / PX) * PX - PX / 2, Math.round(po.fly.y / PX) * PX - PX / 2, PX, PX);
     }
 }
 function drawSprout(x, y, r, stage) {
@@ -8323,6 +8550,8 @@ function drawWindow(rm, sky, d, hf, tsec, dt, dk, arr = wparts, shutters = true)
             cx.stroke();
         }
     }
+    if (spaceOn()) // the detour: space outside (space.js)
+        drawSpace(wx - wr, wy - wr, wr * 2, wr * 2, tsec);
     cx.restore();
     const fr = mix("#7a5636", "#2e2015", dk);
     cx.strokeStyle = fr;
@@ -8578,10 +8807,10 @@ const SCOPE_CAP = {
  * walked over: requestObj(kind) queues it (one more can wait), startObj starts the behaviour
  * from OBJ_ACT, and its show() runs at the moment of arrival (revealAt). objTick ends it.
  */
-const OBJ_ACT = { gdrawers: { beh: "opendrawer", revealAt: .8, show: () => openDrawer() }, gchair: { beh: "armread", revealAt: 1.2, show: () => showBook() || 8 }, gletters: { beh: "readletter", revealAt: .6, show: () => readLetter() }, cat: { beh: "catvisit", revealAt: 0, show: () => 8 }, possum: { beh: "possumchat", revealAt: 0, show: () => 8 }, gdesk: { beh: "write", revealAt: .3, show: () => 6 }, gplants: { beh: "gwater", revealAt: .6, show: () => {
+const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () => showGlimpse() }, gdrawers: { beh: "opendrawer", revealAt: .8, show: () => openDrawer() }, gchair: { beh: "armread", revealAt: 1.2, show: () => showBook() || 8 }, gletters: { beh: "readletter", revealAt: .6, show: () => readLetter() }, cat: { beh: "catvisit", revealAt: 0, show: () => 8 }, possum: { beh: "possumchat", revealAt: 0, show: () => 8 }, gdesk: { beh: "write", revealAt: .3, show: () => 6 }, gplants: { beh: "gwater", revealAt: .6, show: () => {
             say("greenhouse");
             return 5;
-        } }, gvase: { beh: "gsmell", revealAt: 1, show: () => showFlower() }, gfbook: { beh: "gfread", revealAt: .6, show: () => showFlowerBook() }, gpin: { beh: "gpin", revealAt: .4, show: () => { // a snapshot on the pinboard, from up on the platform
+        } }, gvase: { beh: "gsmell", revealAt: 1, show: () => showFlower() }, gfbook: { beh: "gfread", revealAt: .6, show: () => showFlowerBook() }, ghang: { beh: "ghang", revealAt: 0, show: () => 9 }, gpin: { beh: "gpin", revealAt: .4, show: () => { // a snapshot on the pinboard, from up on the platform
             const line = compose("pin_" + (gardenPin && gardenPin.photo)) || compose("pinboard") || "That one's from a while ago. Good place.";
             speak(line, { ms: 5500 });
             return 5.5;
@@ -8687,6 +8916,13 @@ function startObj(kind) {
                 return clamp(3.5 + t.length * .045, 5, 9);
             } };
     }
+    if (kind === "anomphone") { // the red phone (anomalies.js): go over, pick it up, listen
+        const ph = anom && anom.type === "phone" && !anom.done ? anom : null;
+        if (!ph)
+            return;
+        const side = ph.x > W * .5 ? 1 : -1, tx = clamp(ph.x - side * R * .95, R * 1.05, W - R * 1.05); // stand beside it, facing it
+        a = { beh: "answerphone", revealAt: .5, room: ph.room, extra: { tx, face: side, ph }, show: () => answerPhone(ph, side) };
+    }
     if (a && kind === "calendar")
         a = Object.assign({}, a, { extra: { tx: calHit ? calHit.cx : pet.x } });
     if (kind === "capsule")
@@ -8735,7 +8971,7 @@ function startObj(kind) {
         };
         return;
     }
-    const stayUp = view === "garden" ? ["gplants", "gpin", "gpossum"].includes(kind) : kind === "sill" && own("loft"); // (things up on the platform or balcony)
+    const stayUp = view === "garden" ? ["gplants", "gpin", "gpossum", "ghang"].includes(kind) : kind === "sill" && own("loft"); // (things up on the platform or balcony)
     if (pet.ground > 0 && (view === "room" || view === "garden") && !stayUp) {
         pet.start("descend");
         const cur0 = { kind, shown: false, b: pet.b };
@@ -11144,7 +11380,7 @@ function routeDown(p) {
 let view = "room", archHits = [], archiveSince = 0;
 const archLadder = { x: -1, tx: -1 };
 /* behaviours that may run in the archive; anything else walks Mite back to the wagon first */
-const ARCHIVE_OK = new Set(["possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "chairSit", "stare", "bow", "dizzy"]);
+const ARCHIVE_OK = new Set(["scry", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "chairSit", "stare", "bow", "dizzy"]);
 /* interactions that live in the archive; asking for one from the wagon walks Mite there first */
 function isArchiveKind(kind) {
     return kind === "capsule" || kind.startsWith("refl:") || kind.startsWith("box:");
@@ -11212,7 +11448,9 @@ function drawArchiveRoom(now, dt) {
     drawCeiling(dk, "archive");
     drawPlankFloor(dk);
     drawMoss(dk, "archive"); // (draw-world.js)
-    drawRug(dk, "#425a85", "#10142a", "#9ab9d7", "#1e2848"); // (between two palette colours: the same woven dither as the red one) // a blue rug, the same shape as the wagon's red one
+    drawRug(dk, "#425a85", "#10142a", "#9ab9d7", "#1e2848");
+    drawCircle(dk, tsec); // the chalk circle on the blue rug (circle.js)
+    drawMess(dk, "archive"); // (between two palette colours: the same woven dither as the red one) // a blue rug, the same shape as the wagon's red one
     // a small round window above the reading desk, with its share of the plants on the sill (easel.js)
     {
         const aw = archWindow(g);
@@ -11305,14 +11543,12 @@ function drawArchiveRoom(now, dt) {
         cx.fillRect(dx0 + R * .08, top + R * .16, R * .14, GY - top - R * .16);
         cx.fillRect(dx1 - R * .22, top + R * .16, R * .14, GY - top - R * .16);
         cx.fillRect(dx0 + R * .08, top + R * .16, dx1 - dx0 - R * .16, R * .3);
-        cx.fillStyle = mix("#3a3a36", "#121210", dk);
-        cx.fillRect(dx1 - R * .55, top - R * .7, R * .05, R * .7);
-        cx.fillStyle = mix("#c8a050", "#4a3a1a", dk * .5);
-        cx.fillRect(dx1 - R * .75, top - R * .82, R * .42, R * .16);
+        drawTiffany(dk, tsec, dx1 - R * .55, top); // the stained-glass lamp
     });
+    drawLayered(() => drawDeskChair(dk, g)); // a small chair, tucked in at the desk
     if (own("closet")) // the bigger-inside closet, between the desk and the shelves (draw-world.js)
         drawLayered(() => drawCloset(dk, closetX()));
-    softGlow(g.deskX1 - R * .54, GY - R * 1.6, R * 1.6, `rgba(255,200,120,${.18 + .2 * dk})`);
+    softGlow(g.deskX1 - R * .55, GY - R * 1.65, R * 1.6, `rgba(255,190,110,${.16 + .18 * dk})`);
     drawKeepsakesOn(g.deskX1 - R * .95, GY - R * .95, dk, tsec);
     // a bare bulb over the shelves
     const bx = (g.x0 + g.x1) / 2, by = Math.max(R * .6, g.rail - R * .4);
@@ -11401,6 +11637,10 @@ function archiveTap(p) {
         resolveAnom();
         return true;
     }
+    if (sweepAt(p.x, p.y, "archive")) // mess on the archive floor
+        return true;
+    if (circleTap(p)) // the chalk circle: Mite looks back into the past (circle.js)
+        return true;
     if (possumHit && possumHit.room === "archive" && hitIn(p, possumHit)) {
         possumTap();
         return true;
@@ -11458,6 +11698,83 @@ function chooseArchiveBeh() {
             return pet.start(k);
     }
     pet.start("idle");
+}
+
+/* the Tiffany lamp on the desk: a bronze foot and stem, a dome of coloured glass in lead lines (x: the stem, top: the desk top) */
+const TIFFANY = ["..aattaa..", ".attggtta.", "arrggaaggr", "taarrttaat", "gttaaggtta"]; // a amber, t teal, g green, r red
+function drawTiffany(dk, t, x, top) {
+    const q = PX, cols = { a: "#e8a33c", t: "#3f9e9a", g: "#6aa84f", r: "#c2453a" }, lit = .6 + dk * .6;
+    const bronze = mix("#7a5a2e", "#2a1e10", dk * .5), stemH = R * .55, w = R * .8, rows = TIFFANY.length, cw = w / TIFFANY[0].length, rh = Math.max(q, R * .085);
+    cx.fillStyle = bronze;
+    cx.fillRect(x - R * .16, top - q * 2, R * .32, q * 2); // the foot
+    cx.fillRect(Math.round(x / q) * q - q / 2, top - stemH, q, stemH); // the stem
+    const y0 = top - stemH - rows * rh;
+    for (let r = 0; r < rows; r++)
+        for (let c = 0; c < TIFFANY[r].length; c++) {
+            const k = TIFFANY[r][c];
+            if (k === ".")
+                continue;
+            const flick = 1 + Math.sin(t * 2 + c) * .03;
+            cx.fillStyle = mix(mix(cols[k], "#20181a", .55), cols[k], clamp(lit * flick, 0, 1)); // glass, lit from inside at night
+            cx.fillRect(x - w / 2 + c * cw, y0 + r * rh, cw, rh);
+        }
+    cx.fillStyle = mix("#3a2a18", "#120c06", dk * .5); // the lead lines and the rim
+    for (let r = 1; r < rows; r++)
+        cx.fillRect(x - w / 2 + cw * Math.max(0, 2 - r), y0 + r * rh, w - cw * Math.max(0, 2 - r) * 2, 1);
+    cx.fillRect(x - w / 2 - q / 2, y0 + rows * rh, w + q, q);
+    cx.fillRect(Math.round(x / q) * q - q / 2, y0 - q, q, q); // the finial
+    tiffanyAt = { x, y: y0 + rows * rh, w, top: y0 };
+}
+let tiffanyAt = null;
+/* the lamp's light at night: faint clouds of coloured specks on the wall around it, like a nebula, slowly
+   drifting (pixels, not a gradient, so they keep their colour in the palette) */
+function archNebula(now) { // (loop.js: after the night's darkening, so its colours stay)
+    const d = new Date(), dk = clamp(skyAt(d.getHours() + d.getMinutes() / 60).dark * .6 + (S.lightsOut ? .25 : 0), 0, 1);
+    if (dk > .35 && roomVisible("archive")) {
+        const g = archGeo();
+        drawNebula(g.deskX1 - R * .55, GY - R * 1.75, dk, now / 1000);
+    }
+}
+function drawNebula(x, y, dk, t) {
+    const k = clamp((dk - .35) / .4, 0, 1), rr = R * 2, q = PX;
+    const clouds = [["#8a4fa0", -.55, -.25, .75], ["#3f9e9a", .6, -.05, .65], ["#c26a8a", .05, .45, .55], ["#d9a441", -.15, -.55, .4]];
+    cx.save();
+    for (let ci = 0; ci < clouds.length; ci++) {
+        const [col, dx, dy, s] = clouds[ci], ang = t * .025 + ci * 1.7;
+        const cxp = x + (dx * Math.cos(ang) - dy * Math.sin(ang)) * rr * .5, cyp = y + (dx * Math.sin(ang) + dy * Math.cos(ang)) * rr * .35;
+        cx.fillStyle = col;
+        for (let i = 0; i < 40; i++) { // a fixed scatter per cloud, thinning out towards the edge
+            const h1 = Math.sin(i * 12.9898 + ci * 78.233) * 43758.5453, h2 = Math.sin(i * 39.346 + ci * 11.135) * 24634.6345;
+            const u = h1 - Math.floor(h1), v = h2 - Math.floor(h2), d = Math.sqrt(u) * rr * s * .6, a = v * Math.PI * 2;
+            const tw = .55 + .45 * Math.sin(t * .9 + i * 2.1 + ci);
+            cx.globalAlpha = Math.min(1, k * 1.4) * tw * (1 - Math.sqrt(u) * .5);
+            cx.fillRect(Math.round((cxp + Math.cos(a) * d) / q) * q, Math.round((cyp + Math.sin(a) * d * .7) / q) * q, q, q);
+        }
+    }
+    cx.fillStyle = "#fff4e0";
+    for (let i = 0; i < 12; i++) { // and a few stars
+        const ang = i * 2.39 + t * .02, d = (.3 + (i * 37 % 10) / 14) * rr * .75;
+        cx.globalAlpha = k * .6 * (.5 + .5 * Math.sin(t * 1.3 + i * 4));
+        cx.fillRect(Math.round((x + Math.cos(ang) * d) / q) * q, Math.round((y + Math.sin(ang) * d * .6) / q) * q, q, q);
+    }
+    cx.restore();
+}
+/* a small wooden chair tucked in at the desk, seen from the front */
+function drawDeskChair(dk, g) {
+    const q = PX, wood = mix("#9a6a3e", "#2c1d12", dk), woodD = mix("#6a4628", "#1a110a", dk);
+    const x = Math.round((g.deskX0 + (g.deskX1 - g.deskX0) * .42) / q) * q, sw = R * .62, seat = GY - R * .5, backTop = GY - R * 1.18;
+    cx.fillStyle = woodD;
+    cx.fillRect(x - sw / 2, backTop, q * 2, GY - backTop); // the back posts, all the way down as back legs
+    cx.fillRect(x + sw / 2 - q * 2, backTop, q * 2, GY - backTop);
+    cx.fillStyle = wood;
+    cx.fillRect(x - sw / 2, backTop, sw, q * 2); // the top rail and one slat
+    cx.fillRect(x - sw / 2 + q * 2, backTop + R * .22, sw - q * 4, q);
+    cx.fillRect(x - sw / 2 - q, seat, sw + q * 2, q * 2); // the seat
+    cx.fillStyle = mix("#b8844e", "#3a2616", dk);
+    cx.fillRect(x - sw / 2 - q, seat, sw + q * 2, q / 2 > 1 ? q / 2 : 1);
+    cx.fillStyle = woodD;
+    cx.fillRect(x - sw / 2 + q, seat + q * 2, q * 2, GY - seat - q * 2); // the front legs
+    cx.fillRect(x + sw / 2 - q * 3, seat + q * 2, q * 2, GY - seat - q * 2);
 }
 
 </script>
@@ -11748,6 +12065,16 @@ function spawnGuest() {
     S.guestAt = Date.now();
     saveSoon();
 }
+/* bad weather out there (rain, snow, or a cold wind): visitors come in to wait it out */
+function foulOut() {
+    const w = weather();
+    return w.rain > .3 || !!w.snow || (w.wind || 0) > 35;
+}
+/* night or foul weather: a visitor having a nap may just stay a while longer (or all night) */
+function guestStays(g, c) {
+    const dark = skyAt(c.h + c.now.getMinutes() / 60).dark;
+    return !!g.shelter && foulOut() || (foulOut() ? Math.random() < .7 : (c.late || dark > .7) ? Math.random() < .45 : false);
+}
 function guestTick(dt, now) {
     if (!guest) {
         if (now < guestNext)
@@ -11758,8 +12085,11 @@ function guestTick(dt, now) {
             return;
         if (dark > .45 && Date.now() - (S.raccoonAt || 0) > 20 * 36e5 && Date.now() - (S.guestAt || 0) > 36e5 && Math.random() < .15)
             spawnRaccoon(); // evenings and nights, about once a day
-        else if (Date.now() - (S.guestAt || 0) > 2.5 * 36e5 && !c.late && Math.random() < .12)
-            spawnGuest();
+        else if (Date.now() - (S.guestAt || 0) > (foulOut() ? 1 : 2.5) * 36e5 && !c.late && Math.random() < (foulOut() ? .25 : .12)) {
+            spawnGuest(); // (more often in bad weather: they come in out of it)
+            if (foulOut())
+                guest.shelter = true;
+        }
         return;
     }
     const g = guest;
@@ -11774,7 +12104,7 @@ function guestTick(dt, now) {
         if (Math.abs(d) < 2 && Math.abs((g.tz || 0) - g.z) < 2) {
             g.ph = "wait";
             g.t = 0;
-            snailSay(choice(["Knock knock. It's {visitor}.", "Hello hello. Only me.", "Don't mind me. Just {visitor}.", "Is the {treat} on?"]), 3800, "guest");
+            snailSay(g.shelter ? choice(["It's horrible out there. Mind if I wait it out? I'm small. I drip quietly.", "Brr. {visitor}, reporting in from the weather. Is there a dry corner?", "Just till it eases off. I brought my own crumbs. Well, one crumb."]) : choice(["Knock knock. It's {visitor}.", "Hello hello. Only me.", "Don't mind me. Just {visitor}.", "Is the {treat} on?"]), 3800, "guest");
             setTimeout(() => {
                 if (guest === g && g.ph === "wait")
                     requestObj("guest", g.x, GY - g.s * 1.4);
@@ -11796,6 +12126,7 @@ function guestTick(dt, now) {
         if (g.eaten >= 1) {
             g.ph = "nap";
             g.napUntil = now + rnd(25, 45) * 1000;
+            g.willStay = guestStays(g, ctx()); // (decided once)
         }
     }
     else if (g.ph === "nap") {
@@ -11804,7 +12135,13 @@ function guestTick(dt, now) {
             addP({ type: "text", text: "z", x: g.x + g.dir * g.s * .5, y: GY + g.z - g.s * .9, vy: -12, vx: 6 * g.dir, max: 2, col: "#dfe7ff", size: 10 + Math.random() * 3 });
         if (Math.random() < dt * .012 && now > snail2Until)
             snailSay(choice(["…more crumbs…", "…not the cat…", "…left at the big oak…", "…mm. Thursday.", "…the moon's in the jar…"]), 2600, "guest");
-        if (now > g.napUntil) {
+        if (now > g.napUntil && g.willStay && !g.stayed) { // too dark or too wet to go home: stays on, asleep on the floor
+            g.stayed = true;
+            g.napUntil = now + (foulOut() ? rnd(10, 25) : rnd(30, 60)) * 60e3;
+            snailSay(foulOut() ? choice(["…I'll stay till it stops…", "…listen to that rain. Not going anywhere…"]) : choice(["…too dark for the road. Can I stay?…", "…I'll go in the morning…", "…just till the owls go to bed…"]), 3200, "guest");
+            note(`${g.name} the ${g.kind} ${foulOut() ? "stayed in out of the weather" : "stayed the night"}, asleep on the floor.`);
+        }
+        else if (now > g.napUntil && (!g.stayed || !foulOut() || now > g.napUntil + 60 * 60e3)) {
             g.ph = "bye";
             g.t = 0;
             const ln = pool("visitorbye"), bt = guestFill(homeTxt(ln.length ? choice(ln) : "Thank you for the {treat}."));
@@ -11812,6 +12149,9 @@ function guestTick(dt, now) {
             heard(g.name, bt, g.cid || Date.now());
             guestBringsFlowers(g); // flowers for the vase in the nook, half the time (flowers.js)
             if (g.kind === "raccoon") {
+                const eye = Math.random() < .2 ? findEye("raccoon") : null; // raccoons find everything, eyes included
+                if (eye)
+                    setTimeout(() => speak(`${g.name} also left an eye. ${eye.name}. "Found it," it said. For the jar.`, { ms: 5000 }), 6500);
                 const it = findTrinket(), took = choice(["a teaspoon", "one sock", "a button", "the bottle cap I was saving", "a bit of string", "a shiny pebble"]);
                 if (it) {
                     floatText(it, g.x, GY + g.z - g.s * 1.6, "#ffe39a");
@@ -12101,7 +12441,7 @@ const ORIGAMI = [
     { id: "lily", name: "paper lily", col: "#f6e7ef" }, { id: "moon", name: "paper moon", col: "#e8d58a" }
 ];
 /* how the room tints while each one is here (the red vignette is for the eerie ones) */
-const ANOM_EERIE = { door: 1, phone: 1, eyes: 1, tentacle: .75, letter: .5, moth: .45, chair: .25, ghost: .15, cloud: .15 };
+const ANOM_EERIE = { space: .3, door: 1, phone: 1, eyes: 1, tentacle: .75, letter: .5, moth: .45, chair: .25, ghost: .15, cloud: .15 };
 const ANOM_LIFE = { tentacle: 12.5, chair: 14, ghost: 16, cloud: 20, moth: 22, letter: 24 };
 /* where the window (for the ghost) and the light (for the moth) are in a room */
 function anomGeo(rmName) {
@@ -12135,7 +12475,7 @@ function anomX(lo, hi) {
     return x;
 }
 function spawnAnom(dark) {
-    const w = [["door", 1], ["phone", 1], ["tentacle", 1], ["chair", 1], ["ghost", 1 + (dark > .45 ? 1.5 : 0)], ["letter", .8], ["cloud", raining() ? 1.6 : .8]];
+    const w = [["space", .45], ["door", 1], ["phone", 1], ["tentacle", 1], ["chair", 1], ["ghost", 1 + (dark > .45 ? 1.5 : 0)], ["letter", .8], ["cloud", raining() ? 1.6 : .8]];
     if (dark > .45)
         w.push(["eyes", 2]);
     if (dark > .3)
@@ -12165,6 +12505,12 @@ function spawnAnom(dark) {
         anom = Object.assign(base, { x: W - R * 1.7, y: GY - R * .12 });
     else if (type === "cloud")
         anom = Object.assign(base, { x: pet.x, y: GY - R * 2.7 });
+    else if (type === "space") { // nothing in the room: every window shows space for a while (space.js)
+        anom = Object.assign(base, { x: -1e4, y: -1e4 });
+        spaceStart(anom);
+        eerie = ANOM_EERIE.space;
+        return;
+    }
     else
         anom = Object.assign(base, { x: rm.lx, y: rm.ly, cx0: rm.lx, cy0: rm.ly });
     eerie = ANOM_EERIE[type] ?? 1;
@@ -12172,6 +12518,27 @@ function spawnAnom(dark) {
         if (!hint("anom", "Something's here. Tap it and I'll deal with it."))
             say("omen", { anom: type });
     }, 900);
+}
+/* Mite has picked up the phone (the "anomphone" interaction): listen, say what was said, hang up. Returns how long */
+function answerPhone(a, side) {
+    a.held = side;
+    sfx("tock");
+    const c = a.call || anomStamp();
+    const t = say("phone") || "";
+    incNote(`Incident ${c.no}, ${c.tm}: the phone rang. ${S.settings.pet} answered. Transcript: ${t || "[blank]"}${c.it ? " Something was left by the phone: " + c.it + "." : ""}`);
+    const secs = clamp(3 + t.length * .05, 5, 11);
+    setTimeout(() => hangUp(a), secs * 1000);
+    return secs;
+}
+function hangUp(a) {
+    if (!a.held)
+        return;
+    a.held = 0;
+    a.done = true;
+    sfx("tock");
+    a.exit = a.t;
+    a.life = a.t + 2;
+    eerie = .45 * (ANOM_EERIE.phone ?? 1);
 }
 function anomPoof(x, y) {
     for (let i = 0; i < 14; i++)
@@ -12181,7 +12548,7 @@ function anomPoof(x, y) {
 /* where to tap: most are a circle around (x, y); some move */
 function anomHit(p) {
     const a = anom;
-    if (!a || a.resolved || a.t < .8)
+    if (!a || a.resolved || a.t < .8 || a.type === "space")
         return false;
     if (a.type === "eyes")
         return Math.hypot(p.x - a.x, p.y - a.y) < R * 1.7;
@@ -12218,7 +12585,8 @@ function leaveOrigami(a) {
             return { name: "bunch of " + f.n.toLowerCase() };
     }
     const o = ORIGAMI.find(x => x.id === a.gift) || ORIGAMI[0];
-    S.origami = (S.origami || []).concat([{ k: o.id, at: Date.now() }]).slice(-24);
+    origFresh = Date.now();
+    S.origami = (S.origami || []).concat([{ k: o.id, at: origFresh }]).slice(-24); // (one you already have goes up too: they hang side by side)
     addP({ type: "text", text: o.name, room: a.room, x: a.x, y: a.y + anomGeo(a.room).wr * .8, vy: -10, max: 2.6, col: "#fff6e0", size: 13 });
     note(`The ghost at the window left a ${o.name}.`);
     saveSoon();
@@ -12228,6 +12596,8 @@ function resolveAnom() {
     const a = anom;
     if (!a || a.resolved)
         return;
+    if (a.type === "space") // nothing to deal with: Mite just remarks on the view (space.js)
+        return spaceTap(a);
     a.resolved = true;
     sfx("low");
     nextAnom = performance.now() + anomalyInterval();
@@ -12242,21 +12612,23 @@ function resolveAnom() {
         anomPay(a);
         S.flags.door = 1;
         pet.start("curious", { tx: clamp(a.x, W * .1, W * .9) });
-        const fl = Math.random() < .3 ? oddFlowers("a door that wasn't there") : null, it = fl ? null : findAltered();
+        const eye = Math.random() < .25 ? findEye("door") : null, fl = !eye && Math.random() < .3 ? oddFlowers("a door that wasn't there") : null, it = fl || eye ? null : findAltered();
+        if (eye) {
+            setTimeout(() => speak(`I went in for a second. Something gave me an eye. ${eye.name}. It's in the jar now, looking around.`), 2600);
+            incNote(`Incident ${no}, ${tm}: a door in the wagon wall. ${pn} went through and came back with an eye (${eye.name.toLowerCase()}). It seems content.`);
+            return end();
+        }
         setTimeout(() => speak(fl ? `I went in for a second. There were flowers on the other side. I brought some back: ${fl.n.toLowerCase()}.` : it ? `I went in for a second. Came back with this: ${it}.` : "I looked inside. It looked back. Nice door."), 2600);
         incNote(`Incident ${no}, ${tm}: a door in the wagon wall. ${pn} went through for ████ seconds.${it ? " Retrieved: " + it + "." : ""}`);
         return end();
     }
-    if (a.type === "phone") {
+    if (a.type === "phone") { // Mite goes over and picks it up (answerPhone); it keeps ringing until then
         anomPay(a);
         S.flags.phone = 1;
-        pet.start("curious", { tx: clamp(a.x, W * .1, W * .9) });
-        const it = Math.random() < .35 ? findAltered() : null;
-        setTimeout(() => {
-            const t = say("phone");
-            incNote(`Incident ${no}, ${tm}: the phone rang. Transcript: ${t || "[blank]"}${it ? " Something was left by the phone: " + it + "." : ""}`);
-        }, 2200);
-        return end();
+        a.call = { no, tm, it: Math.random() < .35 ? findAltered() : null };
+        a.life = a.t + 60; // time enough to get there from the far end of the wagon
+        requestObj("anomphone", a.x, a.y - R);
+        return afterChange();
     }
     if (a.type === "eyes") {
         anomPay(a);
@@ -12284,6 +12656,15 @@ function resolveAnom() {
     if (a.type === "ghost") {
         anomPay(a);
         pet.start("wave");
+        const eye = Math.random() < .25 ? findEye("ghost") : null; // now and then a paper eye for the jar instead (eyes.js)
+        if (eye) {
+            a.gifted = true;
+            setTimeout(() => speak(`It left a ${eye.name.toLowerCase()}. Folded, blinking. It's in the jar on the key rack now.`), 900);
+            incNote(`Incident ${no}, ${tm}: a ghost at the window. Said: "${a.line}". Left: one paper eye. Filed under: reference.`);
+            a.exit = a.t;
+            a.life = a.t + 2.5;
+            return afterChange();
+        }
         const o = leaveOrigami(a);
         setTimeout(() => speak(choice([`It said hi. I said hi. It left a ${o ? o.name : "something folded"}. We're friends now, I think.`, `The paper ghost again. It folds things while it waits. This one's a ${o ? o.name.replace("paper ", "") : "surprise"}.`, "It waved. I waved. That's the whole story and it's a good one."])), 900);
         incNote(`Incident ${no}, ${tm}: a ghost at the window. Said: "${a.line}". Left: ${o ? "a " + o.name : "nothing"}. Threat level: none. Cuteness: classified.`);
@@ -12357,6 +12738,29 @@ function drawAnom(a, tsec) {
         f(a, tsec);
     cx.restore();
 }
+/* the red phone's handset at Mite's ear, on its curly cord: drawn after Mite (loop.js) */
+function drawHandset(a) {
+    const x = a.x, y = a.y, sd = a.held, ex = pet.x + sd * R * 1.16, ey = GY - (pet.ground || 0) - R * 1.12;
+    cx.fillStyle = "#b4262f";
+    cx.strokeStyle = "#7a161d";
+    cx.lineWidth = Math.max(1.5, R * .035);
+    cx.beginPath();
+    cx.moveTo(x - sd * R * .3, y - R * .14);
+    for (let i = 1; i <= 16; i++) {
+        const k = i / 16, sag = Math.sin(Math.PI * k) * R * .3;
+        cx.lineTo(x - sd * R * .3 + (ex - x + sd * R * .3) * k + Math.sin(i * 2.4) * R * .06, y - R * .14 + (ey + R * .28 - y + R * .14) * k + sag);
+    }
+    cx.stroke();
+    cx.save();
+    cx.translate(ex, ey);
+    cx.rotate(-sd * .3);
+    cx.fillRect(-R * .07, -R * .28, R * .14, R * .56);
+    cx.beginPath();
+    cx.ellipse(0, -R * .28, R * .13, R * .085, 0, 0, 7);
+    cx.ellipse(0, R * .28, R * .13, R * .085, 0, 0, 7);
+    cx.fill();
+    cx.restore();
+}
 const ANOM_DRAW = {
     door(a) {
         const w = R * .8, h = R * 1.45, x0 = a.x - w / 2, y0 = GY - h;
@@ -12378,7 +12782,7 @@ const ANOM_DRAW = {
         cx.fill();
     },
     phone(a) {
-        const ring = (a.t % 2.4) < 1;
+        const ring = !a.held && !a.done && (a.t % 2.4) < 1;
         const sx = ring && !reduced ? Math.sin(a.t * 60) * 2 : 0;
         const x = a.x + sx, y = a.y;
         cx.fillStyle = "#a8232b";
@@ -12398,6 +12802,8 @@ const ANOM_DRAW = {
         cx.arc(x, y + R * .06, R * .04, 0, 7);
         cx.fill();
         cx.fillStyle = "#8a1c23";
+        if (a.held) // the handset is at Mite's ear (drawHandset, in front of Mite)
+            return;
         cx.beginPath();
         cx.ellipse(x, y - R * .2 - (ring ? Math.abs(Math.sin(a.t * 30)) * R * .05 : 0), R * .42, R * .09, 0, 0, 7);
         cx.fill();
@@ -12632,14 +13038,14 @@ const ANOM_DRAW = {
 /* the origami garland across the top of the window: everything the ghost has left */
 /* the adorbigami hang on strings from the ceiling at the right of the room, one under the other, two strings
    side by side, swaying a little. Tap one and it twirls; Mite says something about it. */
-let origHits = [], origSpin = {};
+let origHits = [], origSpin = {}, origFresh = 0; // origFresh: the one the ghost just left (it twirls and sparkles the first time you see it)
 function origamiStrands() {
-    const list = (S.origami || []).slice(-12), top = Math.max(R * .7, H * .06), bottom = GY - R * 4.15;
+    const all = S.origami || [], from = Math.max(0, all.length - 16), list = all.slice(from), top = Math.max(R * .7, H * .06), bottom = GY - R * 4.15; // the newest sixteen, four to a string
     // four strings: two in the right corner, two just left of the round window, so none of them gets too long
     const rm = room(), wl = rm.wx - rm.wr, xs = [W - R * .55, wl - R * .35, W - R * 1.2, wl - R * 1.0];
     const low = Math.min(bottom, lampY(rm) - R * .55); // (and they all stop above the hanging lamp)
     const per = Math.ceil(list.length / 4), gap = Math.max(R * .35, Math.min(R * .75, (low - top - R * .9) / Math.max(1, per))); // the first one hangs below the clock chip
-    return list.map((o, i) => ({ o, i, k: i % 4, x: xs[i % 4], y: top + R * .8 + gap * Math.floor(i / 4) + (i % 4 > 1 ? gap * .5 : 0), top }));
+    return list.map((o, i) => ({ o, i, k: i % 4, x: xs[i % 4], y: top + R * .8 + gap * Math.floor(i / 4) + (i % 4 > 1 ? gap * .5 : 0), top, fresh: o.at === origFresh }));
 }
 function drawGarland(rm, dk) {
     origHits = [];
@@ -12663,6 +13069,12 @@ function drawGarland(rm, dk) {
         const kind = ORIGAMI.find(x => x.id === it.o.k) || ORIGAMI[0];
         const sway = Math.sin(t * .7 + it.k) * R * .05 * ((it.y - it.top) / (GY * .3));
         const x = it.x + sway, y = it.y + s * .9;
+        if (it.fresh && view === "room") { // the new one: a twirl and a few sparkles, once
+            origSpin[it.i] = t;
+            origFresh = 0;
+            for (let k = 0; k < 8; k++)
+                addP({ type: "spark", x: it.x, y: it.y + s, vx: rnd(-40, 40), vy: rnd(-40, 20), g: 30, max: .9, col: "#fff6e0", size: 2, room: "room" });
+        }
         const sp = origSpin[it.i], ph = sp ? Math.min(1, (t - sp) / 1.1) : 1;
         if (sp && ph >= 1)
             delete origSpin[it.i];
@@ -12778,6 +13190,11 @@ function pickDream() {
     return Object.assign(base, { kind: "dream", text: compose(DREAM_DRAWERS[d].pool) });
 }
 function logDream(p) {
+    if (Math.random() < .12) { // something falls out of the folder: an eye, for the jar (eyes.js)
+        const e = findEye("dream");
+        if (e)
+            setTimeout(() => speak(`Something fell out of the folder. ${e.name}. It blinked at me. Into the jar it goes.`, { ms: 5000 }), 2500);
+    }
     S.dreams = (S.dreams || []).concat({ at: Date.now(), d: p.d, k: p.kind, s: p.stamp || "", t: p.text }).slice(-80);
     if (p.fresh)
         S.dreamDay = dayKey();
@@ -13771,13 +14188,25 @@ function drifterTap(p, rmName = "room") {
     });
     if (!d)
         return false;
-    if (d.k === "wisp" && !d.blinked) { // the first time, it just blinks away to somewhere else
-        d.blinked = true;
-        for (let i = 0; i < 6; i++)
-            addP({ type: "spark", x: d.x, y: d.y, vx: rnd(-50, 50), vy: rnd(-50, 30), g: 0, max: .5, col: "#cfe2ff", size: 2 });
-        d.x = d.x < W / 2 ? W * .85 : W * .15;
-        speak(choice(["It moved. They do that.", "Missed. Wisps are quicker than they look.", "It's teasing us."]), { ms: 3000 });
-        return true;
+    if (d.k === "wisp") { // it plays: blinks away to somewhere else, up to six times, then lets itself be caught
+        if (d.dodges === undefined)
+            d.dodges = ri(1, 6);
+        if (d.dodges > 0) {
+            d.dodges--;
+            d.blinked = (d.blinked || 0) + 1;
+            for (let i = 0; i < 6; i++)
+                addP({ type: "spark", x: d.x, y: d.y, vx: rnd(-50, 50), vy: rnd(-50, 30), g: 0, max: .5, col: "#cfe2ff", size: 2 });
+            let nx = rnd(W * .12, W * .88);
+            for (let k = 0; k < 6 && Math.abs(nx - d.x) < W * .3; k++)
+                nx = rnd(W * .12, W * .88);
+            d.x = nx;
+            if (d.y !== undefined)
+                d.y = clamp(d.y + rnd(-R * .8, R * .8), H * .12, GY - R * .4);
+            d.life = Math.max(d.life, d.t + 8); // it stays to play
+            const lines = d.blinked === 1 ? ["It moved. They do that.", "Missed. Wisps are quicker than they look.", "It's teasing us."] : d.blinked < 4 ? ["Again! Over there.", "It's laughing. I can tell. Its light goes wobbly.", "Left! No, right! No..."] : ["This is a game now. I'm winning. Somehow.", "It's waiting for us. Very sporting.", "One more go. It's getting tired. I'm not."];
+            speak(choice(lines), { ms: 2600 });
+            return true;
+        }
     }
     const col = { seed: "#f6f1e2", motes: "#ffe29a", spore: "#bdf08c", wisp: "#cfe2ff", page: "#f3ead6", steam: "#f0f0eb", snow: "#f4f8ff" }[d.k];
     for (let i = 0; i < 8; i++)
@@ -14240,12 +14669,17 @@ const catSize = () => R * .68;
    by the fire, and next to the crystal cabinet */
 function catSpots(room) {
     if (room === "garden") { // the armchair, mostly; the floor of the nook now and then
-        const g = gardenGeo(), seat = { x: g.chX - R * .3, g: g.chH };
-        return [seat, seat, { x: g.drX + g.drW * .18, g: g.drH + R * .02 }, { x: W * .5, g: 0 }]; // (or on top of the drawers)
+        const g = gardenGeo(), seat = { x: g.chX - R * .3, g: g.chH }, top = { x: g.drX + g.drW * .18, g: g.drH + R * .02 }, floor = { x: W * .5, g: 0 };
+        return [hasChair() ? seat : floor, hasChair() ? seat : floor, hasDrawers() ? top : floor, floor]; // (or on top of the drawers)
     }
     if (room === "archive") {
         const g = archGeo();
-        return [{ x: g.deskX0 + R * .45, g: R * .95 + R * .16 }, { x: g.x0 + R * 1.2, g: 0 }, { x: (g.x0 + g.x1) / 2, g: 0 }, { x: g.x1 - R * 1.6, g: 0 }];
+        const out = [{ x: g.deskX0 + R * .45, g: R * .95 + R * .16 }, { x: g.x0 + R * 1.2, g: 0 }, { x: (g.x0 + g.x1) / 2, g: 0 }, { x: g.x1 - R * 1.6, g: 0 }];
+        if (own("circle")) { // the middle of the chalk circle: one of her favourite places (circle.js)
+            const c = circleGeo(), mid = { x: c.x, g: 0, z: c.y - GY, circle: true };
+            out.push(mid, mid, mid);
+        }
+        return out;
     }
     // in the wagon her place is on top of the fireplace; the floor only now and then (or without a fireplace),
     // and never right where a visitor is
@@ -14301,7 +14735,7 @@ function catNext(now) {
         return;
     }
     if (night && cat.room === "garden") { // curled up on the seat (the top of the drawers if Mite's reading there)
-        const sp = catSpots("garden")[pet.beh === "armread" ? 2 : 0];
+        const sp = catSpots("garden")[pet.beh === "armread" || !hasChair() ? 2 : 0];
         Object.assign(cat, { tx: sp.x, tg: sp.g, tz: 0, ph: "walk" });
         return;
     }
@@ -14309,7 +14743,7 @@ function catNext(now) {
     const sp = choice(clear.length ? clear : spots);
     cat.tx = sp.x;
     cat.tg = sp.g;
-    cat.tz = sp.g === 0 && Math.random() < .5 ? floorDepth() : 0; // a floor spot: sometimes out in the middle of the room
+    cat.tz = sp.z !== undefined ? sp.z : sp.g === 0 && Math.random() < .5 ? floorDepth() : 0; // a floor spot: sometimes out in the middle of the room
     cat.ph = "walk";
 }
 function catTick(dt, now) {
@@ -14389,6 +14823,11 @@ function catSettle(now) {
     if (cat.g > 0 && cat.room === "room" && catHeadroom() < CAT_SPRITES.sit.length * catU())
         cat.ph = "nap"; // no room to sit up under the balcony: she curls up instead
     cat.until = now + (cat.ph === "nap" ? (catNight() && cat.room === "garden" ? rnd(300e3, 600e3) : rnd(40e3, 90e3)) : rnd(15e3, 40e3));
+    if (own("circle") && cat.room === "archive" && !catNight()) { // in the middle of the chalk circle: sitting up, a long while (her rituals: green candles)
+        const c = circleGeo();
+        if (Math.abs(cat.x - c.x) < R * .3 && Math.abs(GY + cat.z - c.y) < R * .3)
+            Object.assign(cat, { ph: "sit", until: now + rnd(45e3, 90e3) });
+    }
     if (cat.room !== cat.goal && !catNight()) // just passing through
         Object.assign(cat, { ph: "sit", until: now + rnd(1500, 4000) });
 }
@@ -14652,6 +15091,12 @@ function drawCat(dk, now) {
 }
 /* a tap: it says something (and stops for a moment if it was walking past) */
 function catTap() {
+    if (catInCircle()) { // busy: a warlock has called on her (she's somebody's patron, circle.js)
+        const line = compose("catritual") || "Not now. A warlock is calling. I'll be right back.";
+        snailSay(line, clamp(3500 + line.length * 45, 4500, 9000), "cat");
+        heard(CAT_NAME, line, Date.now());
+        return;
+    }
     if (!objQ.cur && pet.beh !== "sleep" && pet.beh !== "catvisit" && !S.lightsOut && !(cat.room === "room" && cat.g > 0 && cat.ph === "jump")) { // Mite comes over for a chat
         if (!S.flags.tap_cat) {
             S.flags.tap_cat = 1;
@@ -14973,6 +15418,8 @@ function drawerLabels(t = Date.now()) {
 }
 /* now and then: the chest arrives (the first time); and Mite mentions who moved in or out since it last looked */
 function drawerTick() {
+    if (!hasDrawers())
+        return;
     if (!S.drawers)
         S.drawers = { at: 0, sig: "" };
     if (!S.drawers.at) {
@@ -15016,11 +15463,24 @@ function openDrawer() {
 }
 /* the snapshots on the pinboard: places the wagon has stood (tap one and Mite remembers it: pool pinboard) */
 const PIN_PHOTOS = ["sea", "hills", "forest", "lighthouse"];
+/* the snapshots that are up: the space postcard too, once the wagon's been on its detour (space.js) */
+function pinPhotos() {
+    return (S.flags.spacecard ? ["space"] : []).concat(PIN_PHOTOS);
+}
 function drawPinPhoto(k, w, h, dk) {
     const D = c => mix(c, "#1a1a20", dk * .6), m = Math.max(PX, w * .08), iw = w - m * 2, ih = h - m * 2.2;
-    cx.fillStyle = D(k === "forest" ? "#b5d0e6" : "#7fa2c8");
+    cx.fillStyle = D(k === "space" ? "#0a0c20" : k === "forest" ? "#b5d0e6" : "#7fa2c8");
     cx.fillRect(m, m, iw, ih);
-    if (k === "sea") {
+    if (k === "space") { // the detour: stars and a ringed planet
+        cx.fillStyle = D("#ffffff");
+        for (let i = 0; i < 6; i++)
+            cx.fillRect(m + (i * 37 % 10) / 10 * iw, m + (i * 23 % 10) / 10 * ih, PX, PX);
+        cx.fillStyle = D("#c98a5a");
+        cx.fillRect(m + iw * .45, m + ih * .4, iw * .25, ih * .35);
+        cx.fillStyle = D("#e8d0a0");
+        cx.fillRect(m + iw * .3, m + ih * .55, iw * .55, Math.max(1, PX / 2));
+    }
+    else if (k === "sea") {
         cx.fillStyle = D("#33456e");
         cx.fillRect(m, m + ih * .55, iw, ih * .45);
         cx.fillStyle = D("#fff0b8");
@@ -15052,6 +15512,19 @@ function drawPinPhoto(k, w, h, dk) {
         cx.fillStyle = D("#b8592f");
         cx.fillRect(m + iw * .45, m + ih * .25, iw * .12, ih * .1);
     }
+}
+/* what's in the nook so far: the chesterfield (and its side table) comes with the first book; the renter's chest,
+   the vase and the dried flower book are bought together (rental) */
+function hasChair() {
+    return (S.b.books || 0) > 0;
+}
+/* the pinboard starts empty: the first tap on it, Mite climbs up and pins up the first four postcards, one by one */
+const BOARD_FIRST = 4;
+function boardHung() {
+    return Math.min(BOARD_FIRST, num(S.flags.boardN));
+}
+function hasDrawers() {
+    return own("rental") > 0;
 }
 let gardenHits = { plants: [], desk: null, letters: null, chair: null, board: [], drawers: null }, gwparts = []; // gwparts: leaves and such falling outside the window
 /* the snail's bedtime: at night, or when the lights are out (it sleeps next to Mite, snail.js) */
@@ -15129,6 +15602,8 @@ function drawGarden(now, dt) {
             cx.fillStyle = "rgba(255,255,255,.7)";
             cx.fillRect(wx0 + (i * 41.1 + Math.sin(t + i) * 6) % ww, wy0 + ((t * 18 + i * 37) % wh), 2, 2);
         }
+    if (spaceOn()) // the detour: space outside (space.js)
+        drawSpace(wx0, wy0, ww, wh, t);
     cx.restore();
     // the frame, like the wagon window's: a round edge, spokes like a sunrise, and a sill
     const fr = mix("#7a5636", "#2e2015", dk);
@@ -15155,6 +15630,7 @@ function drawGarden(now, dt) {
     drawPlankFloor(dk);
     drawMoss(dk, "garden"); // (draw-world.js)
     drawRug(dk, "#618f46", "#16231a", "#b8d682", "#2a3a20"); // (colours between two palette colours, so the rug gets the same woven dither as the red one) // a green rug, the same shape as the wagon's red one
+    drawMess(dk, "garden"); // mess on the nook floor
     drawNookLoft(dk); // the platform high on the wall, and its stairs (loft.js)
     drawLanterns(lanternString("garden"), dk); // and the lanterns underneath it, as many as along the wagon's ceiling (draw-world.js)
     gardenHits = { plants: [], desk: null, letters: null, chair: null, board: [], drawers: null, table: null };
@@ -15231,7 +15707,10 @@ function drawGarden(now, dt) {
                 cx.fillStyle = "#f2c14e";
                 cx.fillRect(Math.floor(kx / PX) * PX - PX / 2, Math.floor((dTop - R * .27) / PX) * PX, PX, PX * 2);
             }
-            drawFlowerBook(dk); // the dried flower book on the left of the desk (flowers.js)
+            if (hasDrawers())
+                drawFlowerBook(dk); // the dried flower book on the left of the desk (flowers.js)
+            else
+                fbookHit = null;
             // the letter rack on the right end: pigeonholes with the replies in them (post.js); new ones stick out, with a seal
             {
                 const rw = R * .56, rh = R * .44, rx = dx1 - R * .1 - rw, ry = dTop - rh, inbox = (S.post && S.post.inbox) || [];
@@ -15266,10 +15745,11 @@ function drawGarden(now, dt) {
             for (let i = 0; i < 26; i++) // the cork's speckle
                 cx.fillRect(bx0 + (i * 37.7) % bw, by0 + (i * 23.3) % bh, PX, PX);
             const cards = activeFestivals().filter(a => a.f.kind === "card").slice(0, 3);
-            const items = [...cards.map(a => ({ fest: a })), ...PIN_PHOTOS.map(k => ({ photo: k }))].slice(0, Math.max(3, Math.floor(bw / (R * .75))));
+            const items = [...cards.map(a => ({ fest: a })), ...PIN_PHOTOS.map(k => ({ photo: k }))].slice(0, Math.max(3, Math.floor(bw / (R * .75)))).slice(0, boardHung()).concat(S.flags.spacecard && boardHung() >= BOARD_FIRST ? [{ photo: "space" }] : []); // (and the space postcard, after the detour)
             const n = items.length, cw = Math.min(R * 1.05, bw / n - R * .12), chh = cw * .7;
+            const slots = Math.max(n, Math.min(BOARD_FIRST, Math.max(3, Math.floor(bw / (R * .75)))));
             items.forEach((it, i) => {
-                const x = bx0 + (i + .5) * bw / n - cw / 2, y = by0 + R * .14 + (i % 2) * Math.max(0, bh - chh - R * .3) * .6;
+                const x = bx0 + (i + .5) * bw / slots - cw / 2, y = by0 + R * .14 + (i % 2) * Math.max(0, bh - chh - R * .3) * .6;
                 cx.save();
                 cx.translate(x + cw / 2, y + chh / 2);
                 cx.rotate((i % 3 - 1) * .06);
@@ -15289,7 +15769,7 @@ function drawGarden(now, dt) {
                 gardenHits.board.push(Object.assign({ x, y, w: cw, h: chh, cx: x + cw / 2 }, it.fest ? { fest: it.fest.f.id } : { photo: it.photo }));
             });
             // the notes you've pinned up, in a row underneath (their words are in the close-up: pinboard.js)
-            const notes = pinNotes(), nw = Math.min(R * .42, bw / Math.max(4, notes.length + 1));
+            const notes = boardHung() >= BOARD_FIRST ? pinNotes() : [], nw = Math.min(R * .42, bw / Math.max(4, notes.length + 1));
             notes.forEach((q, i) => {
                 const x = Math.floor((bx0 + (i + .5) * bw / notes.length - nw / 2) / PX) * PX, y = Math.floor((by1 - nw - R * .12 - (i % 2) * R * .1) / PX) * PX;
                 cx.fillStyle = mix(noteCol(q), "#3a3530", dk * .6);
@@ -15303,6 +15783,7 @@ function drawGarden(now, dt) {
             gardenHits.boardAll = { x: bx0, y: by0, w: bw, h: bh, cx: bx0 + bw / 2 };
         }
         // the little chest of drawers for rent by the armchair: brass labels, blank while a drawer is to let
+        if (hasDrawers())
         {
             const { drX, drW, drH } = g, x0 = drX - drW / 2, top = GY - drH, n = 4, dh = (drH - R * .16) / n, dec = drawerLabels();
             cx.fillStyle = woodD;
@@ -15330,8 +15811,12 @@ function drawGarden(now, dt) {
             }
             gardenHits.drawers = { x: x0, y: top - R * .1, w: drW, h: drH + R * .1, cx: drX };
         }
-        drawVase(dk, t); // the vase of flowers on the drawers (flowers.js)
-        drawChesterfield(g, dk, t, wood, woodD); // the chesterfield and the side table (drawn again over Mite on the stairs)
+        if (hasDrawers())
+            drawVase(dk, t); // the vase of flowers on the drawers (flowers.js)
+        else
+            flowerHit = null;
+        if (hasChair())
+            drawChesterfield(g, dk, t, wood, woodD); // the chesterfield and the side table (drawn again over Mite on the stairs)
     });
     { // the candle's flame and glow: a little always, more in the evening
         const c = gardenCandle(g), fl = 1 + Math.sin(t * 9) * .04 + Math.sin(t * 23) * .03, up = Math.sin(t * 9) + Math.sin(t * 23) * .6 > .9 ? PX : 0;
@@ -15443,7 +15928,7 @@ function drawChesterfield(g, dk, t, wood, woodD) {
 /* Mite is on the nook's stairs, which go up behind the chesterfield: the chair and table go over it again */
 function chesterfieldOverMite(now) {
     const lg = nookLoftGeo(), gr = pet.ground || 0;
-    if (view !== "garden" || gr <= 0 || gr >= lg.rise - 1)
+    if (view !== "garden" || gr <= 0 || gr >= lg.rise - 1 || !hasChair())
         return;
     const d = new Date(), dk = clamp(skyAt(d.getHours() + d.getMinutes() / 60).dark * .6 + (S.lightsOut ? .25 : 0), 0, 1);
     withRoom("garden", () => drawLayered(() => drawChesterfield(gardenGeo(), dk, reduced ? 0 : now / 1000, mix("#8a6040", "#241810", dk), mix("#5e3e28", "#160f0a", dk))));
@@ -15495,8 +15980,11 @@ function gardenTap(p) {
         requestObj("gletters", gardenHits.letters.cx, gardenHits.letters.y);
         return;
     }
-    if (gardenHits.boardAll && hitIn(p, gardenHits.boardAll)) { // the pinboard: up close (pinboard.js)
-        openPinboard();
+    if (gardenHits.boardAll && hitIn(p, gardenHits.boardAll)) { // the pinboard: up close (pinboard.js); empty at first, so Mite goes up and pins the first postcards
+        if (boardHung() < BOARD_FIRST)
+            requestObj("ghang", gardenHits.boardAll.cx, gardenHits.boardAll.y);
+        else
+            openPinboard();
         return;
     }
     if (flowerHit && hitIn(p, flowerHit, 30)) { // the vase: Mite smells the flowers (flowers.js)
@@ -15519,6 +16007,8 @@ function gardenTap(p) {
         requestObj("gdesk", gardenHits.desk.cx, gardenHits.desk.y);
         return;
     }
+    if (sweepAt(p.x, p.y, "garden")) // mess on the nook's floor
+        return;
     if (lookTap(p, "garden")) // the window, the side table, the beam... (looks.js)
         return;
     if (view === "garden" && p.y > H * .35 && pet.beh !== "sleep")
@@ -15526,7 +16016,7 @@ function gardenTap(p) {
 }
 let gardenPlantAt = 0, gardenPin = null;
 function isGardenKind(kind) {
-    return kind === "gplants" || kind === "gdesk" || kind === "gchair" || kind === "gletters" || kind === "gdrawers" || kind === "gpin" || kind === "gpossum" || kind === "gvase" || kind === "gfbook";
+    return kind === "gplants" || kind === "gdesk" || kind === "gchair" || kind === "gletters" || kind === "gdrawers" || kind === "gpin" || kind === "gpossum" || kind === "gvase" || kind === "gfbook" || kind === "ghang";
 }
 /* which way Mite walks to get to another room (one step at a time; startObj and pet.start chain them) */
 function routeTo(target) {
@@ -15793,75 +16283,63 @@ function possumName() {
 const possum = { talkUntil: 0, chat: false, goal: "garden", goalUntil: 0, ready: false, room: "garden", x: 0, fy: 0, hy: 0, tx: 0, ty: 0, dir: 1, ph: "hang", until: 0, meal: null, ate: 0, said: false, fed: null };
 let possumHit = null;
 /* k black (ears, eyes), g grey fur, l the lighter belly, w the white face, p pink (nose, paws, tail), - shut eyes */
-const POSSUM_SPRITES = {
+const POSSUM_SPRITES = { // small: about the size of Midnightcat's head and shoulders
     walk1: [
-        "..............kk....",
-        ".............kwwk...",
-        "............gwwwww..",
-        "...ggggggggggwkwwww.",
-        "..gggggggggggwwwwwwp",
-        ".ggglllllllgggwww...",
-        "pggllllllllggg......",
-        "p.gggggggggggg......",
-        "p..gg......gg.......",
-        ".pp.pp......pp......"],
+        ".........kk...",
+        "........kwwk..",
+        "..ggggggwwkww.",
+        ".gggggggwwwwwp",
+        "pgglllllggw...",
+        "p.gggggggg....",
+        "p.gg....gg....",
+        ".p.pp....pp..."],
     walk2: [
-        "..............kk....",
-        ".............kwwk...",
-        "............gwwwww..",
-        "...ggggggggggwkwwww.",
-        "..gggggggggggwwwwwwp",
-        ".ggglllllllgggwww...",
-        "pggllllllllggg......",
-        "p.gggggggggggg......",
-        "p...gg....gg........",
-        ".pp..pp..pp........."],
+        ".........kk...",
+        "........kwwk..",
+        "..ggggggwwkww.",
+        ".gggggggwwwwwp",
+        "pgglllllggw...",
+        "p.gggggggg....",
+        "p..gg..gg.....",
+        ".p..pp.pp....."],
     eat: [ // nose down to the floor
-        "....................",
-        "..............kk....",
-        "...ggggggggggkwwk...",
-        "..ggggggggggggwwww..",
-        ".gggllllllllggw-www.",
-        "pgglllllllllggwwwww.",
-        "p.ggggggggggggg.wwwp",
-        "p..gg......gg.......",
-        ".pp.pp......pp......"],
-    hang: [ // upside down from the beam, asleep (small: a tail, a round little body, the face at the bottom)
-        "....pp...",
-        "....p....",
-        "...pp....",
-        "...ggg...",
-        "..glllg..",
-        ".glllllg.",
-        ".gglllgg.",
-        "p.ggggg.p",
-        "..wwwww..",
-        ".wwwpwww.",
-        ".w-www-w.",
-        "k.wwwww.k",
-        "kk.....kk"],
+        "..............",
+        ".........kk...",
+        "..ggggggkwwk..",
+        ".gggllllggww-w",
+        "pgglllllgggwww",
+        "p.gggggggg..wp",
+        "p.gg....gg....",
+        ".p.pp....pp..."],
+    hang: [ // upside down from the beam, asleep (a tail, a round little body, the face at the bottom)
+        "...pp..",
+        "...p...",
+        "..ppp..",
+        "..ggg..",
+        ".glllg.",
+        ".glllg.",
+        "p.ggg.p",
+        ".wwwww.",
+        ".-wpw-.",
+        "k.www.k"],
     beg: [ // sitting up by the oven, paws up, waiting for a cookie
-        "...kk.kk..",
-        "..kwwwwk..",
-        "..wwwwww..",
-        ".wwkwwkww.",
-        "..wwwpww..",
-        "...gggg...",
-        "..gllllg..",
-        ".pgllllgp.",
-        "..gllllg..",
-        "..gllllg..",
-        "..gggggg..",
-        ".pp.gg.pp.",
-        "pp........"],
+        "..kk.kk.",
+        "..wwwww.",
+        ".wkwwkw.",
+        "..wwpw..",
+        "..gggg..",
+        ".pgllgp.",
+        "..gllg..",
+        "..gggg..",
+        ".pp..pp.",
+        "pp......"],
     dead: [ // flat on its back, paws up, tongue out. Very convincing
-        "...p..p..p..p.......",
-        "...g..g..g..g.......",
-        "..gggggggggggg.kk...",
-        ".ggllllllllllgwwwk..",
-        "pgglllllllllggw-wwwp",
-        "p.gggggggggggggwwwwp",
-        ".pp................."]
+        "..p.p.p.p.....",
+        "..g.g.g.g.....",
+        ".gggggggg.kk..",
+        "pgllllllggw-wp",
+        "p.gggggggggwwp",
+        ".pp..........."]
 };
 function possumU() {
     return Math.max(1, Math.round(R * .75 / 10 / PX)) * PX;
@@ -15985,6 +16463,10 @@ function possumTick(dt, now) {
             p.hy -= R * .55 * dt;
             if (p.hy <= g.glassY) {
                 Object.assign(p, { hy: g.glassY, ph: "hang", until: now + rnd(30e3, 90e3) });
+                if (p.carry) { // home with the cookie: eaten upside down, then sleep
+                    p.carry = false;
+                    p.cookie = now + 7000;
+                }
             }
             return;
         case "fly": // tail spinning over its head, floating down to the floor
@@ -16031,13 +16513,20 @@ function possumTick(dt, now) {
                 return;
             break;
         case "beg": // by the oven; the moment the tray comes out, a cookie for the possum
-            if (pet.beh === "bakeOut" && pet.b.done && pet.b !== p.fed) {
+            if (pet.beh === "bakeOut" && pet.b.done && pet.b !== p.fed) { // Mite hands it a cookie
                 p.fed = pet.b;
-                Object.assign(p, { ph: "eat", until: now + 2600 });
-                sfx("munch");
-                addP({ type: "text", text: "yum", x: p.x, y: p.fy - R * 1.1, vy: -16, max: 2, col: "#ffd76a", size: 12, room: p.room });
                 if (roomVisible("room"))
                     setTimeout(() => say("possumcookie"), 900);
+                if (possumAwake()) { // awake: eats it right here
+                    Object.assign(p, { ph: "eat", until: now + 2600, cookie: now + 2600 });
+                    sfx("munch");
+                    addP({ type: "text", text: "yum", x: p.x, y: p.fy - R * 1.1, vy: -16, max: 2, col: "#ffd76a", size: 12, room: p.room });
+                }
+                else { // daytime, sleepy: takes it home to the beam and eats it there, upside down, then sleeps
+                    p.carry = true;
+                    Object.assign(p, { ph: "sit", until: now + 800 });
+                    addP({ type: "text", text: "!", x: p.x, y: p.fy - R * 1.1, vy: -16, max: 1.4, col: "#ffd76a", size: 12, room: p.room });
+                }
                 return;
             }
             if (possumCookies() && now < p.until)
@@ -16058,17 +16547,18 @@ function possumTick(dt, now) {
             addP({ type: "text", text: choice(["sniff", "sniff sniff", "…"]), x: p.x, y: p.fy - R * 1.2, vy: -12, max: 1.8, col: "#f3e7c8", size: 11, room: p.room });
         return;
     }
-    if (p.room === "room" && (S.mess || []).length && p.ate < 14) { // the mess on the wagon floor: dinner
-        if (p.meal && S.mess.includes(p.meal) && Math.abs(p.x - messPos(p.meal).x) < 3) {
+    const here = (S.mess || []).filter(m => messRoom(m) === p.room);
+    if (here.length && p.ate < 14 && !p.carry) { // mess on the floor of the room it's in: dinner
+        if (p.meal && here.includes(p.meal) && Math.abs(p.x - messPos(p.meal).x) < 3) {
             Object.assign(p, { ph: "eat", until: now + rnd(1400, 2200) });
             sfx("munch");
-            if (!p.said && roomVisible("room")) {
+            if (!p.said && roomVisible(p.room)) {
                 p.said = true;
                 say("possumtrash");
             }
             return;
         }
-        p.meal = S.mess.slice().sort((a, b) => Math.abs(messPos(a).x - p.x) - Math.abs(messPos(b).x - p.x))[0];
+        p.meal = here.slice().sort((a, b) => Math.abs(messPos(a).x - p.x) - Math.abs(messPos(b).x - p.x))[0];
         const m = messPos(p.meal);
         Object.assign(p, { ph: "walk", tx: m.x, ty: m.y });
         return;
@@ -16080,21 +16570,20 @@ function possumTick(dt, now) {
         p.goal = pickRoom({ garden: .5, room: .3, archive: .2 });
         p.goalUntil = now + rnd(120e3, 240e3);
     }
-    const goal = possumCookies() || possumHungry() ? "room" : !possumAwake() ? "garden" : p.goal;
+    const goal = p.carry ? "garden" : possumCookies() ? "room" : possumHungry() ? messRoom((S.mess || []).find(m => messRoom(m) === p.room) || S.mess[0]) : !possumAwake() ? "garden" : p.goal; // (mess: in this room first, else wherever it is)
     if (p.room !== goal) {
         const dir = Math.sign(ROOM_X[goal] - ROOM_X[p.room]);
         if (dir < 0 ? p.x < -u * 10 : p.x > W + u * 10) { // through into the next room
             p.room = ROOMS[ROOMS.indexOf(p.room) + dir];
             p.x -= dir * W; // (same height on the floor: it walks straight on through)
-            if (p.room === "room")
-                Object.assign(p, { ate: 0, said: false });
+            Object.assign(p, { ate: 0, said: false });
             Object.assign(p, { ph: "sit", until: now });
             return;
         }
         Object.assign(p, { ph: "walk", tx: dir < 0 ? -u * 12 : W + u * 12, ty: p.fy > GY + R * .2 && Math.random() < .5 ? p.fy : GY });
         return;
     }
-    if (goal === "garden" && !possumAwake()) { // daytime: back up to the beam, by the stairs and its tail, or flying
+    if (goal === "garden" && (!possumAwake() || p.carry)) { // daytime: back up to the beam, by the stairs and its tail, or flying
         const lg = nookLoftGeo(), top = p.fy <= lg.balY + 1;
         if (p.flyHome === undefined)
             p.flyHome = !top && Math.random() < .4;
@@ -16143,12 +16632,12 @@ function drawPossum(dk, now) {
     const col = { k: "#120c0a", g: "#8c8a80", l: "#c9c4b4", w: "#fbf1d9", p: "#e3a0b2", "-": "#55392a" };
     const at = (r, c) => {
         const ch = (sp[r] || "")[c];
-        return ch && ch !== "." ? (ch === "k" && blink && r === 3 && sp !== POSSUM_SPRITES.hang ? "w" : ch) : null;
+        return ch && ch !== "." ? (ch === "k" && blink && r === 2 && sp !== POSSUM_SPRITES.hang ? "w" : ch) : null;
     };
     const px = c => x0 + (flip ? cols - 1 - c : c) * u;
     drawLayered(() => {
         if (p.ph === "hang" || p.ph === "lower" || p.ph === "raise") { // the tail's hold on the beam
-            const tx = px(4);
+            const tx = px(3);
             cx.fillStyle = col.p;
             for (let y = Math.floor(gardenGeo().glassY / PX) * PX; y < y0; y += u)
                 cx.fillRect(tx, y, u, u);
@@ -16177,6 +16666,20 @@ function drawPossum(dk, now) {
             cx.fillStyle = "rgba(227,160,178,.35)"; // the blur of it
             cx.fillRect(mx - w * .55, top - u, w * 1.1, u);
         });
+    }
+    if (p.carry || (p.cookie && now < p.cookie)) { // a cookie in its paws (or in its mouth, upside down)
+        const hang = p.ph === "hang" || p.ph === "raise" || p.ph === "lower", left = p.cookie ? clamp((p.cookie - now) / 7000, .3, 1) : 1;
+        const cxp = hang ? p.x : p.x + (flip ? -1 : 1) * w * .42, cyp = hang ? y0 + h + u : y0 + u * 2.5, s = Math.max(u * 2, Math.round(u * 3 * left / u) * u);
+        drawLayered(() => {
+            cx.fillStyle = "#c98a4a";
+            cx.fillRect(Math.round((cxp - s / 2) / u) * u, Math.round(cyp / u) * u, s, s);
+            cx.fillStyle = "#5a3418"; // chocolate chips
+            cx.fillRect(Math.round((cxp - s / 2) / u) * u + u, Math.round(cyp / u) * u + u, u, u);
+        });
+        if (hang && p.cookie && Math.random() < .06) // crumbs, falling the right way down
+            addP({ type: "spark", x: cxp, y: cyp + s, vx: rnd(-8, 8), vy: rnd(10, 30), g: 200, max: .8, col: "#c98a4a", size: 2, room: p.room });
+        if (hang && p.cookie && Math.random() < .01)
+            addP({ type: "text", text: "nom", x: cxp + u * 3, y: cyp, vy: -10, max: 1.4, col: "#f3e7c8", size: 10, room: p.room });
     }
     if (p.ph === "hang" && Math.random() < .004)
         addP({ type: "text", text: "z", x: p.x + u * 4, y: y0 + h, vy: -10, vx: 6, max: 2, col: "#dfe7ff", size: 9 + Math.random() * 3 });
@@ -16248,14 +16751,13 @@ function lookSpots(rm) {
         add("lamp", "look_lamp", { x: r.lx - R * .4, y: ly - R * .35, w: R * .8, h: R * .5 });
         if (own("lantern"))
             add("lanterns", "look_lanterns", { x: 0, y: H * .03, w: W, h: H * .05 + R * .3 });
-        if (own("circle"))
-            add("circle", "look_circle", { x: W * .5 - R * 1.3, y: rugY - R * .45, w: R * 2.6, h: R * .7 }, true);
         add("rug", "look_rug", rug, true);
     }
     else if (rm === "garden") {
         const g = gardenGeo();
         add("nookwindow", "look_nookwindow", { x: g.wx0, y: g.wy0, w: g.wx1 - g.wx0, h: g.wy1 - g.wy0 });
-        add("sidetable", "look_sidetable", { x: g.tableX - R * .4, y: GY - R * 1.5, w: R * .8, h: R * 1.5 });
+        if (hasChair())
+            add("sidetable", "look_sidetable", { x: g.tableX - R * .4, y: GY - R * 1.5, w: R * .8, h: R * 1.5 });
         add("beam", "look_beam", { x: 0, y: g.glassY - R * .3, w: W, h: R * .45 });
         if (own("ndoor"))
             add("ndoor", "look_ndoor", { x: ndoorX() - R * .3, y: GY - R * 1.45, w: R * .6, h: R * 1.45 });
@@ -16269,7 +16771,7 @@ function lookSpots(rm) {
         add("bulb", "look_bulb", { x: bx - R * .3, y: by - R * .35, w: R * .6, h: R * .6 });
         if (archLadder.x >= 0)
             add("ladder", "look_ladder", { x: archLadder.x - R * .35, y: g.rail, w: R * 1.4, h: GY - g.rail });
-        add("desklamp", "look_desklamp", { x: g.deskX1 - R * .8, y: GY - R * 1.85, w: R * .55, h: R * .9 });
+        add("desklamp", "look_desklamp", { x: g.deskX1 - R * .9, y: GY - R * 1.95, w: R * .7, h: R * 1 });
         if (own("closet"))
             add("closet", "look_closet", { x: closetX() - R * .42, y: GY - R * 1.7, w: R * .84, h: R * 1.7 });
         add("bluerug", "look_bluerug", rug, true);
@@ -16332,7 +16834,8 @@ function pinNotes() {
 /* what's on the board, and where, in close-up pixels: photos along the top, postcards top right, notes below */
 function pinItems() {
     const out = [], cards = activeFestivals().filter(a => a.f.kind === "card").slice(0, 2);
-    PIN_PHOTOS.forEach((k, i) => out.push({ kind: "photo", photo: k, x: 6 + i * 17, y: 6 + (i % 2) * 3, w: 15, h: 11, rot: (i % 3) - 1 }));
+    const ph = pinPhotos(), step = ph.length > 4 ? 14 : 17, pw = ph.length > 4 ? 13 : 15;
+    ph.forEach((k, i) => out.push({ kind: "photo", photo: k, x: (ph.length > 4 ? 3 : 6) + i * step, y: 6 + (i % 2) * 3, w: pw, h: 11, rot: (i % 3) - 1 }));
     cards.forEach((a, i) => out.push({ kind: "card", fest: a, x: 74, y: 5 + i * 13, w: 16, h: 11 }));
     pinNotes().forEach((q, i) => out.push({ kind: "note", q, x: 6 + (i % 4) * 17 + (i >= 4 ? 8 : 0), y: 25 + Math.floor(i / 4) * 15 + (i % 2) * 2, w: 13, h: 12, col: noteCol(q) }));
     return out;
@@ -16343,8 +16846,14 @@ function pinPhotoArt(g, k, x, y, w, h) {
         g.fillStyle = c;
         g.fillRect(x + a, y + b, ww, hh);
     };
-    px(k === "forest" ? "#b5d0e6" : "#7fa2c8", 1, 1, w - 2, h - 3);
-    if (k === "sea") {
+    px(k === "space" ? "#0a0c20" : k === "forest" ? "#b5d0e6" : "#7fa2c8", 1, 1, w - 2, h - 3);
+    if (k === "space") {
+        for (const [a, b] of [[2, 2], [9, 1], [11, 6], [3, 6], [6, 3]])
+            px("#ffffff", a, b, 1, 1);
+        px("#c98a5a", 6, 4, 3, 3);
+        px("#e8d0a0", 4, 5, 7, 1);
+    }
+    else if (k === "sea") {
         px("#33456e", 1, 6, w - 2, h - 8);
         px("#fff0b8", w - 5, 2, 2, 2);
         px("#b5d0e6", 3, 7, 3, 1);
@@ -16616,7 +17125,7 @@ function pickFlower(odd) {
 }
 /* new flowers in the vase (from: who brought them) */
 function newFlowers(f, from) {
-    if (!f)
+    if (!f || !hasDrawers()) // (no vase yet: it comes with the renter's chest)
         return null;
     S.vase = Object.assign({}, f, { from: String(from || "").slice(0, 40), at: Date.now() });
     S.flowerBook = S.flowerBook || [];
@@ -16647,7 +17156,7 @@ function oddFlowers(from) {
 /* now and then (from postTick): the night door's step at night, or a walk when the vase has been the same a week */
 function flowerTick() {
     const now = performance.now();
-    if (now < flowerCheckAt || !S)
+    if (now < flowerCheckAt || !S || !hasDrawers())
         return;
     flowerCheckAt = now + 60e3;
     const d = new Date(), dark = skyAt(d.getHours() + d.getMinutes() / 60).dark;
@@ -17004,6 +17513,7 @@ function drawArchWall(dk, tsec) {
             keyHits.push({ x: kx - step / 2 + q, y: w.rackY, w: Math.max(step - q, q * 3), h: q * 12, cx: kx, month: mk });
         });
     });
+    drawEyeJars(dk, tsec, rx1 + q * 2, w.rackY - q * 2); // the eye jars, standing on the rack (eyes.js)
 }
 /* the last few things that came through the tube */
 function showTube() {
@@ -17033,6 +17543,10 @@ function showMonthKey(mk) {
 }
 /* a tap on the wall (archiveTap): true if it was the tube or a key */
 function archWallTap(p) {
+    if (eyeJarHit && hitIn(p, eyeJarHit, 16)) {
+        showEyeJars();
+        return true;
+    }
     const k = keyHits.find(h => hitIn(p, h, 24));
     if (k) {
         showMonthKey(k.month);
@@ -17043,6 +17557,638 @@ function archWallTap(p) {
         return true;
     }
     return false;
+}
+
+</script>
+<script>/* js/scene/circle.js */
+"use strict";
+/*
+ * circle.js - The chalk circle, in the archive: chalked onto the blue rug (rings, a unicursal hexagram, little
+ * signs along the edge, candles). It's for looking back: tap it and Mite kneels at the edge and sees a glimpse of
+ * someone's family history (the "glimpses" lines: Who | what Mite saw). Three a day; the ones seen are kept in
+ * S.glimpses and listed in the Cabinet. Midnightcat likes to sit in the middle; when she does her own rituals
+ * there, the candles burn green.
+ *   circleGeo()       where it is (archive coordinates)
+ *   drawCircle(...)   on the rug (drawArchiveRoom)
+ *   circleTap(p)      a tap in the archive: true if it was on the circle
+ *   catInCircle()     is Midnightcat sitting in the middle, doing her rituals?
+ */
+const GLIMPSE_DAY = 3;
+function circleGeo() {
+    const fy = H - GY;
+    return { x: W * .5, y: GY + fy * .42, rx: R * 2.3, ry: fy * .27 };
+}
+/* Midnightcat in the middle of the circle, sitting: a ritual (after a moment, so it's not every time she passes) */
+let catRitualSince = 0;
+function catInCircle() {
+    const c = circleGeo(), on = own("circle") > 0 && cat.room === "archive" && cat.ph === "sit" && Math.abs(cat.x - c.x) < R * .3 && Math.abs(GY + cat.z - c.y) < R * .3;
+    if (!on) {
+        catRitualSince = 0;
+        return false;
+    }
+    if (!catRitualSince)
+        catRitualSince = performance.now();
+    return performance.now() - catRitualSince > 1500;
+}
+/* little signs along the edge, 5×5 (made up: a moon, an eye, a spiral, a key, a door, a seed, a star, a wave) */
+const CIRCLE_SIGNS = [
+    ["..##.", ".#...", ".#...", ".#...", "..##."],
+    [".....", ".###.", "#.#.#", ".###.", "....."],
+    ["####.", "...#.", ".#.#.", ".###.", "....."],
+    [".#...", "#.#..", ".####", "...#.", "...##"],
+    [".###.", ".#.#.", ".#.#.", ".#.##", ".###."],
+    ["..#..", ".###.", "#####", ".###.", "..#.."],
+    ["#...#", ".#.#.", "..#..", ".#.#.", "#...#"],
+    [".....", "#.#.#", ".#.#.", ".....", "#####"]
+];
+function drawCircle(dk, tsec) {
+    if (!own("circle"))
+        return;
+    const c = circleGeo(), chalk = mix("#ece6d4", "#8a8a96", dk * .5), q = PX, green = catInCircle();
+    const ring = (rx, ry, w) => {
+        cx.lineWidth = w;
+        cx.beginPath();
+        cx.ellipse(c.x, c.y, rx, ry, 0, 0, 7);
+        cx.stroke();
+    };
+    cx.save();
+    cx.strokeStyle = chalk;
+    cx.globalAlpha = .85;
+    ring(c.rx, c.ry, Math.max(1.5, q * .75)); // two rings with the signs between them
+    ring(c.rx * .86, c.ry * .86, 1.5);
+    ring(c.rx * .42, c.ry * .42, 1.5); // and a small one in the middle
+    // a unicursal hexagram, in one line: top, lower right, upper left, bottom, upper right, lower left, top
+    const hv = a => [c.x + Math.cos(a) * c.rx * .84, c.y + Math.sin(a) * c.ry * .84], D = Math.PI / 180;
+    const pts = [hv(-90 * D), hv(30 * D), hv(-150 * D), hv(90 * D), hv(-30 * D), hv(150 * D)];
+    cx.lineWidth = 1.5;
+    cx.beginPath();
+    pts.concat([pts[0]]).forEach((p, i) => i ? cx.lineTo(p[0], p[1]) : cx.moveTo(p[0], p[1]));
+    cx.stroke();
+    // the signs, in the band between the two outer rings
+    cx.fillStyle = chalk;
+    const n = 14, u = Math.max(1, Math.round(R * .035 / q)) * q * .5;
+    for (let i = 0; i < n; i++) {
+        const a = (i + .5) / n * Math.PI * 2, sx = c.x + Math.cos(a) * c.rx * .93, sy = c.y + Math.sin(a) * c.ry * .93, g = CIRCLE_SIGNS[i % CIRCLE_SIGNS.length];
+        for (let y = 0; y < 5; y++)
+            for (let x = 0; x < 5; x++)
+                if (g[y][x] === "#")
+                    cx.fillRect(Math.round((sx + (x - 2.5) * u) / q * 2) * q / 2, Math.round((sy + (y - 2.5) * u * .6) / q * 2) * q / 2, u, Math.max(1, u * .6));
+    }
+    cx.restore();
+    // candles on the hexagram's points: warm, or green while Midnightcat's at work
+    for (let i = 0; i < pts.length; i++) {
+        const [px, py] = pts[i], h = R * .2;
+        cx.fillStyle = mix("#efe6cf", "#6a6458", dk * .4);
+        cx.fillRect(Math.round((px - R * .04) / q) * q, py - h, Math.max(q, R * .08), h);
+        const fl = 1 + Math.sin(tsec * 12 + i * 3) * .25;
+        cx.fillStyle = green ? "#b8ffb0" : "#ffd27a";
+        cx.fillRect(Math.round(px / q) * q - q / 2, py - h - q * 1.5, q, q * 1.5);
+        glow(px, py - h - q, (green ? 2.2 : 1.6) * fl, green ? "rgba(120,255,140,.8)" : "rgba(255,190,90,.75)");
+    }
+    if (green && Math.random() < .12) // a few green sparks rising off her
+        addP({ type: "spark", x: c.x + rnd(-R * .3, R * .3), y: c.y - R * .4, vx: rnd(-6, 6), vy: -rnd(10, 26), g: -6, max: 1.4, col: "#9dffa8", size: 2, room: "archive" });
+    drawRitualEye(tsec); // an eye from the jar, floating above her while she works (eyes.js)
+    circleHit = { x: c.x - c.rx, y: c.y - c.ry - R * .3, w: c.rx * 2, h: c.ry * 2 + R * .3, cx: c.x };
+}
+let circleHit = null;
+function circleTap(p) {
+    if (!own("circle") || !circleHit || !hitIn(p, circleHit))
+        return false;
+    const c = circleGeo();
+    if (Math.hypot((p.x - c.x) / c.rx, (p.y - c.y) / (c.ry + R * .2)) > 1.05)
+        return false;
+    requestObj("scry", c.x, c.y);
+    return true;
+}
+/* ---------- glimpses into the past ---------- */
+function glimpseList() {
+    return pool("glimpses").map(l => {
+        const [w, ...r] = String(l).split("|");
+        return { who: (w || "").trim(), text: r.join("|").trim(), key: glimpseKey(l) };
+    }).filter(g => g.who && g.text);
+}
+function glimpseKey(l) {
+    return String(l).replace(/\s+/g, " ").trim().slice(0, 60);
+}
+function glimpseFill(t) {
+    return homeTxt(fillNames(String(t))).replace(/\{possum\}/g, possumName()).replace(/\{snail\}/g, snailName()).replace(/\{raccoon\}/g, raccoonName()).replace(/\{cat\}/g, CAT_NAME);
+}
+function glimpsesToday() {
+    const t = dayKey();
+    return (S.glimpses || []).filter(g => dayKey(new Date(g.at)) === t).length;
+}
+/* one glimpse: one not seen yet if there is one, and someone different from last time */
+function pickGlimpse() {
+    const all = glimpseList(), seen = new Set((S.glimpses || []).map(g => g.k)), last = (S.glimpses || []).slice(-1)[0];
+    const lastWho = last && (all.find(g => g.key === last.k) || {}).who;
+    let c = all.filter(g => !seen.has(g.key) && g.who !== lastWho);
+    if (!c.length)
+        c = all.filter(g => !seen.has(g.key));
+    if (!c.length)
+        c = all;
+    return c.length ? choice(c) : null;
+}
+/* Mite's at the edge of the circle: what it sees (the card) */
+function showGlimpse() {
+    if (glimpsesToday() >= GLIMPSE_DAY) {
+        speak(choice(["The chalk's gone quiet. It only looks back three times a day. The past needs its rest too.", "Nothing more today. The circle's cooling off. Tomorrow it'll look again."].concat(pool("look_circle").length ? [compose("look_circle")] : []).filter(Boolean)), { ms: 6000 });
+        return 6;
+    }
+    const g = pickGlimpse();
+    if (!g)
+        return 3;
+    S.glimpses = (S.glimpses || []).concat([{ k: g.key, at: Date.now() }]).slice(-300);
+    saveSoon();
+    sfx("low");
+    const who = glimpseFill(g.who), left = GLIMPSE_DAY - glimpsesToday();
+    openRitual("In the chalk circle", `Long ago, in ${who}'s family…`, `<p class="glimpse">${esc(glimpseFill(g.text))}</p><p class="ritmeta">${left ? `The circle can look back ${left} more time${left > 1 ? "s" : ""} today.` : "That's all the circle will show today."} Everything it's shown is in the Cabinet.</p>`, [["Close", "primary", closeRitual]]);
+    note(`In the chalk circle: a glimpse of ${who}'s family.`);
+    return 4;
+}
+/* the Cabinet: everything the circle has shown, by whose family it was */
+function renderGlimpses() {
+    const el = $("glimpseList");
+    if (!el)
+        return;
+    const all = glimpseList(), by = {};
+    for (const s of S.glimpses || []) {
+        const g = all.find(x => x.key === s.k);
+        if (g && !(by[g.who] || []).some(x => x.key === g.key))
+            (by[g.who] = by[g.who] || []).push(g);
+    }
+    const whos = Object.keys(by);
+    el.innerHTML = whos.length ? whos.map(w => `<details><summary>${esc(glimpseFill(w))} <span class="sync">${by[w].length}</span></summary>${by[w].map(g => `<p>${esc(glimpseFill(g.text))}</p>`).join("")}</details>`).join("")
+        : `<p class="sub">${own("circle") ? "Nothing yet. Tap the chalk circle in the archive and Mite will look back." : "The chalk circle (in the shop) can look back into the past."}</p>`;
+}
+
+</script>
+<script>/* js/scene/pastimes.js */
+"use strict";
+/*
+ * pastimes.js - Small things Mite does on its own, in any room, so it isn't always watering or writing letters:
+ *   sorttiny   sits on the floor and sorts tiny things (beads, buttons, a pebble) into a neat row
+ *   postit     writes a sticky note and puts it on the wall (they stay up for a while, a few per room)
+ *   sketch     draws something small in a little sketchbook, then says what it was
+ *   origami    folds a paper bird, which flaps off and out of the room's window
+ *   fftag      plays tag with a firefly from the jar: chases it, then gets chased
+ *   ffhide     hide and seek with a firefly: counts with its eyes shut, then goes looking
+ * The behaviours set the pose; drawPastimes() (after Mite, loop.js) draws the little things that go with them.
+ */
+const POSTIT_MAX = 4, POSTIT_LIFE = 40 * 60e3;
+let postits = [], paperBirds = [];
+const TINY = ["#c2453a", "#e8a33c", "#f2d06b", "#6aa84f", "#3f9e9a", "#7a6fc0"];
+const SKETCHES = ["a snail, from the side", "the moon, slightly wrong", "Midnightcat, who moved", "a door that isn't there", "the kettle, mid-thought", "you, from memory. Roughly", "a very small mountain", "the possum, upside down. Or the right way up for the possum", "a cloud shaped like a cloud", "the wagon, if it had legs"];
+function pastimeOk(c) { // not in the middle of the night, not when it's sleep time
+    return !c.late;
+}
+Object.assign(BEH, {
+    sorttiny: { d: [10, 14], w: c => pastimeOk(c) ? .55 : 0, init(b) {
+            b.order = TINY.map((c, i) => i).sort(() => Math.random() - .5); // where each one starts
+        }, step(b, p, t, po) {
+            po.sy = -.12;
+            po.feet = false;
+            po.lookOverride = { x: Math.sin(t * .8) * .4, y: .95 };
+            po.arms = Math.sin(t * 3) > .3 ? [-.7, -.25] : [-.25, -.7];
+            po.mouth = t % 5 < 1 ? "o" : "smile";
+            if (Math.random() < .003)
+                floatText(choice(["this one… there", "red, then orange…", "hm, is that a bead or a crumb", "very important work"]), p.x, GY - R * 2.2, "#fff");
+        } },
+    postit: { d: [8, 9], w: c => pastimeOk(c) ? .45 : 0, init(b, p) {
+            b.text = choice(["water fern", "be brave", "tea?", "ask the snail", "♥", "remember: rest", "find the other sock", "door?? (night)", "you're doing fine", "buy moss food"]);
+        }, step(b, p, t, po) {
+            if (t < 3.5) { // writing it, held low
+                po.lookOverride = { x: 0, y: .8 };
+                po.arms = [-.8 + Math.sin(t * 14) * .15, -.5];
+                po.mouth = "o";
+                return;
+            }
+            if (t < 5 || !b.stuck) { // reaching up to stick it on the wall
+                po.lookOverride = { x: 0, y: -1 };
+                po.arms = [-2.6, -2.6];
+                po.sy = .1;
+                if (!b.stuck) {
+                    b.stuck = 1;
+                    postits = postits.filter(n => !(n.room === view && performance.now() - n.at > POSTIT_LIFE));
+                    const mine = postits.filter(n => n.room === view);
+                    if (mine.length >= POSTIT_MAX)
+                        postits.splice(postits.indexOf(mine[0]), 1);
+                    postits.push({ room: view, x: p.x + rnd(-R * .3, R * .3), y: GY - (p.ground || 0) - R * 2.15 + rnd(-R * .15, R * .1), at: performance.now(), rot: rnd(-.15, .15), col: choice(["#f2d06b", "#f4a9b8", "#a8d8a0", "#a9c8f0"]), text: b.text });
+                    sfx("soft");
+                    floatText(b.text, p.x, GY - R * 2.6, "#fff6c8");
+                }
+                return;
+            }
+            po.lookOverride = { x: 0, y: -.8 };
+            po.eyes = "happy";
+            po.mouth = "smile";
+        } },
+    sketch: { d: [9, 12], w: c => pastimeOk(c) ? .45 : 0, init(b) {
+            b.what = choice(SKETCHES);
+        }, step(b, p, t, po) {
+            po.sy = -.1;
+            po.feet = false;
+            po.lookOverride = { x: Math.sin(t * 2) * .15, y: .85 };
+            po.arms = [-.9 + Math.sin(t * 11) * .2, -.6];
+            po.mouth = t % 4 < .6 ? "o" : "smile";
+            if (!b.said && t > p.dur - 2.2) {
+                b.said = 1;
+                speak(choice([`Drew ${b.what}.`, `It's ${b.what}. You can tell. Mostly.`, `A sketch of ${b.what}. Not bad, for a moss.`]), { ms: 3800 });
+            }
+        } },
+    origami: { d: [7, 7], w: c => pastimeOk(c) ? .3 : 0, step(b, p, t, po) {
+            if (t < 4) { // folding
+                po.lookOverride = { x: 0, y: .7 };
+                po.arms = [-.9 + Math.sin(t * 6) * .2, -.9 - Math.sin(t * 6) * .2];
+                po.mouth = "o";
+                return;
+            }
+            if (!b.flew) { // it's alive: off it goes, out of this room's window
+                b.flew = 1;
+                const w = anomGeo(view);
+                paperBirds.push({ room: view, x: p.x, y: GY - (p.ground || 0) - R * 1.1, tx: w.wx, ty: w.wy, t: 0 });
+                floatText(choice(["oh!", "it's flying!", "bye!"]), p.x, GY - R * 2.4, "#fff");
+            }
+            const bd = paperBirds[paperBirds.length - 1];
+            po.lookOverride = bd ? { x: clamp((bd.x - p.x) / R, -1, 1), y: -.8 } : { x: 0, y: -1 };
+            po.arms = [-2.2, -.3 + Math.sin(t * 10) * .5]; // waving it off
+            po.eyes = "happy";
+            po.mouth = "open";
+        } },
+    fftag: { d: [11, 11], w: c => (own("jar") || 0) > 0 && pastimeOk(c) ? .35 : 0, init(b, p) {
+            b.fx = p.x + R;
+            b.fy = GY - R * 2;
+        }, step(b, p, t, po, dt) {
+            const it = t < 5.5; // first Mite's "it" and chases the firefly; then the firefly chases Mite
+            if (it) {
+                const want = clamp(p.x + (b.fx > p.x ? 1 : -1) * R * 1.6, R, W - R); // it keeps away
+                b.fx += clamp(want - b.fx, -R * 2.6 * dt, R * 2.6 * dt);
+                if (b.fx <= R * 1.2 || b.fx >= W - R * 1.2)
+                    b.fx = p.x < W / 2 ? W - R * 1.5 : R * 1.5;
+                walkTo(p, po, b.fx, R * 2.1, dt, 4);
+                po.mouth = "o";
+            }
+            else {
+                if (!b.tagged) {
+                    b.tagged = 1;
+                    floatText("tag!", p.x, GY - R * 2.4, "#fff3a0");
+                }
+                b.fx += clamp(p.x - b.fx, -R * 2 * dt, R * 2 * dt);
+                const away = p.x < b.fx ? R * 1.1 : W - R * 1.1;
+                walkTo(p, po, away, R * 2.3, dt, 4);
+                po.mouth = "open";
+                po.eyes = "happy";
+            }
+            b.fy = GY - R * (1.9 + Math.sin(t * 4) * .35);
+            po.fly = { x: b.fx, y: b.fy };
+            po.lookOverride = { x: clamp((b.fx - p.x) / R, -1, 1), y: -.6 };
+        } },
+    ffhide: { d: [12, 12], w: c => (own("jar") || 0) > 0 && pastimeOk(c) ? .3 : 0, init(b, p) {
+            b.fx = p.x;
+            b.fy = GY - R * 2;
+            b.hx = rnd(W * .12, W * .88); // where it hides
+            b.hy = GY - R * rnd(.4, 2.6);
+        }, step(b, p, t, po, dt) {
+            if (t < 3.5) { // eyes shut, counting
+                po.eyes = "closed";
+                po.arms = [-2.4, -2.4];
+                po.mouth = "o";
+                const n = Math.floor(t / 1.1) + 1;
+                if (n !== b.n && n <= 3) {
+                    b.n = n;
+                    floatText(n + "…", p.x, GY - R * 2.3, "#fff");
+                }
+                b.fx += (b.hx - b.fx) * Math.min(1, dt * 1.5); // off it goes to hide
+                b.fy += (b.hy - b.fy) * Math.min(1, dt * 1.5);
+                po.fly = { x: b.fx, y: b.fy };
+                return;
+            }
+            if (!b.found) { // looking: a little this way, a little that way, then straight to it
+                const look = t < 6 ? p.x + Math.sin(t * 1.5) * R * 1.2 : b.hx;
+                if (walkTo(p, po, clamp(look, R, W - R), R * 1.6, dt, R * .8) && t >= 6) {
+                    b.found = 1;
+                    floatText(choice(["found you!", "there!", "aha!"]), p.x, GY - R * 2.4, "#fff3a0");
+                    for (let i = 0; i < 8; i++)
+                        addP({ type: "spark", x: b.hx, y: b.hy, vx: rnd(-50, 50), vy: rnd(-50, 20), g: 40, max: .7, col: "#ffe58a", size: 2 });
+                }
+                po.lookOverride = { x: Math.sin(t * 2.3), y: -.3 };
+                po.fly = { x: b.fx, y: b.fy, dim: true }; // hiding: barely glowing
+                return;
+            }
+            b.fy += (GY - R * 2.2 - b.fy) * Math.min(1, dt * 2); // it comes out, giggling (fireflies giggle)
+            b.fx += (p.x + R * .6 - b.fx) * Math.min(1, dt * 2);
+            po.fly = { x: b.fx, y: b.fy };
+            po.eyes = "happy";
+            po.mouth = "open";
+        } }
+});
+["sorttiny", "postit", "sketch", "origami", "fftag", "ffhide"].forEach(k => {
+    GARDEN_OK.add(k);
+    ARCHIVE_OK.add(k);
+});
+/* drawn after Mite, in Mite's room (and the notes on any wall on screen) */
+function drawPastimes(dt) {
+    const now = performance.now(), d = new Date(), dk = clamp(skyAt(d.getHours() + d.getMinutes() / 60).dark * .6 + (S.lightsOut ? .25 : 0), 0, 1);
+    postits = postits.filter(n => now - n.at < POSTIT_LIFE);
+    for (const n of postits)
+        withRoomLight(n.room, () => {
+            const s = R * .32, q = PX;
+            cx.save();
+            cx.translate(n.x, n.y);
+            cx.rotate(n.rot);
+            cx.fillStyle = mix(n.col, "#2a2420", dk * .55);
+            cx.fillRect(-s / 2, -s / 2, s, s);
+            cx.fillStyle = mix("#6a5a48", "#1a1612", dk * .5);
+            for (let l = 0; l < 2; l++)
+                cx.fillRect(-s / 2 + q, -s / 2 + q * (2 + l * 2), s - q * (2 + l), Math.max(1, q / 2));
+            cx.restore();
+        });
+    paperBirds = paperBirds.filter(bd => bd.t < 4);
+    for (const bd of paperBirds) {
+        bd.t += dt;
+        const k = Math.min(1, bd.t / 3.2), e = k * k * (3 - 2 * k);
+        const x = bd.x + (bd.tx - bd.x) * e, y = bd.y + (bd.ty - bd.y) * e - Math.sin(k * Math.PI) * R * .9, flap = Math.sin(bd.t * 18);
+        withRoomLight(bd.room, () => {
+            cx.globalAlpha = k > .92 ? (1 - k) / .08 : 1; // gone through the window
+            cx.fillStyle = mix("#f4ecd8", "#5a564c", dk * .5);
+            const s = R * .2;
+            cx.beginPath();
+            cx.moveTo(x - s, y - flap * s * .6);
+            cx.lineTo(x, y + s * .2);
+            cx.lineTo(x + s, y - flap * s * .6);
+            cx.lineTo(x, y - s * .2);
+            cx.closePath();
+            cx.fill();
+            cx.globalAlpha = 1;
+        });
+    }
+    const b = pet.b, p = pet;
+    if (!b)
+        return;
+    withRoomLight(view, () => {
+        const q = PX, gy = GY - (p.ground || 0);
+        if (p.beh === "sorttiny" && b.order) { // the row of tiny things on the floor, slowly getting sorted
+            const k = clamp((p.bt - .5) / (p.dur - 2), 0, 1);
+            TINY.forEach((c, i) => {
+                const from = b.order.indexOf(i), slot = from + (i - from) * Math.min(1, k * 1.3);
+                const x = p.x - R * .9 + slot * R * .36, y = gy + R * .3; // on the floor in front of it
+                cx.fillStyle = mix(c, "#2a2420", dk * .5);
+                cx.fillRect(Math.round(x / q) * q, Math.round(y / q) * q - q, q * 2, q * 2);
+            });
+        }
+        if (p.beh === "postit" && p.bt < 3.5) { // the note being written
+            cx.fillStyle = mix("#f2d06b", "#2a2420", dk * .5);
+            cx.fillRect(p.x - R * .45, gy - R * .75, R * .32, R * .32);
+        }
+        if (p.beh === "sketch") { // a little sketchbook in front, filling up with lines
+            const x0 = p.x - R * .35, y0 = gy - R * .55, w = R * .7, h = R * .32;
+            cx.fillStyle = mix("#3a5a7a", "#121a24", dk * .5);
+            cx.fillRect(x0 - q, y0 - q, w + q * 2, h + q * 2);
+            cx.fillStyle = mix("#f4ecd8", "#4a463c", dk * .5);
+            cx.fillRect(x0, y0, w, h);
+            const n = Math.floor(clamp(p.bt / (p.dur - 2), 0, 1) * 9);
+            cx.fillStyle = mix("#4a3a2c", "#1a1612", dk * .5);
+            for (let i = 0; i < n; i++)
+                cx.fillRect(x0 + q + (i * 7 % 9) * w / 11, y0 + q + (i * 5 % 4) * h / 5, q * (1 + i % 3), q);
+        }
+        if (p.beh === "origami" && p.bt < 4) { // the paper, being folded smaller
+            const k = p.bt / 4, s = R * (.36 - .18 * k);
+            cx.fillStyle = mix("#f4ecd8", "#5a564c", dk * .5);
+            cx.save();
+            cx.translate(p.x, gy - R * .75);
+            cx.rotate(k * 2.4);
+            cx.fillRect(-s / 2, -s / 2, s, s);
+            cx.restore();
+        }
+    });
+}
+
+</script>
+<script>/* js/scene/eyes.js */
+"use strict";
+/*
+ * eyes.js - The eye jars on top of the key rack in the archive. Just for reference: a collection of eyes of
+ * various creatures, kept in jars, blinking and looking around slowly. Nothing nefarious. It starts as one empty
+ * jar; Mite finds eyes now and then (the ghost leaves a paper one, one comes back through a door, one falls out of
+ * the dream archive) and puts each one in. Four to a jar, then a new jar (four at most).
+ * Midnightcat borrows one for her patron rituals in the chalk circle (circle.js), and sometimes plays with one.
+ *   S.eyes      [{ k, at, from }], one per kind
+ *   findEye(from)  a new eye, if there's one left to find (null otherwise)
+ *   drawEyeJars(dk, t, x1, y)  on the rack (archive-wall.js)
+ */
+const EYES = [
+    { id: "owl", name: "Owl's eye", ring: "#e8a33c", pupil: "round", note: "Very good in the dark. Disapproves of the bulb." },
+    { id: "goat", name: "Goat's eye", ring: "#d9b56a", pupil: "bar", note: "Sideways pupil. Sees almost all the way round. Unbothered by any of it." },
+    { id: "cat", name: "Cat's eye (not Midnightcat's)", ring: "#7fbf5a", pupil: "slit", note: "From a cousin of hers, she says. She won't say which cousin." },
+    { id: "paper", name: "Paper eye", ring: "#bcd0e8", pupil: "round", paper: true, note: "Folded by the ghost. It blinks by folding shut." },
+    { id: "moth", name: "Moth's eye", ring: "#2a2a40", pupil: "none", note: "Hundreds of tiny eyes in one. Likes the lamp a lot." },
+    { id: "frog", name: "Frog's eye", ring: "#c9a33a", pupil: "bar", note: "Golden, a bit damp, blinks with a slow wet wink." },
+    { id: "deep", name: "Deep-sea eye", ring: "#3a7ac0", pupil: "round", glow: "#7ad0ff", note: "Glows a little blue. Has never seen the sun and isn't sure about it." },
+    { id: "door", name: "An eye from beyond a door", ring: "#9a6ad0", pupil: "star", note: "Came back through a door that wasn't there. Looks at things that aren't there either. Politely." },
+    { id: "dream", name: "Dream eye", ring: "#e0a0c0", pupil: "round", note: "Fell out of the dream archive. Closes whenever anyone yawns." },
+    { id: "crow", name: "Crow's eye", ring: "#3a3036", pupil: "round", note: "Black and bright. Keeps looking at the shiny keys." },
+    { id: "snail", name: "Eye-stalk tip (spare)", ring: "#8a9a6a", pupil: "round", note: "The snail grew a new one and gave Mite the old one. For the collection." },
+    { id: "spider", name: "One spider eye", ring: "#20181c", pupil: "round", note: "Just the one. The spider has seven left and says that's plenty." },
+    { id: "lantern", name: "Lantern-fish eye", ring: "#f0d070", pupil: "slit", glow: "#ffe08a", note: "Brings its own light. Useful in the archive." },
+    { id: "stone", name: "Stone eye", ring: "#8a8a96", pupil: "none", note: "From a statue that got tired of watching the same square. Very calm." },
+    { id: "star", name: "Something's eye, from very far up", ring: "#1a2050", pupil: "star", glow: "#c8d8ff", note: "There are stars in it. It's looking at somewhere we haven't been." },
+    { id: "kind", name: "A kind eye", ring: "#a07850", pupil: "round", note: "Nobody knows whose. It just looks kind. Mite put it in the front." }
+];
+const EYES_PER_JAR = 4, EYE_JARS = 4;
+/* where each eye comes from (some are only found one way) */
+const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door" };
+function findEye(from) {
+    const have = new Set((S.eyes || []).map(e => e.k));
+    const can = EYES.filter(e => !have.has(e.id) && (!EYE_FROM[e.id] || EYE_FROM[e.id] === from));
+    const pref = can.filter(e => EYE_FROM[e.id] === from); // its own kind first
+    const e = pref.length && Math.random() < .6 ? choice(pref) : can.length ? choice(can) : null;
+    if (!e || (S.eyes || []).length >= EYES_PER_JAR * EYE_JARS)
+        return null;
+    S.eyes = (S.eyes || []).concat([{ k: e.id, at: Date.now(), from: String(from || "").slice(0, 20) }]);
+    note(`Found an eye for the jar: ${e.name.toLowerCase()}. ${e.note}`);
+    saveSoon();
+    return e;
+}
+let eyeJarHit = null, eyeLook = { x: 0, y: 0, tx: 0, ty: 0, at: 0 };
+/* the jars, standing on the rack, the last one at its right end */
+function drawEyeJars(dk, t, xRight, yTop) {
+    const q = PX, have = (S.eyes || []).map(s => EYES.find(e => e.id === s.k)).filter(Boolean);
+    const jars = Math.max(1, Math.min(EYE_JARS, Math.ceil(have.length / EYES_PER_JAR) || 1));
+    const jw = q * 9, jh = q * 10;
+    if (t * 1000 > eyeLook.at) { // they all look somewhere new, slowly, every few seconds
+        eyeLook.tx = rnd(-1, 1);
+        eyeLook.ty = rnd(-.6, .6);
+        eyeLook.at = t * 1000 + rnd(2500, 6000);
+    }
+    eyeLook.x += (eyeLook.tx - eyeLook.x) * .02;
+    eyeLook.y += (eyeLook.ty - eyeLook.y) * .02;
+    const x0 = xRight - jars * (jw + q * 2);
+    for (let j = 0; j < jars; j++) {
+        const jx = Math.round((x0 + j * (jw + q * 2)) / q) * q, jy = yTop - jh;
+        drawLayered(() => {
+            cx.fillStyle = mix("#9fc0b8", "#1e2a30", dk * .6); // the glass, a little green
+            cx.fillRect(jx, jy + q * 2, jw, jh - q * 2);
+            cx.fillStyle = mix("#2f4a44", "#0e1614", dk * .5); // and dark liquid inside, so the eyes show
+            cx.fillRect(jx + q, jy + q * 4, jw - q * 2, jh - q * 5);
+            cx.fillStyle = mix("#d8eae4", "#3a4a50", dk * .6);
+            cx.fillRect(jx + q, jy + q * 3, q, jh - q * 5); // a shine
+            cx.fillStyle = mix("#8a5a34", "#24170e", dk); // the lid
+            cx.fillRect(jx - q, jy, jw + q * 2, q * 2);
+        });
+        const mine = have.slice(j * EYES_PER_JAR, (j + 1) * EYES_PER_JAR);
+        mine.forEach((e, i) => {
+            const ex = jx + q * 3 + (i % 2) * q * 3.5, ey = jy + jh - q * 2.5 - Math.floor(i / 2) * q * 3.2 + Math.sin(t * .7 + i) * q * .4; // two by two (bobbing a little)
+            const blink = ((t + i * 1.37 + j * 2.1) % (4 + (i % 3))) < .14 || (e.id === "dream" && pet.beh === "yawn");
+            const er = q;
+            if (e.glow)
+                glow(ex, ey, 1.2, e.glow + "88");
+            cx.fillStyle = blink ? mix(e.paper ? "#e8e0d0" : "#c99a8a", "#2a2020", dk * .5) : mix(e.paper ? "#f4ecd8" : "#f4efe6", "#4a4844", dk * .45);
+            cx.fillRect(Math.round((ex - er) / q) * q, Math.round((ey - er) / q) * q, er * 2, blink ? q : er * 2);
+            if (blink)
+                return;
+            const lx = Math.round((ex - q / 2 + eyeLook.x * er * .5) / q) * q, ly = Math.round((ey - q / 2 + eyeLook.y * er * .4) / q) * q;
+            cx.fillStyle = mix(e.ring, "#141018", dk * .35);
+            cx.fillRect(lx - (e.pupil === "none" ? q / 2 : 0), ly, q * (e.pupil === "none" ? 2 : 1), q);
+            if (e.pupil === "star") {
+                cx.fillStyle = "#fff6d0";
+                cx.fillRect(lx, ly, Math.max(1, q / 2), Math.max(1, q / 2));
+            }
+        });
+    }
+    eyeJarHit = { x: x0 - q, y: yTop - jh - q, w: jars * (jw + q * 2) + q * 2, h: jh + q * 2, cx: x0 + jars * (jw + q * 2) / 2 };
+}
+/* the card: every eye in the jars, what it is and where it came from */
+function showEyeJars() {
+    const have = (S.eyes || []).map(s => ({ s, e: EYES.find(e => e.id === s.k) })).filter(x => x.e);
+    const from = { ghost: "left by the ghost", door: "through a door", dream: "from the dream archive" };
+    const body = have.length ? `<ul class="fbooklist">${have.map(x => `<li><b>${esc(x.e.name)}</b> <span class="sub">${esc(from[x.s.from] || "found")} · ${esc(dmy(new Date(x.s.at)))}</span><br>${esc(x.e.note)}</li>`).join("")}</ul>` : "";
+    openRitual("The eye jars", have.length ? `${have.length} of ${EYES.length} eyes, for reference. They're only looking.` : "An empty jar, waiting. Mite keeps an eye out. Ha.", body, [["Close", "primary", closeRitual]]);
+    sfx("card");
+}
+/* Midnightcat's ritual in the circle: one eye from the jar floats above her, glowing green */
+function drawRitualEye(t) {
+    if (!(S.eyes || []).length || !catInCircle())
+        return;
+    const c = circleGeo(), e = EYES.find(x => x.id === S.eyes[Math.floor(t / 20) % S.eyes.length].k) || EYES[0], q = PX;
+    const x = c.x, y = c.y - R * 1.35 + Math.sin(t * 1.2) * R * .1, er = Math.round(R * .09 / q) * q;
+    glow(x, y, 2, "rgba(140,255,160,.6)");
+    cx.fillStyle = "#f4efe6";
+    cx.fillRect(Math.round((x - er) / q) * q, Math.round((y - er * .7) / q) * q, er * 2, er * 1.4);
+    cx.fillStyle = e.ring;
+    cx.fillRect(Math.round((x - q / 2) / q) * q, Math.round((y - q / 2) / q) * q, q, q);
+}
+/* now and then Midnightcat has one out of the jar to bat about on the archive floor */
+function drawCatEye(t) {
+    if (!(S.eyes || []).length || cat.room !== "archive" || cat.g > 0 || cat.ph !== "sit" || catInCircle() || Math.floor(t / 40) % 3 !== 1)
+        return;
+    const q = PX, e = EYES.find(x => x.id === S.eyes[Math.floor(t / 120) % S.eyes.length].k) || EYES[0];
+    const roll = Math.sin(t * 1.6), x = cat.x + (cat.dir || 1) * catSize() * (.65 + roll * .2), y = GY + cat.z - q * 2, er = Math.round(R * .06 / q) * q;
+    cx.fillStyle = "#f4efe6";
+    cx.fillRect(Math.round((x - er) / q) * q, Math.round((y - er) / q) * q, er * 2, er * 2);
+    cx.fillStyle = e.ring;
+    cx.fillRect(Math.round((x - q / 2 + roll * er * .6) / q) * q, Math.round((y - q / 2) / q) * q, q, q);
+}
+
+</script>
+<script>/* js/scene/space.js */
+"use strict";
+/*
+ * space.js - The detour: an anomaly where, for a minute or so, every window shows the wagon drifting through
+ * space (stars going by, a nebula, a ringed planet, now and then a comet). Nothing to tap or fix: Mite goes to
+ * look, says something, and when it's over makes a postcard of it for the pinboard in the nook (S.flags.spacecard).
+ *   spaceOn()            is the detour happening now?
+ *   drawSpace(x,y,w,h,t) the view, inside a window's clip (room.js, garden.js)
+ */
+function spaceOn() {
+    return !!(anom && anom.type === "space" && !anom.exit);
+}
+let spaceStars = null;
+function drawSpace(x0, y0, w, h, t) {
+    const q = PX, k = anom ? clamp(anom.t / 2, 0, 1) * clamp(((anom.life || 70) - anom.t) / 2.5, 0, 1) : 0; // fades in and out
+    if (k <= 0)
+        return;
+    if (!spaceStars)
+        spaceStars = Array.from({ length: 70 }, (_, i) => ({ x: Math.random(), y: Math.random(), z: .3 + Math.random() * .7, c: i % 9 === 0 ? "#ffd8a0" : i % 7 === 0 ? "#bcd8ff" : "#ffffff" }));
+    cx.save();
+    cx.globalAlpha = k;
+    cx.fillStyle = "#0a0c20";
+    cx.fillRect(x0, y0, w, h);
+    const clouds = [["#5a3a8a", .3, .4], ["#2a6a7a", .7, .6], ["#8a3a6a", .5, .2]]; // a nebula, in specks
+    clouds.forEach(([col, cx0, cy0], ci) => {
+        cx.fillStyle = col;
+        for (let i = 0; i < 40; i++) {
+            const h1 = Math.sin(i * 12.9898 + ci * 78.233) * 43758.5453, h2 = Math.sin(i * 39.346 + ci * 11.135) * 24634.6345;
+            const u = h1 - Math.floor(h1), v = h2 - Math.floor(h2), d = Math.sqrt(u) * .28, a = v * Math.PI * 2;
+            const px = ((cx0 + Math.cos(a) * d - t * .004) % 1 + 1) % 1, py = cy0 + Math.sin(a) * d * .8;
+            cx.globalAlpha = k * (1 - Math.sqrt(u) * .7);
+            cx.fillRect(Math.round((x0 + px * w) / q) * q, Math.round((y0 + py * h) / q) * q, q, q);
+        }
+    });
+    for (const s of spaceStars) { // stars going by, the near ones faster
+        const px = ((s.x - t * .03 * s.z) % 1 + 1) % 1;
+        cx.globalAlpha = k * (.5 + .5 * s.z);
+        cx.fillStyle = s.c;
+        cx.fillRect(Math.round((x0 + px * w) / q) * q, Math.round((y0 + s.y * h) / q) * q, s.z > .85 ? q * 2 : q, q);
+    }
+    { // a ringed planet, drifting across
+        const p = ((.9 - t * .006) % 1.4 + 1.4) % 1.4 - .2, px = x0 + p * w, py = y0 + h * .55, pr = Math.max(q * 3, Math.min(w, h) * .14);
+        cx.globalAlpha = k;
+        cx.fillStyle = "#c98a5a";
+        cx.beginPath();
+        cx.arc(px, py, pr, 0, 7);
+        cx.fill();
+        cx.fillStyle = "#a8603c";
+        cx.fillRect(px - pr, py - q, pr * 2, q * 1.5);
+        cx.strokeStyle = "#e8d0a0";
+        cx.lineWidth = Math.max(1.5, q * .7);
+        cx.beginPath();
+        cx.ellipse(px, py, pr * 1.8, pr * .45, -.25, 0, 7);
+        cx.stroke();
+    }
+    if (Math.floor(t / 9) % 3 === 0) { // a comet, now and then
+        const c = (t % 9) / 9, cxp = x0 + w * (1.1 - c * 1.3), cyp = y0 + h * (.1 + c * .5);
+        cx.globalAlpha = k;
+        cx.fillStyle = "#ffffff";
+        cx.fillRect(Math.round(cxp / q) * q, Math.round(cyp / q) * q, q * 2, q * 2);
+        cx.fillStyle = "#9ad8ff";
+        for (let i = 1; i < 6; i++) {
+            cx.globalAlpha = k * (1 - i / 6);
+            cx.fillRect(Math.round((cxp + i * q * 2) / q) * q, Math.round((cyp - i * q * .8) / q) * q, q, q);
+        }
+    }
+    cx.restore();
+}
+/* it starts: Mite notices (the anomaly is spawned in anomalies.js) */
+function spaceStart(a) {
+    a.life = 70;
+    setTimeout(() => {
+        if (anom !== a)
+            return;
+        speak(choice(["Oh. Look out of the window. We seem to have taken a little detour.", "Don't panic. The wagon's just gone the long way round. Through space.", "Is that… a planet? Hold on to something soft. Or don't, there's no bumps."]), { ms: 6000 });
+        if (pet.beh !== "sleep" && !objQ.cur)
+            pet.start("lookAround");
+    }, 1500);
+}
+/* a tap during the detour (or the anomaly button): Mite says something about it, once for glimmers */
+function spaceTap(a) {
+    if (!a.paid) {
+        a.paid = true;
+        anomPay(a);
+    }
+    speak(choice(["The stars are going by sideways. I think we're being taken somewhere scenic.", "I waved at the planet. It didn't wave back. Planets are like that.", "It's very quiet out there. Like the archive, but bigger.", "If we're lucky we'll be back for tea. If we're very lucky, we won't, for a bit."]), { ms: 5000 });
+}
+/* over: back where we were. A postcard of it for the board */
+function spaceEnd(a) {
+    const { no, tm } = (S.incidents++, anomStamp());
+    S.incidents--;
+    incNote(`Incident ${no}, ${tm}: the view from every window was space for about a minute. The wagon did not move. The wagon is back. One postcard made.`);
+    S.flags.space = 1;
+    if (!S.flags.spacecard) {
+        S.flags.spacecard = 1;
+        setTimeout(() => speak("Back. I made a postcard of it, so we remember. It's on the board in the nook.", { ms: 5500 }), 1200);
+    }
+    else
+        setTimeout(() => speak("And we're back. Same as before, but with a bit more sky in us.", { ms: 4000 }), 1200);
+    afterChange();
 }
 
 </script>
@@ -17207,25 +18353,6 @@ function drawWorld(now, dt) {
         if (Math.random() < .04)
             addP({ type: "steam", x: x + R * .5, y: ky - R * .52, vy: -16, vx: rnd(-3, 6), max: 2.2, size: R * .1, bg: 1 });
     }
-    // chalk circle
-    if (own("circle")) {
-        const x = W * .5, y = ry;
-        cx.strokeStyle = "rgba(235,230,215,.55)";
-        cx.lineWidth = 1.5;
-        cx.beginPath();
-        cx.ellipse(x, y, R * 1.25, R * .3, 0, 0, 7);
-        cx.stroke();
-        cx.beginPath();
-        cx.ellipse(x, y, R * .85, R * .2, 0, 0, 7);
-        cx.stroke();
-        const n = Math.min(7, 2 + own("circle"));
-        for (let i = 0; i < n; i++) {
-            const a = i / n * Math.PI * 2, px = x + Math.cos(a) * R * 1.25, py = y + Math.sin(a) * R * .3;
-            cx.fillStyle = "#efe6cf";
-            cx.fillRect(px - 2, py - 8, 4, 8);
-            glow(px, py - 10, 1.6 * (1 + Math.sin(tsec * 12 + i * 3) * .25), "rgba(255,190,90,.75)");
-        }
-    }
     // the doorway to the archive on the right; filed boxes fly out through it
     const { sx0, rowH, bw } = rm;
     boxHits = [];
@@ -17254,48 +18381,7 @@ function drawWorld(now, dt) {
             ctext("+" + (pb.length - 10), px0 - bw * 2.3, miny - 6, { col: "#fff8e6", behind: true });
     }
     guestTick(dt, performance.now());
-    // mess on the floor
-    for (const m of (S.mess || [])) {
-        const x = m.x * W, y = GY + 6 + m.y * (H - GY - 14), sz = R * .16 * m.r;
-        if (m.t === "dust") {
-            cx.fillStyle = mix("#b7ad98", "#3b3a36", dk * .7);
-            for (let i = 0; i < 4; i++) {
-                cx.beginPath();
-                cx.arc(x + Math.cos(i * 1.7 + m.rot) * sz * .6, y + Math.sin(i * 2.3) * sz * .25, sz * .55, 0, 7);
-                cx.fill();
-            }
-        }
-        else if (m.t === "leaf") {
-            cx.save();
-            cx.translate(x, y);
-            cx.rotate(m.rot);
-            cx.fillStyle = ["#d9893a", "#c25b34", "#e3b347"][Math.floor(m.rot * 10) % 3];
-            cx.beginPath();
-            cx.ellipse(0, 0, sz * 1.2, sz * .5, 0, 0, 7);
-            cx.fill();
-            cx.restore();
-        }
-        else if (m.t === "paper") {
-            cx.save();
-            cx.translate(x, y);
-            cx.rotate(m.rot);
-            cx.fillStyle = mix("#efe9da", "#55534c", dk * .7);
-            cx.beginPath();
-            cx.moveTo(-sz, -sz * .5);
-            cx.lineTo(sz * .2, -sz * .8);
-            cx.lineTo(sz, -sz * .1);
-            cx.lineTo(sz * .5, sz * .6);
-            cx.lineTo(-sz * .7, sz * .5);
-            cx.closePath();
-            cx.fill();
-            cx.restore();
-        }
-        else {
-            cx.fillStyle = "#e0c08a";
-            for (let i = 0; i < 5; i++)
-                cx.fillRect(x + Math.cos(i * 2.4 + m.rot) * sz, y + Math.sin(i * 1.9) * sz * .3, 2.5, 2.5);
-        }
-    }
+    drawMess(dk, "room"); // mess on the floor (any room: drawMess)
     // ball
     if (ball) {
         ball.vy += 700 * dt;
@@ -17734,6 +18820,53 @@ function drawParts(dt, layer = "fg") {
     }
 }
 
+/* the mess on this room's floor */
+function drawMess(dk, room) {
+    for (const m of (S.mess || [])) {
+        if (messRoom(m) !== room)
+            continue;
+        const x = m.x * W, y = GY + 6 + m.y * (H - GY - 14), sz = R * .16 * m.r;
+        if (m.t === "dust") {
+            cx.fillStyle = mix("#b7ad98", "#3b3a36", dk * .7);
+            for (let i = 0; i < 4; i++) {
+                cx.beginPath();
+                cx.arc(x + Math.cos(i * 1.7 + m.rot) * sz * .6, y + Math.sin(i * 2.3) * sz * .25, sz * .55, 0, 7);
+                cx.fill();
+            }
+        }
+        else if (m.t === "leaf") {
+            cx.save();
+            cx.translate(x, y);
+            cx.rotate(m.rot);
+            cx.fillStyle = ["#d9893a", "#c25b34", "#e3b347"][Math.floor(m.rot * 10) % 3];
+            cx.beginPath();
+            cx.ellipse(0, 0, sz * 1.2, sz * .5, 0, 0, 7);
+            cx.fill();
+            cx.restore();
+        }
+        else if (m.t === "paper") {
+            cx.save();
+            cx.translate(x, y);
+            cx.rotate(m.rot);
+            cx.fillStyle = mix("#efe9da", "#55534c", dk * .7);
+            cx.beginPath();
+            cx.moveTo(-sz, -sz * .5);
+            cx.lineTo(sz * .2, -sz * .8);
+            cx.lineTo(sz, -sz * .1);
+            cx.lineTo(sz * .5, sz * .6);
+            cx.lineTo(-sz * .7, sz * .5);
+            cx.closePath();
+            cx.fill();
+            cx.restore();
+        }
+        else {
+            cx.fillStyle = "#e0c08a";
+            for (let i = 0; i < 5; i++)
+                cx.fillRect(x + Math.cos(i * 2.4 + m.rot) * sz, y + Math.sin(i * 1.9) * sz * .3, 2.5, 2.5);
+        }
+    }
+}
+
 </script>
 <script>/* js/scene/loop.js */
 "use strict";
@@ -17797,6 +18930,8 @@ function frame(now) {
         anom.t += dt;
         anomTick(anom, dt, now);
         if (anom && anom.t > (anom.life || 24)) {
+            if (anom.type === "space")
+                spaceEnd(anom); // back from the detour: a postcard (space.js)
             anom = null;
             nextAnom = now + anomalyInterval();
         }
@@ -17848,6 +18983,10 @@ function frame(now) {
             withRoom(view, () => drawPet(po));
         else
             withRoomLight(view, () => drawPet(po)); // not clipped: Mite walks across from one room into the next
+        drawPastimes(dt);
+        withRoomLight("archive", () => drawCatEye(now / 1000)); // Midnightcat batting an eye from the jar about (eyes.js) // sticky notes, paper birds, the tiny things Mite's sorting (pastimes.js)
+        if (anom && anom.held && anom.room === view) // the red phone's handset, at Mite's ear (anomalies.js)
+            withRoomLight(view, () => drawLayered(() => drawHandset(anom)));
         chesterfieldOverMite(now); // on the nook's stairs, Mite walks behind the chair (garden.js)
         withRoom(snailRoom, drawSnailInBed); // the snail tucked in next to Mite (snail.js)
         drawAnimals(now); // the snail and the possum, in front of Mite (camera.js)
@@ -17862,6 +19001,7 @@ function frame(now) {
             cx.fillStyle = `rgba(10,14,40,${sky.dark * .18})`;
             cx.fillRect(0, 0, W, H);
         }
+        withRoom("archive", () => archNebula(now)); // the Tiffany lamp's coloured light on the archive wall, at night
         if (S.lightsOut) {
             cx.fillStyle = "rgba(4,6,18,.55)";
             cx.fillRect(0, 0, W, H);
@@ -18104,9 +19244,9 @@ cv.addEventListener("pointermove", e => {
         camX = camTarget = clamp(swipe.c0 - (sp.x - swipe.x0), -W, W);
         return;
     }
-    if (roomAt(sp.x) === "room") {
-        const p = toWagon(sp);
-        if (sweepAt(p.x, p.y) && swipe)
+    {
+        const rm = roomAt(sp.x), p = { x: sp.x - roomOff(rm), y: sp.y };
+        if (sweepAt(p.x, p.y, rm) && swipe)
             swipe.swept = true; // sweeping the floor, not swiping
     }
 });
@@ -18472,6 +19612,7 @@ $("jotList").addEventListener("click", e => {
 function renderTasks() {
     renderJots();
     $("eveCard").hidden = !eveCardDue();
+    $("bkCard").hidden = !backupDue();
     const open = openTasks().concat(editingId ? S.tasks.filter(t => t.id === editingId && !t.d && isAhead(t)) : []);
     $("openCount").textContent = open.length || "";
     const vis = t => filter === "all" || (filter === "week" && t.wk) || t.tag === filter;
@@ -18716,11 +19857,12 @@ setInterval(() => {
 /*
  * shop.js - The shop: buying things, wall pieces, plants and crystals.
  */
+const byPrice = list => list.map((b, i) => [b, i]).sort((x, y) => x[0].price - y[0].price || x[1] - y[1]).map(x => x[0]); // cheapest first (same price: list order)
 function renderShop() {
     const shop = $("shop");
     shop.innerHTML = "";
     let prevOwned = true;
-    BUILDINGS.forEach((b, i) => {
+    byPrice(BUILDINGS).forEach((b, i) => {
         const own = S.b[b.id] || 0;
         const visible = own > 0 || prevOwned || S.gTotal >= b.price * .6;
         prevOwned = own > 0;
@@ -18740,7 +19882,7 @@ function renderShop() {
     });
     const ws = $("wallShop");
     ws.innerHTML = "";
-    WALL.forEach(b => {
+    byPrice(WALL).forEach(b => {
         const own = (S.b[b.id] || 0) > 0;
         const el = document.createElement("div");
         el.className = "bld";
@@ -18752,7 +19894,7 @@ function renderShop() {
     });
     const ps = $("plantShop");
     ps.innerHTML = "";
-    PLANTS.forEach(b => {
+    byPrice(PLANTS).forEach(b => {
         const own = (S.b[b.id] || 0) > 0;
         const el = document.createElement("div");
         el.className = "bld";
@@ -18766,7 +19908,7 @@ function renderShop() {
     });
     const cs = $("crystalShop");
     cs.innerHTML = "";
-    CRYSTALS.forEach(b => {
+    byPrice(CRYSTALS).forEach(b => {
         const own = (S.b[b.id] || 0) > 0;
         const el = document.createElement("div");
         el.className = "bld";
@@ -18838,7 +19980,17 @@ function buy(b) {
     S.b[b.id] = (S.b[b.id] || 0) + 1;
     if (b.id === "jar" && nameFireflies(true))
         return afterChange();
-    if (S.b[b.id] === 1) {
+    if (S.b[b.id] === 1 && b.id === "books") { // the first book comes with a chair
+        speak("A book! I'll need somewhere to read it. Oh. There's a chair in the nook now. A big soft one. It looks like it's been waiting.", { ms: 7000 });
+        note("Got a tiny library. A chesterfield turned up in the nook to read in.");
+    }
+    else if (S.b[b.id] === 1 && b.id === "rental") {
+        speak("The chest is in the nook. Four drawers to let. The vase goes on top, the flower book on the desk. Lavender first, it's tradition.", { ms: 7000 });
+        note("Got the renter's chest, a vase and a book for pressed flowers.");
+        if (S.vase && S.vase.at > 1e9)
+            S.vase.at = Date.now();
+    }
+    else if (S.b[b.id] === 1) {
         say("buy", { item: b.name.toLowerCase() });
         note(`Got a ${b.name.toLowerCase()}.`);
     }
@@ -18865,6 +20017,7 @@ function renderCabinet() {
         $("origamiList").innerHTML = ORIGAMI.map(o => n[o.id] ? `<span class="word"><i>${esc(o.name)}</i>${n[o.id] > 1 ? " ×" + n[o.id] : ""}</span>` : `<span class="word" style="opacity:.45"><i>?</i></span>`).join("");
     }
     renderKnits();
+    renderGlimpses(); // what the chalk circle has shown (circle.js)
     {
         const fl = $("festList");
         if (fl) {
@@ -19058,10 +20211,12 @@ function renderContent() {
     $("setYou").value = st.you;
     $("setPet").value = st.pet;
     $("setApp").value = st.app || "Small Things";
+    $("setPossum").value = possumName();
     $("setDoneBy").value = st.doneBy;
     $("setBed").value = st.bed;
     $("setStrange").value = String(strangeness());
     $("setTalk").value = String(S.settings.talk ?? 1);
+    $("setBackup").value = String(S.settings.backup ?? 1);
     const days = (el, arr, name) => {
         el.innerHTML = [1, 2, 3, 4, 5, 6, 0].map(d => `<label><input type="checkbox" id="${name}${d}" data-d="${d}" ${arr.includes(d) ? "checked" : ""}>${DAYS[d]}</label>`).join("");
     };
@@ -19448,6 +20603,15 @@ $("saveSettings").onclick = () => {
     st.app = $("setApp").value.trim() || "Small Things";
     document.title = st.app;
     {
+        const pn = $("setPossum").value.trim().slice(0, 30);
+        if (pn && pn !== S.possumName) {
+            S.possumName = pn;
+            S.possumSet = Date.now();
+            if (!S.possumAt)
+                S.possumAt = S.possumSet;
+        }
+    }
+    {
         const l = parseLoc($("setLoc").value);
         st.wloc = l ? `${l.la}, ${l.lo}` : "";
         liveWx = null;
@@ -19463,6 +20627,7 @@ $("saveSettings").onclick = () => {
     }
     st.doneBy = clamp(+$("setDoneBy").value || 19, 12, 23);
     st.talk = clamp(Math.round(+$("setTalk").value), 0, 2);
+    st.backup = clamp(Math.round(+$("setBackup").value), 0, 2);
     st.strange = +$("setStrange").value;
     if (!st.strange) {
         anom = null;
@@ -19543,7 +20708,11 @@ async function copy(text, label) {
         toast("Clipboard blocked; it's in the box below, selected");
     }
 }
-$("exportBtn").onclick = () => copy(JSON.stringify(Object.assign({}, S, { archive: ARCH, keepsakes: KEEP })), "Save");
+$("exportBtn").onclick = async () => {
+    await copy(backupText(), "Save");
+    S.backupAt = Date.now();
+    saveSoon();
+};
 $("exportContentBtn").onclick = () => copy(JSON.stringify({ mosslingContent: Object.assign({ persona: persona() }, { pools: Object.fromEntries(Object.keys(POOL_INFO).map(k => [k, pool(k)])) }) }, null, 1), "Lines");
 $("importBtn").onclick = () => {
     const raw = $("importText").value;
@@ -19623,6 +20792,79 @@ $("resetAll").onclick = () => {
     renderAll();
     speak("Hello. I'm new. Or new again.");
     $("resetAll").textContent = "Start over";
+};
+
+/* ---------- backups as a file: the morning reminder in the task list, and the buttons in Backup ---------- */
+function backupText() {
+    return JSON.stringify(Object.assign({}, S, { archive: ARCH, keepsakes: KEEP }));
+}
+function backupName() {
+    const d = new Date(), p = n => String(n).padStart(2, "0");
+    return `small-things-backup-${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}.json`;
+}
+/* the reminder: once a day (or week), from the morning on, when there's something worth keeping */
+function backupDue() {
+    const k = S.settings.backup ?? 1;
+    if (!k || S.flags.bkLater === dayKey() || new Date().getHours() < 5)
+        return false;
+    const since = Date.now() - num(S.backupAt), gap = k === 2 ? 6.5 * 864e5 : 18 * 36e5;
+    const age = Date.now() - num(S.created);
+    return since > gap && age > 864e5 && (S.tasks.length + doneTasks().length + (S.notes || []).length) > 0;
+}
+function backupDone(how) {
+    S.backupAt = Date.now();
+    saveSoon();
+    renderTasks();
+    toast(how);
+}
+/* the share sheet (messengers, mail, files) where the device has one for files; otherwise a download */
+async function sendBackup() {
+    const text = backupText();
+    try {
+        const f = new File([text], backupName(), { type: "application/json" });
+        if (navigator.canShare && navigator.canShare({ files: [f] })) {
+            await navigator.share({ files: [f], title: "Small Things backup" });
+            return backupDone("Backup sent");
+        }
+    }
+    catch (e) {
+        if (e && e.name === "AbortError")
+            return; // closed the share sheet: nothing happened
+    }
+    saveBackup(text, true);
+}
+function saveBackup(text, fromShare) {
+    try {
+        const url = URL.createObjectURL(new Blob([text || backupText()], { type: "application/json" })), a = document.createElement("a");
+        a.href = url;
+        a.download = backupName();
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        backupDone(fromShare ? "No share menu here, so it's downloaded instead" : "Backup downloaded");
+    }
+    catch (e) {
+        copy(text || backupText(), "Save");
+    }
+}
+$("bkSend").onclick = $("bkSend2").onclick = () => sendBackup();
+$("bkSave").onclick = $("bkSave2").onclick = () => saveBackup();
+$("bkLater").onclick = () => {
+    S.flags.bkLater = dayKey();
+    saveSoon();
+    renderTasks();
+};
+$("bkOpen").onclick = () => $("bkFile").click();
+$("bkFile").onchange = async () => {
+    const f = $("bkFile").files && $("bkFile").files[0];
+    $("bkFile").value = "";
+    if (!f)
+        return;
+    if (f.size > 8e6)
+        return toast("That file is too big to be a backup");
+    $("importText").value = await f.text();
+    $("importBtn").click();
 };
 
 </script>
@@ -20273,7 +21515,10 @@ function selfCare(id) {
         note(`${youN()} went outside. So did I. Brought back a leaf.`);
     afterChange();
 }
-/* mess */
+/* mess: bits on the floor, in any of the three rooms (m.room) */
+function messRoom(m) {
+    return m && (m.room === "garden" || m.room === "archive") ? m.room : "room";
+}
 let nextMess = Date.now() + rnd(8, 20) * 60e3;
 function addMess(n) {
     if (!Array.isArray(S.mess))
@@ -20281,7 +21526,8 @@ function addMess(n) {
     const sea = season(new Date().getMonth());
     for (let i = 0; i < n && S.mess.length < 14; i++) {
         const r = Math.random();
-        S.mess.push({ x: rnd(.06, .94), y: rnd(.05, .8), t: sea === "autumn" && r < .5 ? "leaf" : r < .7 ? "dust" : r < .88 ? "paper" : "crumb", r: rnd(.8, 1.25), rot: rnd(0, 6) });
+        const rr = Math.random(), room = rr < .5 ? "room" : rr < .75 ? "garden" : "archive"; // the whole wagon gets messy, the middle most
+        S.mess.push({ room, x: rnd(.06, .94), y: rnd(.05, .8), t: sea === "autumn" && r < .5 ? "leaf" : r < .7 ? "dust" : r < .88 ? "paper" : "crumb", r: rnd(.8, 1.25), rot: rnd(0, 6) });
     }
     if (curTab === "care")
         renderCare();
@@ -20292,12 +21538,14 @@ function addMess(n) {
     }
 }
 let messHintQueued = false;
-function sweepAt(x, y) {
+function sweepAt(x, y, room = "room") {
     if (!S.mess || !S.mess.length)
         return false;
     let any = false;
     for (let i = S.mess.length - 1; i >= 0; i--) {
         const m = S.mess[i];
+        if (messRoom(m) !== room)
+            continue;
         const mx = m.x * W, my = GY + 6 + m.y * (H - GY - 14);
         if (Math.hypot(mx - x, my - y) < Math.max(22, R * .5)) {
             S.mess.splice(i, 1);
@@ -20306,7 +21554,7 @@ function sweepAt(x, y) {
             if (S.care.swept % 3 === 0)
                 addG(PAY.sweep);
             for (let j = 0; j < 7; j++)
-                addP({ type: "spark", x: mx, y: my, vx: rnd(-70, 70), vy: rnd(-90, -10), g: 160, max: .7, col: "#d8d2c0", size: 2.5 });
+                addP({ type: "spark", x: mx, y: my, vx: rnd(-70, 70), vy: rnd(-90, -10), g: 160, max: .7, col: "#d8d2c0", size: 2.5, room });
         }
     }
     if (any) {
@@ -21330,19 +22578,33 @@ function autoFileOld() {
  *   openDesk()        the index
  *   openDesk("lines") straight to a page (showPane() sends Desk pages here too)
  */
+/* the credits page: inspirations (tone and ideas only: no names, characters, places or text taken from them),
+   the fonts and their licence */
+const CREDITS_HTML = `<div><h2>Credits and inspiration</h2><p class="sub">Small Things is a small, original thing. These are the works whose mood it borrows: their tone and ideas, never their characters, places or words. It isn't affiliated with any of them.</p></div>
+<div><h3>Inspiration</h3><ul class="credits-list">
+<li><b>The SCP Foundation</b> (collaborative fiction): containment reports, redacted files and a very calm bureau.</li>
+<li><b>Control</b> (Remedy Entertainment): altered items, a building bigger on the inside, filing as a supernatural act.</li>
+<li><b>World of Darkness</b> and <b>Vampire: The Masquerade</b> (White Wolf): old, polite, patient strangeness; patrons and pacts.</li>
+<li><b>Fallen London</b> (Failbetter Games): gaslit, wry, underground whimsy; strange books, odd manners and lovely sentences.</li>
+<li><b>Cosy witch games</b>: gardens, brewing, a familiar who keeps you company while you get through the day.</li>
+<li><b>Virtual pets</b>: a small creature who's happier when you look after yourself.</li></ul></div>
+<div><h3>Fonts</h3><p class="sub">Bricolage Grotesque, Atkinson Hyperlegible, IBM Plex Mono, DotGothic16 and VT323, each under the SIL Open Font License 1.1.</p></div>
+<div><h3>Made with</h3><p class="sub">Written, drawn and built with Claude. All the pixel art is drawn in code, and all of it is original.</p></div>`;
 const DESK_PAGES = {
     content: { pane: "tab-content", title: "Settings" },
     lines: { pane: "tab-lines", title: "Lines" },
     review: { pane: "tab-lines", title: "Lines", anchor: "aiLogHead" },
     usage: { pane: "tab-data", title: "AI usage and backup", anchor: "usage" },
     data: { pane: "tab-data", title: "AI usage and backup", anchor: "exportBtn" },
-    fixit: { pane: "deskFix", title: "Fix-it list" }
+    fixit: { pane: "deskFix", title: "Fix-it list" },
+    credits: { pane: "deskCredits", title: "Credits and inspiration" }
 };
 const DESK_GROUPS = () => [
     { title: "You and " + S.settings.pet, rows: [["content", "Settings", "Names, work days, bedtime, home, Strangeness, talk speed, weather"]] },
     { title: "Lines", rows: [["lines", "Lines editor", `${Object.keys(POOL_INFO).length} pools: what ${S.settings.pet} says, books, bakes, visitors`], ["review", "New from " + S.settings.pet, "Lines written with AI help, to keep or remove", (S.aiLog || []).length || ""]] },
     { title: "AI", rows: [["usage", "AI usage", "Every call, with estimated tokens"]] },
-    { title: "Data", rows: [["data", "Backup and import", "Copy your save, import lines, start over"], ["fixit", "Fix-it list", "Notes about what's clumsy", (S.fixes || []).filter(f => !f.done).length || ""]] }
+    { title: "Data", rows: [["data", "Backup and import", "Copy your save, import lines, start over"], ["fixit", "Fix-it list", "Notes about what's clumsy", (S.fixes || []).filter(f => !f.done).length || ""]] },
+    { title: "About", rows: [["credits", "Credits and inspiration", "What the wagon is made of, and what it was inspired by"]] }
 ];
 let deskOpener = null, deskPage = "";
 /* move the Desk panes (and the fix-it list) out of the sheet, into the Desk */
@@ -21362,6 +22624,12 @@ let deskOpener = null, deskPage = "";
     box.open = true;
     fx.appendChild(box);
     body.appendChild(fx);
+    const cr = document.createElement("div"); // credits: fixed text, no saved data in it
+    cr.className = "pane credits";
+    cr.id = "deskCredits";
+    cr.hidden = true;
+    cr.innerHTML = CREDITS_HTML;
+    body.appendChild(cr);
 })();
 function renderDesk() {
     $("deskSync").textContent = $("syncTxt").textContent || "Saved in this browser";
@@ -21659,7 +22927,7 @@ $("kbd").addEventListener("click", e => {
 $("kSweep").onclick = () => {
     const m = S.mess && S.mess[S.mess.length - 1];
     if (m)
-        sweepAt(m.x * W, GY + 6 + m.y * (H - GY - 14));
+        sweepAt(m.x * W, GY + 6 + m.y * (H - GY - 14), messRoom(m));
 };
 $("fsBtn").onclick = () => {
     if (document.fullscreenElement)
@@ -21747,6 +23015,11 @@ function boot() {
     loadArchLocal();
     loadKeepLocal();
     migrateCounts();
+    if (!S.flags.m_rental) { // the renter's chest used to come by itself: a save that already had it keeps it
+        S.flags.m_rental = 1;
+        if (!isNew && S.drawers && S.drawers.at && !S.b.rental)
+            S.b.rental = 1;
+    }
     {
         const n = autoFileOld();
         compact();
