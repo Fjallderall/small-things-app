@@ -14928,24 +14928,31 @@ function catYarnTick(dt, now) {
         }
         // roll the ball, slow it down, keep it near Mite (the thread pulls it back)
         yarnBall.x += yarnBall.vx * dt;
-        yarnBall.vx *= Math.pow(.25, dt);
+        yarnBall.vx *= Math.pow(.2, dt);
+        if (Math.abs(yarnBall.vx) < R * .05)
+            yarnBall.vx = 0; // (comes to a stop, instead of creeping)
         const pull = yarnBall.home - yarnBall.x;
         if (Math.abs(pull) > R * 1.4)
             yarnBall.vx += Math.sign(pull) * R * 3 * dt;
         yarnBall.x = clamp(yarnBall.x, R * .3, W - R * .3);
-        // stay close to it, on the far side from Mite
+        // stay close to it, on the far side from Mite: walk over when it's got away (not for every little roll),
+        // facing where she's going, then crouch facing the ball
         const want = yarnBall.x + yarnBall.side * catBox().w * .55, d = want - cat.x;
-        if (Math.abs(d) > R * .25) {
-            cat.x += Math.sign(d) * Math.min(Math.abs(d), R * 1.6 * dt);
+        if (!cat.walkPlay && Math.abs(d) > R * .5)
             cat.walkPlay = true;
+        else if (cat.walkPlay && Math.abs(d) < R * .1)
+            cat.walkPlay = false;
+        if (cat.walkPlay) {
+            cat.x += Math.sign(d) * Math.min(Math.abs(d), R * 1.5 * dt);
+            cat.dir = Math.sign(d) || cat.dir;
         }
         else
-            cat.walkPlay = false;
-        cat.dir = -yarnBall.side;
-        if (now > cat.until) { // a swipe at it
+            cat.dir = Math.sign(yarnBall.x - cat.x) || -yarnBall.side;
+        const reach = Math.abs(yarnBall.x - cat.x) < catBox().w * .85;
+        if (now > cat.until && !cat.walkPlay && reach && Math.abs(yarnBall.vx) < R * .5) { // a swipe at it, once it's close and settling
             cat.paw = now;
-            yarnBall.vx = (Math.random() < .6 ? -yarnBall.side : yarnBall.side) * rnd(R * .9, R * 2);
-            cat.until = now + rnd(900, 2400);
+            yarnBall.vx = (Math.random() < .6 ? -yarnBall.side : yarnBall.side) * rnd(R * .7, R * 1.5);
+            cat.until = now + rnd(1400, 3000);
             if (Math.random() < .15)
                 addP({ type: "text", text: choice(["!", "mrrp", "pounce"]), x: cat.x, y: GY - catSize() * 1.6, vy: -14, max: 1.6, col: "#e6e0f0", size: 12, room: cat.room });
         }
