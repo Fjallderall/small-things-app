@@ -12603,7 +12603,7 @@ function spawnAnom(dark) {
     else if (type === "cloud")
         anom = Object.assign(base, { x: pet.x, y: GY - R * 2.7 });
     else if (type === "figure") { // a tall thin someone, standing very still in the corner furthest from Mite
-        const left = pet.x > W / 2 || view !== base.room;
+        const left = base.room !== "archive" && (pet.x > W / 2 || view !== base.room); // (in the archive the left corner's the desk: always the far right)
         anom = Object.assign(base, { x: left ? W * .07 + R * .3 : W * .93 - R * .3, y: GY });
     }
     else if (type === "hand")
