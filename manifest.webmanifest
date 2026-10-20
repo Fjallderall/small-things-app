@@ -1,0 +1,17 @@
+{
+  "name": "Small Things",
+  "short_name": "Small Things",
+  "description": "A cosy pixel-art wagon where Mite, a small moss creature, keeps your task list company.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#241812",
+  "theme_color": "#241812",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

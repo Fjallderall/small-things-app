@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data: blob:; media-src data: blob:; connect-src https://api.open-meteo.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src 'self' data: blob:; manifest-src 'self'; worker-src 'self'; media-src data: blob:; connect-src https://api.open-meteo.com; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#241812">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>if ("serviceWorker" in navigator && location.protocol === "https:") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
 <!-- Small Things, shared build of 20-10-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
@@ -4277,7 +4281,7 @@ function typeInto(b, text, voice) {
             blip(text[st.n - 1], voice);
         if (st.n >= text.length)
             return typeFinish();
-        st.timer = setTimeout(tick, 1000 / (TYPE_CPS * talkF()) * (/[.,!?…]/.test(text[st.n - 1]) ? 4 : 1));
+        st.timer = setTimeout(tick, 1000 / (TYPE_CPS * typeF()) * (/[.,!?…]/.test(text[st.n - 1]) ? (typeF() > 2 ? 2 : 4) : 1)); // (fast: shorter pauses at commas and full stops too)
     };
     tick();
 }
@@ -4323,6 +4327,10 @@ function readMs(text) {
 /* talk speed (Settings): how much faster than normal speech types and moves on */
 function talkF() {
     return [.7, 1, 1.45][S && S.settings ? S.settings.talk ?? 1 : 1] || 1;
+}
+/* how fast the letters type: fast is a lot faster (the line then still stays up long enough to read, talkF) */
+function typeF() {
+    return [.7, 1, 2.6][S && S.settings ? S.settings.talk ?? 1 : 1] || 1;
 }
 /* Mite finishes a thought before starting the next: while a line is still typing, or hasn't been readable for a
    moment yet (speakReadUntil), a new line waits in speakQ and speakPump() shows it after. Little emotes and the
@@ -4382,7 +4390,7 @@ function speak(text, opts = {}) {
         speakReadUntil = 0;
         return;
     }
-    const f = talkF(), typeMs = typed ? text.length / (TYPE_CPS * f) * 1000 : 0;
+    const f = talkF(), typeMs = typed ? text.length / (TYPE_CPS * typeF()) * 1000 : 0;
     bubbleUntil = performance.now() + (ms || clamp(3200 + text.length * 65, 4200, 13000)) / f + typeMs;
     speakReadUntil = thinking ? 0 : performance.now() + typeMs + clamp(800 + text.length * 25, 1200, 3500) / f;
     // { whole: true }: a line that's finished and read before anything else is said, even a reply to a tap
@@ -5353,22 +5361,30 @@ const LUT = new Uint8Array(32768);
             }
 })();
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v / 16 - .47) * 9);
+/* for speed: for each of the 16 dither offsets, every channel value 0..255 straight to its 5-bit step; and the
+   palette as whole pixels (one write per pixel instead of four) */
+const DITH5 = new Uint8Array(16 * 256), PAL32 = new Uint32Array(PAL.length);
+BAYER.forEach((o, k) => {
+    for (let v = 0; v < 256; v++)
+        DITH5[k * 256 + v] = clamp(v + o, 0, 255) >> 3;
+});
+{
+    const b = new Uint8Array(PAL32.buffer);
+    PAL.forEach((p, i) => b.set([p[0], p[1], p[2], 255], i * 4));
+}
 /* snap every pixel of the small canvas to the palette, with a little ordered dithering (BAYER) */
 function quantize() {
     const w = pc.width, h = pc.height;
     if (!w || !h)
         return;
-    const im = pcx.getImageData(0, 0, w, h), d = im.data;
-    for (let y = 0, i = 0; y < h; y++)
-        for (let x = 0; x < w; x++, i += 4) {
-            const o = BAYER[((y & 3) << 2) | (x & 3)];
-            const r = clamp(d[i] + o, 0, 255) >> 3, g = clamp(d[i + 1] + o, 0, 255) >> 3, b = clamp(d[i + 2] + o, 0, 255) >> 3;
-            const p = PAL[LUT[(r << 10) | (g << 5) | b]];
-            d[i] = p[0];
-            d[i + 1] = p[1];
-            d[i + 2] = p[2];
-            d[i + 3] = 255;
+    const im = pcx.getImageData(0, 0, w, h), d = im.data, d32 = new Uint32Array(d.buffer, d.byteOffset, w * h);
+    for (let y = 0, i = 0, k = 0; y < h; y++) {
+        const row = (y & 3) << 2;
+        for (let x = 0; x < w; x++, i += 4, k++) {
+            const o = (row | (x & 3)) << 8;
+            d32[k] = PAL32[LUT[(DITH5[o + d[i]] << 10) | (DITH5[o + d[i + 1]] << 5) | DITH5[o + d[i + 2]]]];
         }
+    }
     pcx.putImageData(im, 0, 0);
 }
 /* 5x7 bitmap font, drawn at screen resolution after the scene is upscaled */
@@ -5377,10 +5393,86 @@ const G7 = { A: "01110100011000111111100011000110001", B: "111101000110001111101
     "+": "00000001000010011111001000010000000", "-": "00000000000000011111000000000000000", "!": "00100001000010000100001000000000100", "?": "01110100010000100010001000000000100", ".": "00000000000000000000000000110001100", ",": "00000000000000000000011000010001000", ":": "00000011000110000000011000110000000", "'": "00100001000100000000000000000000000", "/": "00001000100001000100010000100010000", "×": "00000100010101000100010101000100000", " ": "00000000000000000000000000000000000" };
 let TQ = [];
 const propLayer = document.createElement("canvas"), plx = propLayer.getContext("2d", { willReadFrequently: true });
-function hardenLayer(c, w, h) {
+/* what's been drawn on the outline layer since it was last cleared, as a box in layer pixels (or "all" when it
+   can't tell), so hardenLayer only has to read that part back. Reading pixels back is the slowest thing the scene
+   does, and most layers are one small object on a big empty canvas. Every way of drawing on plx is watched; the
+   box is generous (curves count their control points, strokes their width) so nothing is ever cut off. */
+let layerBox = null, pathBox = null, layerM = null;
+function layerReset() {
+    layerBox = pathBox = layerM = null;
+}
+(function watchLayer() {
+    const P = CanvasRenderingContext2D.prototype, g = plx;
+    const grow = (b, X0, Y0, X1, Y1) => {
+        if (!b)
+            return [X0, Y0, X1, Y1];
+        if (X0 < b[0]) b[0] = X0;
+        if (Y0 < b[1]) b[1] = Y0;
+        if (X1 > b[2]) b[2] = X1;
+        if (Y1 > b[3]) b[3] = Y1;
+        return b;
+    };
+    /* a box in drawing coordinates, through the current transform, to layer pixels */
+    const tbox = (b, x0, y0, x1, y1, pad = 0) => {
+        const m = layerM || (layerM = g.getTransform());
+        const ax = m.a * x0, cx0 = m.c * y0, ax1 = m.a * x1, cy1 = m.c * y1, bx = m.b * x0, dy0 = m.d * y0, bx1 = m.b * x1, dy1 = m.d * y1;
+        const X0 = Math.min(ax, ax1) + Math.min(cx0, cy1) + m.e - pad, X1 = Math.max(ax, ax1) + Math.max(cx0, cy1) + m.e + pad;
+        const Y0 = Math.min(bx, bx1) + Math.min(dy0, dy1) + m.f - pad, Y1 = Math.max(bx, bx1) + Math.max(dy0, dy1) + m.f + pad;
+        return grow(b, X0, Y0, X1, Y1);
+    };
+    const all = () => { layerBox = "all"; };
+    const toLayer = (b, pad = 0) => {
+        if (b && layerBox !== "all")
+            layerBox = grow(layerBox, b[0] - pad, b[1] - pad, b[2] + pad, b[3] + pad);
+    };
+    const strokePad = () => {
+        const m = layerM || (layerM = g.getTransform());
+        return g.lineWidth * Math.max(Math.hypot(m.a, m.b), Math.hypot(m.c, m.d)) / 2 + 2;
+    };
+    for (const k of ["setTransform", "resetTransform", "transform", "translate", "scale", "rotate", "restore"])
+        g[k] = function () { layerM = null; return P[k].apply(this, arguments); };
+    g.beginPath = function () { pathBox = null; return P.beginPath.call(this); };
+    const pts = k => g[k] = function () {
+        const a = arguments;
+        for (let i = 0; i + 1 < a.length; i += 2)
+            pathBox = tbox(pathBox, a[i], a[i + 1], a[i], a[i + 1]);
+        return P[k].apply(this, a);
+    };
+    ["moveTo", "lineTo", "quadraticCurveTo", "bezierCurveTo"].forEach(pts);
+    g.arc = function (x, y, r) { pathBox = tbox(pathBox, x - r, y - r, x + r, y + r); return P.arc.apply(this, arguments); };
+    g.arcTo = function (x1, y1, x2, y2, r) { pathBox = tbox(tbox(pathBox, x1 - r, y1 - r, x1 + r, y1 + r), x2 - r, y2 - r, x2 + r, y2 + r); return P.arcTo.apply(this, arguments); };
+    g.ellipse = function (x, y, rx, ry) { const r = Math.max(Math.abs(rx), Math.abs(ry)); pathBox = tbox(pathBox, x - r, y - r, x + r, y + r); return P.ellipse.apply(this, arguments); };
+    const rectish = k => g[k] = function (x, y, w, h) { pathBox = tbox(pathBox, x, y, x + w, y + h); return P[k].apply(this, arguments); };
+    ["rect", "roundRect"].forEach(rectish);
+    g.fill = function (p) { if (p && typeof p === "object") all(); else toLayer(pathBox, 2); return P.fill.apply(this, arguments); };
+    g.stroke = function (p) { if (p && typeof p === "object") all(); else toLayer(pathBox, strokePad()); return P.stroke.apply(this, arguments); };
+    g.fillRect = function (x, y, w, h) { toLayer(tbox(null, x, y, x + w, y + h), 2); return P.fillRect.apply(this, arguments); };
+    g.strokeRect = function (x, y, w, h) { toLayer(tbox(null, x, y, x + w, y + h), strokePad()); return P.strokeRect.apply(this, arguments); };
+    g.drawImage = function (img, a, b, c, d, e, f, gg, h) {
+        const n = arguments.length;
+        if (n === 3) toLayer(tbox(null, a, b, a + (img.width || 0), b + (img.height || 0)), 2);
+        else if (n === 5) toLayer(tbox(null, a, b, a + c, b + d), 2);
+        else toLayer(tbox(null, e, f, e + gg, f + h), 2);
+        return P.drawImage.apply(this, arguments);
+    };
+    for (const k of ["putImageData", "fillText", "strokeText"])
+        g[k] = function () { all(); return P[k].apply(this, arguments); };
+})();
+function hardenLayer(c, W0, H0) {
     // faint antialiased slivers become solid pixels; every shape gets a 1px dark rim. Only the part that was drawn
-    // on is processed and written back (most layers are one small object), which keeps it quick
-    const im = c.getImageData(0, 0, w, h), d = im.data;
+    // on is read, processed and written back (layerBox, above), which keeps it quick
+    let rx = 0, ry = 0, w = W0, h = H0;
+    if (c === plx && layerBox !== "all") {
+        if (!layerBox)
+            return false; // nothing drawn
+        rx = clamp(Math.floor(layerBox[0]) - 2, 0, W0);
+        ry = clamp(Math.floor(layerBox[1]) - 2, 0, H0);
+        w = clamp(Math.ceil(layerBox[2]) + 3, 0, W0) - rx;
+        h = clamp(Math.ceil(layerBox[3]) + 3, 0, H0) - ry;
+        if (w <= 0 || h <= 0)
+            return false; // all of it off the canvas
+    }
+    const im = c.getImageData(rx, ry, w, h), d = im.data;
     let x0 = w, y0 = h, x1 = -1, y1 = -1;
     for (let y = 0, i = 3; y < h; y++)
         for (let x = 0; x < w; x++, i += 4) {
@@ -5433,8 +5525,8 @@ function hardenLayer(c, w, h) {
             d[i + 2] = Math.round(d[j + 2] * .5 + 8);
             d[i + 3] = 255;
         }
-    c.putImageData(im, 0, 0, x0, y0, bw, y1 - y0 + 1);
-    return { x0, y0, w: bw, h: y1 - y0 + 1 };
+    c.putImageData(im, rx, ry, x0, y0, bw, y1 - y0 + 1);
+    return { x0: x0 + rx, y0: y0 + ry, w: bw, h: y1 - y0 + 1 };
 }
 function drawTextQueue() {
     if (!TQ.length)
@@ -5497,7 +5589,7 @@ function lightPattern(a) {
     if (!LPAT || LPAT_A !== a) {
         const t = document.createElement("canvas");
         t.width = t.height = 4;
-        const q = t.getContext("2d");
+        const q = t.getContext("2d", { willReadFrequently: true }); // (kept in memory, like the scene it patterns)
         q.fillStyle = `rgba(255,236,190,${.55 * a})`;
         [[0, 0], [2, 2], [2, 0], [0, 2]].slice(0, a > .6 ? 4 : 2).forEach(([x, y]) => q.fillRect(x, y, 1, 1));
         LPAT = cx.createPattern(t, "repeat");
@@ -7945,6 +8037,7 @@ function drawPet(po) {
     if (propHost) {
         propLayer.width = pc.width;
         propLayer.height = pc.height;
+        layerReset();
         plx.setTransform(cx.getTransform());
         cx = plx;
     }
@@ -8333,11 +8426,13 @@ function drawPet(po) {
     }
     if (propHost) {
         cx = propHost;
-        hardenLayer(plx, propLayer.width, propLayer.height);
-        cx.save();
-        cx.setTransform(1, 0, 0, 1, 0, 0);
-        cx.drawImage(propLayer, 0, 0);
-        cx.restore();
+        const bb = hardenLayer(plx, propLayer.width, propLayer.height);
+        if (bb) {
+            cx.save();
+            cx.setTransform(1, 0, 0, 1, 0, 0);
+            cx.drawImage(propLayer, bb.x0, bb.y0, bb.w, bb.h, bb.x0, bb.y0, bb.w, bb.h);
+            cx.restore();
+        }
     }
     if (blk > 0) {
         // kakebuton pulled up to the chin
@@ -12071,7 +12166,7 @@ function runConvo(line, onEnd) {
 /* the dialogue box: text types out, a tap finishes the line or moves on, otherwise it moves on by itself */
 let dlgState = null;
 function dlgTime(txt) {
-    return (txt.length / DLG_CPS + clamp(1.4 + txt.length * .035, 2.2, 5.5)) / talkF();
+    return (txt.length / DLG_CPS * talkF() / typeF() + clamp(1.4 + txt.length * .035, 2.2, 5.5)) / talkF();
 }
 const DLG_CPS = 34;
 function emoteFor(t, who) {
@@ -12115,7 +12210,7 @@ function dlgShow(name, txt, kind, id, next) {
         if (dlgState !== st || st.done)
             return;
         const was = st.shown;
-        st.shown = Math.min(txt.length, Math.floor((performance.now() - st.t0) / 1000 * DLG_CPS * talkF()));
+        st.shown = Math.min(txt.length, Math.floor((performance.now() - st.t0) / 1000 * DLG_CPS * typeF()));
         if (st.shown > was && st.shown % 2 === 1)
             blip(txt[st.shown - 1], ["snail", "guest", "cat", "possum"].includes(kind) ? kind : "mite");
         $("dlgText").textContent = txt.slice(0, st.shown);
@@ -12425,6 +12520,7 @@ function drawLayered(fn) {
         plx.globalCompositeOperation = "source-over";
         plx.clearRect(0, 0, propLayer.width, propLayer.height);
     }
+    layerReset();
     plx.setTransform(cx.getTransform());
     cx = plx;
     try {
@@ -19961,26 +20057,27 @@ function frame(now) {
     // bubble position
     if (dlgState && dlgState.id !== convoId)
         dlgClose(dlgState.id);
+    // both bubbles' sizes are read first and only then moved: reading a size after moving something makes the
+    // browser lay the page out again, twice a frame
+    const b = $("bubble"), b2 = $("bubble2"), bH = b.hidden ? 0 : b.offsetHeight, b2W = b2.hidden ? 160 : b2.offsetWidth || 160, b2H = b2.hidden ? 0 : b2.offsetHeight;
     {
-        const b2 = $("bubble2");
         const r2 = b2Who === "cat" ? cat.room : b2Who === "possum" ? possum.room : b2Who === "snail" ? snailRoom : "room";
         if (now > snail2Until || (b2Who === "snail" && !own("snail")) || (b2Who === "guest" && !guest) || !roomVisible(r2)) {
             b2.hidden = true;
         }
         else {
-            const sp0 = b2Who === "guest" ? guestPos() : b2Who === "cat" ? catPos() : b2Who === "possum" ? possumPos() : snailPos(), sp = { x: sp0.x + roomOff(r2), y: sp0.y }, half = (b2.offsetWidth || 160) / 2 + 8;
+            const sp0 = b2Who === "guest" ? guestPos() : b2Who === "cat" ? catPos() : b2Who === "possum" ? possumPos() : snailPos(), sp = { x: sp0.x + roomOff(r2), y: sp0.y }, half = b2W / 2 + 8;
             b2.style.left = clamp(sp.x, half, W - half) + "px";
             // above the speaker, unless there's no room up there (the possum on its beam): then underneath, tail up
-            const bh2 = b2.offsetHeight, below = sp.y - R * .75 - bh2 < bubbleSafeTop();
+            const bh2 = b2H, below = sp.y - R * .75 - bh2 < bubbleSafeTop();
             const foot = b2Who === "possum" ? possumBox().y0 + possumBox().h : sp.y + R * .5;
             b2.classList.toggle("below", below);
             b2.style.top = (below ? foot + 12 + bh2 : sp.y - R * .75) + "px";
-            b2.style.setProperty("--tail", clamp(50 + (sp.x - clamp(sp.x, half, W - half)) / (b2.offsetWidth || 160) * 100, 12, 88) + "%");
+            b2.style.setProperty("--tail", clamp(50 + (sp.x - clamp(sp.x, half, W - half)) / b2W * 100, 12, 88) + "%");
         }
     }
     roomArrows(); // the arrows to look into the other room (garden.js)
     speakPump(now); // a line that waited for Mite to finish the last one (speech.js)
-    const b = $("bubble");
     b.classList.toggle("more", speakQ.length > 0 && (!bubbleType || bubbleType.done)); // ▾: tap for the next line
     if (!b.hidden) {
         if (now > bubbleUntil && !(bubbleType && !bubbleType.done)) { // never while it's still typing
@@ -19992,7 +20089,7 @@ function frame(now) {
             const bx = W > half * 2 ? clamp(px, half, W - half) : W / 2;
             b.style.left = bx + "px";
             // the bubble hangs above Mite; if it's too tall for that, it moves down so it never slides under the top controls
-            const bh = b.offsetHeight, safe = bubbleSafeTop();
+            const bh = bH || b.offsetHeight, safe = bubbleSafeTop(); // (just shown this frame: measured now)
             let top = Math.max(54, GY - (pet.ground || 0) - R * 2.5 - (S.hat ? R * .5 : 0));
             if (top - bh < safe)
                 top = safe + bh;
