@@ -5758,9 +5758,10 @@ const BEH = {
                 return;
             }
             if (b.ph === "read") {
-                if (!walkTo(p, po, g.chX, R * 1.8, dt, 3)) {
+                if (!walkTo(p, po, g.chX, R * 1.8, dt, 3)) { // carrying it to the chair: the book's own paws hold it
                     po.prop = "book";
                     po.bookCol = "#365a2c";
+                    po.noArms = true;
                     return;
                 }
                 b.ra = b.ra ?? t;
