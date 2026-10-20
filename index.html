@@ -20818,6 +20818,22 @@ function backupDone(how) {
     renderTasks();
     toast(how);
 }
+/* inside claude.ai the page can't download by itself: the viewer's own save (with a confirmation; in the Claude
+   iOS app that's the share sheet). Resolves "saved", "declined", or null when this view can't do it */
+async function claudeSave(text) {
+    try {
+        if (!window.claude || !window.claude.use)
+            return null;
+        const d = await window.claude.use("downloads");
+        if (!d)
+            return null;
+        await d.save({ filename: backupName(), data: text });
+        return "saved";
+    }
+    catch (e) {
+        return e && e.code === "declined" ? "declined" : null;
+    }
+}
 /* the share sheet (messengers, mail, files) where the device has one for files; otherwise a download */
 async function sendBackup() {
     const text = backupText();
@@ -20834,9 +20850,15 @@ async function sendBackup() {
     }
     saveBackup(text, true);
 }
-function saveBackup(text, fromShare) {
+async function saveBackup(text, fromShare) {
+    text = text || backupText();
+    const c = await claudeSave(text);
+    if (c === "saved")
+        return backupDone(fromShare ? "Backup saved: send it on from your files" : "Backup saved");
+    if (c === "declined")
+        return;
     try {
-        const url = URL.createObjectURL(new Blob([text || backupText()], { type: "application/json" })), a = document.createElement("a");
+        const url = URL.createObjectURL(new Blob([text], { type: "application/json" })), a = document.createElement("a");
         a.href = url;
         a.download = backupName();
         document.body.appendChild(a);
@@ -20846,7 +20868,7 @@ function saveBackup(text, fromShare) {
         backupDone(fromShare ? "No share menu here, so it's downloaded instead" : "Backup downloaded");
     }
     catch (e) {
-        copy(text || backupText(), "Save");
+        copy(text, "Save");
     }
 }
 $("bkSend").onclick = $("bkSend2").onclick = () => sendBackup();
