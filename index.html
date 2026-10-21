@@ -407,12 +407,6 @@ a.mini{text-decoration:none;display:inline-block}
 .btn.ai:disabled,.mini.ai:disabled{opacity:.4;cursor:default}
 .btn.ai .cost,.tray .cost{font-family:var(--f-mono);font-weight:400;font-size:11.5px;color:var(--muted);margin-left:5px}
 .talkbar .btn.ai{background:#fff;color:#22281f}
-.fixlist{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
-.fixlist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;padding:7px 9px;border:1px dashed var(--line);font-size:14px}
-.fixlist li span{overflow-wrap:anywhere}
-.fixlist li small{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
-.fixlist .acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
-#fixForm{margin-top:6px}
 /* ---------- pixel art skin ---------- */
 body.pixel{--f-display:"VT323",ui-monospace,monospace;--f-read:"DotGothic16","Atkinson Hyperlegible",system-ui,sans-serif;--px-ink:#2a1f18}
 body.pixel .stage canvas{image-rendering:pixelated;image-rendering:crisp-edges}
@@ -683,10 +677,6 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <details id="jotBox" open><summary id="jotSum">Jotted down</summary><p class="sub jot-sub">Off the list, out of your head. No dates, no reminders. Tick one off whenever, or let it go.</p><ul class="jots" id="jotList"></ul></details>
       <details id="aheadBox"><summary id="aheadSum">Planned ahead</summary><div id="aheadList" class="agenda"></div></details>
       <details id="doneBox"><summary id="doneSum">Done today</summary><ul class="donelist" id="doneList"></ul></details>
-      <details id="fixBox"><summary id="fixSum">Fix-it list</summary>
-        <p class="sub" style="margin-top:6px">When a procedure annoys you, note it here instead of fixing it on the spot. Turn it into a task when you have room for it.</p>
-        <form class="row" id="fixForm" autocomplete="off"><input type="text" class="inline-in" id="fixIn" maxlength="200" placeholder="What's clumsy, and where?" aria-label="Friction note"><button class="btn" type="submit">Note it</button></form>
-        <ul class="fixlist" id="fixList"></ul></details>
       <form class="addform bottom" id="addForm" autocomplete="off">
         <div class="row">
           <input type="text" id="tTitle" placeholder="Add a task… e.g. 16-10-2026 0900 big #work" aria-label="New task" aria-describedby="addChips" maxlength="160" required>
@@ -924,7 +914,7 @@ const POOL_INFO = {
     late: "After bedtime", after_work: "After work hours on a workday", day_off: "On non-workdays",
     buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
-    uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", friction: "Friction noted ({item})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
+    uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
     trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
 };
 const DEF = {
@@ -1188,7 +1178,7 @@ const DEF = {
             "[strange] door, hallway, deur | The door only comes when it wants to. It's polite.",
             "help, what can you do | Tell me things. Say remember… and I'll keep it. Say I need to… and I'll make a task. Tell me about plans with a day, and I'll ask about them after.",
             "lonely, alone, eenzaam | I'm here. And maybe text someone you like today. Just a small hello.",
-            "stupid, so stupid, is so stupid, is stupid, annoying, clumsy, inefficient, why do we, waarom, omslachtig, friction | Put it on the fix-it list (say: fix …). It'll keep until you have room to do it properly.",
+            "stupid, so stupid, is so stupid, is stupid, annoying, clumsy, inefficient, why do we, waarom, omslachtig, friction | Jot it down (say: note …). It'll keep until you have room to do it properly.",
             "queue, backlog, requests, pile, stapel, achterstand | Queues are easier in batches. Split it, and I'll count the batches for you.",
             "workflow, process, procedure, proces | Workflows are just habits someone wrote down. Or didn't. Which is usually the problem.",
             "metadata, naming, filenames, bestandsnamen, conventions | Good names are kindness to future-you.",
@@ -1223,14 +1213,6 @@ const DEF = {
             "topic: the weather | filing systems | the moon | string | the rug | what the hallway is up to | the best kind of box",
             "pastverb: counted | labelled | polished | alphabetised | interviewed | sketched | sorted | measured",
             "cozything: a warm cup | a clean desk | a small win | a quiet hour | a good box | the sound of rain"
-        ],
-        friction: [
-            "Noted: {item}. It'll keep until you have room for it.",
-            "Filed under things that could work better.",
-            "[workday] Written down. The fix can wait; the queue is still here.",
-            "Good catch. A clumsy procedure is just a design problem nobody has looked at yet.",
-            "On the fix-it list. Pick it up when you have a slow afternoon.",
-            "[offday] Noted. Day off, though. It'll be there on Monday."
         ],
         fixed: [
             "Fixed: {task}. Every time that happens now, it'll be a little easier.",
@@ -3215,7 +3197,7 @@ const LESSONS = [
     { n: 15, id: "tea", name: "Tea ceremony" }, { n: 22, id: "stargaze", name: "Stargazing" }, { n: 30, id: "moonwalk", name: "Moonwalking" },
     { n: 40, id: "tidy", name: "Filing leaves" }, { n: 55, id: "story", name: "Telling stories" }, { n: 75, id: "bow", name: "Taking a bow" }, { n: 100, id: "grand", name: "The grand dance" }
 ];
-const HATS = [{ id: "", name: "No hat", lvl: 1 }, { id: "acorn", name: "Acorn cap", lvl: 2 }, { id: "beret", name: "Beret", lvl: 4 }, { id: "leaves", name: "Leaf crown", lvl: 6 }, { id: "flower", name: "Flower", lvl: 8 }, { id: "wizard", name: "Wizard hat", lvl: 12 }, { id: "crown", name: "Tiny crown", lvl: 16 }, { id: "party", name: "Party hat", lvl: 20 }];
+const HATS = [{ id: "", name: "No hat", lvl: 1 }, { id: "acorn", name: "Acorn cap", lvl: 2 }, { id: "beret", name: "Beret", lvl: 4 }, { id: "leaves", name: "Leaf crown", lvl: 6 }, { id: "flower", name: "Flower", lvl: 8 }, { id: "postit", name: "Sticky note", lvl: 10 }, { id: "wizard", name: "Wizard hat", lvl: 12 }, { id: "crown", name: "Tiny crown", lvl: 16 }, { id: "party", name: "Party hat", lvl: 20 }];
 const ACH = [
     ["first", "First thing", "Finish a task", s => s.done >= 1], ["t10", "Ten-ish", "Finish 10 tasks", s => s.done >= 10], ["t50", "Fifty", "Finish 50 tasks", s => s.done >= 50],
     ["t100", "Centurion", "Finish 100 tasks", s => s.done >= 100], ["t250", "Head archivist", "Finish 250 tasks", s => s.done >= 250],
@@ -3239,7 +3221,7 @@ const ACH = [
     ["talk1", "We talked", "Talk to your pet", s => S.flags.chat], ["mem10", "Memory palace", "Keep 10 memories", s => S.memories.length >= 10],
     ["rested", "Well rested", "Lights out near bedtime, back in the morning", s => S.flags.rested],
     ["fx1", "Root cause", "Finish a task from the fix-it list", s => (S.flags.fixes || 0) >= 1], ["fx5", "Quietly better", "Finish 5 fix-it tasks", s => (S.flags.fixes || 0) >= 5],
-    ["fn10", "Field notes", "Note 10 frictions", s => (S.fixes || []).length >= 10]
+    ["fn10", "Field notes", "Jot down 10 things", s => S.tasks.filter(t => t.jot).length >= 10]
 ];
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
@@ -3461,7 +3443,9 @@ function sanitizeState(raw) {
         return x;
     });
     o.said = arr(s.said, 40).map(x => ({ t: str(x.t, 600), at: num(x.at) }));
-    o.fixes = arr(s.fixes, 500).map(f => ({ id: sid(f.id) || uidGen(), t: str(f.t, 200), at: num(f.at), task: sid(f.task), done: num(f.done) })).filter(f => f.t);
+    for (const f of arr(s.fixes, 500)) // (the old fix-it list: what was still open is jotted down now)
+        if (f && !f.done && !f.task && str(f.t, 200) && !o.tasks.some(t => t.id === "fx" + sid(f.id)))
+            o.tasks.push({ id: ("fx" + sid(f.id)).slice(0, 40), t: str(f.t, 160), s: 1, tag: "work", wk: false, due: "", c: num(f.at) || Date.now(), d: 0, jot: 1, u: num(f.at) || Date.now() });
     o.aiLog = arr(s.aiLog, 300).map(e => ({ k: Object.prototype.hasOwnProperty.call(POOL_INFO, e.k) ? e.k : "idle", l: str(e.l, 400), at: num(e.at), src: sid(e.src) }));
     const ai = s.ai && typeof s.ai === "object" ? s.ai : {};
     o.ai = { calls: arr(ai.calls, 300).map(c => ({ at: num(c.at), k: sid(c.k), i: num(c.i), o: num(c.o), tier: sid(c.tier), ms: num(c.ms) })), tot: {} };
@@ -3729,12 +3713,6 @@ function mergeStates(a, b) {
     o.chat = uniq([...(a.chat || []), ...(b.chat || [])], m => m.at + "|" + m.r + "|" + m.t).sort((x, y) => x.at - y.at).slice(-80);
     o.said = uniq([...(nw.said || []), ...(od.said || [])], x => x.at + "|" + x.t).sort((x, y) => y.at - x.at).slice(0, 40);
     o.words = uniq([...(nw.words || []), ...(od.words || [])], w => w.w).sort((x, y) => y.at - x.at).slice(0, 80);
-    const fx = new Map();
-    for (const f of [...(od.fixes || []), ...(nw.fixes || [])]) {
-        const c = fx.get(f.id);
-        fx.set(f.id, c ? Object.assign({}, f, { done: Math.max(num(c.done), num(f.done)), task: f.task || c.task }) : f);
-    }
-    o.fixes = [...fx.values()].filter(f => !o.del["f:" + f.id]).sort((x, y) => y.at - x.at).slice(0, 500);
     o.aiLog = uniq([...(nw.aiLog || []), ...(od.aiLog || [])], e => e.k + "|" + e.l).sort((x, y) => y.at - x.at).slice(0, 300);
     o.ai = { calls: uniq([...((nw.ai || {}).calls || []), ...((od.ai || {}).calls || [])], c => c.at + "|" + c.k).sort((x, y) => y.at - x.at).slice(0, 300), tot: {} };
     for (const k of new Set([...Object.keys((a.ai || {}).tot || {}), ...Object.keys((b.ai || {}).tot || {})])) {
@@ -5297,7 +5275,7 @@ function addG(x) {
     return x;
 }
 /* rewards, in glimmers */
-const PAY = { task: { 1: 1, 3: 3, 8: 6 }, pick: 1, fix: 1, fixDone: 1, anomaly: 3, gold: 4, rested: 3, selfcare: 1, selfcareMax: 3, sweep: 1, file: 1 };
+const PAY = { task: { 1: 1, 3: 3, 8: 6 }, pick: 1, fixDone: 1, anomaly: 3, gold: 4, rested: 3, selfcare: 1, selfcareMax: 3, sweep: 1, file: 1 };
 function decayMom(dtMs) {
     S.mom *= Math.pow(.5, dtMs / (36 * 3600e3));
 }
@@ -5392,16 +5370,12 @@ function completeTask(id, src) {
     else if (t.fx) {
         line = say("fixed", extra);
         S.flags.fixes = (S.flags.fixes || 0) + 1;
-        const f = (S.fixes || []).find(x => x.task === t.id);
-        if (f)
-            f.done = Date.now();
         note(`Fixed something: "${t.t}".`);
     }
     else if (t.fq) {
         line = null;
         setTimeout(() => {
-            $("fixBox").open = true;
-            speak("What would make it faster? Note it in the fix-it list, on the Desk.");
+            speak("What would make it faster next time? Jot it down, if something comes to mind.");
         }, 900);
     }
     else if (t.bt) {
@@ -7965,6 +7939,40 @@ Object.assign(BEH, {
     // archival work at the desk or the shelves, now and then: taking in a new box, recording where things came from,
     // arranging, describing, rehousing, appraising, checking files. Little labels float up as Mite works, and it
     // explains a bit after (pools archive_ingest, archive_provenance, ...: simplified, sometimes absurd, never wrong)
+    /* the journal: Mite climbs into the desk chair and writes, her back to us, for as long as the journal is open;
+       then she writes a moment longer and hops down again (interactions.js: the journal; the chair's back goes over her, archive-room.js) */
+    journalsit: { d: [60, 60], w: c => 0, init(b) {
+            b.tx = clamp(deskChairX(), R * 1.05, W - R * 1.05);
+            b.act = 8;
+        }, step(b, p, t, po, dt) {
+            const ta = goTo(b, p, po, dt, b.tx, 0, b.act);
+            if (ta < 0)
+                return;
+            if (b.down === undefined) { // sitting for as long as the journal (or what it led to) is open, half an hour at most; the
+                // journal opens once she's been writing a moment (revealAt), and she writes on a little after it closes
+                if (!$("ritual").hidden && ta < 1800) {
+                    p.dur = p.bt + 2;
+                    b.shut = undefined;
+                }
+                else if (b.revealed || ta > 3) {
+                    b.shut = b.shut === undefined ? ta : b.shut;
+                    if (ta - b.shut > 1.8)
+                        b.down = ta;
+                }
+            }
+            const upK = clamp(ta / .3, 0, 1), downK = b.down === undefined ? 0 : clamp((ta - b.down) / .3, 0, 1), k = upK * (1 - downK);
+            po.lift = R * .45 * k + (ta < .3 ? Math.sin(ta / .3 * Math.PI) * R * .18 : 0);
+            po.sy = -.12 * k;
+            po.feet = k < .5;
+            b.seated = k > .6;
+            if (b.seated) {
+                po.back = { write: ta };
+                po.noArms = true;
+                po.breath = .6;
+            }
+            if (b.down !== undefined && downK >= 1)
+                p.bt = p.dur;
+        } },
     archivework: { d: [60, 60], w: c => 0, init(b) {
             const g = archGeo(), kinds = ARCHIVE_TASKS.filter(k => k !== archiveTaskLast);
             b.k = choice(kinds);
@@ -8298,6 +8306,34 @@ function drawPet(po) {
         cx.arc(Math.cos(i * 2.1) * r * .55 * sx, by + Math.sin(i * 1.7) * r * .55 * sy - r * .2, r * .07, 0, 7);
         cx.fill();
     }
+    if (po.back) { // seen from behind (writing at the desk): no belly, no face; a darker patch of moss down the back,
+        // the writing paw's elbow going to and fro at her side, the head tipping now and then; then the sprout or hat
+        const w = po.back.write || 0;
+        cx.fillStyle = "rgba(40,70,30,.22)";
+        cx.beginPath();
+        cx.ellipse(0, by + r * .25 * sy, r * .5 * sx, r * .6 * sy, 0, 0, 7);
+        cx.fill();
+        cx.fillStyle = "rgba(255,255,255,.07)";
+        cx.beginPath();
+        cx.ellipse(-r * .3 * sx, by - r * .45 * sy, r * .28, r * .14, -.4, 0, 7);
+        cx.fill();
+        cx.fillStyle = dark; // the elbow, out to the right
+        cx.beginPath();
+        cx.ellipse(r * (1.0 + Math.sin(w * 7) * .05) * sx, by + r * (.1 + Math.abs(Math.sin(w * 3.5)) * .06), r * .15, r * .2, .5, 0, 7);
+        cx.fill();
+        cx.fillStyle = body;
+        cx.beginPath();
+        cx.ellipse(r * (.98 + Math.sin(w * 7) * .05) * sx, by + r * (.08 + Math.abs(Math.sin(w * 3.5)) * .06), r * .13, r * .18, .5, 0, 7);
+        cx.fill();
+        const topB = by - r * sy, stageB = Math.min(4, Math.floor((level() - 1) / 2));
+        cx.save();
+        cx.rotate(Math.sin(w * .9) > .85 ? .06 : 0); // (thinking of the next word)
+        drawHat(S.hat, 0, topB + r * .08, r);
+        drawSprout(0, topB - (S.hat ? (S.hat === "wizard" ? r * .85 : S.hat === "party" ? r * .6 : S.hat === "postit" ? 0 : r * .25) : 0) + r * .04, r, stageB);
+        cx.restore();
+        cx.restore();
+        return;
+    }
     cx.fillStyle = belly;
     cx.beginPath();
     cx.ellipse(0, by + r * .38 * sy, r * .58 * sx, r * .5 * sy, 0, 0, 7);
@@ -8429,7 +8465,7 @@ function drawPet(po) {
     const L = level();
     const stage = Math.min(4, Math.floor((L - 1) / 2));
     drawHat(S.hat, 0, topY + r * .08, r);
-    const hatLift = S.hat ? (S.hat === "wizard" ? r * .85 : S.hat === "party" ? r * .6 : r * .25) : 0;
+    const hatLift = S.hat ? (S.hat === "wizard" ? r * .85 : S.hat === "party" ? r * .6 : S.hat === "postit" ? 0 : r * .25) : 0;
     drawSprout(0, topY - hatLift + r * .04, r, stage);
     // props (pixel mode: drawn on their own layer, then hardened and outlined so small things stay visible)
     const propHost = po.prop ? cx : null;
@@ -8938,6 +8974,34 @@ function drawHat(id, x, y, r) {
         return;
     cx.save();
     cx.translate(x, y);
+    if (id === "postit") { // a yellow sticky note stuck to the top of the head, at a tilt: a few lines of writing, the bottom corner curling up
+        cx.translate(r * .3, r * .02); // (off to the right of the sprout)
+        cx.rotate(.3);
+        const s = r * .62;
+        cx.fillStyle = "#d9b52a"; // its shadow edge
+        cx.fillRect(-s / 2 + r * .03, -s + r * .03, s, s);
+        cx.fillStyle = "#f6dc4c";
+        cx.fillRect(-s / 2, -s, s, s);
+        cx.fillStyle = "#fbe98a"; // the sticky strip along the top, a shade paler
+        cx.fillRect(-s / 2, -s, s, s * .2);
+        cx.fillStyle = "#6a5a8a"; // the writing: three short lines in purple ink
+        for (const [f, w] of [[.38, .7], [.56, .55], [.74, .62]])
+            cx.fillRect(-s / 2 + s * .14, -s + s * f, s * w, Math.max(1, r * .035));
+        cx.fillStyle = "#e3c43a"; // the curl
+        cx.beginPath();
+        cx.moveTo(s / 2, -s * .26);
+        cx.lineTo(s / 2, 0);
+        cx.lineTo(s * .24, 0);
+        cx.closePath();
+        cx.fill();
+        cx.fillStyle = "#fff3b0";
+        cx.beginPath();
+        cx.moveTo(s / 2, -s * .26);
+        cx.lineTo(s * .24, 0);
+        cx.lineTo(s * .3, -s * .22);
+        cx.closePath();
+        cx.fill();
+    }
     if (id === "acorn") {
         cx.fillStyle = "#8a5a32";
         cx.beginPath();
@@ -9562,7 +9626,7 @@ const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () 
             if (t)
                 speak(t, { ms: clamp(3500 + t.length * 50, 5000, 11000) });
             return clamp(3.5 + (t || "").length * .05, 5, 11);
-        } }, journal: { beh: "admire", revealAt: .5, room: "archive", extra: null, show: () => {
+        } }, journal: { beh: "journalsit", revealAt: 1.3, room: "archive", extra: null, show: () => {
             showJournal(0);
             return 1.5;
         } }, calendar: { beh: "admire", revealAt: .5, extra: null, show: () => {
@@ -9646,8 +9710,6 @@ function startObj(kind) {
         const side = ph.x > W * .5 ? 1 : -1, tx = clamp(ph.x - side * R * .95, R * 1.05, W - R * 1.05); // stand beside it, facing it
         a = { beh: "answerphone", revealAt: .5, room: ph.room, extra: { tx, face: side, ph }, show: () => answerPhone(ph, side) };
     }
-    if (a && kind === "journal")
-        a = Object.assign({}, a, { extra: { tx: journalHit ? journalHit.cx : pet.x } });
     if (a && kind === "calendar")
         a = Object.assign({}, a, { extra: { tx: calHit ? calHit.cx : pet.x } });
     if (kind === "capsule")
@@ -10713,7 +10775,8 @@ function wallSlots() {
         for (const cx of cols) {
             const x = W * cx;
             const y = top + (bot - top) * ry;
-            if (Math.abs(x - rm.wx) < rm.wr * 1.25 || (Math.abs(x - rm.lx) < R * .75 && Math.abs(y - lampY(rm)) < R * .95)) // (not on the window, not behind the lamp)
+            const nx = clamp(rm.wx, x - sz * .7, x + sz * .7) - rm.wx, ny = clamp(rm.wy, y - sz * .9, y + sz * .9) - rm.wy; // (the piece's whole box, not just its middle, clear of the window and its frame)
+            if (Math.abs(x - rm.wx) < rm.wr * 1.25 || Math.hypot(nx, ny) < rm.wr * 1.12 || (Math.abs(x - rm.lx) < R * .75 && Math.abs(y - lampY(rm)) < R * .95)) // (not on the window, not behind the lamp)
                 continue;
             out.push({ x, y });
         }
@@ -12084,6 +12147,16 @@ let nookDk = 0;
    "garden" for the nook's platform) */
 function drawLoftFront(where = "room") {
     const g = loftGeo(where), { wood, dark, lite, u } = loftCols(where === "garden" ? nookDk : loftDk), lw = Math.max(2, R * .05, 1.6 * u);
+    { // the floor's front edge again, over whoever stands up there, so feet and shadows stay behind it (the plank's top
+        // is where they stand: only from a little below it)
+        const t = Math.max(4, R * .12, 3 * u), y0 = g.balY + Math.max(1, Math.round(t * .25));
+        cx.fillStyle = dark;
+        cx.fillRect(g.balL - t * .3 - u, y0, g.balR - g.balL + t * .6 + 2 * u, g.balY + t + u - y0);
+        cx.fillStyle = wood;
+        cx.fillRect(g.balL - t * .3, y0, g.balR - g.balL + t * .6, g.balY + t - y0);
+        cx.fillStyle = dark;
+        cx.fillRect(g.balL - t * .3, g.balY + t, g.balR - g.balL + t * .6, Math.max(2, 2 * u));
+    }
     if (own("scope") && where === "room")
         drawLayered(() => drawScope(loftDk));
     for (let x = g.balL + R * .1; x <= g.balR - R * .05; x += R * .32) {
@@ -12157,7 +12230,7 @@ function routeDown(p) {
 let view = "room", archHits = [], archiveSince = 0;
 const archLadder = { x: -1, tx: -1 };
 /* behaviours that may run in the archive; anything else walks Mite back to the wagon first */
-const ARCHIVE_OK = new Set(["scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "archivework", "chairSit", "stare", "bow", "dizzy"]);
+const ARCHIVE_OK = new Set(["scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "archivework", "chairSit", "journalsit", "stare", "bow", "dizzy"]);
 /* interactions that live in the archive; asking for one from the wagon walks Mite there first */
 function isArchiveKind(kind) {
     return kind === "capsule" || kind === "journal" || kind.startsWith("refl:") || kind.startsWith("box:");
@@ -12613,22 +12686,41 @@ function drawLampLight(x, y, dk) {
     }
     cx.drawImage(lampCache.c, ox, oy); // (still: no flicker. The cache lives in memory, like the scene's canvas, so drawing it is a plain copy)
 }
-/* a small wooden chair tucked in at the desk, seen from the front */
-function drawDeskChair(dk, g) {
-    const q = PX, wood = mix("#9a6a3e", "#2c1d12", dk), woodD = mix("#6a4628", "#1a110a", dk);
-    const x = Math.round((g.deskX0 + (g.deskX1 - g.deskX0) * .42) / q) * q, sw = R * .62, seat = GY - R * .5, backTop = GY - R * 1.18;
+/* where the desk chair stands: right of the journal, under the lamp, tucked in with its back to us */
+function deskChairX(g = archGeo()) {
+    return Math.round((g.deskX1 - R * .45) / PX) * PX;
+}
+/* a small wooden chair tucked in at the desk, seen from behind (it faces the desk): the back's posts, rail and slats
+   come no higher than the desk top, so the journal and the lamp stay clear. backOnly: just the back, drawn again over
+   Mite when she sits in it to write (deskChairOverMite) */
+function drawDeskChair(dk, g, backOnly) {
+    const q = PX, wood = mix("#9a6a3e", "#2c1d12", dk), woodD = mix("#6a4628", "#1a110a", dk), woodL = mix("#b8844e", "#3a2616", dk);
+    const x = deskChairX(g), sw = Math.round(R * .62 / q) * q, seat = Math.round((GY - R * .5) / q) * q, backTop = Math.round((GY - R * .98) / q) * q, x0 = x - sw / 2;
+    if (!backOnly) {
+        cx.fillStyle = woodL; // the seat's edge, peeking out either side of the back
+        cx.fillRect(x0 - q, seat, sw + q * 2, q);
+        cx.fillStyle = mix("#4a3020", "#120c08", dk); // the front legs, further off, between the back legs
+        cx.fillRect(x0 + q * 2, seat + q, q, GY - seat - q);
+        cx.fillRect(x0 + sw - q * 3, seat + q, q, GY - seat - q);
+    }
     cx.fillStyle = woodD;
-    cx.fillRect(x - sw / 2, backTop, q * 2, GY - backTop); // the back posts, all the way down as back legs
-    cx.fillRect(x + sw / 2 - q * 2, backTop, q * 2, GY - backTop);
+    cx.fillRect(x0, backTop, q * 2, (backOnly ? seat + q : GY) - backTop); // the back posts, all the way down as back legs
+    cx.fillRect(x0 + sw - q * 2, backTop, q * 2, (backOnly ? seat + q : GY) - backTop);
     cx.fillStyle = wood;
-    cx.fillRect(x - sw / 2, backTop, sw, q * 2); // the top rail and one slat
-    cx.fillRect(x - sw / 2 + q * 2, backTop + R * .22, sw - q * 4, q);
-    cx.fillRect(x - sw / 2 - q, seat, sw + q * 2, q * 2); // the seat
-    cx.fillStyle = mix("#b8844e", "#3a2616", dk);
-    cx.fillRect(x - sw / 2 - q, seat, sw + q * 2, Math.max(1, q / 2));
-    cx.fillStyle = woodD;
-    cx.fillRect(x - sw / 2 + q, seat + q * 2, q * 2, GY - seat - q * 2); // the front legs
-    cx.fillRect(x + sw / 2 - q * 3, seat + q * 2, q * 2, GY - seat - q * 2);
+    cx.fillRect(x0, backTop, sw, q * 2); // the top rail
+    cx.fillStyle = woodL;
+    cx.fillRect(x0, backTop, sw, Math.max(1, q / 2));
+    cx.fillStyle = wood; // two slats down to the seat, with gaps between
+    for (const f of [.36, .64])
+        cx.fillRect(Math.round((x0 + sw * f) / q) * q - q / 2, backTop + q * 2, q, seat - backTop - q * 2);
+    cx.fillRect(x0, seat - q, sw, q); // the bottom rail of the back
+}
+/* Mite sitting in the desk chair, writing: the chair's back goes in front of her (loop.js, after Mite) */
+function deskChairOverMite() {
+    if (view !== "archive" || pet.beh !== "journalsit" || !pet.b.seated)
+        return;
+    const dk = Math.round(sceneDark() * 20) / 20;
+    withRoomLight("archive", () => drawLayered(() => drawDeskChair(dk, archGeo(), true)));
 }
 
 </script>
@@ -20448,6 +20540,90 @@ function drawNightDoor(dk, x, sky, y = GY) { // (y: what it stands on)
     cx.stroke();
     if (sky.dark > .4)
         glow(x, y - h * .4, R * .12, "rgba(170,140,255,.35)");
+    drawDoorShade(x, y, w, h, sky);
+}
+/* every now and then something reaches out of the night door: shadow tendrils curling out along the floor and up the
+   wall, or a shadow hand that feels about and goes back in. Only with Strangeness on; more often at night.
+   (ndShade: the one going on now; tests can start one with ndShade = { k, t0, side, dur }) */
+let ndShade = null, ndNext = 0;
+function drawDoorShade(x, y, w, h, sky) {
+    const now = performance.now();
+    if (!ndNext)
+        ndNext = now + rnd(25e3, 60e3);
+    if (!ndShade && now > ndNext && S.settings.strange) {
+        ndShade = { k: Math.random() < .55 ? "tendrils" : "hand", t0: now, side: Math.random() < .5 ? -1 : 1, dur: rnd(6e3, 9e3), seed: Math.random() * 9 };
+        ndNext = now + ndShade.dur + (sky.dark > .4 ? rnd(30e3, 90e3) : rnd(60e3, 180e3));
+    }
+    const a = ndShade;
+    if (!a)
+        return;
+    const e = now - a.t0;
+    if (e > a.dur) {
+        ndShade = null;
+        return;
+    }
+    const sm = k => k * k * (3 - 2 * k), grow = sm(clamp(e / 1400, 0, 1)) * sm(clamp((a.dur - e) / 1400, 0, 1)), t = e / 1000;
+    const ink = "rgba(10,6,16,.95)", halo = `rgba(130,100,220,${.3 + .25 * sky.dark})`;
+    const line = (pts, w0, w1, thin) => { // a tapering stroke, a faint violet halo underneath so it reads against the dark wall
+        for (const [col, extra] of [[halo, thin ? Math.max(1, R * .02) : Math.max(2, R * .05)], [ink, 0]])
+            for (let k = 1; k < pts.length; k++) {
+                cx.strokeStyle = col;
+                cx.lineWidth = Math.max(1, w0 + (w1 - w0) * k / pts.length) + extra;
+                cx.beginPath();
+                cx.moveTo(pts[k - 1][0], pts[k - 1][1]);
+                cx.lineTo(pts[k][0], pts[k][1]);
+                cx.stroke();
+            }
+    };
+    cx.save();
+    cx.lineCap = "round";
+    if (a.k === "tendrils") { // five, out of the gaps round the door: up and outwards over the wall, the tips curling
+        for (let i = 0; i < 5; i++) {
+            const side = i === 4 ? 0 : i % 2 ? -1 : 1, hgt = [.45, .55, .85, .95, 1.1][i], len = R * [.95, .8, .75, .9, .55][i] * grow;
+            const ox = x + side * w / 2, oy = y - h * hgt - (side ? 0 : w / 2), pts = [];
+            for (let k = 0; k <= 14; k++) {
+                const f = k / 14, curl = f > .65 ? (f - .65) / .35 : 0, wig = Math.sin(t * 2 + f * 6 + i * 1.9 + a.seed) * R * .06 * f;
+                const ang = (side ? (side > 0 ? -.35 : Math.PI + .35) : -Math.PI / 2) + (side || 1) * (-.5 * f) + curl * curl * 3.2 * (side || (i % 2 ? 1 : -1)) * (.8 + .2 * Math.sin(t * 1.5 + i));
+                const px = k ? pts[k - 1][0] + Math.cos(ang) * len / 14 : ox, py = k ? pts[k - 1][1] + Math.sin(ang) * len / 14 + wig * .3 : oy;
+                pts.push([px, py]);
+            }
+            line(pts, R * .11, R * .02);
+        }
+    }
+    else { // a hand: out of the gap at the side, high up, feeling about, fingers curling and uncurling, then back in
+        const sd = a.side, reach = R * 1.15 * grow, hy = y - h * .85 + Math.sin(t * 1.3) * R * .06, hx = x + sd * (w / 2 + reach);
+        const arm = [];
+        for (let k = 0; k <= 8; k++) {
+            const f = k / 8;
+            arm.push([x + sd * (w * .45 + (reach + w * .05) * f), hy + R * .04 - Math.sin(f * Math.PI) * R * .12 * grow]);
+        }
+        line(arm, R * .15, R * .12);
+        if (grow > .2) {
+            const pr = R * .17 * grow, curl = .3 + .3 * Math.sin(t * 2.4 + a.seed); // the palm, then the fingers: spread, then curling in
+            cx.fillStyle = halo;
+            cx.beginPath();
+            cx.ellipse(hx, hy, pr * 1.1 + R * .025, pr * 1.1 + R * .025, 0, 0, 7);
+            cx.fill();
+            cx.fillStyle = ink;
+            cx.beginPath();
+            cx.ellipse(hx, hy, pr * 1.1, pr * 1.1, 0, 0, 7);
+            cx.fill();
+            for (let f = 0; f < 4; f++) {
+                const ang = -1.5 + f * .42, L = R * (.46 + (f === 1 || f === 2 ? .08 : 0)) * grow, pts = [];
+                let px = hx + sd * Math.cos(ang) * pr, py = hy + Math.sin(ang) * pr;
+                pts.push([px, py]);
+                for (let k = 1; k <= 4; k++) { // three joints, each bending further as it curls
+                    const an = ang + curl * .55 * k;
+                    px += sd * Math.cos(an) * L / 4;
+                    py += Math.sin(an) * L / 4;
+                    pts.push([px, py]);
+                }
+                line(pts, R * .08, R * .05, true);
+            }
+            line([[hx, hy + pr * .5], [hx + sd * pr * .8, hy + pr * 1.2], [hx + sd * pr * 1.3, hy + pr * 1.1]], R * .06, R * .04); // the thumb
+        }
+    }
+    cx.restore();
 }
 /* the roof: one gentle arch over the whole long wagon, highest over the middle room */
 function roofY(x, room) {
@@ -20953,7 +21129,8 @@ function frame(now) {
         withRoomLight("archive", () => drawCatEye(now / 1000)); // Midnightcat batting an eye from the jar about (eyes.js) // sticky notes, paper birds, the tiny things Mite's sorting (pastimes.js)
         if (anom && anom.held && anom.room === view) // the red phone's handset, at Mite's ear (anomalies.js)
             withRoomLight(view, () => drawLayered(() => drawHandset(anom)));
-        chesterfieldOverMite(now); // on the nook's stairs, Mite walks behind the chair (garden.js)
+        chesterfieldOverMite(now);
+        deskChairOverMite(); // in the archive, the desk chair's back in front of Mite while she writes (archive-room.js) // on the nook's stairs, Mite walks behind the chair (garden.js)
         withRoom(snailRoom, drawSnailInBed); // the snail tucked in next to Mite (snail.js)
         drawAnimals(now); // the snail and the possum, in front of Mite (camera.js)
         withRoom("room", () => {
@@ -22407,7 +22584,6 @@ function renderAll() {
 function afterChange() {
     checkAch();
     renderAll();
-    renderFixes();
     saveSoon();
 }
 /* tabs */
@@ -24896,9 +25072,11 @@ function offlineReply(text) {
         return { reply: ms.length ? `I remember that ${ms.join("; that ")}.` : "Not much yet. Tell me things, and say remember… for the important ones." };
     }
     if (m = t.match(/^(?:fix|friction|fix-it|note)[:\s]+(.+)/i)) {
-        const f = addFix(m[1]);
-        if (f)
-            return { reply: compose("friction", { item: f.t }) || "Noted on the fix-it list.", action: "tidy" };
+        const text = m[1].trim().replace(/[.!]+$/, "").slice(0, 160);
+        if (text) { // (the fix-it list is gone: a note like this is jotted down)
+            addTask(text, 1, ctxTag(), false, "", null).jot = 1;
+            return { reply: `Jotted down: ${text}. It'll keep until you have room for it.`, action: "tidy" };
+        }
     }
     if (/how am i doing|how'?s it going|my progress|stats|hoe gaat het/.test(low))
         return { reply: `${c.doneToday} done today, ${c.week} this week${c.streak ? `, and a ${c.streak}-day streak` : ""}. ${c.doneToday ? "Good work. Really." : "Nothing yet today, and that's allowed."}`, action: c.doneToday ? "hop" : "sit" };
@@ -25019,63 +25197,6 @@ function importTSV(txt) {
 $("exportTsvBtn").onclick = () => copy(linesTSV(), "Spreadsheet rows");
 
 </script>
-<script>/* js/ui/fixit.js */
-"use strict";
-/*
- * fixit.js - The fix-it list: notes about what's clumsy in the app.
- */
-function addFix(text) {
-    text = String(text || "").trim().replace(/[.!]+$/, "").slice(0, 200);
-    if (!text)
-        return null;
-    if (!Array.isArray(S.fixes))
-        S.fixes = [];
-    const f = { id: uidGen(), t: text, at: Date.now(), task: "", done: 0 };
-    S.fixes.unshift(f);
-    addG(PAY.fix);
-    sfx("soft");
-    pet.start("tidy");
-    return f;
-}
-function renderFixes() {
-    const all = Array.isArray(S.fixes) ? S.fixes : [];
-    const open = all.filter(f => !f.done);
-    $("fixSum").textContent = `Fix-it list (${open.length})`;
-    $("fixList").innerHTML = open.map(f => {
-        const t = f.task && S.tasks.find(x => x.id === f.task);
-        return `<li><span>${esc(f.t)}<small>${dmy(f.at)}${t ? " · on the task list" : ""}</small></span><span class="acts">${t ? "" : `<button class="mini" data-fx="task" data-id="${esc(f.id)}">Make task</button>`}<button class="mini" data-fx="drop" data-id="${esc(f.id)}" aria-label="Remove">✕</button></span></li>`;
-    }).join("") || `<li style="grid-template-columns:1fr;border-style:dotted"><span class="sub">Nothing noted yet.</span></li>`;
-}
-$("fixForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const f = addFix($("fixIn").value);
-    if (!f)
-        return;
-    $("fixIn").value = "";
-    say("friction", { item: f.t });
-    afterChange();
-});
-$("fixList").addEventListener("click", e => {
-    const b = e.target.closest("button[data-fx]");
-    if (!b)
-        return;
-    const f = S.fixes.find(x => x.id === b.dataset.id);
-    if (!f)
-        return;
-    if (b.dataset.fx === "task") {
-        const t = addTask("Fix: " + f.t, 3, ctxTag(), false, "");
-        t.fx = 1;
-        f.task = t.id;
-        speak("On the list. It pays a bit extra when it's done.");
-    }
-    else {
-        S.fixes = S.fixes.filter(x => x !== f);
-        tomb("f:" + f.id);
-    }
-    afterChange();
-});
-
-</script>
 <script>/* js/ui/archive.js */
 "use strict";
 /*
@@ -25172,14 +25293,13 @@ const DESK_PAGES = {
     review: { pane: "tab-lines", title: "Lines", anchor: "aiLogHead" },
     usage: { pane: "tab-data", title: "AI usage and backup", anchor: "usage" },
     data: { pane: "tab-data", title: "AI usage and backup", anchor: "exportBtn" },
-    fixit: { pane: "deskFix", title: "Fix-it list" },
     credits: { pane: "deskCredits", title: "Credits and inspiration" }
 };
 const DESK_GROUPS = () => [
     { title: "You and " + S.settings.pet, rows: [["content", "Settings", "Names, work days, bedtime, home, Strangeness, talk speed, weather"]] },
     { title: "Lines", rows: [["lines", "Lines editor", `${Object.keys(POOL_INFO).length} pools: what ${S.settings.pet} says, books, bakes, visitors`], ["review", "New from " + S.settings.pet, "Lines written with AI help, to keep or remove", (S.aiLog || []).length || ""]] },
     { title: "AI", rows: [["usage", "AI usage", "Every call, with estimated tokens"]] },
-    { title: "Data", rows: [["data", "Backup and import", "Copy your save, import lines, start over"], ["fixit", "Fix-it list", "Notes about what's clumsy", (S.fixes || []).filter(f => !f.done).length || ""]] },
+    { title: "Data", rows: [["data", "Backup and import", "Copy your save, import lines, start over"]] },
     { title: "About", rows: [["credits", "Credits and inspiration", "What the wagon is made of, and what it was inspired by"]] }
 ];
 let deskOpener = null, deskPage = "";
@@ -25192,14 +25312,6 @@ let deskOpener = null, deskPage = "";
         p.hidden = true;
         body.appendChild(p);
     });
-    const fx = document.createElement("div");
-    fx.className = "pane";
-    fx.id = "deskFix";
-    fx.hidden = true;
-    const box = $("fixBox");
-    box.open = true;
-    fx.appendChild(box);
-    body.appendChild(fx);
     const cr = document.createElement("div"); // credits: fixed text, no saved data in it
     cr.className = "pane credits";
     cr.id = "deskCredits";
@@ -25237,10 +25349,7 @@ function openDesk(page) {
     const pg = DESK_PAGES[deskPage];
     $("deskTitle").textContent = pg.title;
     curTab = pg.pane === "tab-content" ? "content" : pg.pane === "tab-lines" ? "lines" : pg.pane === "tab-data" ? "data" : curTab;
-    if (pg.pane !== "deskFix")
-        renderContent();
-    else
-        renderFixes();
+    renderContent();
     $("desk").scrollTop = 0;
     setTimeout(() => {
         if (pg.anchor && $(pg.anchor))
@@ -25441,10 +25550,7 @@ function openEvening(manual) {
     const sc = S.selfcare[today] || {};
     const scTxt = SELF.filter(x => sc[x.id]).map(x => `${x.label.toLowerCase()} ${sc[x.id]}`).join(" · ");
     const body = (done.length ? `<ul class="ritlist">${done.slice(0, 8).map(t => `<li>${esc(t.t)}</li>`).join("")}${done.length > 8 ? `<li>and ${done.length - 8} more</li>` : ""}</ul>` : `<p class="sub">Nothing finished today. That's allowed.</p>`) +
-        `<p class="ritmeta">${[plan.length ? `picks ${planDone} of ${plan.length}` : "", scTxt, (() => {
-                const n = (S.fixes || []).filter(f => dayKey(new Date(f.at)) === today).length;
-                return n ? `${n} friction note${n > 1 ? "s" : ""}` : "";
-            })(), pile.length ? `${pile.length} box${pile.length > 1 ? "es" : ""} to file` : ""].filter(Boolean).join(" · ")}</p>` +
+        `<p class="ritmeta">${[plan.length ? `picks ${planDone} of ${plan.length}` : "", scTxt, pile.length ? `${pile.length} box${pile.length > 1 ? "es" : ""} to file` : ""].filter(Boolean).join(" · ")}</p>` +
         `<label class="field" style="margin-top:8px">A line for the journal (optional)<input id="eveRefl" maxlength="${Math.max(JOURNAL_MAX, (journalDay(today)[0] || { text: "" }).text.length)}" value="${esc((journalDay(today)[0] || { text: "" }).text)}" placeholder="What's worth keeping from today?" style="font-family:var(--f-body);font-size:15px"></label>`;
     const nearBed = isLate(c.h) || ((S.settings.bed - c.h + 24) % 24) <= 2;
     const keepLine = () => {
