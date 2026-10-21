@@ -772,44 +772,46 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div class="row"><button class="btn" id="reflBtn">Open the journal</button><button class="btn" id="capBtn">Seal a time capsule</button></div>
       <div id="capDue"></div>
       <div class="files" id="archive"></div>
-      <div><h3>The journal</h3><p class="sub">One line a day, kept in the journal on the archive desk. Every line so far, newest first.</p></div>
-      <div id="reflList" class="agenda"></div>
-      <div><h3>Time capsules</h3><p class="sub">Sealed until their day. The tin on the shelf glows when one is ready.</p></div>
-      <div id="capList" class="agenda"></div>
+      <details class="shopsec colsec" data-sec="arch-journal" open><summary><h3>The journal</h3></summary><p class="sub">One line a day, kept in the journal on the archive desk. Every line so far, newest first.</p>
+        <div id="reflList" class="agenda"></div></details>
+      <details class="shopsec colsec" data-sec="arch-caps" open><summary><h3>Time capsules</h3></summary><p class="sub">Sealed until their day. The tin on the plank glows when one is ready.</p>
+        <div id="capList" class="agenda"></div></details>
     </div>
 
     <div class="pane" id="tab-cabinet" role="tabpanel" hidden>
-      <div><h2>Cabinet of small things</h2><p class="sub">Your pet finds these after tasks, inside golden fireflies, and sometimes just on the floor.</p></div>
-      <div class="drawers" id="drawers"></div>
-      <div><h3>Altered items</h3><p class="sub">Recovered from anomalies. Contained, mostly.</p></div>
-      <div class="drawers" id="altered"></div>
-      <div><h3>Seen in the chalk circle</h3><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p></div>
-      <div class="glimpses" id="glimpseList"></div>
-      <div><h3>Adorbigami</h3><p class="sub">Folded by the ghost at the window. They hang above it on a string.</p></div>
-      <div class="words" id="origamiList"></div>
-      <div><h3>Knitted things</h3><p class="sub">Everything Mite has knitted. One project at a time, a few evenings each.</p></div>
-      <div class="knits" id="knitList"></div>
-      <div><h3>Festivals</h3><p class="sub">What Mite has learned about the festivals that came by. Tap one to read it again.</p></div>
-      <div class="words" id="festList"></div>
-      <div><h3>Dream log</h3><p class="sub">Read from the dream archive. Newest first.</p></div>
-      <ul class="inclog" id="dreamLog"></ul>
-      <div><h3>Hats</h3></div>
-      <div class="hats" id="hats"></div>
-      <div><h3>Achievements</h3></div>
-      <ul class="achs" id="achs"></ul>
+      <div><h2>Cabinet of small things</h2></div>
+      <details class="shopsec colsec" data-sec="cab-small" open><summary><h3>Small things</h3><span class="seccount" id="cnt-cab-small"></span></summary><p class="sub">Your pet finds these after tasks, inside golden fireflies, and sometimes just on the floor.</p>
+        <div class="drawers" id="drawers"></div></details>
+      <details class="shopsec colsec" data-sec="cab-altered" open><summary><h3>Altered items</h3><span class="seccount" id="cnt-cab-altered"></span></summary><p class="sub">Recovered from anomalies. Contained, mostly.</p>
+        <div class="drawers" id="altered"></div></details>
+      <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
+        <div class="glimpses" id="glimpseList"></div></details>
+      <details class="shopsec colsec" data-sec="cab-origami" open><summary><h3>Adorbigami</h3><span class="seccount" id="cnt-cab-origami"></span></summary><p class="sub">Folded by the ghost at the window. They hang above it on a string.</p>
+        <div class="words" id="origamiList"></div></details>
+      <details class="shopsec colsec" data-sec="cab-fest" open><summary><h3>Festivals</h3><span class="seccount" id="cnt-cab-fest"></span></summary><p class="sub">What <span class="pn">Mite</span> has learned about the festivals that came by. Tap one to read it again.</p>
+        <div class="words" id="festList"></div></details>
+      <details class="shopsec colsec" data-sec="cab-dreams" open><summary><h3>Dream log</h3><span class="seccount" id="cnt-cab-dreams"></span></summary><p class="sub">Read from the dream archive. Newest first.</p>
+        <ul class="inclog" id="dreamLog"></ul></details>
+      <details class="shopsec colsec" data-sec="cab-hats" open><summary><h3>Hats</h3><span class="seccount" id="cnt-cab-hats"></span></summary>
+        <div class="hats" id="hats"></div></details>
+      <details class="shopsec colsec" data-sec="cab-achs" open><summary><h3>Achievements</h3><span class="seccount" id="cnt-cab-achs"></span></summary>
+        <ul class="achs" id="achs"></ul></details>
     </div>
 
     <div class="pane" id="tab-gallery" role="tabpanel" hidden>
-      <div><h2>Gallery</h2><p class="sub"><span class="pn">Mite</span> finishes one painting a day. The next morning it goes off to a friend; this is where each one went.</p></div>
-      <div class="gallery" id="gallery"></div>
+      <div><h2>Crafts</h2><p class="sub">Everything <span class="pn">Mite</span> has made.</p></div>
+      <details class="shopsec colsec" data-sec="craft-paint" open><summary><h3>Paintings</h3><span class="seccount" id="cnt-craft-paint"></span></summary><p class="sub"><span class="pn">Mite</span> finishes one painting a day. The next morning it goes off to a friend; this is where each one went.</p>
+        <div class="gallery" id="gallery"></div></details>
+      <details class="shopsec colsec" data-sec="craft-knit" open><summary><h3>Knitted things</h3><span class="seccount" id="cnt-craft-knit"></span></summary><p class="sub">One project at a time, a few evenings each.</p>
+        <div class="knits" id="knitList"></div></details>
     </div>
 
     <div class="pane" id="tab-notebook" role="tabpanel" hidden>
       <div><h2><span class="pn">Mite</span>'s notebook</h2><p class="sub">What <span class="pn">Mite</span> noticed today, written down on its own. A fresh page every day, at the hour set under Settings (0500 to start with).</p></div>
-      <div><h3>Overheard</h3><p class="sub">Today's conversations with the snail, the cat, the possum and visitors.</p></div>
-      <div class="heard" id="heard"></div>
-      <div><h3>Words <span class="pn">Mite</span> invented</h3></div>
-      <div class="words" id="words"></div>
+      <details class="shopsec colsec" data-sec="nb-heard" open><summary><h3>Overheard</h3></summary><p class="sub">Today's conversations with the snail, the cat, the possum and visitors.</p>
+        <div class="heard" id="heard"></div></details>
+      <details class="shopsec colsec" data-sec="nb-words" open><summary><h3>Words <span class="pn">Mite</span> invented</h3></summary>
+        <div class="words" id="words"></div></details>
       <ul class="notes" id="notes"></ul>
     </div>
 
@@ -15063,8 +15065,8 @@ function festTap(p) {
 /*
  * knitting.js - What Mite knits. One project at a time (S.knit): a thing, two yarn colours and a pattern.
  * Every knitting session adds a bit; a project takes about three sessions. Finished pieces go into S.knits
- * and show in the Cabinet. The piece on the needles is drawn by drawKnitPiece, the same drawing the
- * Cabinet uses for its little pictures.
+ * and show in Crafts. The piece on the needles is drawn by drawKnitPiece, the same drawing the
+ * Crafts page uses for its little pictures.
  */
 const KNIT_ITEMS = [
     { id: "scarf", name: "scarf" }, { id: "hat", name: "hat" }, { id: "sock", name: "sock" },
@@ -15104,7 +15106,7 @@ function finishKnit() {
     S.knit = null;
     S.knitRest = dayKey(); // nothing new on the needles until tomorrow
     sfx("done", { step: 2 });
-    speak(choice([`Finished: a ${knitName(k)}. I'm very proud. Don't look at the back.`, `Done! One ${knitName(k)}. It's in the Cabinet.`, `Cast off. A ${knitName(k)}. Slightly wonky. Completely loved.`]), { ms: 6000 });
+    speak(choice([`Finished: a ${knitName(k)}. I'm very proud. Don't look at the back.`, `Done! One ${knitName(k)}. It's with my crafts now.`, `Cast off. A ${knitName(k)}. Slightly wonky. Completely loved.`]), { ms: 6000 });
     note(`Knitted a ${knitName(k)}.`);
     saveSoon();
 }
@@ -15254,7 +15256,7 @@ function knitStep(b, t) {
     }
     return S.knit;
 }
-/* the Cabinet: everything Mite has knitted, newest first */
+/* Crafts: everything Mite has knitted, newest first */
 function renderKnits() {
     const el = $("knitList");
     if (!el)
@@ -22502,7 +22504,6 @@ function renderCabinet() {
         (S.origami || []).forEach(o => n[o.k] = (n[o.k] || 0) + 1);
         $("origamiList").innerHTML = ORIGAMI.map(o => n[o.id] ? `<span class="word"><i>${esc(o.name)}</i>${n[o.id] > 1 ? " ×" + n[o.id] : ""}</span>` : `<span class="word" style="opacity:.45"><i>?</i></span>`).join("");
     }
-    renderKnits();
     renderGlimpses(); // what the chalk circle has shown (circle.js)
     {
         const fl = $("festList");
@@ -22534,6 +22535,35 @@ function renderCabinet() {
         $("hats").appendChild(b);
     });
     $("achs").innerHTML = ACH.map(([id, n, d]) => `<li class="${S.ach[id] ? "got" : ""}"><b>${S.ach[id] ? esc(n) : "Hidden"}</b>${esc(d)}</li>`).join("");
+    { // how many of each, on the headings
+        const oc = new Set((S.origami || []).map(o => o.k)), set = (k, t) => { const e = $("cnt-" + k); if (e) e.textContent = t; };
+        set("cab-small", `${trinketList().filter(t => S.trinkets[t.name]).length}/${trinketList().length}`);
+        set("cab-altered", `${alteredList().filter(t => S.altered[t.name]).length}/${alteredList().length}`);
+        set("cab-origami", `${ORIGAMI.filter(o => oc.has(o.id)).length}/${ORIGAMI.length}`);
+        set("cab-fest", `${FESTIVALS.filter(f => S.fest[f.id]).length}`);
+        set("cab-glimpses", `${(S.glimpses || []).length}`);
+        set("cab-dreams", `${(S.dreams || []).length}`);
+        set("cab-hats", `${HATS.filter(h => h.id && L >= h.lvl).length}/${HATS.length - 1}`);
+        set("cab-achs", `${ACH.filter(a => S.ach[a[0]]).length}/${ACH.length}`);
+    }
+    foldSections();
+}
+/* the foldable sections in the Cabinet, Crafts, Notebook and Archive: open to start with; what you open or close is
+   remembered in this browser */
+const foldPref = (() => { try { return JSON.parse(localStorage.getItem("st-fold") || "{}") || {}; } catch (e) { return {}; } })();
+function foldSections() {
+    document.querySelectorAll("details.colsec").forEach(d => {
+        const k = d.dataset.sec;
+        if (d.dataset.wired)
+            return;
+        d.dataset.wired = 1;
+        if (foldPref[k] !== undefined)
+            d.open = foldPref[k];
+        d.addEventListener("toggle", () => {
+            foldPref[k] = d.open;
+            try { localStorage.setItem("st-fold", JSON.stringify(foldPref)); } catch (e) { }
+        });
+    });
 }
 function renderHeard() {
     const el = $("heard");
@@ -22753,6 +22783,13 @@ function renderGallery() {
         g.clearRect(0, 0, c.width, c.height);
         drawPainting(g, 0, 0, c.width, c.height, c.dataset.day, +c.dataset.prog);
     });
+    renderKnits(); // (the knitting is one of Mite's crafts too)
+    const cp = $("cnt-craft-paint"), ck = $("cnt-craft-knit");
+    if (cp)
+        cp.textContent = `${(S.gallery || []).length}`;
+    if (ck)
+        ck.textContent = `${(S.knits || []).length}`;
+    foldSections();
 }
 /* festival buttons (Cabinet and the calendar card) open that festival's card */
 document.addEventListener("click", e => {
@@ -22796,7 +22833,7 @@ function afterChange() {
 }
 /* tabs */
 /* the sheet's sections: what you use while playing. Upkeep (settings, lines, backup) is on the Desk (desk.js). */
-const GROUPS = { tasks: [["tasks", "Tasks"]], mite: [["care", "Care"], ["talk", "Talk"]], journal: [["cabinet", "Cabinet"], ["gallery", "Gallery"], ["notebook", "Notebook"], ["archive", "Archive"], ["files", "Files"], ["grow", "Shop"]] };
+const GROUPS = { tasks: [["tasks", "Tasks"]], mite: [["care", "Care"], ["talk", "Talk"]], journal: [["cabinet", "Cabinet"], ["gallery", "Crafts"], ["notebook", "Notebook"], ["archive", "Archive"], ["files", "Files"], ["grow", "Shop"]] };
 const GROUP_OF = {};
 for (const g in GROUPS)
     GROUPS[g].forEach(([p]) => GROUP_OF[p] = g);
@@ -26049,6 +26086,7 @@ function boot() {
     pet.x = W * .5;
     resetAdd();
     renderAll();
+    foldSections(); // (the Cabinet's, Crafts', Notebook's and Archive's sections: collection.js)
     updSndUI();
     sndUnlock(); // (some places let it start straight away: the Android app, a browser that knows you)
     updAiUI();
