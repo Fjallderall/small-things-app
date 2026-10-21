@@ -226,6 +226,8 @@ textarea{width:100%;min-height:220px;border:1px solid var(--line);border-radius:
 .stamp{display:inline-block;border:2px solid var(--warn);color:var(--warn);font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:1px 6px;border-radius:4px;transform:rotate(-2deg)}
 .clbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .drawer.alt{border-color:var(--warn)}
+.drawer.racc{border-style:dashed}
+.drawer.racc .cls{color:var(--muted);margin:4px 0 0}
 .drawer .cls{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--warn);display:block;margin-bottom:2px}
 .scopeview{position:absolute;left:50%;top:8%;transform:translateX(-50%);z-index:7;display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:transparent;padding:0;cursor:pointer;animation:scopeIn .35s ease-out}
 .scopeview canvas{width:min(170px,42vw);height:min(170px,42vw);filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
@@ -915,7 +917,7 @@ const POOL_INFO = {
     buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
-    trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
+    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for the Cabinet: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -1896,6 +1898,48 @@ const DEF = {
             "First of the month. Capsule weather. Seal one if you like: the plank's above the archive desk, or ask the journal.",
             "New month, new tin. A few lines for the you of next month, or next year? No pressure. I'll keep them safe.",
             "It's the first. I've polished the capsule tins. Just saying."
+        ],
+        barter_tea: [
+            "Lost-Property Earl Grey | Found in a coat at a railway office, still in its tin. Tastes of waiting rooms, in a good way. | #8a5a2e cup=teacup",
+            "Attic Rooibos | From a box marked 1974. Red, sweet, and a little dusty in a way that's almost a flavour. | #b0442a cup=mug",
+            "Moonlit Bin Mint | Picked behind the restaurant, by the light of the moon. Very fresh. Don't ask which restaurant. | #7fbf5a float=leaf cup=glass",
+            "Third Floor Chai | Somebody's office kept it in a drawer. The drawer is still a bit warm. | #b07a4a foam cup=mug",
+            "Smoked Lantern Tea | It smells of a bonfire you weren't invited to but enjoyed from across the field. | #5a3520 smoke cup=teacup",
+            "Fog in a Jar | Sold as tea. It mostly behaves like tea. The steam goes the wrong way. | #c8d0d8 glow cup=glass",
+            "Raccoon's Own Blend | Seven leaves, three twigs and one button. The raccoon insists on the button. | #6b4a2a float=star cup=bowl",
+            "Night Market Oolong | Traded for a spoon, a key and a compliment. Rolls open slowly in the cup, like it's waking up. | #c89a3a cup=thimble"
+        ],
+        barter_bake: [
+            "Bin-Day Shortbread | Rescued, still in the box, perfectly fine. The raccoon is very proud of this one. | cookies #e0b060",
+            "Lost Wedding Cake (One Tier) | Nobody came back for it. It's lemon. We'll have it, with respect. | cake #f4ecd8",
+            "Sea-Salt Fudge Brownie | From a seaside kiosk that closed for the winter. It tastes like the last warm day. | cake #4a2c1a",
+            "Rooftop Rye | Baked by pigeons, the raccoon says. The pigeons say nothing. Dense, dark, good. | bread #6b4a2a",
+            "Quiet Hour Croissant | Flakes everywhere, silently. The crumbs don't make a sound when they land. | croissant",
+            "Apple Turnover, Turned Twice | It's been turned over so many times it's back where it started. Still delicious. | pie",
+            "Pocket Gingerbread | Comes in the shape of whoever's holding it. Today it's shaped like a raccoon. | gingerbread",
+            "Honeycomb Bun | There's a little honeycomb inside, and once, a little bee, who was fine and flew off. | bun #e8b830"
+        ],
+        barter_flower: [
+            "Gutter Violets | #7a5ac0 | bell | Grown in a gutter that gets exactly the right amount of rain. The raccoon knows the gutter.",
+            "Station Roses | #c8323a | poppy | Left on a bench at platform four. Nobody came. They deserved a vase.",
+            "Lamp-Post Clover | #8fbf5a | sprig | From around the foot of an old lamp post. Three leaves, every one of them.",
+            "Velvet Dock | #6b2a3a | tulip | Dark red, soft as a coat collar. It closes up when the radio's on.",
+            "Attic Everlasting | #e8c070 | daisy | Dried decades ago, still bright. It's been waiting in a hatbox for somewhere to be.",
+            "Midnight Stock | #3a3a7a | herb | Smells of cloves, only after dark. In daylight it pretends to be ordinary.",
+            "Puddle Flag | #5a86c8 | tulip | Found standing in a puddle, looking at itself. Not vain. Just curious.",
+            "Ghost Gypsophila | #f6f8ff | sprig | Tiny white clouds of flowers. Some of them are a little see-through."
+        ],
+        barter_curio: [
+            "Ticket to nowhere in particular | Single, second class, valid until used. The raccoon used to keep it behind its ear.",
+            "Snow globe with no snow | Shake it and the little house inside turns its lights on.",
+            "Key labelled 'the other one' | It opens the other one. We don't have the first one.",
+            "Tin soldier on leave | Off duty. Holding a tiny suitcase instead of a rifle. It looks relieved.",
+            "Thimble of sea | It's damp inside and, if you listen, there's a tide.",
+            "Button from a famous coat | Nobody remembers whose coat. Everyone agrees it was famous.",
+            "Pocket compass that points home | Whose home, it doesn't say. Not ours. It points somewhere north-ish and sighs.",
+            "Dice with a seventh side | You can't see the seventh side. It comes up sometimes anyway.",
+            "Postcard of the wagon | Somebody painted the wagon from outside, years ago. Mite is in the window, waving.",
+            "Very small umbrella | Too small for anyone we know. Opens on its own when it's going to rain."
         ],
         closet_echo: [
             "It echoes. Further in than the archive goes. I didn't ask how much further.",
@@ -3234,7 +3278,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, barterOwn: [], splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3406,8 +3450,9 @@ function sanitizeState(raw) {
     o.splurge = { k: s.splurge && ["ice", "balloons", "cake", "fireworks"].includes(s.splurge.k) ? s.splurge.k : "", at: num(s.splurge && s.splurge.at) }; // the day's treat (splurge.js)
     { // the raccoon's barter: this week's stock and what's been traded (barter.js)
         const b = s.barter && typeof s.barter === "object" ? s.barter : {};
-        o.barter = { wk: dkey(b.wk) || "", stock: arr(b.stock, 4).map(x => ({ k: ["trinket", "altered", "eye"].includes(x.k) ? x.k : "trinket", id: str(x.id, 80), price: clamp(Math.round(num(x.price, 20)), 1, 999) })).filter(x => x.id), got: (Array.isArray(b.got) ? b.got : []).slice(0, 4).map(x => str(x, 80)).filter(Boolean) };
+        o.barter = { wk: dkey(b.wk) || "", stock: arr(b.stock, 4).map(x => ({ k: ["tea", "bake", "flower", "curio", "eye"].includes(x.k) ? x.k : "", id: str(x.id, 80), price: clamp(Math.round(num(x.price, 20)), 1, 999) })).filter(x => x.id && x.k), got: (Array.isArray(b.got) ? b.got : []).slice(0, 4).map(x => str(x, 80)).filter(Boolean) };
     }
+    o.barterOwn = arr(s.barterOwn, 400).map(x => ({ k: ["tea", "bake", "flower", "curio"].includes(x.k) ? x.k : "", n: str(x.n, 80).trim(), at: num(x.at) })).filter(x => x.k && x.n); // what the raccoon brought, for good (barter.js)
     o.eyes = arr(s.eyes, 24).map(e => ({ k: sid(e.k).slice(0, 12), at: num(e.at), from: str(e.from, 20) })).filter(e => e.k); // the eye jars (eyes.js)
     o.glimpses = arr(s.glimpses, 300).map(g => ({ k: str(g && g.k, 80), at: num(g && g.at) })).filter(g => g.k); // what the chalk circle has shown (circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
@@ -3659,6 +3704,7 @@ function mergeStates(a, b) {
     o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
     o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small journal", at: 0 }) : Object.assign({}, b.journal); // the newest name
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
+    o.barterOwn = uniq([...(a.barterOwn || []), ...(b.barterOwn || [])], x => x.k + "|" + String(x.n).toLowerCase()).slice(0, 400); // everything traded, from either side
     { // the barter: the newer week wins; the same week keeps one stock and everything traded on either side
         const ba = a.barter || {}, bb = b.barter || {};
         if ((ba.wk || "") !== (bb.wk || ""))
@@ -10138,7 +10184,8 @@ function showBrew() {
     if (brew)
         closeBrew();
     const c = ctx();
-    const all = pool("brews").map(parseLine).filter(x => x.text.includes("|") && x.conds.every(k => condOk(k, c) !== false));
+    const all = pool("brews").concat(barterLines("tea")).map(parseLine) // (and the teas from the raccoon, barter.js)
+        .filter(x => x.text.includes("|") && x.conds.every(k => condOk(k, c) !== false));
     if (!all.length)
         return;
     let cand = all.filter(x => !recentBrews.includes(x.text));
@@ -11761,7 +11808,8 @@ function showBake() {
     if (bake)
         closeBake();
     const c = ctx();
-    const all = pool("bakes").map(parseLine).filter(x => x.text.includes("|") && x.conds.every(k => condOk(k, c) !== false));
+    const all = pool("bakes").concat(barterLines("bake")).map(parseLine) // (and the raccoon's recipes, barter.js)
+        .filter(x => x.text.includes("|") && x.conds.every(k => condOk(k, c) !== false));
     if (!all.length)
         return 4;
     let cand = all.filter(x => !recentBakes.includes(x.text));
@@ -18499,7 +18547,7 @@ function parseFlower(text, odd) {
 /* a flower from the lines that fits right now (season and so on), not the one already in the vase */
 function pickFlower(odd) {
     const c = ctx(), cur = S.vase && S.vase.n;
-    const all = pool(odd ? "flowers_odd" : "flowers").map(parseLine).filter(x => x.text.includes("|") && x.conds.every(k => condOk(k, c) !== false)).map(x => parseFlower(x.text, odd)).filter(f => f.n && f.n !== cur);
+    const all = (odd ? pool("flowers_odd") : pool("flowers").concat(barterLines("flower"))).map(parseLine).filter(x => x.text.includes("|") && x.conds.every(k => condOk(k, c) !== false)).map(x => parseFlower(x.text, odd)).filter(f => f.n && f.n !== cur);
     return all.length ? choice(all) : null;
 }
 /* new flowers in the vase (from: who brought them) */
@@ -19478,11 +19526,16 @@ const EYES = [
     { id: "lantern", name: "Lantern-fish eye", ring: "#f0d070", pupil: "slit", glow: "#ffe08a", note: "Brings its own light. Useful in the archive." },
     { id: "stone", name: "Stone eye", ring: "#8a8a96", pupil: "none", note: "From a statue that got tired of watching the same square. Very calm." },
     { id: "star", name: "Something's eye, from very far up", ring: "#1a2050", pupil: "star", glow: "#c8d8ff", note: "There are stars in it. It's looking at somewhere we haven't been." },
-    { id: "kind", name: "A kind eye", ring: "#a07850", pupil: "round", note: "Nobody knows whose. It just looks kind. Mite put it in the front." }
+    { id: "kind", name: "A kind eye", ring: "#a07850", pupil: "round", note: "Nobody knows whose. It just looks kind. Mite put it in the front." },
+    // only the raccoon brings these (barter.js): Mite never finds them itself
+    { id: "glassdoll", name: "Doll's glass eye", ring: "#5a9ad0", pupil: "round", note: "From an attic doll who has another one and says that's enough. Opens when you tilt it." },
+    { id: "heron", name: "Heron's eye", ring: "#e8d050", pupil: "round", note: "Yellow and very patient. It watches the jar's bubbles as if one might be a fish." },
+    { id: "lighthouse", name: "Lighthouse eye", ring: "#f4ecd0", pupil: "slit", glow: "#fff4b0", note: "Sweeps slowly round the jar, once a minute. The other eyes have learned to look away." },
+    { id: "bureau", name: "Eye with a Bureau tag", ring: "#7a8a7a", pupil: "bar", note: "Tagged 'surplus, do not reissue'. The raccoon got it from a skip behind an office that isn't on any map." }
 ];
 const EYES_PER_JAR = 6, EYE_JARS = 3; // (two on the shelf, one on top: eighteen eyes fit)
 /* where each eye comes from (some are only found one way) */
-const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door" };
+const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door", glassdoll: "raccoon", heron: "raccoon", lighthouse: "raccoon", bureau: "raccoon" };
 function findEye(from) {
     const have = new Set((S.eyes || []).map(e => e.k));
     const can = EYES.filter(e => !have.has(e.id) && (!EYE_FROM[e.id] || EYE_FROM[e.id] === from));
@@ -22204,25 +22257,43 @@ function buy(b) {
 <script>/* js/ui/barter.js */
 "use strict";
 /*
- * barter.js - The raccoon's barter, in the shop: once the raccoon friend has come by, it brings three odd
- * things each week to trade for glimmers. They're things for the collections you don't have yet: a small thing
- * for the Cabinet, an altered item, an eye for the jars. The week's stock is fixed the first time you look
- * (S.barter: { wk, stock: [{ k, id, price }], got: [id] }); what you trade is yours, the rest goes back in
- * the raccoon's sack at the end of the week.
+ * barter.js - The raccoon's barter, in the shop: once the raccoon friend has come by, it brings three odd things
+ * each week to trade for glimmers. Only things Mite could never find itself: new kinds of tea for the kettle, new
+ * bakes for the oven, new flowers for the vase (lines: barter_tea, barter_bake, barter_flower), curios for the
+ * Cabinet (barter_curio) and eyes from far away for the jars (EYE_FROM "raccoon", eyes.js).
+ *   S.barter     this week: { wk, stock: [{ k, id, price }], got: [id] }, fixed the first time you look
+ *   S.barterOwn  everything ever traded: [{ k, n, at }]; the teas, bakes and flowers join the kettle's, the oven's
+ *                and the vase's own (barterLines), the curios get their own drawers in the Cabinet
  */
-const BARTER_PRICE = { trinket: 18, altered: 45, eye: 70 };
-/* the week's stock: picked once per week from what you haven't got */
+const BARTER_PRICE = { tea: 12, bake: 12, flower: 10, curio: 20, eye: 60 };
+const BARTER_POOL = { tea: "barter_tea", bake: "barter_bake", flower: "barter_flower", curio: "barter_curio" };
+const barterName = line => String(parseLine(line).text.split("|")[0] || "").trim();
+function barterOwned(k, n) {
+    return (S.barterOwn || []).some(x => x.k === k && x.n.toLowerCase() === String(n).toLowerCase());
+}
+/* the lines of what's been traded, of one kind (tea, bake, flower), to add to the kettle's, oven's or vase's own */
+function barterLines(k) {
+    return pool(BARTER_POOL[k] || "").filter(l => barterOwned(k, barterName(l)));
+}
+/* what the raccoon could bring: everything of its own that you haven't got yet */
+function barterCandidates() {
+    const out = {};
+    for (const k of ["tea", "bake", "flower", "curio"])
+        out[k] = pool(BARTER_POOL[k]).map(barterName).filter(n => n && !barterOwned(k, n)).map(id => ({ k, id }));
+    const have = new Set((S.eyes || []).map(e => e.k));
+    out.eye = (S.eyes || []).length < EYES_PER_JAR * EYE_JARS ? EYES.filter(e => EYE_FROM[e.id] === "raccoon" && !have.has(e.id)).map(e => ({ k: "eye", id: e.id })) : [];
+    return out;
+}
+/* the week's stock: three things of three different kinds where it can (more of one kind when the others run out) */
 function barterStock() {
     const wk = weekKey(Date.now());
-    if (!S.barter || S.barter.wk !== wk) {
-        const pick = (list, n) => list.sort(() => Math.random() - .5).slice(0, n);
-        const tr = pick(trinketList().filter(t => !S.trinkets[t.name]).map(t => ({ k: "trinket", id: t.name })), 1);
-        const al = pick(alteredList().filter(t => !S.altered[t.name]).map(t => ({ k: "altered", id: t.name })), 1);
-        const have = new Set((S.eyes || []).map(e => e.k));
-        const ey = (S.eyes || []).length < EYES_PER_JAR * EYE_JARS ? pick(EYES.filter(e => !have.has(e.id)).map(e => ({ k: "eye", id: e.id })), 1) : [];
-        let stock = [...tr, ...al, ...ey];
-        if (stock.length < 3) // fill up with more small things, if some collection's complete
-            stock = stock.concat(pick(trinketList().filter(t => !S.trinkets[t.name] && !stock.some(s => s.id === t.name)).map(t => ({ k: "trinket", id: t.name })), 3 - stock.length));
+    if (!S.barter || S.barter.wk !== wk || S.barter.stock.some(s => !BARTER_PRICE[s.k])) { // (or still last version's stock)
+        const shuf = a => a.sort(() => Math.random() - .5), c = barterCandidates(), stock = [];
+        for (const k of shuf(Object.keys(c).filter(k => c[k].length)).slice(0, 3))
+            stock.push(choice(c[k]));
+        const rest = shuf(Object.values(c).flat().filter(x => !stock.some(s => s.k === x.k && s.id === x.id)));
+        while (stock.length < 3 && rest.length)
+            stock.push(rest.shift());
         S.barter = { wk, stock: stock.map(s => Object.assign(s, { price: BARTER_PRICE[s.k] })), got: [] };
         saveSoon();
     }
@@ -22234,12 +22305,11 @@ function barterInfo(s) {
         const e = EYES.find(x => x.id === s.id);
         return e ? { name: e.name, note: e.note, kind: "for the eye jars" } : null;
     }
-    if (s.k === "altered") {
-        const a = alteredList().find(x => x.name === s.id);
-        return a ? { name: a.name, note: a.note, kind: "altered item, " + a.cls } : null;
-    }
-    const t = trinketList().find(x => x.name === s.id);
-    return t ? { name: t.name, note: t.note, kind: "for the Cabinet" } : null;
+    const line = pool(BARTER_POOL[s.k] || "").find(l => barterName(l) === s.id);
+    if (!line)
+        return null;
+    const parts = parseLine(line).text.split("|").map(x => x.trim()), note = s.k === "flower" ? parts[3] || "" : parts[1] || "";
+    return { name: s.id, note, kind: { tea: "a new tea for the kettle", bake: "a new bake for the oven", flower: "flowers for the vase", curio: "for the Cabinet" }[s.k] };
 }
 function renderBarter() {
     const el = $("barterShop");
@@ -22257,7 +22327,7 @@ function renderBarter() {
         const got = b.got.includes(s.id);
         return `<div class="bld"><div style="min-width:0"><b>${esc(info.name)}</b><span class="own">${esc(info.kind)}</span><p>${esc(info.note)}</p></div><span class="bacts">${got ? `<span class="owned">Traded</span>` : `<button class="btn amber" data-barter="${i}" ${S.g < s.price ? "disabled" : ""} aria-label="Trade ${esc(String(s.price))} glimmers for ${esc(info.name)}">${s.price} ◆</button>`}</span></div>`;
     }).join("");
-    el.innerHTML = rows ? `<p class="sub">This week ${who} brought these, from bins, attics and lost-property boxes. New things every week.</p>${rows}` : `<p class="sub">${who} has nothing you don't have already. It's very impressed.</p>`;
+    el.innerHTML = rows ? `<p class="sub">This week ${who} brought these, from bins, attics and lost-property boxes: things ${esc(S.settings.pet)} would never find. New things every week.</p>${rows}` : `<p class="sub">${who} has nothing you don't have already. It's very impressed.</p>`;
     el.querySelectorAll("[data-barter]").forEach(bt => bt.onclick = () => barterTrade(+bt.dataset.barter));
 }
 function barterTrade(i) {
@@ -22266,15 +22336,19 @@ function barterTrade(i) {
         return;
     S.g -= s.price;
     b.got.push(s.id);
-    if (s.k === "trinket")
-        S.trinkets[s.id] = (S.trinkets[s.id] || 0) + 1;
-    else if (s.k === "altered")
-        S.altered[s.id] = (S.altered[s.id] || 0) + 1;
-    else
+    if (s.k === "eye")
         S.eyes = (S.eyes || []).concat([{ k: s.id, at: Date.now(), from: "raccoon" }]);
+    else {
+        S.barterOwn = (S.barterOwn || []).concat([{ k: s.k, n: s.id, at: Date.now() }]);
+        if (s.k === "flower") { // straight into the vase
+            const line = pool("barter_flower").find(l => barterName(l) === s.id);
+            if (line && typeof newFlowers === "function")
+                newFlowers(parseFlower(parseLine(line).text, false), raccoonName());
+        }
+    }
     sfx("coin");
     note(`Traded ${s.price} glimmers with ${raccoonName()} for ${info.name.toLowerCase()}.`);
-    speak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, `${info.name}! I'll put it ${s.k === "eye" ? "in the jar" : s.k === "altered" ? "with the altered items, carefully" : "in the Cabinet"}.`]), { ms: 5000 });
+    speak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, { tea: `${info.name}. I'll put it with the other teas. The kettle's already curious.`, bake: `${info.name}. I've got the recipe now too. The oven will make it some days.`, flower: `${info.name}. Straight into the vase.`, curio: `${info.name}! It gets its own drawer in the Cabinet.`, eye: `${info.name}. In the jar it goes. The others are making room.` }[s.k]]), { ms: 5000 });
     afterChange();
 }
 
@@ -22287,7 +22361,11 @@ function barterTrade(i) {
  */
 function renderCabinet() {
     const list = trinketList();
-    $("drawers").innerHTML = list.map(t => S.trinkets[t.name] ? `<div class="drawer"><b>${esc(t.name)}${S.trinkets[t.name] > 1 ? ` <span class="sync">×${esc(S.trinkets[t.name])}</span>` : ""}</b>${esc(t.note)}</div>` : `<div class="drawer unk">?</div>`).join("");
+    $("drawers").innerHTML = list.map(t => S.trinkets[t.name] ? `<div class="drawer"><b>${esc(t.name)}${S.trinkets[t.name] > 1 ? ` <span class="sync">×${esc(S.trinkets[t.name])}</span>` : ""}</b>${esc(t.note)}</div>` : `<div class="drawer unk">?</div>`).join("") +
+        pool("barter_curio").filter(l => barterOwned("curio", barterName(l))).map(l => { // the raccoon's curios: only the ones you have (no empty drawers: they're a surprise)
+            const [n, ...r] = parseLine(l).text.split("|");
+            return `<div class="drawer racc"><b>${esc(n.trim())}</b>${esc(r.join("|").trim())}<span class="cls">from ${esc(raccoonName())}</span></div>`;
+        }).join("");
     $("altered").innerHTML = alteredList().map(t => S.altered[t.name] ? `<div class="drawer alt"><span class="cls">${esc(t.cls)}</span><b>${esc(t.name)}</b>${esc(t.note)}</div>` : `<div class="drawer unk">▮▮▮</div>`).join("");
     {
         const n = {};
