@@ -500,6 +500,10 @@ body.pixel .cabglim{border-radius:0;font-family:var(--f-display);font-size:18px;
 .fbooklist{list-style:none;margin:0;padding:0;max-height:52vh;overflow:auto}.fbooklist li{padding:8px 0;border-bottom:1px dashed rgba(58,44,34,.25)}
 .fdot{display:inline-block;width:10px;height:10px;margin-right:6px;border:2px solid #3a2c22;vertical-align:-1px}.fbook.odd b{color:#6b4a84}
 .pinadd{border:0;cursor:pointer;color:#ffe9a8}
+.pinpager{display:flex;align-items:center;gap:10px;margin-top:4px;color:#ffe9a8;font-family:var(--f-mono);font-size:13px}
+.pinpager .cabglim{border:0;cursor:pointer;color:#ffe9a8;margin:6px 0 0;min-height:36px}
+.pinpager .cabglim:disabled{opacity:.35;cursor:default}
+.pinpager span{margin-top:6px;text-shadow:0 1px 2px #000}
 .dlg.pin{border-color:#6a4428}.dlg.pin b{background:#6a4428}
 .pinform{display:flex;gap:8px;margin-top:8px}.pinform input{flex:1;min-width:0;font:inherit;padding:6px 8px;border:2px solid #3a2c22;background:#fff;color:#25291f}
 .pinform button,.pindown{font:inherit;padding:6px 12px;border:2px solid #3a2c22;background:#ecd6ad;color:#25291f;cursor:pointer}
@@ -612,6 +616,7 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div id="pinView" class="cabview" hidden role="dialog" aria-modal="true" aria-label="Pinboard">
         <div class="cabbox pinbox" id="pinBox"><canvas id="pinCv" width="96" height="60" aria-hidden="true"></canvas><div class="cabhits" id="pinHits"></div><button type="button" class="cabclose" id="pinClose" aria-label="Close">✕</button></div>
         <button type="button" class="cabglim pinadd" id="pinAdd">＋ Pin a note</button>
+        <div class="pinpager" id="pinPager" hidden><button type="button" class="cabglim" id="pinPrev" aria-label="Older notes">‹ Older</button><span id="pinPageTxt" aria-live="polite"></span><button type="button" class="cabglim" id="pinNext" aria-label="Newer notes">Newer ›</button></div>
         <div id="pinDlg" class="dlg pin" hidden aria-live="polite"><b id="pinDlgName"></b><span id="pinDlgText"></span>
           <div id="pinForm" class="pinform" hidden><input id="pinInput" type="text" maxlength="120" placeholder="Something worth remembering" aria-label="The note" enterkeyhint="done"><button type="button" id="pinSave">Pin it</button></div>
           <button type="button" class="pindown" id="pinDown" hidden>Take it down</button></div>
@@ -832,7 +837,7 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div><h2>AI usage</h2><p class="sub">Every AI call is logged here. Counts are estimates from text length (about 3.6 characters per token); the real number is somewhat higher because the platform adds its own framing to each call.</p></div>
       <div class="usage" id="usage"></div>
 
-      <div><h2>Backup</h2><p class="sub">Your pet saves to your Claude account when that's available, and to this browser either way. Keep a copy somewhere safe, or use it to move to another device: send the file to yourself, download it, or copy it.</p></div>
+      <div><h2>Backup</h2><p class="sub">Keep a copy somewhere safe, or use it to move to another device: send the file to yourself (mail, a chat, a cloud drive), save it, or copy it.</p><p class="sub" id="bkStatus"></p></div>
       <div class="row">
         <button class="btn primary" id="bkSend2">Send backup to…</button>
         <button class="btn" id="bkSave2">Download backup</button>
@@ -3386,7 +3391,7 @@ function sanitizeState(raw) {
     }
     o.eyes = arr(s.eyes, 24).map(e => ({ k: sid(e.k).slice(0, 12), at: num(e.at), from: str(e.from, 20) })).filter(e => e.k); // the eye jars (eyes.js)
     o.glimpses = arr(s.glimpses, 300).map(g => ({ k: str(g && g.k, 80), at: num(g && g.at) })).filter(g => g.k); // what the chalk circle has shown (circle.js)
-    o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 40).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
+    o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
     // the chest of drawers for rent in the nook: when it arrived, and who Mite last knew was living in it (sig)
     o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240) };
     // the post: letters Mite wrote at the desk (to whom, when, whether a reply came: r) and the replies (read or not)
@@ -3554,7 +3559,7 @@ function mergeStates(a, b) {
     o.origami = uniq([...(od.origami || []), ...(nw.origami || [])], x => x.k + "|" + x.at).sort((x, y) => x.at - y.at).slice(-24);
     o.dreams = uniq([...(od.dreams || []), ...(nw.dreams || [])], x => x.at + "|" + x.t).sort((x, y) => x.at - y.at).slice(-80);
     o.dreamDay = [od.dreamDay || "", nw.dreamDay || ""].sort().pop();
-    o.knits = uniq([...(od.knits || []), ...(nw.knits || [])], x => x.at + "|" + x.item).sort((x, y) => x.at - y.at).slice(-40);
+    o.knits = uniq([...(od.knits || []), ...(nw.knits || [])], x => x.at + "|" + x.item).sort((x, y) => x.at - y.at).slice(-300);
     o.knit = nw.knit && od.knit && nw.knit.at === od.knit.at ? (num(nw.knit.prog) >= num(od.knit.prog) ? nw.knit : od.knit) : (nw.knit || od.knit || null);
     o.knitRest = [od.knitRest || "", nw.knitRest || ""].sort().pop();
     if (o.knit && o.knits.some(x => x.at >= o.knit.at && x.item === o.knit.item))
@@ -3769,8 +3774,8 @@ const KEEP_KEY = "mossling.keep";
 let KEEP = { refl: [], caps: [], del: {} }, keepDirty = false;
 function cleanKeep(raw) {
     const s = cleanJSON(raw) || {}, o = { refl: [], caps: [], del: {} };
-    o.refl = arr(s.refl, 2000).map(r => ({ id: sid(r.id) || uidGen(), at: num(r.at, Date.now()), text: str(r.text, 1000), u: num(r.u, num(r.at)) })).filter(r => r.text);
-    o.caps = arr(s.caps, 500).map(c => ({ id: sid(c.id) || uidGen(), made: num(c.made, Date.now()), open: dkey(c.open) || dayKey(), text: str(c.text, 3000), opened: Math.max(0, num(c.opened)),
+    o.refl = arr(s.refl, 20000).map(r => ({ id: sid(r.id) || uidGen(), at: num(r.at, Date.now()), text: str(r.text, 1000), u: num(r.u, num(r.at)) })).filter(r => r.text);
+    o.caps = arr(s.caps, 2000).map(c => ({ id: sid(c.id) || uidGen(), made: num(c.made, Date.now()), open: dkey(c.open) || dayKey(), text: str(c.text, 3000), opened: Math.max(0, num(c.opened)),
         snap: { done: Math.max(0, num(c.snap && c.snap.done)), lvl: Math.max(1, num(c.snap && c.snap.lvl, 1)), open: Math.max(0, num(c.snap && c.snap.open)) } })).filter(c => c.text);
     for (const k of Object.keys(s.del && typeof s.del === "object" ? s.del : {}).slice(0, 3000))
         o.del[str(k, 40)] = num(s.del[k]);
@@ -3814,11 +3819,42 @@ function saveKeep() {
     }
     saveSoon(800);
 }
+/* account documents can hold at most 256 KiB each. A save that's grown past that (years of reflections, hundreds of
+   tasks and lines) is written in parts: the text split into pieces "<name>-part-0", "-part-1", ..., and the main
+   document says how many ({ chunked: n }). Reading puts them back together. Small saves stay one document. */
+const DOC_MAX = 200000, PART_CHARS = 60000; // (60 000 characters stay under 200 KB even if every one takes 3 bytes)
+async function putDoc(name, obj) {
+    const base = "data/users/" + uid + "/" + name, j = JSON.stringify(obj);
+    if (byteLen(j) <= DOC_MAX)
+        return db.doc(base).set(JSON.parse(j));
+    const n = Math.ceil(j.length / PART_CHARS);
+    for (let i = 0; i < n; i++)
+        await db.doc(base + "-part-" + i).set({ i, n, s: j.slice(i * PART_CHARS, (i + 1) * PART_CHARS) });
+    return db.doc(base).set({ chunked: n, savedAt: num(obj.savedAt) || Date.now() });
+}
+async function getDoc(name) {
+    const base = "data/users/" + uid + "/" + name, snap = await db.doc(base).get(), d = snap && snap.exists ? snap.data() : null;
+    if (!d || !d.chunked)
+        return d;
+    let j = "";
+    for (let i = 0; i < Math.min(500, num(d.chunked)); i++) {
+        const p = await db.doc(base + "-part-" + i).get(), pd = p && p.exists ? p.data() : null;
+        if (!pd || pd.n !== d.chunked || typeof pd.s !== "string")
+            return null; // (parts missing or from another save: leave it; the next save writes them again)
+        j += pd.s;
+    }
+    try {
+        return JSON.parse(j);
+    }
+    catch (e) {
+        return null;
+    }
+}
 async function pushKeep() {
     if (!db || !uid || !keepDirty)
         return;
     try {
-        await db.doc("data/users/" + uid + "/keepsakes").set(JSON.parse(JSON.stringify(KEEP)));
+        await putDoc("keepsakes", KEEP);
         keepDirty = false;
     }
     catch (e) {
@@ -3828,8 +3864,7 @@ async function pullKeep() {
     if (!db || !uid)
         return;
     try {
-        const snap = await db.doc("data/users/" + uid + "/keepsakes").get();
-        const r = snap && snap.exists ? snap.data() : null;
+        const r = await getDoc("keepsakes");
         if (r) {
             const before = JSON.stringify(KEEP);
             KEEP = mergeKeep(KEEP, cleanKeep(r));
@@ -3908,7 +3943,7 @@ async function pullArch() {
     catch (e) {
     }
 }
-const SIZE_SOFT = 180000, SIZE_HARD = 240000;
+const SIZE_SOFT = 1500000; // (past this, old chat and notebook lines are trimmed, to keep the browser's storage healthy; tasks, the archive and keepsakes never are)
 let sizeWarned = false;
 function byteLen(x) {
     try {
@@ -3961,13 +3996,11 @@ async function save() {
     catch (e) {
         setSync("This browser's storage is full; copy a backup on the Desk, under Data");
     }
+    if (typeof safekeepMirror === "function")
+        safekeepMirror(); // (the Android app: a second copy in its own files, safekeep.js)
     if (db && uid) {
-        if (byteLen(j) > SIZE_HARD) {
-            setSync("Too large for account sync; saved in this browser. Copy a backup on the Desk, under Data.");
-            return;
-        }
         try {
-            await db.doc("data/users/" + uid + "/mossling").set(JSON.parse(j));
+            await putDoc("mossling", JSON.parse(j));
             await pushArch();
             await pushKeep();
             setSync("Saved " + hhmm() + ((S.archPending || []).length ? " · archive pending" : ""));
@@ -17773,10 +17806,36 @@ function noteCol(q) {
         h = (h * 31 + ch.charCodeAt(0)) >>> 0;
     return NOTE_COLS[h % NOTE_COLS.length];
 }
-let pinOpen = false, pinSel = null, pinSelAt = 0, pinRaf = 0;
-/* the notes that are up (the newest few, if there are more than fit) */
+let pinOpen = false, pinSel = null, pinSelAt = 0, pinRaf = 0, pinPage = 0;
+/* every note that's up, oldest first */
+function pinAllNotes() {
+    return (S.quotes || []).filter(q => !q.off && q.t);
+}
+/* the notes on the board right now: eight at a time, the newest first; ‹ Older and Newer › page through the stack */
+function pinPages() {
+    return Math.max(1, Math.ceil(pinAllNotes().length / PIN_NOTE_MAX));
+}
 function pinNotes() {
-    return (S.quotes || []).filter(q => !q.off && q.t).slice(-PIN_NOTE_MAX);
+    const all = pinAllNotes(), end = all.length - clamp(pinPage, 0, pinPages() - 1) * PIN_NOTE_MAX;
+    return all.slice(Math.max(0, end - PIN_NOTE_MAX), Math.max(0, end));
+}
+function pinPagerUI() {
+    const n = pinAllNotes().length, pages = pinPages(), el = $("pinPager");
+    if (!el)
+        return;
+    pinPage = clamp(pinPage, 0, pages - 1);
+    el.hidden = pages < 2;
+    const end = n - pinPage * PIN_NOTE_MAX, start = Math.max(0, end - PIN_NOTE_MAX);
+    $("pinPageTxt").textContent = `notes ${n - end + 1}–${n - start} of ${n}`;
+    $("pinPrev").disabled = pinPage >= pages - 1;
+    $("pinNext").disabled = pinPage <= 0;
+}
+function pinTurn(d) {
+    pinPage = clamp(pinPage + d, 0, pinPages() - 1);
+    pinSel = null;
+    $("pinDlg").hidden = true;
+    sfx("tock");
+    pinBuildHits();
 }
 /* what's on the board, and where, in close-up pixels: photos along the top, postcards top right, notes below */
 function pinItems() {
@@ -17838,6 +17897,7 @@ function openPinboard() {
         return;
     pinOpen = true;
     pinSel = null;
+    pinPage = 0;
     if (!S.flags.tap_pinboard) {
         S.flags.tap_pinboard = 1;
         saveSoon();
@@ -17860,6 +17920,7 @@ function closePinboard() {
     if (!pinOpen)
         return;
     pinOpen = false;
+    pinPage = 0; // (the board in the nook always shows the newest)
     cancelAnimationFrame(pinRaf);
     $("pinView").hidden = true;
     sfx("tock");
@@ -17868,6 +17929,7 @@ function closePinboard() {
 function pinBuildHits() {
     const hits = $("pinHits");
     hits.innerHTML = "";
+    pinPagerUI();
     pinItems().forEach(it => {
         const b = document.createElement("button");
         b.type = "button";
@@ -17916,8 +17978,9 @@ function pinAddNote(text) {
     }
     else
         S.quotes.push({ t, at: Date.now(), off: 0 });
-    if (S.quotes.length > 40)
-        S.quotes.splice(0, S.quotes.length - 40);
+    if (S.quotes.length > 300)
+        S.quotes.splice(0, S.quotes.length - 300);
+    pinPage = 0; // (back to the front, where the new one is)
     saveSoon();
     return true;
 }
@@ -17927,7 +17990,7 @@ function pinTakeDown(q) {
 }
 /* now and then, Mite reads one of the notes out */
 function quoteSay() {
-    const n = pinNotes();
+    const n = pinAllNotes();
     if (!n.length)
         return false;
     const q = choice(n).t.replace(/[.!?…]+$/, "");
@@ -17999,10 +18062,18 @@ $("pinClose").addEventListener("click", e => {
     closePinboard();
 });
 $("pinView").addEventListener("click", e => {
-    if (!e.target.closest("#pinBox") && !e.target.closest("#pinDlg") && !e.target.closest("#pinAdd"))
+    if (!e.target.closest("#pinBox") && !e.target.closest("#pinDlg") && !e.target.closest("#pinAdd") && !e.target.closest("#pinPager"))
         closePinboard();
 });
 $("pinView").addEventListener("pointerdown", e => e.stopPropagation());
+$("pinPrev").addEventListener("click", e => {
+    e.stopPropagation();
+    pinTurn(1);
+});
+$("pinNext").addEventListener("click", e => {
+    e.stopPropagation();
+    pinTurn(-1);
+});
 $("pinAdd").addEventListener("click", e => {
     e.stopPropagation();
     pinSel = null;
@@ -20125,9 +20196,35 @@ function drawCeiling(dk, room) {
         drawRoof(dk, room);
 }
 /* the round rug in the middle of a room's floor (each room has its own colours; the wagon's is red) */
+/* a woven texture for the rugs: every other pixel a shade darker, in a checker (a colour that happens to sit exactly
+   on the palette would otherwise come out flat) */
+const rugPats = {};
+function rugPattern(c) {
+    let p = rugPats[c];
+    if (!p) {
+        const t = document.createElement("canvas");
+        t.width = t.height = 2;
+        const g = t.getContext("2d", { willReadFrequently: true });
+        g.fillStyle = c;
+        g.fillRect(0, 0, 2, 2);
+        g.fillStyle = mix(c, "#000000", .22);
+        g.fillRect(0, 0, 1, 1);
+        g.fillRect(1, 1, 1, 1);
+        p = rugPats[c] = cx.createPattern(t, "repeat");
+        if (Object.keys(rugPats).length > 40)
+            for (const k in rugPats)
+                delete rugPats[k];
+    }
+    try {
+        p.setTransform(new DOMMatrix().scale(1 / DPR));
+    }
+    catch (e) {
+    }
+    return p;
+}
 function drawRug(dk, col, colDark, trim, trimDark) {
     const ry = GY + (H - GY) * .42;
-    cx.fillStyle = mix(col, colDark, dk);
+    cx.fillStyle = rugPattern(mix(col, colDark, Math.round(dk * 10) / 10));
     cx.beginPath();
     cx.ellipse(W * .5, ry, R * 2.5, (H - GY) * .3, 0, 0, 7);
     cx.fill();
@@ -21136,6 +21233,8 @@ function renderTasks() {
     renderJots();
     $("eveCard").hidden = !eveCardDue();
     $("bkCard").hidden = !backupDue();
+    if (typeof safekeepStatus === "function")
+        safekeepStatus();
     const open = openTasks().concat(editingId ? S.tasks.filter(t => t.id === editingId && !t.d && isAhead(t)) : []);
     $("openCount").textContent = open.length || "";
     const vis = t => filter === "all" || (filter === "week" && t.wk) || t.tag === filter;
@@ -22340,23 +22439,7 @@ $("importBtn").onclick = () => {
             toast("Lines imported");
         }
         else if (o.tasks && o.settings) {
-            S = merge(defaultState(), o);
-            if (o.archive && typeof o.archive === "object") {
-                const a = cleanJSON(o.archive) || {};
-                for (const k of Object.keys(a))
-                    if (dkey(k)) {
-                        mergeWeek(k, archClean(a[k]));
-                        S.archPending = [...new Set((S.archPending || []).concat(k))];
-                    }
-                rebuildFlat();
-                saveArchLocal();
-            }
-            if (o.keepsakes) {
-                KEEP = mergeKeep(KEEP, cleanKeep(o.keepsakes));
-                saveKeep();
-            }
-            migrateCounts();
-            compact();
+            importSave(o);
             toast("Save imported");
         }
         else
@@ -22369,6 +22452,26 @@ $("importBtn").onclick = () => {
         toast("That doesn't look like a Mossling export");
     }
 };
+/* a whole save (a backup file, or the app's own copy): the game, the archive weeks and the keepsakes */
+function importSave(o) {
+    S = merge(defaultState(), o);
+    if (o.archive && typeof o.archive === "object") {
+        const a = cleanJSON(o.archive) || {};
+        for (const k of Object.keys(a))
+            if (dkey(k)) {
+                mergeWeek(k, archClean(a[k]));
+                S.archPending = [...new Set((S.archPending || []).concat(k))];
+            }
+        rebuildFlat();
+        saveArchLocal();
+    }
+    if (o.keepsakes) {
+        KEEP = mergeKeep(KEEP, cleanKeep(o.keepsakes));
+        saveKeep();
+    }
+    migrateCounts();
+    compact();
+}
 let resetArm = 0;
 $("resetAll").onclick = () => {
     if (Date.now() - resetArm > 4000) {
@@ -22405,14 +22508,15 @@ function backupName() {
     const d = new Date(), p = n => String(n).padStart(2, "0");
     return `small-things-backup-${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}.json`;
 }
-/* the reminder: once a day (or week), from the morning on, when there's something worth keeping */
+/* the reminder: every morning there's been no backup yet that day (or once a week: seven days on), when there's
+   something worth keeping. By the calendar, not by hours: a backup in the evening doesn't hide the next morning's */
 function backupDue() {
     const k = S.settings.backup ?? 1;
     if (!k || S.flags.bkLater === dayKey() || new Date().getHours() < 5)
         return false;
-    const since = Date.now() - num(S.backupAt), gap = k === 2 ? 6.5 * 864e5 : 18 * 36e5;
+    const last = num(S.backupAt), days = last ? Math.round((new Date(dayKey() + "T12:00") - new Date(dayKey(new Date(last)) + "T12:00")) / 864e5) : 99;
     const age = Date.now() - num(S.created);
-    return since > gap && age > 864e5 && (S.tasks.length + doneTasks().length + (S.notes || []).length) > 0;
+    return days >= (k === 2 ? 7 : 1) && age > 864e5 && (S.tasks.length + doneTasks().length + (S.notes || []).length) > 0;
 }
 function backupDone(how) {
     S.backupAt = Date.now();
@@ -22531,6 +22635,99 @@ $("bkFile").onchange = async () => {
     $("importText").value = await f.text();
     $("importBtn").click();
 };
+
+</script>
+<script>/* js/core/safekeep.js */
+"use strict";
+/*
+ * safekeep.js - Keeping the save safe beyond the browser's own storage.
+ *   In a browser: asks for persistent storage (so the browser won't clear it to make room), once.
+ *   In the Android app (Capacitor, with the Filesystem plugin):
+ *     - a second copy of the whole save in the app's own files (safekeepMirror, after saving, at most every 20 s).
+ *       If the app's web storage is ever empty at start, the game comes back from that copy (safekeepRestore).
+ *       The app's files are also what Android backs up to the Google account (Auto Backup), so they survive a new phone.
+ *     - a dated backup file every day in Documents/Small Things/auto, keeping the last 14 (safekeepDaily), so
+ *       there's always a copy you can see, move or send, outside the app.
+ * On claude.ai the save is in the account as well (storage.js); everywhere, Backup in the Journal makes a file.
+ */
+const MIRROR_FILE = "small-things-save.json", AUTO_DIR = "Small Things/auto", AUTO_KEEP = 14;
+let mirrorAt = 0, mirrorTimer = null;
+function appFs() {
+    return nativeApp() && window.Capacitor.Plugins && Capacitor.Plugins.Filesystem || null;
+}
+/* after a save: the app's own copy (not more often than every 20 seconds) */
+function safekeepMirror() {
+    const fsys = appFs();
+    if (!fsys)
+        return;
+    clearTimeout(mirrorTimer);
+    const wait = Math.max(0, 20e3 - (Date.now() - mirrorAt));
+    mirrorTimer = setTimeout(async () => {
+        mirrorAt = Date.now();
+        try {
+            await fsys.writeFile({ path: MIRROR_FILE, data: backupText(), directory: "DATA", encoding: "utf8" });
+        }
+        catch (e) {
+        }
+        safekeepDaily();
+    }, wait);
+}
+/* at start, in the app: nothing in web storage, but the app's own copy is there? Then that's the game */
+async function safekeepRestore() {
+    const fsys = appFs();
+    if (!fsys || !firstStart)
+        return false;
+    try {
+        const r = await fsys.readFile({ path: MIRROR_FILE, directory: "DATA", encoding: "utf8" });
+        const o = JSON.parse(r && r.data || "null");
+        if (!o || !o.tasks || !o.settings)
+            return false;
+        importSave(o);
+        firstStart = false;
+        renderAll();
+        save();
+        toast("Your save was missing here, so it's been put back from the app's own copy.");
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
+}
+/* once a day, in the app: a dated backup in Documents/Small Things/auto; older than the last 14 are cleared */
+async function safekeepDaily() {
+    const fsys = appFs();
+    if (!fsys || S.flags.autoBk === dayNum())
+        return;
+    const d = new Date(), p = n => String(n).padStart(2, "0"), name = `small-things-auto-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.json`; // (year first, so they sort by date)
+    try {
+        await fsys.writeFile({ path: AUTO_DIR + "/" + name, data: backupText(), directory: "DOCUMENTS", encoding: "utf8", recursive: true });
+        S.flags.autoBk = dayNum();
+        const ls = await fsys.readdir({ path: AUTO_DIR, directory: "DOCUMENTS" });
+        const files = (ls && ls.files || []).map(f => typeof f === "string" ? f : f.name).filter(n => /^small-things-auto-\d{4}-\d\d-\d\d\.json$/.test(n)).sort();
+        for (const old of files.slice(0, Math.max(0, files.length - AUTO_KEEP)))
+            await fsys.deleteFile({ path: AUTO_DIR + "/" + old, directory: "DOCUMENTS" }).catch(() => { });
+        saveSoon();
+    }
+    catch (e) {
+    }
+}
+/* in a browser: ask to keep this site's storage (a quiet request; some browsers decide by themselves) */
+function safekeepPersist() {
+    if (nativeApp() || S.flags.persistAsked || !navigator.storage || !navigator.storage.persist)
+        return;
+    S.flags.persistAsked = 1;
+    navigator.storage.persist().catch(() => { });
+}
+/* the line in Backup that says where copies are */
+function safekeepStatus() {
+    const el = $("bkStatus");
+    if (!el)
+        return;
+    const last = num(S.backupAt) ? `Last backup file: ${dmy(new Date(S.backupAt))}.` : "No backup file made yet.";
+    const where = nativeApp() ? `The app also keeps a copy in its own files (Android backs those up to your Google account), and saves one into Documents/Small Things/auto every day${S.flags.autoBk === dayNum() ? " (today's is there)" : ""}.`
+        : window.claude && window.claude.use ? "Your save is also kept in your Claude account." : "In a browser, the save lives only in this browser: make a backup file now and then.";
+    el.textContent = `${last} ${where}`;
+}
 
 </script>
 <script>/* js/ai/think.js */
@@ -24768,6 +24965,8 @@ function boot() {
     booted = true;
     requestAnimationFrame(frame);
     connect(prevSeen);
+    safekeepPersist(); // (safekeep.js: storage the browser keeps, and in the app a copy in its own files)
+    safekeepRestore();
 }
 let connectDone = false;
 async function connect(prevSeen) {
@@ -24789,8 +24988,7 @@ async function connect(prevSeen) {
                 return;
             db = d;
             uid = id;
-            const snap = await db.doc("data/users/" + uid + "/mossling").get();
-            const remote = snap && snap.exists ? snap.data() : null;
+            const remote = await getDoc("mossling");
             if (firstStart && !remote)
                 starterGift();
             else if (remote)
@@ -24824,8 +25022,7 @@ document.addEventListener("visibilitychange", async () => {
     const prev = S.lastSeen;
     if (db && uid) {
         try {
-            const snap = await db.doc("data/users/" + uid + "/mossling").get();
-            const r = snap && snap.exists ? snap.data() : null;
+            const r = await getDoc("mossling");
             if (r) {
                 S = merge(defaultState(), mergeStates(JSON.parse(JSON.stringify(S)), merge(defaultState(), r)));
                 setSync("synced with your account");
