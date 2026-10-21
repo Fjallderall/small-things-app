@@ -835,6 +835,7 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
         <label class="field">Work ends at (hour)<input id="setDoneBy" type="number" min="12" max="23"></label>
         <label class="field">Bedtime (hour)<input id="setBed" type="number" min="0" max="23"></label>
         <label class="field">A new day starts at (hour)<input id="setDayStart" type="number" min="0" max="23" aria-describedby="dayStartHint"><small class="sub" id="dayStartHint">Until then it still counts as the day before: what you finish, the journal, filing the day, the notebook page. Due dates and times keep the clock. 5 is 0500; for night shifts, pick when your day really begins.</small></label>
+        <label class="field">Night light at<select id="setNight" aria-describedby="nightHint"><option value="-1">Off</option></select><small class="sub" id="nightHint">From then until the new day starts, the room's main light goes down. Lanterns, candles and the reading lamp stay on; Mite stays up.</small></label>
         <label class="field">Strangeness<select id="setStrange"><option value="0">Off: just cosy</option><option value="1">Some: the odd door</option><option value="2">A lot: thin place</option></select></label>
         <label class="field">Weather location (lat, lon)<input id="setLoc" maxlength="30" placeholder="e.g. 48.86, 2.35" inputmode="decimal"></label>
         <label class="field">Talk speed<select id="setTalk"><option value="0">Slow</option><option value="1">Normal</option><option value="2">Fast</option></select></label>
@@ -3310,7 +3311,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 function defaultState() {
     return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
-        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
+        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
 }
 let S = defaultState();
@@ -3568,6 +3569,8 @@ function sanitizeState(raw) {
         o.settings.bed = clamp(num(st.bed, 1), 0, 23);
     if ("dayStart" in st) // when a new day of activity begins (actDay; 0-23, 5 = 0500)
         o.settings.dayStart = clamp(Math.round(num(st.dayStart, 5)), 0, 23);
+    if ("nightLight" in st) // when the night light comes on (nightLight, camera.js; 0-23, -1 off)
+        o.settings.nightLight = clamp(Math.round(num(st.nightLight, 0)), -1, 23);
     if ("strange" in st)
         o.settings.strange = clamp(num(st.strange, 1), 0, 2);
     if ("sound" in st)
@@ -11256,7 +11259,8 @@ function drawWallPiece(id, s, dk, t) {
 <script>/* js/scene/lights.js */
 "use strict";
 /*
- * lights.js - Lights out: the lanterns become a nightlight.
+ * lights.js - Lights out: the lanterns become a nightlight. The night light (camera.js: nightLight): the main light
+ * goes down and every small light stays on, glowing through the dark (pointLights).
  */
 function nightLights(t, where = "room") {
     const s = lanternString(where), ln = s.n;
@@ -11282,6 +11286,33 @@ function nightLights(t, where = "room") {
     const mi = wallHits.find(h => h.id === "wmoon");
     if (mi)
         softGlow(mi.cx, mi.y + mi.h * .55, R * .9, `rgba(220,240,210,${.25 + .1 * Math.sin(t)})`);
+}
+/* the night light: every small light in the rooms on screen, glowing over the dimmed room. The lanterns (and the fire
+   and the moon print, nightLights), the fireflies' jar, the candles on the nook's desk and by the chesterfield, the
+   reading lamp on the archive desk and the bare bulb over the shelves */
+function pointLights(t) {
+    withRoomLight("room", () => {
+        if (own("jar"))
+            glow(jarX(), GY - R * .4, R * .2, "rgba(255,215,140,.3)");
+        nightLights(t);
+    });
+    if (roomVisible("garden"))
+        withRoomLight("garden", () => {
+            nightLights(t, "garden");
+            const g = gardenGeo(), fl = 1 + Math.sin(t * 9) * .04 + Math.sin(t * 23) * .03;
+            for (const c of [gardenCandle(g), { x: g.dx0 + R * .62, y: g.dTop - R * .2 }]) {
+                glow(c.x, c.y - PX * 1.5, PX * 1.2, "rgba(255,210,120,.8)");
+                softGlow(c.x, c.y - PX, R * 1.4 * fl, "rgba(255,190,110,.32)");
+            }
+        });
+    if (roomVisible("archive"))
+        withRoomLight("archive", () => {
+            const g = archGeo(), bx = (g.x0 + g.x1) / 2, by = Math.max(R * .6, g.rail - R * .4);
+            drawLampLight(g.deskX1 - R * .55, GY - R * 1.72, Math.max(.7, sceneDark())); // the reading lamp, at full
+            softGlow(g.deskX1 - R * .55, GY - R * 1.65, R * 1.8, "rgba(255,190,110,.3)");
+            glow(bx, by + 3, 3, "rgba(255,225,160,.9)");
+            softGlow(bx, by, R * 2.6, "rgba(255,200,120,.22)");
+        });
 }
 
 </script>
@@ -12469,7 +12500,7 @@ function archLayout(g) {
 }
 function drawArchiveRoom(now, dt) {
     const d = new Date(), sky = skyAt(d.getHours() + d.getMinutes() / 60), tsec = now / 1000;
-    const dk = clamp(sky.dark * .6 + (S.lightsOut ? .25 : 0), 0, 1), g = archGeo(); // lit like the wagon next door
+    const dk = clamp(sky.dark * .6 + roomDim(), 0, 1), g = archGeo(); // lit like the wagon next door
     // the same wagon as next door: plank wall, roof and floor (draw-world.js)
     drawBackWall(dk, "archive");
     drawCeiling(dk, "archive");
@@ -16697,10 +16728,27 @@ function enterRoom(v) {
     if (v === "archive")
         archiveSince = performance.now();
 }
+/* the night light (Settings: night light at, 0000 to start with): from then until the day starts the rooms' main
+   light goes down, fading over ten minutes each way. Only the light: Mite stays up, and every small light (the
+   lanterns, candles, the reading lamp, the bulb, the fire) stays on (pointLights, lights.js). -1: off */
+function nightLight(now = new Date()) {
+    const a = S && S.settings ? S.settings.nightLight ?? 0 : 0, b = S && S.settings ? S.settings.dayStart ?? 5 : 5;
+    if (a < 0 || a === b)
+        return 0;
+    const m = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60, A = a * 60, B = b * 60;
+    const since = (m - A + 1440) % 1440, len = (B - A + 1440) % 1440;
+    if (since < len)
+        return Math.min(1, since / 10);
+    return since - len < 10 ? 1 - (since - len) / 10 : 0; // (just after the day starts: back up, slowly)
+}
+/* how much the rooms' own light is down: lights out (the sleep light), or the night light */
+function roomDim() {
+    return S.lightsOut ? .25 : nightLight() * .2;
+}
 /* how dark it is (the rooms share their light) */
 function sceneDark() {
     const d = new Date();
-    return clamp(skyAt(d.getHours() + d.getMinutes() / 60).dark * .6 + (S.lightsOut ? .25 : 0), 0, 1);
+    return clamp(skyAt(d.getHours() + d.getMinutes() / 60).dark * .6 + roomDim(), 0, 1);
 }
 /* the snail and the possum walk from room to room and pass in front of Mite, so they're drawn after Mite,
    without the clip (Midnightcat stays behind, drawScene, unless she's out on the floor) */
@@ -17003,7 +17051,7 @@ function gardenPlantSpots() {
 }
 function drawGarden(now, dt) {
     const d = new Date(), hf = d.getHours() + d.getMinutes() / 60, sky = skyAt(hf), tsec = now / 1000, t = reduced ? 0 : tsec;
-    const dk = clamp(sky.dark * .6 + (S.lightsOut ? .25 : 0), 0, 1), g = gardenGeo(), wx = weather();
+    const dk = clamp(sky.dark * .6 + roomDim(), 0, 1), g = gardenGeo(), wx = weather();
     const wood = mix("#8a6040", "#241810", dk), woodD = mix("#5e3e28", "#160f0a", dk), frame = mix("#ece4cf", "#3c3a40", dk * .85);
     // the same wagon as next door: plank wall, roof and floor (draw-world.js)
     drawBackWall(dk, "garden");
@@ -17156,7 +17204,7 @@ function drawGarden(now, dt) {
             const kx = dx0 + R * .62;
             cx.fillStyle = mix("#f3ead6", "#4a4436", dk * .5);
             cx.fillRect(kx - R * .04, dTop - R * .18, R * .08, R * .18);
-            if (sky.dark > .45 || S.lightsOut) {
+            if (sky.dark > .45 || S.lightsOut || nightLight() > 0) {
                 cx.fillStyle = "#f2c14e";
                 cx.fillRect(Math.floor(kx / PX) * PX - PX / 2, Math.floor((dTop - R * .27) / PX) * PX, PX, PX * 2);
             }
@@ -17296,7 +17344,7 @@ function drawGarden(now, dt) {
         cx.fillRect(fx, fy - PX * 3 - up, PX, PX * 2 + up);
         cx.fillStyle = "#fff4c8";
         cx.fillRect(fx, fy - PX, PX, PX);
-        if (sky.dark > .45 || S.lightsOut) {
+        if (sky.dark > .45 || S.lightsOut || nightLight() > 0) {
             glow(c.x, fy - PX * 1.5, PX * 1.2, "rgba(255,210,120,.8)");
             softGlow(c.x, c.y - PX, R * 1.5 * fl, "rgba(255,190,110,.3)");
         }
@@ -20372,7 +20420,7 @@ function drawWorld(now, dt) {
     const sky = skyAt(hf);
     const tsec = now / 1000;
     const rm = room();
-    const dk = clamp(sky.dark * .6 + (S.lightsOut ? .25 : 0), 0, 1);
+    const dk = clamp(sky.dark * .6 + roomDim(), 0, 1);
     drawBackWall(dk, "room");
     // window to the real sky
     drawWindow(rm, sky, d, hf, tsec, dt, dk);
@@ -20429,7 +20477,8 @@ function drawWorld(now, dt) {
     cx.moveTo(rm.lx, 0);
     cx.lineTo(rm.lx, lyy - R * .2);
     cx.stroke();
-    cx.fillStyle = mix("#c07a3a", "#4a2c16", S.lightsOut ? .8 : dk * .4);
+    const lampOff = S.lightsOut || nightLight() > .5; // (the main light: off at lights out and in the night light)
+    cx.fillStyle = mix("#c07a3a", "#4a2c16", lampOff ? .8 : dk * .4);
     cx.beginPath();
     cx.moveTo(rm.lx - R * .15, lyy - R * .22);
     cx.lineTo(rm.lx + R * .15, lyy - R * .22);
@@ -20437,7 +20486,7 @@ function drawWorld(now, dt) {
     cx.lineTo(rm.lx - R * .36, lyy + R * .06);
     cx.closePath();
     cx.fill();
-    if (!S.lightsOut) {
+    if (!lampOff) {
         cx.fillStyle = "#fff2c8";
         cx.beginPath();
         cx.arc(rm.lx, lyy + R * .08, R * .09, 0, 7);
@@ -21431,6 +21480,7 @@ function frame(now) {
             cx.fillRect(0, 0, W, H);
         }
         withRoom("archive", () => archNebula(now)); // the Tiffany lamp's coloured light on the archive wall, at night
+        const nl = S.lightsOut ? 0 : nightLight(); // the night light: the main light down, the small ones still on
         if (S.lightsOut) {
             cx.fillStyle = "rgba(4,6,18,.55)";
             cx.fillRect(0, 0, W, H);
@@ -21441,11 +21491,19 @@ function frame(now) {
             });
             withRoomLight("garden", () => nightLights(now / 1000, "garden")); // the lanterns under the nook's platform
         }
-        else withRoomLight("room", () => { // the lamp's light spills over into the rooms either side
+        else if (nl > 0) {
+            cx.fillStyle = `rgba(6,8,22,${.42 * nl})`;
+            cx.fillRect(0, 0, W, H);
+            cx.save();
+            cx.globalAlpha = nl;
+            pointLights(now / 1000);
+            cx.restore();
+        }
+        if (!S.lightsOut && nl < 1) withRoomLight("room", () => { // the lamp's light spills over into the rooms either side
             const rm = room(), lx = rm.lx, ly = lampY(rm);
             cx.save();
             cx.globalCompositeOperation = "lighter";
-            const k = .04 + .12 * sky.skyDark;
+            const k = (.04 + .12 * sky.skyDark) * (1 - nl);
             const lg = cx.createRadialGradient(lx, ly, 0, lx, ly, Math.max(W, H) * .55);
             lg.addColorStop(0, `rgba(255,170,90,${k})`);
             lg.addColorStop(1, "rgba(255,170,90,0)");
@@ -22919,6 +22977,16 @@ function renderContent() {
     $("setDoneBy").value = st.doneBy;
     $("setBed").value = st.bed;
     $("setDayStart").value = st.dayStart ?? 5;
+    {
+        const sel = $("setNight");
+        if (sel.options.length < 2) // Off, then every hour from the evening round to the early morning (0000 in the middle)
+            for (const h of [18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4])
+                sel.add(new Option(String(h).padStart(2, "0") + "00", String(h)));
+        const v = String(st.nightLight ?? 0);
+        if (![...sel.options].some(o => o.value === v)) // (an hour set some other way: shown too)
+            sel.add(new Option(v.padStart(2, "0") + "00", v));
+        sel.value = v;
+    }
     $("setStrange").value = String(strangeness());
     $("setTalk").value = String(S.settings.talk ?? 1);
     $("setBackup").value = String(S.settings.backup ?? 1);
@@ -23347,6 +23415,9 @@ $("saveSettings").onclick = () => {
         nextAnom = Math.min(nextAnom, performance.now() + anomalyInterval());
     st.bed = clamp(+$("setBed").value || 0, 0, 23);
     st.dayStart = clamp(Math.round(+$("setDayStart").value), 0, 23);
+    st.nightLight = clamp(Math.round(+$("setNight").value), -1, 23);
+    if (!Number.isFinite(st.nightLight))
+        st.nightLight = 0;
     if (!Number.isFinite(st.dayStart))
         st.dayStart = 5;
     notebookNewDay();
