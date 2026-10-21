@@ -11299,7 +11299,8 @@ function jarLight(a) {
 }
 /* the night light: every small light in the rooms on screen, glowing over the dimmed room. The lanterns (and the fire
    and the moon print, nightLights), the fireflies' jar, the candles on the nook's desk and by the chesterfield, the
-   reading lamp on the archive desk and the bare bulb over the shelves */
+   bare bulb over the shelves. (The reading lamp on the archive desk keeps its colours itself: archLampLight, drawn
+   behind the cat and Mite) */
 function pointLights(t) {
     withRoomLight("room", () => {
         if (own("jar"))
@@ -11319,8 +11320,6 @@ function pointLights(t) {
     if (roomVisible("archive"))
         withRoomLight("archive", () => {
             const g = archGeo(), bx = (g.x0 + g.x1) / 2, by = Math.max(R * .6, g.rail - R * .4);
-            drawLampLight(g.deskX1 - R * .55, GY - R * 1.72, Math.max(.7, sceneDark())); // the reading lamp, at full
-            softGlow(g.deskX1 - R * .55, GY - R * 1.65, R * 1.8, "rgba(255,190,110,.3)");
             glow(bx, by + 3, 3, "rgba(255,225,160,.9)");
             softGlow(bx, by, R * 2.6, "rgba(255,200,120,.22)");
         });
@@ -12604,6 +12603,7 @@ function drawArchiveRoom(now, dt) {
             cx.fillRect(lx - R * .25 + xo, Math.floor((y - lw / 2) / PX) * PX, R * .5, Math.max(1, PX / 2));
         }
     }
+    archLampLight(); // the Tiffany lamp's coloured light on the wall: behind the lamp itself, the cat and Mite
     // the reading desk by the door: lamp, time capsule tin, reflections
     drawLayered(() => {
         const dx0 = g.deskX0, dx1 = g.deskX1, top = GY - R * .95;
@@ -12854,12 +12854,17 @@ function drawTiffany(dk, t, x, top) {
 /* the Tiffany lamp's light at night: the coloured glass thrown onto the wall around it, big and soft, like light
    through a stained-glass window. Each panel of the shade casts a patch of its colour in a ring around the lamp;
    the patches are dithered pixels, so they keep their colour in the palette and read as light, not as specks. */
-function archNebula(now) { // (loop.js: after the night's darkening, so its colours stay)
+/* drawn with the room, so the shade, the cat and Mite are in front of it. The whole scene is darkened afterwards (the
+   night sky, the night light: loop.js), so the light is laid on a little thicker to make up for that and keep its
+   colours: one copy, plus one more for every third of darkening that follows */
+function archLampLight() {
     const dk = sceneDark();
-    if (dk > .35 && roomVisible("archive")) {
-        const g = archGeo();
+    if (dk <= .35)
+        return;
+    const d = new Date(), sky = skyAt(d.getHours() + d.getMinutes() / 60).dark, after = 1 - (1 - (sky > .15 ? sky * .18 : 0)) * (1 - (S.lightsOut ? 0 : .42 * nightLight()));
+    const g = archGeo();
+    for (let i = 0, n = 1 + Math.round(after * 3); i < n; i++)
         drawLampLight(g.deskX1 - R * .55, GY - R * 1.72, dk);
-    }
 }
 let lampCache = { key: "", c: null };
 function drawLampLight(x, y, dk) {
@@ -21490,7 +21495,6 @@ function frame(now) {
             cx.fillStyle = `rgba(10,14,40,${sky.dark * .18})`;
             cx.fillRect(0, 0, W, H);
         }
-        withRoom("archive", () => archNebula(now)); // the Tiffany lamp's coloured light on the archive wall, at night
         const nl = S.lightsOut ? 0 : nightLight(); // the night light: the main light down, the small ones still on
         if (S.lightsOut) {
             cx.fillStyle = "rgba(4,6,18,.55)";
