@@ -620,6 +620,18 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .pnlist{max-height:30dvh;overflow:auto}
 .pnlist .linkbtn{text-align:left;padding:0}
 
+/* the shop's sections: collapsible, with how many you have and a "new" when something's been added */
+.shopsec{margin:4px 0}
+.shopsec>summary{display:flex;align-items:baseline;gap:8px;list-style:none;cursor:pointer;color:inherit;font-size:inherit;padding:4px 0}
+.shopsec>summary::-webkit-details-marker{display:none}
+.shopsec>summary::before{content:"▸";font-family:var(--f-mono);font-size:12px;color:var(--muted);width:10px;transition:transform .15s}
+.shopsec[open]>summary::before{transform:rotate(90deg)}
+.shopsec>summary h3{margin:0}
+.shopsec .seccount{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.secnew,.itemnew{font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:#f2c14e;color:#2a1d10;padding:1px 5px;align-self:center}
+.itemnew{margin-left:6px}
+@media (prefers-reduced-motion:reduce){.shopsec>summary::before{transition:none}}
+
 </style>
 <div class="app">
   <section class="world" aria-label="Pet">
@@ -725,22 +737,22 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
         <h2>The wagon</h2>
         <p class="sub">Finished tasks earn glimmers: 1 for small, 3 for medium, 6 for big. Spend them on things for the wagon; everything you buy shows up in the scene. <b id="shopBal"></b></p>
       </div>
-      <div><h3>Furniture</h3></div>
-      <div class="shop" id="shop"></div>
-      <div><h3>Plants</h3><p class="sub">They live on the windowsill. Tap the sill and <span class="pn">Mite</span> waters them.</p></div>
-      <div class="shop" id="plantShop"></div>
-      <div><h3>Crystals</h3><p class="sub">For the crystal shelf on the wall. Tap the shelf to look at them up close and see your glimmers.</p></div>
-      <div class="shop" id="crystalShop"></div>
-      <div><h3>Kettles</h3><p class="sub">For the kettle on the stove. <span class="pn">Mite</span> takes one of the kettles in the scene at random each time it makes tea.</p></div>
-      <div class="shop" id="kettleShop"></div>
-      <div><h3>On the wall</h3><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p></div>
-      <div class="shop" id="wallShop"></div>
-      <div><h3>Something special</h3><p class="sub">A treat for the wagon, for one day. Then it's gone, and you can pick another.</p></div>
-      <div class="shop" id="splurgeShop"></div>
-      <div><h3>The raccoon's barter</h3></div>
-      <div class="shop" id="barterShop"></div>
-      <div><h3>Lessons</h3><p class="sub">Only finished tasks unlock these. Each one teaches Mite something new to do.</p></div>
-      <ul class="lessons" id="lessons"></ul>
+      <details class="shopsec" data-sec="furn" open><summary><h3>Furniture</h3><span class="seccount" id="cnt-furn"></span><span class="secnew" id="new-furn" hidden>new</span></summary>
+        <div class="shop" id="shop"></div></details>
+      <details class="shopsec" data-sec="plants" open><summary><h3>Plants</h3><span class="seccount" id="cnt-plants"></span><span class="secnew" id="new-plants" hidden>new</span></summary><p class="sub">They live on the windowsill. Tap the sill and <span class="pn">Mite</span> waters them.</p>
+        <div class="shop" id="plantShop"></div></details>
+      <details class="shopsec" data-sec="crystals" open><summary><h3>Crystals</h3><span class="seccount" id="cnt-crystals"></span><span class="secnew" id="new-crystals" hidden>new</span></summary><p class="sub">For the crystal shelf on the wall. Tap the shelf to look at them up close and see your glimmers.</p>
+        <div class="shop" id="crystalShop"></div></details>
+      <details class="shopsec" data-sec="kettles" open><summary><h3>Kettles</h3><span class="seccount" id="cnt-kettles"></span><span class="secnew" id="new-kettles" hidden>new</span></summary><p class="sub">For the kettle on the stove. <span class="pn">Mite</span> takes one of the kettles in the scene at random each time it makes tea.</p>
+        <div class="shop" id="kettleShop"></div></details>
+      <details class="shopsec" data-sec="wall" open><summary><h3>On the wall</h3><span class="seccount" id="cnt-wall"></span><span class="secnew" id="new-wall" hidden>new</span></summary><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p>
+        <div class="shop" id="wallShop"></div></details>
+      <details class="shopsec" data-sec="splurge" open><summary><h3>Something special</h3><span class="seccount" id="cnt-splurge"></span><span class="secnew" id="new-splurge" hidden>new</span></summary><p class="sub">A treat for the wagon, for one day. Then it's gone, and you can pick another.</p>
+        <div class="shop" id="splurgeShop"></div></details>
+      <details class="shopsec" data-sec="barter" open><summary><h3>The raccoon's barter</h3><span class="seccount" id="cnt-barter"></span><span class="secnew" id="new-barter" hidden>new</span></summary>
+        <div class="shop" id="barterShop"></div></details>
+      <details class="shopsec" data-sec="lessons" open><summary><h3>Lessons</h3><span class="seccount" id="cnt-lessons"></span></summary><p class="sub">Only finished tasks unlock these. Each one teaches <span class="pn">Mite</span> something new to do.</p>
+        <ul class="lessons" id="lessons"></ul></details>
     </div>
 
     <div class="pane" id="tab-archive" role="tabpanel" hidden>
@@ -3278,7 +3290,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, barterOwn: [], splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3452,6 +3464,7 @@ function sanitizeState(raw) {
         const b = s.barter && typeof s.barter === "object" ? s.barter : {};
         o.barter = { wk: dkey(b.wk) || "", stock: arr(b.stock, 4).map(x => ({ k: ["tea", "bake", "flower", "curio", "eye"].includes(x.k) ? x.k : "", id: str(x.id, 80), price: clamp(Math.round(num(x.price, 20)), 1, 999) })).filter(x => x.id && x.k), got: (Array.isArray(b.got) ? b.got : []).slice(0, 4).map(x => str(x, 80)).filter(Boolean) };
     }
+    o.shopSeen = { ids: (Array.isArray(s.shopSeen && s.shopSeen.ids) ? s.shopSeen.ids : []).map(x => str(x, 40)).filter(Boolean).slice(-600), at: num(s.shopSeen && s.shopSeen.at) }; // what the shop has shown you (shop.js)
     o.barterOwn = arr(s.barterOwn, 400).map(x => ({ k: ["tea", "bake", "flower", "curio"].includes(x.k) ? x.k : "", n: str(x.n, 80).trim(), at: num(x.at) })).filter(x => x.k && x.n); // what the raccoon brought, for good (barter.js)
     o.eyes = arr(s.eyes, 24).map(e => ({ k: sid(e.k).slice(0, 12), at: num(e.at), from: str(e.from, 20) })).filter(e => e.k); // the eye jars (eyes.js)
     o.glimpses = arr(s.glimpses, 300).map(g => ({ k: str(g && g.k, 80), at: num(g && g.at) })).filter(g => g.k); // what the chalk circle has shown (circle.js)
@@ -3704,6 +3717,7 @@ function mergeStates(a, b) {
     o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
     o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small journal", at: 0 }) : Object.assign({}, b.journal); // the newest name
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
+    o.shopSeen = { ids: [...new Set([...((a.shopSeen || {}).ids || []), ...((b.shopSeen || {}).ids || [])])].slice(-600), at: Math.max(num((a.shopSeen || {}).at), num((b.shopSeen || {}).at)) };
     o.barterOwn = uniq([...(a.barterOwn || []), ...(b.barterOwn || [])], x => x.k + "|" + String(x.n).toLowerCase()).slice(0, 400); // everything traded, from either side
     { // the barter: the newer week wins; the same week keeps one stock and everything traded on either side
         const ba = a.barter || {}, bb = b.barter || {};
@@ -19534,6 +19548,10 @@ const EYES = [
     { id: "bureau", name: "Eye with a Bureau tag", ring: "#7a8a7a", pupil: "bar", note: "Tagged 'surplus, do not reissue'. The raccoon got it from a skip behind an office that isn't on any map." }
 ];
 const EYES_PER_JAR = 6, EYE_JARS = 3; // (two on the shelf, one on top: eighteen eyes fit)
+/* the raccoon's eyes have a jar of their own, which only turns up once it has sold Mite one: then every one of them
+   can be collected too, however full Mite's own jars are */
+const isRaccEye = id => EYE_FROM[id] === "raccoon";
+const ownEyes = () => (S.eyes || []).filter(s => !isRaccEye(s.k));
 /* where each eye comes from (some are only found one way) */
 const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door", glassdoll: "raccoon", heron: "raccoon", lighthouse: "raccoon", bureau: "raccoon" };
 function findEye(from) {
@@ -19541,7 +19559,7 @@ function findEye(from) {
     const can = EYES.filter(e => !have.has(e.id) && (!EYE_FROM[e.id] || EYE_FROM[e.id] === from));
     const pref = can.filter(e => EYE_FROM[e.id] === from); // its own kind first
     const e = pref.length && Math.random() < .6 ? choice(pref) : can.length ? choice(can) : null;
-    if (!e || (S.eyes || []).length >= EYES_PER_JAR * EYE_JARS)
+    if (!e || ownEyes().length >= EYES_PER_JAR * EYE_JARS)
         return null;
     S.eyes = (S.eyes || []).concat([{ k: e.id, at: Date.now(), from: String(from || "").slice(0, 20) }]);
     note(`Found an eye for the jar: ${e.name.toLowerCase()}. ${e.note}`);
@@ -19562,8 +19580,8 @@ function eyeJarSpots(n, xRight, yTop, jw, jh, gap) {
     return out;
 }
 function drawEyeJars(dk, t, xRight, yTop) {
-    const q = PX, have = (S.eyes || []).map(s => EYES.find(e => e.id === s.k)).filter(Boolean);
-    const jars = Math.max(1, Math.min(EYE_JARS, Math.ceil(have.length / EYES_PER_JAR) || 1));
+    const q = PX, all = (S.eyes || []).map(s => EYES.find(e => e.id === s.k)).filter(Boolean), have = all.filter(e => !isRaccEye(e.id)), racc = all.filter(e => isRaccEye(e.id));
+    const own = Math.max(1, Math.min(EYE_JARS, Math.ceil(have.length / EYES_PER_JAR) || 1)), jars = own + (racc.length ? 1 : 0); // (the raccoon's jar last, on top)
     const jw = q * 8, jh = q * 9, gap = q * 2;
     if (t * 1000 > eyeLook.at) { // they all look somewhere new, slowly, every few seconds
         eyeLook.tx = rnd(-1, 1);
@@ -19575,8 +19593,9 @@ function drawEyeJars(dk, t, xRight, yTop) {
     const spots = eyeJarSpots(jars, Math.round(xRight / q) * q, yTop, jw, jh, gap);
     spots.forEach((sp, j) => {
         const jx = Math.round(sp.x / q) * q, jy = Math.round(sp.y / q) * q;
+        const rj = j >= own; // the raccoon's jar: amber glass, a striped cloth over the lid tied with string
         drawLayered(() => {
-            const glass = mix("#9fc0b8", "#1e2a30", dk * .6), liquid = mix("#3f6a58", "#0e1a16", dk * .5);
+            const glass = rj ? mix("#d8b070", "#2e2416", dk * .6) : mix("#9fc0b8", "#1e2a30", dk * .6), liquid = rj ? mix("#7a5a2a", "#1a120a", dk * .5) : mix("#3f6a58", "#0e1a16", dk * .5);
             cx.fillStyle = glass; // a round-shouldered jar: the body, the shoulders, the neck
             cx.fillRect(jx, jy + q * 3, jw, jh - q * 4);
             cx.fillRect(jx + q, jy + q * 2, jw - q * 2, q);
@@ -19587,12 +19606,23 @@ function drawEyeJars(dk, t, xRight, yTop) {
             cx.fillRect(jx + q * 2, jy + q * 3, jw - q * 4, q);
             cx.fillStyle = mix("#e2f0ea", "#3a4a50", dk * .6); // the shine down one side
             cx.fillRect(jx + q, jy + q * 4, q, jh - q * 7);
-            cx.fillStyle = mix("#b08a5a", "#2e2416", dk * .7); // the cork
-            cx.fillRect(jx + q * 3, jy - q, jw - q * 6, q * 2);
+            if (rj) { // a bit of striped cloth over the top instead of a cork, the way the raccoon wraps things
+                cx.fillStyle = mix("#6a6e78", "#1a1c20", dk * .6);
+                cx.fillRect(jx + q, jy - q, jw - q * 2, q * 2);
+                cx.fillStyle = mix("#2a2a30", "#0a0a0c", dk * .6);
+                for (let k = 0; k < jw - q * 2; k += q * 2)
+                    cx.fillRect(jx + q + k, jy - q, q, q * 2);
+                cx.fillStyle = mix("#c8b080", "#3a3020", dk * .6); // the string round the neck
+                cx.fillRect(jx + q, jy + q, jw - q * 2, Math.max(1, q / 2));
+            }
+            else {
+                cx.fillStyle = mix("#b08a5a", "#2e2416", dk * .7); // the cork
+                cx.fillRect(jx + q * 3, jy - q, jw - q * 6, q * 2);
+            }
             cx.fillStyle = mix("#f1e6cc", "#4a4436", dk * .6); // a paper tag tied round the neck
             cx.fillRect(jx + jw - q * 3, jy + q, q * 2, q * 2);
         });
-        const mine = have.slice(j * EYES_PER_JAR, (j + 1) * EYES_PER_JAR);
+        const mine = rj ? racc : have.slice(j * EYES_PER_JAR, (j + 1) * EYES_PER_JAR);
         const pos = [[.3, .78], [.7, .72], [.34, .58], [.68, .5], [.3, .38], [.66, .32]]; // crowded in at all heights
         mine.forEach((e, i) => {
             const ex = jx + jw * pos[i][0] + Math.sin(t * .5 + i * 2 + j) * q * .5, ey = jy + jh * pos[i][1] + Math.sin(t * .7 + i + j) * q * .5;
@@ -19626,7 +19656,7 @@ function drawEyeJars(dk, t, xRight, yTop) {
 /* the card: every eye in the jars, what it is and where it came from */
 function showEyeJars() {
     const have = (S.eyes || []).map(s => ({ s, e: EYES.find(e => e.id === s.k) })).filter(x => x.e);
-    const from = { ghost: "left by the ghost", door: "through a door", dream: "from the dream archive" };
+    const from = { ghost: "left by the ghost", door: "through a door", dream: "from the dream archive", raccoon: "from the raccoon" };
     const body = have.length ? `<ul class="fbooklist eyelist">${have.map(x => `<li><canvas class="eyepic" width="24" height="16" data-eye="${esc(x.e.id)}" aria-hidden="true"></canvas><span><b>${esc(x.e.name)}</b> <span class="sub">${esc(from[x.s.from] || "found")} · ${esc(dmy(new Date(x.s.at)))}</span><br>${esc(x.e.note)}</span></li>`).join("")}</ul>` : "";
     openRitual("The eye jars", have.length ? `${have.length} of ${EYES.length} eyes, for reference. They're only looking.` : "An empty jar, waiting. Mite keeps an eye out. Ha.", body, [["Close", "primary", closeRitual]]);
     sfx("card");
@@ -22079,9 +22109,83 @@ setInterval(() => {
  * shop.js - The shop: buying things, wall pieces, plants and crystals.
  */
 const byPrice = list => list.map((b, i) => [b, i]).sort((x, y) => x[0].price - y[0].price || x[1] - y[1]).map(x => x[0]); // cheapest first (same price: list order)
+/* the shop's sections: what's in each (ids), what you have, and which things are new since you last looked
+   (S.shopSeen: { ids, at }; at 0 = never looked, then everything there is counts as seen) */
+const SHOP_SECS = {
+    furn: { ids: () => BUILDINGS.filter(b => b.price > 0).map(b => b.id), has: id => (S.b[id] || 0) > 0 },
+    plants: { ids: () => PLANTS.map(b => b.id), has: id => (S.b[id] || 0) > 0 },
+    crystals: { ids: () => CRYSTALS.map(b => b.id), has: id => (S.b[id] || 0) > 0 },
+    kettles: { ids: () => KETTLE_STYLES.map(k => k.sid), has: id => kettlesOwned().some(k => k.sid === id) },
+    wall: { ids: () => WALL.map(b => b.id), has: id => (S.b[id] || 0) > 0 }
+};
+let shopFurnShown = new Set(), shopSeenTimer = 0, shopSecSetting = false;
+const shopOpenPref = (() => { try { return JSON.parse(localStorage.getItem("st-shopsec") || "{}") || {}; } catch (e) { return {}; } })(); // (which ones you opened or closed: this browser only)
+function shopIsNew(id) {
+    return !!S.shopSeen && S.shopSeen.at > 0 && !S.shopSeen.ids.includes(id);
+}
+const shopNewTag = id => shopIsNew(id) ? `<span class="itemnew">new</span>` : "";
+/* counts and "new" on each section's heading; a complete section starts closed (unless you opened it yourself) */
+function shopSections() {
+    if (!S.shopSeen || !S.shopSeen.at) { // the first look: all that's there now is known
+        S.shopSeen = { ids: Object.values(SHOP_SECS).flatMap(c => c.ids()), at: Date.now() };
+        saveSoon();
+    }
+    const fresh = [];
+    document.querySelectorAll("details.shopsec").forEach(d => {
+        const k = d.dataset.sec, c = SHOP_SECS[k], cnt = $("cnt-" + k), nw = $("new-" + k);
+        let done = false;
+        if (c) {
+            const ids = c.ids(), n = ids.filter(c.has).length, news = ids.filter(id => shopIsNew(id) && (k !== "furn" || shopFurnShown.has(id)));
+            cnt.textContent = `${n}/${ids.length}`;
+            done = n === ids.length;
+            nw.hidden = !news.length;
+            d.dataset.news = news.join(" ");
+        }
+        else if (k === "barter" && S.raccoonAt) {
+            const b = barterStock();
+            cnt.textContent = b.stock.length ? `${b.got.length}/${b.stock.length} this week` : "";
+            done = b.stock.length > 0 && b.got.length >= b.stock.length;
+        }
+        else if (k === "lessons") {
+            const n = lessonsGot().length;
+            cnt.textContent = `${n}/${LESSONS.length}`;
+            done = n === LESSONS.length;
+        }
+        else if (cnt)
+            cnt.textContent = "";
+        const want = shopOpenPref[k] !== undefined ? shopOpenPref[k] : !done;
+        if (d.open !== want) {
+            shopSecSetting = true;
+            d.open = want;
+            shopSecSetting = false;
+        }
+        if (d.open && d.dataset.news) // (only what's in an open section counts as seen)
+            fresh.push(...d.dataset.news.split(" "));
+        if (!d.dataset.wired) {
+            d.dataset.wired = 1;
+            d.addEventListener("toggle", () => {
+                if (shopSecSetting)
+                    return;
+                shopOpenPref[k] = d.open;
+                try { localStorage.setItem("st-shopsec", JSON.stringify(shopOpenPref)); } catch (e) { }
+                if (d.open)
+                    renderShop(); // (what's new in it gets seen)
+            });
+        }
+    });
+    clearTimeout(shopSeenTimer);
+    if (fresh.length) // seen once it's been on screen a moment; the word stays until the next time you look
+        shopSeenTimer = setTimeout(() => {
+            if ($("tab-grow").hidden || !document.body.classList.contains("sheet"))
+                return;
+            S.shopSeen.ids = [...new Set(S.shopSeen.ids.concat(fresh))].slice(-600);
+            saveSoon();
+        }, 3000);
+}
 function renderShop() {
     const shop = $("shop");
     shop.innerHTML = "";
+    shopFurnShown = new Set();
     let prevOwned = true;
     byPrice(BUILDINGS).forEach((b, i) => {
         const own = S.b[b.id] || 0;
@@ -22094,8 +22198,9 @@ function renderShop() {
             shop.appendChild(el);
             return;
         }
+        shopFurnShown.add(b.id);
         const shown = Math.min(own, b.max);
-        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b><span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
         const bb = el.querySelector("[data-b]");
         if (bb)
             bb.onclick = () => buy(b);
@@ -22107,7 +22212,7 @@ function renderShop() {
         const own = (S.b[b.id] || 0) > 0;
         const el = document.createElement("div");
         el.className = "bld";
-        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b><span class="own">${own ? "on the wall" : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${shopNewTag(b.id)}<span class="own">${own ? "on the wall" : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
         const wb = el.querySelector("[data-w]");
         if (wb)
             wb.onclick = () => buyWall(b);
@@ -22121,7 +22226,7 @@ function renderShop() {
         el.className = "bld";
         const full = !own && sillPlants("all").length >= SILL_MAX.room + SILL_MAX.garden + SILL_MAX.archive; // (three window sills: room for all of them)
         const where = !own ? "" : !isShown(b.id) ? "put away" : sillPlants("all").includes(b) ? "on a window sill" : "waiting for a spot";
-        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b><span class="own">${where}</span></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : full ? `<span class="owned">Sills are full</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${shopNewTag(b.id)}<span class="own">${where}</span></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : full ? `<span class="owned">Sills are full</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
         const wb = el.querySelector("[data-w]");
         if (wb)
             wb.onclick = () => buyWall(b);
@@ -22136,7 +22241,7 @@ function renderShop() {
         // the shelf shows six; more can be bought, and switching one off (In the scene) puts the next one up: a swap
         const noCab = !own && !S.b.crystals, onShelf = cabinetCrystals().includes(b);
         const where = !own ? "" : !isShown(b.id) ? "put away" : onShelf ? "on the shelf" : "in the box (switch one off to swap)";
-        el.innerHTML = `<div style="min-width:0"><b>${esc(b.name)}</b><span class="own">${where}</span></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : noCab ? `<span class="owned">Needs the shelf</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${esc(b.name)}</b>${shopNewTag(b.id)}<span class="own">${where}</span></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : noCab ? `<span class="owned">Needs the shelf</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
         const wb = el.querySelector("[data-w]");
         if (wb)
             wb.onclick = () => buyWall(b);
@@ -22149,7 +22254,7 @@ function renderShop() {
         const where = !own ? "" : !isShown(k.sid) ? "put away" : kettleStyle() === k.id ? "on the stove" : "on the shelf";
         const el = document.createElement("div");
         el.className = "bld";
-        el.innerHTML = `<div style="min-width:0"><b><i class="kswatch" style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 3px ${k.body},inset 0 0 0 6px ${k.flower}` : ""}"></i>${esc(k.name)}</b><span class="own">${where}</span><p>${esc(k.note)}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${k.sid}" ${isShown(k.sid) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : noKettle ? `<span class="owned">Needs the kettle</span>` : `<button class="btn amber" data-w="${k.sid}" ${S.g < k.price ? "disabled" : ""} aria-label="Buy ${esc(k.name)} for ${k.price} glimmers">${k.price} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b><i class="kswatch" style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 3px ${k.body},inset 0 0 0 6px ${k.flower}` : ""}"></i>${esc(k.name)}</b>${shopNewTag(k.sid)}<span class="own">${where}</span><p>${esc(k.note)}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${k.sid}" ${isShown(k.sid) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : noKettle ? `<span class="owned">Needs the kettle</span>` : `<button class="btn amber" data-w="${k.sid}" ${S.g < k.price ? "disabled" : ""} aria-label="Buy ${esc(k.name)} for ${k.price} glimmers">${k.price} ◆</button>`}</span>`;
         const wb = el.querySelector("[data-w]");
         if (wb)
             wb.onclick = () => buyKettle(k);
@@ -22166,6 +22271,7 @@ function renderShop() {
     $("lessons").innerHTML = LESSONS.map(l => `<li class="${n >= l.n ? "got" : ""}">${n >= l.n ? esc(l.name) : "Lesson " + (LESSONS.indexOf(l) + 1)}<small>${n >= l.n ? "learned" : `${n}/${l.n} tasks`}</small></li>`).join("");
     renderBarter(); // this week's things from the raccoon (barter.js)
     renderSplurges(); // a treat for a day (splurge.js)
+    shopSections();
     updateShopAfford();
 }
 function updateShopAfford() {
@@ -22281,7 +22387,7 @@ function barterCandidates() {
     for (const k of ["tea", "bake", "flower", "curio"])
         out[k] = pool(BARTER_POOL[k]).map(barterName).filter(n => n && !barterOwned(k, n)).map(id => ({ k, id }));
     const have = new Set((S.eyes || []).map(e => e.k));
-    out.eye = (S.eyes || []).length < EYES_PER_JAR * EYE_JARS ? EYES.filter(e => EYE_FROM[e.id] === "raccoon" && !have.has(e.id)).map(e => ({ k: "eye", id: e.id })) : [];
+    out.eye = EYES.filter(e => isRaccEye(e.id) && !have.has(e.id)).map(e => ({ k: "eye", id: e.id })); // (they have their own jar: always room)
     return out;
 }
 /* the week's stock: three things of three different kinds where it can (more of one kind when the others run out) */
@@ -22348,7 +22454,7 @@ function barterTrade(i) {
     }
     sfx("coin");
     note(`Traded ${s.price} glimmers with ${raccoonName()} for ${info.name.toLowerCase()}.`);
-    speak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, { tea: `${info.name}. I'll put it with the other teas. The kettle's already curious.`, bake: `${info.name}. I've got the recipe now too. The oven will make it some days.`, flower: `${info.name}. Straight into the vase.`, curio: `${info.name}! It gets its own drawer in the Cabinet.`, eye: `${info.name}. In the jar it goes. The others are making room.` }[s.k]]), { ms: 5000 });
+    speak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, { tea: `${info.name}. I'll put it with the other teas. The kettle's already curious.`, bake: `${info.name}. I've got the recipe now too. The oven will make it some days.`, flower: `${info.name}. Straight into the vase.`, curio: `${info.name}! It gets its own drawer in the Cabinet.`, eye: (S.eyes || []).filter(x => isRaccEye(x.k)).length === 1 ? `${info.name}. ${raccoonName()} brought a jar for it too, its own. For the rest of them, it says.` : `${info.name}. Into the raccoon's jar, with the others it brought.` }[s.k]]), { ms: 5000 });
     afterChange();
 }
 
