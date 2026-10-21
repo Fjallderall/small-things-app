@@ -11287,13 +11287,23 @@ function nightLights(t, where = "room") {
     if (mi)
         softGlow(mi.cx, mi.y + mi.h * .55, R * .9, `rgba(220,240,210,${.25 + .1 * Math.sin(t)})`);
 }
+/* the lights are drawn over the whole scene, Mite included: a light that's behind Mite right now (the jar, a candle)
+   keeps only its soft halo, so its bright middle doesn't show through Mite's body */
+function behindMite(room, x, y) {
+    return view === room && Math.abs(x - pet.x) < R * 1.05 && Math.abs(y - (GY - R - (pet.ground || 0))) < R * 1.1;
+}
+function jarLight(a) {
+    const x = jarX(), y = GY - R * .4;
+    if (!behindMite("room", x, y))
+        glow(x, y, R * .2, `rgba(255,215,140,${a})`);
+}
 /* the night light: every small light in the rooms on screen, glowing over the dimmed room. The lanterns (and the fire
    and the moon print, nightLights), the fireflies' jar, the candles on the nook's desk and by the chesterfield, the
    reading lamp on the archive desk and the bare bulb over the shelves */
 function pointLights(t) {
     withRoomLight("room", () => {
         if (own("jar"))
-            glow(jarX(), GY - R * .4, R * .2, "rgba(255,215,140,.3)");
+            jarLight(.3);
         nightLights(t);
     });
     if (roomVisible("garden"))
@@ -11301,7 +11311,8 @@ function pointLights(t) {
             nightLights(t, "garden");
             const g = gardenGeo(), fl = 1 + Math.sin(t * 9) * .04 + Math.sin(t * 23) * .03;
             for (const c of [gardenCandle(g), { x: g.dx0 + R * .62, y: g.dTop - R * .2 }]) {
-                glow(c.x, c.y - PX * 1.5, PX * 1.2, "rgba(255,210,120,.8)");
+                if (!behindMite("garden", c.x, c.y))
+                    glow(c.x, c.y - PX * 1.5, PX * 1.2, "rgba(255,210,120,.8)");
                 softGlow(c.x, c.y - PX, R * 1.4 * fl, "rgba(255,190,110,.32)");
             }
         });
@@ -21486,7 +21497,7 @@ function frame(now) {
             cx.fillRect(0, 0, W, H);
             withRoomLight("room", () => {
                 if (own("jar"))
-                    glow(jarX(), GY - R * .4, R * .2, "rgba(255,215,140,.25)");
+                    jarLight(.25); // (lights.js: not over Mite)
                 nightLights(now / 1000);
             });
             withRoomLight("garden", () => nightLights(now / 1000, "garden")); // the lanterns under the nook's platform
