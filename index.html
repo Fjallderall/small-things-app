@@ -597,7 +597,12 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .seeking:focus-visible{outline:2px solid #c2453a;outline-offset:2px}
 .seeknote{margin:6px 0 0;padding:6px 8px;border-left:3px solid #c2453a;font:.86em var(--f-mono);background:rgba(194,69,58,.07)}
 /* the journal: a week to a page, one line a day, today at the bottom (journal.js) */
-.jweek{margin:0 0 6px;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.jnav{display:flex;align-items:center;gap:6px;margin:0 0 6px}
+.jnavb{min-width:44px;min-height:44px;font-family:var(--f-mono);font-size:15px;line-height:1;color:var(--ink);padding:0 6px}
+.jnavb:disabled{opacity:.35;cursor:default}
+.jweek{flex:1;margin:0;text-align:center;font-family:var(--f-mono);font-size:12px;color:var(--ink);line-height:1.3}
+.jweek span,.jweek small{display:block}
+.jweek small{color:var(--muted);font-size:11px;white-space:nowrap}
 .jlist{list-style:none;margin:0;padding:0;max-height:46dvh;overflow:auto;display:flex;flex-direction:column}
 .jrow{display:grid;grid-template-columns:76px 1fr auto;gap:8px;align-items:baseline;padding:8px 2px;border-bottom:1px dashed var(--line);font-size:15px;overflow-wrap:anywhere}
 .jday{font-family:var(--f-mono);font-size:12px;line-height:1.3}
@@ -606,7 +611,6 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .jwrite .jfield{grid-column:2 / 4;display:flex;flex-direction:column;gap:2px}
 .jwrite input{width:100%;font-family:var(--f-body);font-size:15px}
 .jcount{align-self:flex-end;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
-.jdisabled{opacity:.4}
 .jname{cursor:pointer;text-decoration:underline dotted 2px;text-underline-offset:6px}
 .jname:focus-visible{outline:2px solid var(--accent,#c2453a);outline-offset:3px}
 .kswatch{display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-2px;border:1px solid rgba(0,0,0,.35)}
@@ -23636,9 +23640,11 @@ function showJournal(off = 0) {
     jPage = clamp(off, journalFirstOff(), 0);
     const { start, days } = journalWeek(jPage), end = new Date(start);
     end.setDate(start.getDate() + 6);
+    let hasIn = false;
     const today = actDay(), row = ({ k, d }) => {
         const lines = journalDay(k), wd = d.toLocaleDateString("en-GB", { weekday: "short" }), label = `<span class="jday">${esc(wd)} <small>${esc(dmy(d))}</small></span>`;
         if (jEdit === k || (k === today && !lines.length)) {
+            hasIn = true;
             const cur = lines[0] ? lines[0].text : "", max = Math.max(JOURNAL_MAX, cur.length);
             return `<li class="jrow jwrite">${label}<span class="jfield"><input id="jIn" data-day="${esc(k)}" maxlength="${max}" value="${esc(cur)}" placeholder="${k === today ? "One line for today" : "This day's line"}" aria-label="The line for ${esc(wd)} ${esc(dmy(d))}" enterkeyhint="done"><small class="jcount" id="jCount">${cur.length}/${max}</small></span></li>`;
         }
@@ -23646,23 +23652,13 @@ function showJournal(off = 0) {
             return `<li class="jrow jempty">${label}<span class="jtext">—</span></li>`;
         return `<li class="jrow">${label}<span class="jtext">${lines.map(r => esc(r.text)).join("<br>")}</span><button type="button" class="mini jedit" data-jday="${esc(k)}" aria-label="Change the line for ${esc(wd)} ${esc(dmy(d))}">✎</button></li>`;
     };
-    const body = `<p class="jweek">Week ${weekNo(start)} · ${esc(dmy(start))} – ${esc(dmy(end))}</p><ol class="jlist" id="jList">${days.map(row).join("")}</ol>`;
+    const ds = dmy(start), range = (start.getFullYear() === end.getFullYear() ? ds.slice(0, 5) : ds) + " – " + dmy(end); // (19-10 – 25-10-2026)
+    const first = journalFirstOff(), back = jPage > first, fwd = jPage < 0, nb = (id, txt, lbl, on) => `<button type="button" class="mini jnavb" id="${id}" aria-label="${lbl}"${on ? "" : " disabled"}>${txt}</button>`;
+    const nav = `<nav class="jnav" aria-label="Journal pages">${nb("jFirst", "|‹", "First week", back)}${nb("jPrev", "‹", "Earlier week", back)}<p class="jweek" aria-live="polite"><span>Week ${weekNo(start)}</span><small>${esc(range)}</small></p>${nb("jNext", "›", "Later week", fwd)}${nb("jLast", "›|", "This week", fwd)}</nav>`;
+    const body = `${nav}<ol class="jlist" id="jList">${days.map(row).join("")}</ol>`;
     const btns = [];
-    if (document.getElementById("jIn") || jEdit || (jPage === 0 && !journalDay(today).length))
+    if (hasIn) // (only when this page has a line to write: the last page's field is still on screen at this point)
         btns.push(["Write it down", "primary", journalSave]);
-    btns.push(["‹ Earlier week", jPage > journalFirstOff() ? "" : "ghost jdisabled", () => {
-            if (jPage > journalFirstOff()) {
-                jEdit = "";
-                sfx("tock");
-                showJournal(jPage - 1);
-            }
-        }]);
-    if (jPage < 0)
-        btns.push(["Later week ›", "", () => {
-                jEdit = "";
-                sfx("tock");
-                showJournal(jPage + 1);
-            }]);
     btns.push(["Time capsules", "ghost", () => { jEdit = ""; showCapsules(); }]);
     btns.push(["Close", btns.length && btns[0][1] === "primary" ? "ghost" : "primary", () => {
             jEdit = "";
@@ -23676,6 +23672,21 @@ function showJournal(off = 0) {
     title.title = "Tap to rename";
     title.onclick = journalRename;
     title.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); journalRename(); } };
+    /* |‹ ‹ › ›|: the first page, one back, one on, this week. Focus stays on the same button after the page turns,
+       or on its neighbour when it has just gone disabled at the end */
+    const go = (id, to, alt) => $(id).onclick = () => {
+        if (to === jPage)
+            return;
+        jEdit = "";
+        sfx("tock");
+        showJournal(to);
+        const b = $(id), a = $(alt);
+        (b && !b.disabled ? b : a && !a.disabled ? a : $(id)).focus({ preventScroll: true });
+    };
+    go("jFirst", first, "jNext");
+    go("jPrev", jPage - 1, "jNext");
+    go("jNext", jPage + 1, "jPrev");
+    go("jLast", 0, "jPrev");
     const list = $("jList"), inp = $("jIn");
     if (list)
         list.scrollTop = list.scrollHeight; // (the newest at the bottom, in view)
