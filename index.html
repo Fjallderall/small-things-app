@@ -637,6 +637,13 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 @keyframes sndwait{50%{opacity:.35}}
 @media (prefers-reduced-motion:reduce){#sndG.snd-wait{animation:none;opacity:.5}}
 
+/* pointing out the sound button, once (welcome.js: soundHint) */
+#sndG.snd-point{animation:sndpoint 1.2s ease-in-out infinite;position:relative;z-index:2;outline:2px solid #f2c14e;outline-offset:2px}
+#sndG.snd-point::after{content:"";position:absolute;inset:-5px;border:2px solid #f2c14e;pointer-events:none;animation:sndring 1.2s ease-out infinite}
+@keyframes sndpoint{50%{background:#f2c14e;color:#2a1d10}}
+@keyframes sndring{from{opacity:1;transform:scale(.9)}to{opacity:0;transform:scale(1.35)}}
+@media (prefers-reduced-motion:reduce){#sndG.snd-point,#sndG.snd-point::after{animation:none}#sndG.snd-point{background:#f2c14e;color:#2a1d10}}
+
 </style>
 <div class="app">
   <section class="world" aria-label="Pet">
@@ -24263,8 +24270,10 @@ function welcome(prevSeen, isNew) {
             if (!S.pats)
                 hint("pat", "You can pat me, by the way. Just tap. And if you tap the ground, I'll go and look.");
         }, 16000);
+        setTimeout(soundHint, 32000);
         return;
     }
+    setTimeout(soundHint, 25000); // (a save from before this hint existed hears it once too, if the sound's still off)
     setTimeout(() => {
         if (away > 4 * 3600e3) {
             const acts = pool("away").slice();
@@ -24283,6 +24292,22 @@ function welcome(prevSeen, isNew) {
         else
             say("greet");
     }, 1100);
+}
+
+/* once: there's sound, and where the button is. The notes in the corner light up while Mite says it. Waits until
+   nothing else is on screen (the name, a card); skipped if the sound's already on */
+function soundHint() {
+    if ((S.hints && S.hints.sound) || sndMode())
+        return;
+    if (!$("ritual").hidden || ($("dlg") && !$("dlg").hidden) || document.body.classList.contains("sheet") || document.hidden) {
+        setTimeout(soundHint, 5000);
+        return;
+    }
+    if (hint("sound", "There's sound too, if you like: little noises, rain on the roof, a quiet song. Tap the note up in the corner. Each tap adds a bit more.", 9000)) {
+        const g = $("sndG");
+        g.classList.add("snd-point");
+        setTimeout(() => g.classList.remove("snd-point"), 9000);
+    }
 }
 
 </script>
