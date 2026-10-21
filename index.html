@@ -729,7 +729,7 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div class="shop" id="plantShop"></div>
       <div><h3>Crystals</h3><p class="sub">For the crystal shelf on the wall. Tap the shelf to look at them up close and see your glimmers.</p></div>
       <div class="shop" id="crystalShop"></div>
-      <div><h3>Kettles</h3><p class="sub">For the kettle on the stove. <span class="pn">Mite</span> takes one of the kettles in the scene at random each time she makes tea.</p></div>
+      <div><h3>Kettles</h3><p class="sub">For the kettle on the stove. <span class="pn">Mite</span> takes one of the kettles in the scene at random each time it makes tea.</p></div>
       <div class="shop" id="kettleShop"></div>
       <div><h3>On the wall</h3><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p></div>
       <div class="shop" id="wallShop"></div>
@@ -7939,8 +7939,8 @@ Object.assign(BEH, {
     // archival work at the desk or the shelves, now and then: taking in a new box, recording where things came from,
     // arranging, describing, rehousing, appraising, checking files. Little labels float up as Mite works, and it
     // explains a bit after (pools archive_ingest, archive_provenance, ...: simplified, sometimes absurd, never wrong)
-    /* the journal: Mite climbs into the desk chair and writes, her back to us, for as long as the journal is open;
-       then she writes a moment longer and hops down again (interactions.js: the journal; the chair's back goes over her, archive-room.js) */
+    /* the journal: Mite climbs into the desk chair and writes, its back to us, for as long as the journal is open;
+       then it writes a moment longer and hops down again (interactions.js: the journal; the chair's back goes over it, archive-room.js) */
     journalsit: { d: [60, 60], w: c => 0, init(b) {
             b.tx = clamp(deskChairX(), R * 1.05, W - R * 1.05);
             b.act = 8;
@@ -7949,7 +7949,7 @@ Object.assign(BEH, {
             if (ta < 0)
                 return;
             if (b.down === undefined) { // sitting for as long as the journal (or what it led to) is open, half an hour at most; the
-                // journal opens once she's been writing a moment (revealAt), and she writes on a little after it closes
+                // journal opens once it's been writing a moment (revealAt), and it writes on a little after it closes
                 if (!$("ritual").hidden && ta < 1800) {
                     p.dur = p.bt + 2;
                     b.shut = undefined;
@@ -8307,7 +8307,7 @@ function drawPet(po) {
         cx.fill();
     }
     if (po.back) { // seen from behind (writing at the desk): no belly, no face; a darker patch of moss down the back,
-        // the writing paw's elbow going to and fro at her side, the head tipping now and then; then the sprout or hat
+        // the writing paw's elbow going to and fro at its side, the head tipping now and then; then the sprout or hat
         const w = po.back.write || 0;
         cx.fillStyle = "rgba(40,70,30,.22)";
         cx.beginPath();
@@ -12692,7 +12692,7 @@ function deskChairX(g = archGeo()) {
 }
 /* a small wooden chair tucked in at the desk, seen from behind (it faces the desk): the back's posts, rail and slats
    come no higher than the desk top, so the journal and the lamp stay clear. backOnly: just the back, drawn again over
-   Mite when she sits in it to write (deskChairOverMite) */
+   Mite when it sits in it to write (deskChairOverMite) */
 function drawDeskChair(dk, g, backOnly) {
     const q = PX, wood = mix("#9a6a3e", "#2c1d12", dk), woodD = mix("#6a4628", "#1a110a", dk), woodL = mix("#b8844e", "#3a2616", dk);
     const x = deskChairX(g), sw = Math.round(R * .62 / q) * q, seat = Math.round((GY - R * .5) / q) * q, backTop = Math.round((GY - R * .98) / q) * q, x0 = x - sw / 2;
@@ -12715,7 +12715,7 @@ function drawDeskChair(dk, g, backOnly) {
         cx.fillRect(Math.round((x0 + sw * f) / q) * q - q / 2, backTop + q * 2, q, seat - backTop - q * 2);
     cx.fillRect(x0, seat - q, sw, q); // the bottom rail of the back
 }
-/* Mite sitting in the desk chair, writing: the chair's back goes in front of her (loop.js, after Mite) */
+/* Mite sitting in the desk chair, writing: the chair's back goes in front of it (loop.js, after Mite) */
 function deskChairOverMite() {
     if (view !== "archive" || pet.beh !== "journalsit" || !pet.b.seated)
         return;
@@ -20679,7 +20679,7 @@ function drawCeiling(dk, room) {
 }
 /* the round rug in the middle of a room's floor (each room has its own colours; the wagon's is red) */
 /* a woven texture for the rugs: every other pixel a shade darker, in a checker (a colour that happens to sit exactly
-   on the palette would otherwise come out flat) */
+   on the palette would otherwise come out flat). Set again at every fill, for the transform of the moment */
 const rugPats = {};
 function rugPattern(c) {
     let p = rugPats[c];
@@ -20697,8 +20697,8 @@ function rugPattern(c) {
             for (const k in rugPats)
                 delete rugPats[k];
     }
-    try {
-        p.setTransform(new DOMMatrix().scale(1 / DPR));
+    try { // locked to the canvas's own pixel grid, not to the room: the checker stays put while a room slides past
+        p.setTransform(cx.getTransform().inverse());
     }
     catch (e) {
     }
@@ -20744,7 +20744,7 @@ function drawPlankFloor(dk) {
     cx.fillRect(0, GY - 3, W, 4);
 }
 /* the kettles: copper comes with the kettle; the others are bought in the shop (Kettles, S.b.kt_<id>) and can be put
-   away there like the crystals. Mite takes one of the kettles in the scene at random each time she brews
+   away there like the crystals. Mite takes one of the kettles in the scene at random each time it brews
    (pickKettle, kettle.js); the one in use is S.kettleStyle */
 const KETTLE_STYLES = [
     { id: "copper", sid: "kt_copper", name: "Copper kettle", price: 0, note: "The first one. Comes with the kettle.", body: "#b8592f", dark: "#7a3a20", lite: "#f2b07a" },
@@ -21130,7 +21130,7 @@ function frame(now) {
         if (anom && anom.held && anom.room === view) // the red phone's handset, at Mite's ear (anomalies.js)
             withRoomLight(view, () => drawLayered(() => drawHandset(anom)));
         chesterfieldOverMite(now);
-        deskChairOverMite(); // in the archive, the desk chair's back in front of Mite while she writes (archive-room.js) // on the nook's stairs, Mite walks behind the chair (garden.js)
+        deskChairOverMite(); // in the archive, the desk chair's back in front of Mite while it writes (archive-room.js) // on the nook's stairs, Mite walks behind the chair (garden.js)
         withRoom(snailRoom, drawSnailInBed); // the snail tucked in next to Mite (snail.js)
         drawAnimals(now); // the snail and the possum, in front of Mite (camera.js)
         withRoom("room", () => {
@@ -22676,6 +22676,10 @@ function parseDMY(w) {
 }
 function parseShort(raw) {
     const o = {};
+    raw = String(raw).replace(/^\s*(?:todo|to-do|to do)\s*[:-]?\s+/i, () => { // "todo …" at the start: jotted down, without the word
+        o.jot = true;
+        return "";
+    });
     const DOW = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
     const text = raw.replace(/(^|\s)([!#@^])([\w:.\/-]+)/g, (m, sp, sig, w) => {
         w = w.toLowerCase().replace(/\.$/, "");
@@ -22801,7 +22805,7 @@ $("optBtn").onclick = () => {
     $("addOpts").hidden = !open;
     $("optBtn").setAttribute("aria-expanded", open);
 };
-/* "Jot" (or #jot / #todo in the text): just write it down, onto the jotted-down pile */
+/* "Jot" (or #jot / #todo in the text, or "todo" at the start): just write it down, onto the jotted-down pile */
 function jotDown(raw) {
     const p = parseShort(raw);
     if (!p.text)
@@ -22824,7 +22828,7 @@ $("jotBtn").onclick = () => {
 };
 $("addForm").addEventListener("submit", e => {
     e.preventDefault();
-    if (/(^|\s)#(jot|todo)(?=\s|$)/i.test($("tTitle").value)) {
+    if (/(^|\s)#(jot|todo)(?=\s|$)/i.test($("tTitle").value) || parseShort($("tTitle").value).jot) {
         jotDown($("tTitle").value);
         return;
     }
@@ -25071,7 +25075,7 @@ function offlineReply(text) {
         const ms = S.memories.slice(0, 3).map(x => x.t);
         return { reply: ms.length ? `I remember that ${ms.join("; that ")}.` : "Not much yet. Tell me things, and say remember… for the important ones." };
     }
-    if (m = t.match(/^(?:fix|friction|fix-it|note)[:\s]+(.+)/i)) {
+    if (m = t.match(/^(?:fix|friction|fix-it|note|todo|to do|to-do)[:\s]+(.+)/i)) { // (todo …: jotted down too, like a note)
         const text = m[1].trim().replace(/[.!]+$/, "").slice(0, 160);
         if (text) { // (the fix-it list is gone: a note like this is jotted down)
             addTask(text, 1, ctxTag(), false, "", null).jot = 1;
@@ -25089,7 +25093,7 @@ function offlineReply(text) {
         }
         return { reply: "Nothing needs you right now. Rest counts." };
     }
-    const tm = t.match(/^(?:todo|to do|to-do|add|task)[:\s]+(.+)/i) || t.match(/\b(?:i need to|i have to|i should|i must|i've got to|i still need to|ik moet)\s+(.+?)(?:[.!?]|$)/i);
+    const tm = t.match(/^(?:add|task)[:\s]+(.+)/i) || t.match(/\b(?:i need to|i have to|i should|i must|i've got to|i still need to|ik moet)\s+(.+?)(?:[.!?]|$)/i);
     const day = findDay(low);
     const ev = day && t.match(/\b(?:i have|i've got|i got|i'm going to|i am going to|we have|we're going to|there's|there is|going to|heb|ga naar)\s+(?:a |an |the |my |our |een |de |het |mijn )?(.+?)(?=\s+(?:on|this|tomorrow|today|tonight|next|morgen|vandaag|op|this weekend)\b|[.,!?]|$)/i);
     if (ev && !tm) {
