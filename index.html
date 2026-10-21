@@ -19736,18 +19736,22 @@ const EYES = [
     { id: "bureau", name: "Eye with a Bureau tag", ring: "#7a8a7a", pupil: "bar", note: "Tagged 'surplus, do not reissue'. The raccoon got it from a skip behind an office that isn't on any map." }
 ];
 const EYES_PER_JAR = 6, EYE_JARS = 3; // (two on the shelf, one on top: eighteen eyes fit)
-/* the raccoon's eyes have a jar of their own, which only turns up once it has sold Mite one: then every one of them
-   can be collected too, however full Mite's own jars are */
+/* the raccoon's eyes have a jar of their own, which only turns up once the raccoon has brought Mite one: then every
+   one of them can be collected too, however full Mite's own jars are. An eye goes in it by who brought it (s.from),
+   so the few it brought before it kept to its own kinds are in there too */
 const isRaccEye = id => EYE_FROM[id] === "raccoon";
-const ownEyes = () => (S.eyes || []).filter(s => !isRaccEye(s.k));
+const inRaccJar = s => s.from === "raccoon" || isRaccEye(s.k);
+const ownEyes = () => (S.eyes || []).filter(s => !inRaccJar(s));
 /* where each eye comes from (some are only found one way) */
 const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door", glassdoll: "raccoon", heron: "raccoon", lighthouse: "raccoon", bureau: "raccoon" };
 function findEye(from) {
     const have = new Set((S.eyes || []).map(e => e.k));
     const can = EYES.filter(e => !have.has(e.id) && (!EYE_FROM[e.id] || EYE_FROM[e.id] === from));
     const pref = can.filter(e => EYE_FROM[e.id] === from); // its own kind first
-    const e = pref.length && Math.random() < .6 ? choice(pref) : can.length ? choice(can) : null;
-    if (!e || ownEyes().length >= EYES_PER_JAR * EYE_JARS)
+    if (from === "raccoon" && !pref.length) // (the raccoon only ever brings its own: never one Mite could find itself)
+        return null;
+    const e = from === "raccoon" ? choice(pref) : pref.length && Math.random() < .6 ? choice(pref) : can.length ? choice(can) : null;
+    if (!e || (from !== "raccoon" && ownEyes().length >= EYES_PER_JAR * EYE_JARS))
         return null;
     S.eyes = (S.eyes || []).concat([{ k: e.id, at: Date.now(), from: String(from || "").slice(0, 20) }]);
     note(`Found an eye for the jar: ${e.name.toLowerCase()}. ${e.note}`);
@@ -19768,7 +19772,7 @@ function eyeJarSpots(n, xRight, yTop, jw, jh, gap) {
     return out;
 }
 function drawEyeJars(dk, t, xRight, yTop) {
-    const q = PX, all = (S.eyes || []).map(s => EYES.find(e => e.id === s.k)).filter(Boolean), have = all.filter(e => !isRaccEye(e.id)), racc = all.filter(e => isRaccEye(e.id));
+    const q = PX, eye = s => EYES.find(e => e.id === s.k), have = ownEyes().map(eye).filter(Boolean), racc = (S.eyes || []).filter(inRaccJar).map(eye).filter(Boolean);
     const own = Math.max(1, Math.min(EYE_JARS, Math.ceil(have.length / EYES_PER_JAR) || 1)), jars = own + (racc.length ? 1 : 0); // (the raccoon's jar last, on top)
     const jw = q * 8, jh = q * 9, gap = q * 2;
     if (t * 1000 > eyeLook.at) { // they all look somewhere new, slowly, every few seconds
@@ -22584,7 +22588,7 @@ function barterCandidates() {
 /* the week's stock: three things of three different kinds where it can (more of one kind when the others run out) */
 function barterStock() {
     const wk = weekKey(Date.now());
-    if (!S.barter || S.barter.wk !== wk || S.barter.stock.some(s => !BARTER_PRICE[s.k])) { // (or still last version's stock)
+    if (!S.barter || S.barter.wk !== wk || S.barter.stock.some(s => !BARTER_PRICE[s.k] || (s.k === "eye" && !isRaccEye(s.id) && !S.barter.got.includes(s.id)))) { // (or still last version's stock: an eye that isn't the raccoon's own)
         const shuf = a => a.sort(() => Math.random() - .5), c = barterCandidates(), stock = [];
         for (const k of shuf(Object.keys(c).filter(k => c[k].length)).slice(0, 3))
             stock.push(choice(c[k]));
@@ -22645,7 +22649,7 @@ function barterTrade(i) {
     }
     sfx("coin");
     note(`Traded ${s.price} glimmers with ${raccoonName()} for ${info.name.toLowerCase()}.`);
-    speak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, { tea: `${info.name}. I'll put it with the other teas. The kettle's already curious.`, bake: `${info.name}. I've got the recipe now too. The oven will make it some days.`, flower: `${info.name}. Straight into the vase.`, curio: `${info.name}! It gets its own drawer in the Cabinet.`, eye: (S.eyes || []).filter(x => isRaccEye(x.k)).length === 1 ? `${info.name}. ${raccoonName()} brought a jar for it too, its own. For the rest of them, it says.` : `${info.name}. Into the raccoon's jar, with the others it brought.` }[s.k]]), { ms: 5000 });
+    speak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, { tea: `${info.name}. I'll put it with the other teas. The kettle's already curious.`, bake: `${info.name}. I've got the recipe now too. The oven will make it some days.`, flower: `${info.name}. Straight into the vase.`, curio: `${info.name}! It gets its own drawer in the Cabinet.`, eye: (S.eyes || []).filter(inRaccJar).length === 1 ? `${info.name}. ${raccoonName()} brought a jar for it too, its own. For the rest of them, it says.` : `${info.name}. Into the raccoon's jar, with the others it brought.` }[s.k]]), { ms: 5000 });
     afterChange();
 }
 
