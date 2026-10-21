@@ -558,7 +558,8 @@ body.desking .dock,body.desking .gamectl{visibility:hidden}
 body.pixel .desk-rows,body.pixel .desk-badge{border-radius:0}
 body.pixel .desk h1{font-family:var(--f-display)}
 body.pixel .desk .desk-h,.desk .desk-h{font-family:var(--f-body);font-size:14px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);line-height:1.2}
-#deskBtn{justify-self:start}
+#deskBtn{justify-self:start;display:inline-flex;align-items:center;gap:5px}
+#deskBtn .gear{flex:none}
 /* the sound button: one to three notes, or a crossed-out one when off */
 #sndG{position:relative;letter-spacing:-.12em;padding-right:.12em;font-size:20px!important}
 #sndG[data-n="2"]{font-size:18px!important}
@@ -612,9 +613,7 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .jdisabled{opacity:.4}
 .jname{cursor:pointer;text-decoration:underline dotted 2px;text-underline-offset:6px}
 .jname:focus-visible{outline:2px solid var(--accent,#c2453a);outline-offset:3px}
-.kstyles{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 10px}
-.kstyles .chipbtn{display:inline-flex;align-items:center;gap:6px}
-.kstyles i{display:inline-block;width:16px;height:16px;border:1px solid rgba(0,0,0,.35)}
+.kswatch{display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-2px;border:1px solid rgba(0,0,0,.35)}
 /* the paternoster (paternoster.js): the window, the turning buttons, the months as one scrolling row of keys */
 .pncv{display:block;width:100%;max-width:420px;margin:0 auto 8px;aspect-ratio:160/100;image-rendering:pixelated;image-rendering:crisp-edges}
 .pnnav{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
@@ -661,7 +660,7 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 
   <section class="panel" id="panel" aria-label="Menu">
     <div class="sheettop">
-    <div class="sheethead"><button class="btn ghost" id="deskBtn" title="Settings, lines, backup">Desk</button><span class="grab" aria-hidden="true"></span><button class="btn ghost" id="sheetClose">Close</button></div>
+    <div class="sheethead"><button class="btn ghost" id="deskBtn" title="Settings, lines, backup" aria-label="Desk: settings, lines, backup"><svg class="gear" viewBox="0 0 11 11" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges" fill="currentColor"><rect x="4" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="1" y="1" width="1" height="1"/><rect x="2" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="8" y="1" width="1" height="1"/><rect x="9" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/><rect x="8" y="2" width="1" height="1"/><rect x="9" y="2" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="7" y="3" width="1" height="1"/><rect x="8" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="8" y="4" width="1" height="1"/><rect x="9" y="4" width="1" height="1"/><rect x="10" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="8" y="5" width="1" height="1"/><rect x="9" y="5" width="1" height="1"/><rect x="10" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="8" y="6" width="1" height="1"/><rect x="9" y="6" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/><rect x="8" y="7" width="1" height="1"/><rect x="1" y="8" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="3" y="8" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="6" y="8" width="1" height="1"/><rect x="7" y="8" width="1" height="1"/><rect x="8" y="8" width="1" height="1"/><rect x="9" y="8" width="1" height="1"/><rect x="1" y="9" width="1" height="1"/><rect x="2" y="9" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="5" y="9" width="1" height="1"/><rect x="6" y="9" width="1" height="1"/><rect x="8" y="9" width="1" height="1"/><rect x="9" y="9" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="5" y="10" width="1" height="1"/><rect x="6" y="10" width="1" height="1"/></svg>Desk</button><span class="grab" aria-hidden="true"></span><button class="btn ghost" id="sheetClose">Close</button></div>
     <nav class="tabs" role="tablist" aria-label="Sections">
       <button role="tab" data-group="tasks" aria-selected="true">Tasks<span class="count" id="openCount"></span></button>
       <button role="tab" data-group="mite" aria-selected="false"><span class="pn">Mite</span></button>
@@ -740,6 +739,8 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div class="shop" id="plantShop"></div>
       <div><h3>Crystals</h3><p class="sub">For the crystal shelf on the wall. Tap the shelf to look at them up close and see your glimmers.</p></div>
       <div class="shop" id="crystalShop"></div>
+      <div><h3>Kettles</h3><p class="sub">For the kettle on the stove. <span class="pn">Mite</span> takes one of the kettles in the scene at random each time she makes tea.</p></div>
+      <div class="shop" id="kettleShop"></div>
       <div><h3>On the wall</h3><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p></div>
       <div class="shop" id="wallShop"></div>
       <div><h3>Something special</h3><p class="sub">A treat for the wagon, for one day. Then it's gone, and you can pick another.</p></div>
@@ -3417,6 +3418,8 @@ function sanitizeState(raw) {
     }
     o.postcards = arr(s.postcards, 60).map(p => ({ id: str(p.id, 30), y: clamp(Math.round(num(p.y)), 2000, 3000), at: num(p.at) })).filter(p => /^[a-z0-9_-]+$/i.test(p.id)); // postcards kept on the board (festivals.js)
     o.kettleStyle = { k: ["copper", "blue", "green", "pink", "bluefl"].includes(s.kettleStyle && s.kettleStyle.k) ? s.kettleStyle.k : "copper", at: num(s.kettleStyle && s.kettleStyle.at) }; // the kettle's looks (draw-world.js)
+    if (o.kettleStyle.at && o.kettleStyle.k !== "copper" && !o.b["kt_" + o.kettleStyle.k]) // (picked for free before the kettles were sold: it's yours)
+        o.b["kt_" + o.kettleStyle.k] = 1;
     o.journal = { name: str(s.journal && s.journal.name, 40).replace(/\s+/g, " ").trim() || "Small journal", at: num(s.journal && s.journal.at) }; // the journal's name (journal.js)
     o.splurge = { k: s.splurge && ["ice", "balloons", "cake", "fireworks"].includes(s.splurge.k) ? s.splurge.k : "", at: num(s.splurge && s.splurge.at) }; // the day's treat (splurge.js)
     { // the raccoon's barter: this week's stock and what's been traded (barter.js)
@@ -5268,7 +5271,7 @@ function isShown(id) {
 /* bought (S.b) and switched on in Settings (decorations can be hidden without selling them) */
 /* things you bought: the free ones (Mite's own easel) don't count */
 function boughtCount() {
-    const all = [...BUILDINGS, ...PLANTS, ...CRYSTALS, ...WALL];
+    const all = [...BUILDINGS, ...PLANTS, ...CRYSTALS, ...WALL, ...KETTLE_STYLES.map(k => ({ id: k.sid, price: k.price }))];
     return Object.entries(S.b).reduce((a, [id, n]) => {
         const it = all.find(x => x.id === id);
         return a + (it && it.price > 0 ? Math.max(0, n) : 0);
@@ -10089,6 +10092,7 @@ function showBrew() {
     const cv = $("brewCv"), px = 56;
     cv.width = px;
     cv.height = px;
+    pickKettle(); // (which of the kettles: draw-world.js)
     brew = { d, t0: performance.now() };
     cardCap($("brewCap"), `<b>${esc(d.name)}</b>${d.note ? " " + esc(d.note) : ""}`);
     const el = $("brewView");
@@ -20563,17 +20567,36 @@ function drawPlankFloor(dk) {
     cx.fillStyle = mix("#4f3a2a", "#1a120c", dk);
     cx.fillRect(0, GY - 3, W, 4);
 }
-/* the kettle's looks: copper to start with; the others are chosen in the shop, under the kettle (S.kettleStyle) */
+/* the kettles: copper comes with the kettle; the others are bought in the shop (Kettles, S.b.kt_<id>) and can be put
+   away there like the crystals. Mite takes one of the kettles in the scene at random each time she brews
+   (pickKettle, kettle.js); the one in use is S.kettleStyle */
 const KETTLE_STYLES = [
-    { id: "copper", name: "Copper", body: "#b8592f", dark: "#7a3a20", lite: "#f2b07a" },
-    { id: "blue", name: "Blue enamel", body: "#3f6aa8", dark: "#24406e", lite: "#a8c8ec" },
-    { id: "green", name: "Green enamel", body: "#4f8a4a", dark: "#2c5a2c", lite: "#b8dc9a" },
-    { id: "pink", name: "White, pink flowers", body: "#f1ece0", dark: "#b8b0a0", lite: "#ffffff", flower: "#e3a0b2" },
-    { id: "bluefl", name: "White, blue flowers", body: "#f1ece0", dark: "#b8b0a0", lite: "#ffffff", flower: "#5a86c8" }
+    { id: "copper", sid: "kt_copper", name: "Copper kettle", price: 0, note: "The first one. Comes with the kettle.", body: "#b8592f", dark: "#7a3a20", lite: "#f2b07a" },
+    { id: "blue", sid: "kt_blue", name: "Blue enamel kettle", price: 12, note: "Chipped at the spout, which is how you know it's loved.", body: "#3f6aa8", dark: "#24406e", lite: "#a8c8ec" },
+    { id: "green", sid: "kt_green", name: "Green enamel kettle", price: 12, note: "The colour of moss after rain. Mite chose it, obviously.", body: "#4f8a4a", dark: "#2c5a2c", lite: "#b8dc9a" },
+    { id: "pink", sid: "kt_pink", name: "White kettle, pink flowers", price: 16, note: "The flowers are painted on. Probably. They look different some mornings.", body: "#f1ece0", dark: "#b8b0a0", lite: "#ffffff", flower: "#e3a0b2" },
+    { id: "bluefl", sid: "kt_bluefl", name: "White kettle, blue flowers", price: 16, note: "Blue flowers, white enamel. It hums one note when it's nearly ready.", body: "#f1ece0", dark: "#b8b0a0", lite: "#ffffff", flower: "#5a86c8" }
 ];
+/* the kettles that are bought (copper: with the kettle itself) and not put away */
+function kettlesOwned() {
+    return KETTLE_STYLES.filter(k => k.price ? (S.b[k.sid] || 0) > 0 : (S.b.kettle || 0) > 0);
+}
+function kettlesShown() {
+    return kettlesOwned().filter(k => isShown(k.sid));
+}
+/* the kettle on the stove: the one Mite last took, if it's still out; else the first one out; copper if all are away */
 function kettleStyle() {
-    const k = S.kettleStyle && S.kettleStyle.k;
-    return KETTLE_STYLES.some(x => x.id === k) ? k : "copper";
+    const k = S.kettleStyle && S.kettleStyle.k, out = kettlesShown();
+    return out.some(x => x.id === k) ? k : out.length ? out[0].id : "copper";
+}
+/* Mite takes a kettle for a brew: any of the ones out, at random (another one than last time, when there's a choice) */
+function pickKettle() {
+    const out = kettlesShown(), cur = kettleStyle();
+    if (out.length < 2)
+        return cur;
+    const k = choice(out.filter(x => x.id !== cur)).id;
+    S.kettleStyle = { k, at: Date.now() };
+    return k;
 }
 /* today's pile of finished boxes, waiting to be filed, and the boxes on their way into the filing tube: drawn after
    Mite, the treats and the animals by the wall, so the boxes are always in front; only an animal out on the rug comes
@@ -21847,21 +21870,6 @@ function renderShop() {
         if (bb)
             bb.onclick = () => buy(b);
         shop.appendChild(el);
-        if (b.id === "kettle" && own) { // its looks, to pick from (free)
-            const ks = document.createElement("div");
-            ks.className = "kstyles";
-            ks.setAttribute("role", "group");
-            ks.setAttribute("aria-label", "The kettle's looks");
-            ks.innerHTML = KETTLE_STYLES.map(k => `<button type="button" class="chipbtn" data-ks="${k.id}" aria-pressed="${kettleStyle() === k.id}"><i style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 3px ${k.body},inset 0 0 0 6px ${k.flower}` : ""}"></i>${esc(k.name)}</button>`).join("");
-            ks.querySelectorAll("[data-ks]").forEach(x => x.onclick = () => {
-                S.kettleStyle = { k: x.dataset.ks, at: Date.now() };
-                sfx("tock");
-                if (Math.random() < .6)
-                    speak(choice(["A new kettle! Well, the same kettle, dressed up.", "Oh, that's nice. The tea will taste the same, but nicer.", "The kettle approves. It whistled a bit."]), { ms: 3500 });
-                afterChange();
-            });
-            shop.appendChild(ks);
-        }
     });
     const ws = $("wallShop");
     ws.innerHTML = "";
@@ -21904,9 +21912,24 @@ function renderShop() {
             wb.onclick = () => buyWall(b);
         cs.appendChild(el);
     });
+    const kts = $("kettleShop"); // the kettles: Mite takes one of the ones in the scene at random for each brew
+    kts.innerHTML = "";
+    KETTLE_STYLES.forEach(k => {
+        const own = kettlesOwned().includes(k), noKettle = !S.b.kettle;
+        const where = !own ? "" : !isShown(k.sid) ? "put away" : kettleStyle() === k.id ? "on the stove" : "on the shelf";
+        const el = document.createElement("div");
+        el.className = "bld";
+        el.innerHTML = `<div style="min-width:0"><b><i class="kswatch" style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 3px ${k.body},inset 0 0 0 6px ${k.flower}` : ""}"></i>${esc(k.name)}</b><span class="own">${where}</span><p>${esc(k.note)}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${k.sid}" ${isShown(k.sid) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : noKettle ? `<span class="owned">Needs the kettle</span>` : `<button class="btn amber" data-w="${k.sid}" ${S.g < k.price ? "disabled" : ""} aria-label="Buy ${esc(k.name)} for ${k.price} glimmers">${k.price} ◆</button>`}</span>`;
+        const wb = el.querySelector("[data-w]");
+        if (wb)
+            wb.onclick = () => buyKettle(k);
+        kts.appendChild(el);
+    });
     document.querySelectorAll("#tab-grow input[data-vis]").forEach(cb => cb.onchange = () => {
         setShown(cb.dataset.vis, cb.checked);
         sfx("tock");
+        if (cb.dataset.vis.startsWith("kt_"))
+            renderShop(); // (which kettle is on the stove may change)
     });
     $("shopBal").textContent = `You have ${S.g} glimmer${S.g === 1 ? "" : "s"}.`;
     const n = doneCount();
@@ -21916,8 +21939,8 @@ function renderShop() {
     updateShopAfford();
 }
 function updateShopAfford() {
-    document.querySelectorAll("#wallShop button[data-w],#plantShop button[data-w],#crystalShop button[data-w]").forEach(bt => {
-        const b = WALL.find(x => x.id === bt.dataset.w) || PLANTS.find(x => x.id === bt.dataset.w) || CRYSTALS.find(x => x.id === bt.dataset.w);
+    document.querySelectorAll("#wallShop button[data-w],#plantShop button[data-w],#crystalShop button[data-w],#kettleShop button[data-w]").forEach(bt => {
+        const k = KETTLE_STYLES.find(x => x.sid === bt.dataset.w), b = k ? { id: k.sid, price: k.price } : WALL.find(x => x.id === bt.dataset.w) || PLANTS.find(x => x.id === bt.dataset.w) || CRYSTALS.find(x => x.id === bt.dataset.w);
         const o = (S.b[b.id] || 0) > 0;
         bt.disabled = o || S.g < b.price;
     });
@@ -21953,6 +21976,21 @@ function buyWall(b) {
     else
         say("buy", { item: b.name.toLowerCase() });
     note(plant ? `New plant on the sill: ${b.name}.` : crystal ? `New crystal on the shelf: ${b.name}.` : `Hung up: ${b.name}.`);
+    burst("spark", 6);
+    afterChange();
+}
+/* a kettle: it goes on the shelf by the stove, and Mite uses it straight away */
+function buyKettle(k) {
+    if (!k.price || S.g < k.price || (S.b[k.sid] || 0) > 0 || !S.b.kettle)
+        return;
+    sfx("coin");
+    S.g -= k.price;
+    S.b[k.sid] = 1;
+    if (!isShown(k.sid))
+        setShown(k.sid, true);
+    S.kettleStyle = { k: k.id, at: Date.now() };
+    speak(choice([`A ${k.name.toLowerCase()}! I'll take turns with them. It's only fair.`, `The ${k.name.toLowerCase()} is on the stove. The others don't mind. Much.`, `Another kettle. The tea will taste the same, but nicer.`]), { ms: 4000 });
+    note(`New kettle: ${k.name}.`);
     burst("spark", 6);
     afterChange();
 }
