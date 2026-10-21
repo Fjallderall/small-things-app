@@ -599,6 +599,17 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .seeking{background:none;border:0;padding:2px 4px;margin:-2px 0;font:700 .85em var(--f-mono);color:#c2453a;cursor:pointer;letter-spacing:.04em}
 .seeking:focus-visible{outline:2px solid #c2453a;outline-offset:2px}
 .seeknote{margin:6px 0 0;padding:6px 8px;border-left:3px solid #c2453a;font:.86em var(--f-mono);background:rgba(194,69,58,.07)}
+/* the journal: a week to a page, one line a day, today at the bottom (journal.js) */
+.jweek{margin:0 0 6px;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.jlist{list-style:none;margin:0;padding:0;max-height:46dvh;overflow:auto;display:flex;flex-direction:column}
+.jrow{display:grid;grid-template-columns:76px 1fr auto;gap:8px;align-items:baseline;padding:8px 2px;border-bottom:1px dashed var(--line);font-size:15px;overflow-wrap:anywhere}
+.jday{font-family:var(--f-mono);font-size:12px;line-height:1.3}
+.jday small{display:block;color:var(--muted);font-size:11px}
+.jempty .jtext{color:var(--muted)}
+.jwrite .jfield{grid-column:2 / 4;display:flex;flex-direction:column;gap:2px}
+.jwrite input{width:100%;font-family:var(--f-body);font-size:15px}
+.jcount{align-self:flex-end;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.jdisabled{opacity:.4}
 
 </style>
 <div class="app">
@@ -728,10 +739,10 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 
     <div class="pane" id="tab-archive" role="tabpanel" hidden>
       <div><h2>The archive</h2><p class="sub">Every finished task is a box. Each week fills a shelf; this is every shelf so far. Tap a week to read its labels.</p></div>
-      <div class="row"><button class="btn" id="reflBtn">Write a reflection</button><button class="btn" id="capBtn">Seal a time capsule</button></div>
+      <div class="row"><button class="btn" id="reflBtn">Open the journal</button><button class="btn" id="capBtn">Seal a time capsule</button></div>
       <div id="capDue"></div>
       <div class="files" id="archive"></div>
-      <div><h3>Reflections</h3><p class="sub">Notes you keep. This week's sit on the archive shelf in the scene; tap one and <span class="pn">Mite</span> reads it back.</p></div>
+      <div><h3>The journal</h3><p class="sub">One line a day, kept in the journal on the archive desk. Every line so far, newest first.</p></div>
       <div id="reflList" class="agenda"></div>
       <div><h3>Time capsules</h3><p class="sub">Sealed until their day. The tin on the shelf glows when one is ready.</p></div>
       <div id="capList" class="agenda"></div>
@@ -3220,7 +3231,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, splurge: { k: "", at: 0 }, anomLog: {}, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, splurge: { k: "", at: 0 }, anomLog: {}, journal: { name: "Small things", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3384,6 +3395,7 @@ function sanitizeState(raw) {
             if (/^[a-z]{2,12}$/.test(k) && L[k] && typeof L[k] === "object")
                 o.anomLog[k] = { n: clamp(Math.round(num(L[k].n)), 0, 1e6), first: num(L[k].first), last: num(L[k].last), h: (Array.isArray(L[k].h) ? L[k].h : []).filter(x => typeof x === "string" && /^[0-9a-z]{1,8}$/.test(x)).slice(0, 80) };
     }
+    o.journal = { name: str(s.journal && s.journal.name, 40).replace(/\s+/g, " ").trim() || "Small things", at: num(s.journal && s.journal.at) }; // the journal's name (journal.js)
     o.splurge = { k: s.splurge && ["ice", "balloons", "cake", "fireworks"].includes(s.splurge.k) ? s.splurge.k : "", at: num(s.splurge && s.splurge.at) }; // the day's treat (splurge.js)
     { // the raccoon's barter: this week's stock and what's been traded (barter.js)
         const b = s.barter && typeof s.barter === "object" ? s.barter : {};
@@ -3624,6 +3636,7 @@ function mergeStates(a, b) {
             o.anomLog[k] = { n: Math.max(num(x.n), num(y.n)), first: firsts.length ? Math.min(...firsts) : 0, last: Math.max(num(x.last), num(y.last)), h: [...new Set([...(x.h || []), ...(y.h || [])])].slice(0, 80) };
         }
     }
+    o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small things", at: 0 }) : Object.assign({}, b.journal); // the newest name
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
     { // the barter: the newer week wins; the same week keeps one stock and everything traded on either side
         const ba = a.barter || {}, bb = b.barter || {};
@@ -4543,7 +4556,7 @@ function typeF() {
 /* Mite finishes a thought before starting the next: while a line is still typing, or hasn't been readable for a
    moment yet (speakReadUntil), a new line waits in speakQ and speakPump() shows it after. Little emotes and the
    thinking dots are just skipped then. Queued lines go stale after 15 seconds. */
-let speakQ = [], speakReadUntil = 0, lastInput = -1e9, speakWhole = false; // speakWhole: the line showing may not be cut off
+let speakQ = [], speakReadUntil = 0, lastInput = -1e9, speakWhole = false, speakReply = false; // speakReply: said in answer to a tap (an interaction you asked for), so it never queues // speakWhole: the line showing may not be cut off
 /* a line that answers something you just did (a tap, a key, a purchase) doesn't wait: it's a reply */
 ["pointerdown", "keydown", "click"].forEach(ev => document.addEventListener(ev, () => lastInput = performance.now(), true));
 function speakPump(now) {
@@ -4564,7 +4577,7 @@ function speak(text, opts = {}) {
             speakQ.push({ text, opts, at: now });
         return;
     }
-    if (!b.hidden && now < speakReadUntil && !b.classList.contains("thinking") && (now - lastInput > 700 || speakWhole)) {
+    if (!b.hidden && now < speakReadUntil && !b.classList.contains("thinking") && ((now - lastInput > 700 && !speakReply) || speakWhole)) {
         if (emote || thinking)
             return;
         if (!speakQ.some(q => q.text === text))
@@ -6157,303 +6170,6 @@ const BEH = {
         } },
     /* at the writing desk under the window: Mite writes a letter to one of its penpals, line by line; when it's
        done it goes in the notebook */
-    write: { d: [60, 60], w: c => view === "garden" && !c.late && num(S.flags.letterDay) < dayNum() ? .25 : 0, init(b, p) { // one letter a day, by itself (tap the desk for more)
-            const g = gardenGeo();
-            b.tx = clamp(g.wcx, R * 1.05, W - R * 1.05);
-            b.act = rnd(16, 24);
-            b.to = choice(pool("penpals").length ? pool("penpals") : ["a friend"]);
-        }, step(b, p, t, po, dt) {
-            const ta = goTo(b, p, po, dt, b.tx, 0, b.act);
-            if (ta < 0)
-                return;
-            po.prop = "letter";
-            po.noArms = true; // the prop draws the paw with the quill
-            po.letter = clamp(ta / (b.act - 3), 0, 1);
-            po.kt = ta;
-            po.feet = false;
-            po.sy = -.1;
-            po.lookOverride = { x: Math.sin(ta * 1.3) * .25, y: .8 };
-            po.eyes = ta % 6 < .15 ? "closed" : "half";
-            po.mouth = ta % 7 < 1.2 ? "o" : "smile";
-            if (Math.random() < .003)
-                floatText(choice(["dear…", "hm", "scratch scratch", "P.S."]), p.x, GY - R * 2.2, "#fff");
-            if (!b.sealed && ta > b.act - 3) { // finished: fold it, note it down
-                b.sealed = 1;
-                const line = fillText(compose("letters") || "Dear {penpal}, all well here. The moss sends regards.", Object.assign(ctx(), { penpal: b.to }));
-                note(`Wrote a letter to ${b.to}: “${line}”`);
-                S.flags.letterDay = dayNum();
-                postSent(b.to); // a reply may come in a few days (post.js)
-                floatText("sealed", p.x, GY - R * 2.3, "#ffd76a");
-                sfx("soft");
-            }
-        } },
-    /* in the armchair in the nook with a book (a tap on the chair: Mite says what it's reading, bookshelf.js) */
-    armread: { d: [60, 60], w: c => view === "garden" && hasChair() ? (c.dark > .45 ? 1.2 : .6) : 0, init(b) {
-            b.act = rnd(14, 24);
-            b.bookCol = choice(["#b6543c", "#3f6fa8", "#5b8a4a", "#8a4fa0", "#c99a3a", "#2e4a5a"]);
-        }, step(b, p, t, po, dt) {
-            const g = gardenGeo();
-            if (b.arr === undefined && Math.abs(p.x - g.chX) < R * 1.6 && catMakeRoom()) { // Midnightcat's in it: she moves up onto the back first
-                p.dir = -1;
-                po.lookOverride = { x: -.3, y: -.4 };
-                po.mouth = "o";
-                return;
-            }
-            const ta = goTo(b, p, po, dt, g.chX, -1, b.act);
-            if (ta < 0)
-                return;
-            if (b.onReveal && !b.revealed && ta >= (b.revealAt || 0)) {
-                b.revealed = 1;
-                b.onReveal();
-            }
-            po.lift = g.chH * .55; // sunk into the cushion
-            po.prop = "book";
-            po.bookCol = b.bookCol;
-            po.noArms = true;
-            po.lookOverride = { x: 0, y: .6 };
-            po.sy = -.12;
-            po.feet = false;
-            po.eyes = ta % 7 < .15 ? "closed" : "half";
-            if (Math.random() < .004)
-                floatText(choice(["…", "hm", "oh", "turn"]), p.x, GY - R * 2.6, "#fff");
-        } },
-    /* very now and then: Mite fetches the dried flower book from the desk, reads it in the chair, and puts it back
-       (so you find out it's there: flowers.js) */
-    fbookchair: { d: [60, 60], w: c => view === "garden" && hasChair() && hasDrawers() && (S.flowerBook || []).length ? .06 : 0, init(b) {
-            b.act = rnd(12, 18);
-            b.ph = "fetch";
-        }, step(b, p, t, po, dt) {
-            const g = gardenGeo(), deskX = clamp(g.dx0 + R * .9, R * 1.05, W - R * 1.05);
-            if (b.ph === "fetch" || b.ph === "return") {
-                if (!walkTo(p, po, deskX, R * 1.8, dt, 3))
-                    return;
-                b.t0 = b.t0 ?? t;
-                po.lookOverride = { x: -.6, y: .5 };
-                if (t - b.t0 < .7)
-                    return;
-                b.t0 = undefined;
-                if (b.ph === "return") { // back on the desk
-                    fbookOut = false;
-                    p.bt = p.dur;
-                    return;
-                }
-                fbookOut = true; // picked up
-                b.ph = "read";
-                return;
-            }
-            if (b.ph === "read") {
-                if (b.ra === undefined && Math.abs(p.x - g.chX) < R * 1.6 && catMakeRoom()) { // waits for Midnightcat to move up
-                    po.prop = "book";
-                    po.bookCol = "#365a2c";
-                    po.noArms = true;
-                    return;
-                }
-                if (!walkTo(p, po, g.chX, R * 1.8, dt, 3)) { // carrying it to the chair: the book's own paws hold it
-                    po.prop = "book";
-                    po.bookCol = "#365a2c";
-                    po.noArms = true;
-                    return;
-                }
-                b.ra = b.ra ?? t;
-                const ta = t - b.ra;
-                p.dir = -1;
-                po.lift = g.chH * .55; // sunk into the cushion, like any other book
-                po.prop = "book";
-                po.bookCol = "#365a2c";
-                po.noArms = true;
-                po.lookOverride = { x: 0, y: .6 };
-                po.sy = -.12;
-                po.feet = false;
-                po.eyes = ta % 7 < .15 ? "closed" : "half";
-                if (!b.said && ta > 2.5) { // a page with a pressed flower on it
-                    b.said = 1;
-                    const f = choice(S.flowerBook);
-                    if (f && roomVisible("garden"))
-                        speak(`The dried flower book. This page: ${f.n.toLowerCase()}${f.from && f.from !== "Mite" ? `, ${f.from === "a walk" ? "from a walk" : "from " + f.from}` : ""}. ${f.odd ? "Still a bit strange, even pressed." : "Still smells a little."}`, { ms: 6000 });
-                }
-                if (ta > b.act)
-                    b.ph = "return";
-                return;
-            }
-        } },
-    /* at the chest of drawers by the armchair: one pulled open (garden.js, openDrawer) */
-    opendrawer: { d: [60, 60], w: c => 0, init(b, p) {
-            const g = gardenGeo(), st = standBy(g.drX, R * 1.15, -1);
-            b.tx = st.x;
-            b.face = st.face;
-            b.act = 8;
-        }, step(b, p, t, po, dt) {
-            const ta = goTo(b, p, po, dt, b.tx, b.face, b.act);
-            if (ta < 0)
-                return;
-            po.arms = b.face > 0 ? [-.2, -1.2 + Math.min(1, ta) * .6] : [-1.2 + Math.min(1, ta) * .6, -.2];
-            po.lookOverride = { x: b.face * .7, y: .5 };
-            po.sy = -.04;
-            po.mouth = ta < 1.5 ? "o" : "smile";
-        } },
-    /* at the desk with the letter rack: a reply read out (post.js) */
-    readletter: { d: [60, 60], w: c => view === "garden" && S.post && S.post.inbox.some(l => !l.read) ? 1.5 : 0, init(b, p) {
-            const g = gardenGeo();
-            b.tx = clamp(g.dx1 - R * .4, R * 1.05, W - R * 1.05);
-            b.act = 8;
-        }, step(b, p, t, po, dt) {
-            const ta = goTo(b, p, po, dt, b.tx, 0, b.act);
-            if (ta < 0)
-                return;
-            if (!b.read) { // (when it's not a tap, which reads it on arrival, Mite reads it by itself)
-                b.read = 1;
-                if (!b.onReveal)
-                    p.dur = p.bt + readLetter();
-            }
-            po.prop = "letter";
-            po.letter = 1;
-            po.kt = 0;
-            po.noArms = true;
-            po.feet = false;
-            po.sy = -.08;
-            po.lookOverride = { x: Math.sin(ta * .9) * .3, y: .7 };
-            po.eyes = "open";
-            po.mouth = ta % 3 < 1.5 ? "o" : "smile";
-        } },
-    /* watering the greenhouse plants (the one you tapped, or one of them) */
-    gwater: { d: [60, 60], w: c => view === "garden" && watered() ? .3 : 0, init(b, p) {
-            waterAt = performance.now();
-            const spots = gardenPlantSpots(), sp = gardenPlantAt ? spots.reduce((a, s) => Math.abs(s.x - gardenPlantAt) < Math.abs(a.x - gardenPlantAt) ? s : a) : choice(spots);
-            gardenPlantAt = 0;
-            const st = standBy(sp.x, R * 1.25, p.x > sp.x ? 1 : -1);
-            b.tx = st.x;
-            b.face = st.face;
-            b.sp = { x: sp.x, y: sp.y };
-            b.act = rnd(5, 7);
-            b.high = sp.k.startsWith("hang"); // the hanging pots: from up on the platform (loft.js)
-            if (b.high) {
-                const g = loftGeo();
-                b.tx = clamp(sp.x + (p.x > sp.x ? 1 : -1) * R * .9, g.balL + R * .7, g.balR - R * .7);
-                b.face = Math.sign(sp.x - b.tx) || 1;
-                b.sp.y = Math.max(sp.y + R * .35, g.balY - R * 2.5); // the can just under the pot, not a long arm up to it
-                Object.assign(b, upTo(p, b.tx));
-                b.ph = "route";
-            }
-            else if ((p.ground || 0) > 0) { // the sill's down below: down the stairs first
-                Object.assign(b, routeDown(p));
-                b.ph = "route";
-            }
-        }, step(b, p, t, po, dt) {
-            if (b.ph === "route") {
-                if (!followRoute(b, p, po, dt))
-                    return;
-                b.ph = null;
-            }
-            po.ground = b.high ? loftGeo().rise : 0;
-            const ta = goTo(b, p, po, dt, b.tx, b.face, b.act);
-            if (ta < 0)
-                return;
-            po.prop = "can";
-            po.reach = b.sp;
-            po.arms = [-1.7, -.3];
-            po.mouth = "o";
-            if (ta > .4 && Math.random() < .5)
-                waterDrop();
-        } },
-    /* at the chest of drawers, nose in the flowers (flowers.js) */
-    gsmell: { d: [60, 60], w: c => 0, init(b, p) {
-            const v = vasePos(), st = standBy(v.x, R * 1.05, p.x > v.x ? 1 : -1);
-            b.tx = st.x;
-            b.face = st.face;
-            b.act = 5;
-        }, step(b, p, t, po, dt) {
-            const ta = goTo(b, p, po, dt, b.tx, b.face, b.act);
-            if (ta < 0)
-                return;
-            po.rot = .22 * p.dir * Math.min(1, ta / .5); // leaning in
-            po.pivot = "feet";
-            po.eyes = ta > .4 ? "closed" : "open";
-            po.mouth = "o";
-            po.lookOverride = { x: p.dir, y: -.2 };
-            if (ta > .6 && !b.sniffed) {
-                b.sniffed = 1;
-                floatText(choice(["sniff", "mm", "sniff sniff"]), p.x + p.dir * R, GY - R * 2.2, "#fff");
-            }
-        } },
-    /* at the writing desk, leafing through the dried flower book (flowers.js) */
-    gfread: { d: [60, 60], w: c => 0, init(b) {
-            b.act = 4;
-        }, step(b, p, t, po, dt) {
-            const g = gardenGeo(), ta = goTo(b, p, po, dt, clamp(g.dx0 + R * .9, R * 1.05, W - R * 1.05), -1, b.act);
-            if (ta < 0)
-                return;
-            po.prop = "book";
-            po.bookCol = "#365a2c";
-            po.noArms = true;
-            po.lookOverride = { x: 0, y: .6 };
-        } },
-    /* up on the nook's platform: up the stairs, then (to) somewhere along it; then fn(b, p, ta, po) once there */
-    nookup: nookUp({ w: c => view === "garden" ? .5 : 0, act: () => rnd(10, 18), at: (b, p) => rnd(loftGeo().balL + R, loftGeo().balR - R), fn(b, p, ta, po) {
-            po.feet = false; // sitting on the edge, legs over
-            po.sy = -.1;
-            po.lookOverride = { x: Math.sin(ta * .4) * .7, y: .3 };
-            po.eyes = ta % 5 < 4 ? "open" : "half";
-            if (!b.said && ta > 2.5) {
-                b.said = 1;
-                const line = compose("nookup");
-                if (line && Math.random() < .6)
-                    speak(line[0].toUpperCase() + line.slice(1) + ".", { ms: 3500 });
-            }
-        } }),
-    gpin: nookUp({ act: () => 6, at: () => gardenPin ? gardenPin.cx : W * .7, face: 0, fn(b, p, ta, po) {
-            po.lookOverride = { x: 0, y: -1 }; // up at the snapshot
-            po.mouth = "o";
-            po.eyes = ta > 1 && ta < 1.4 ? "happy" : "open";
-        } }),
-    ghang: nookUp({ act: () => 10, at: () => { const g = gardenGeo(); return (g.bx0 + g.bx1) / 2; }, face: 0, fn(b, p, ta, po) { // pinning up the first postcards
-            const g = gardenGeo(), k = boardHung();
-            if (k < BOARD_FIRST) {
-                po.lookOverride = { x: 0, y: -1 };
-                po.arms = Math.sin(ta * 9) > 0 ? [-2.6, -.3] : [-.3, -2.6]; // reaching up, paw over paw
-                po.mouth = "o";
-                if (ta > .8 + k * 1.5) { // one more card, pinned
-                    S.flags.boardN = k + 1;
-                    sfx("tock");
-                    const n = BOARD_FIRST, x = g.bx0 + (k + .5) * (g.bx1 - g.bx0) / n;
-                    for (let i = 0; i < 5; i++)
-                        addP({ type: "spark", x: x + rnd(-R * .2, R * .2), y: g.by0 + R * .4, vx: rnd(-30, 30), vy: rnd(-40, -10), g: 80, max: .6, col: "#f4ecd8", size: 2 });
-                    if (k + 1 === BOARD_FIRST) {
-                        b.doneAt = ta;
-                        speak(choice(["There. The sea, the hills, the forest and the lighthouse. Places we've stood. Now the board knows where we've been.", "Four postcards up. It's a pinboard now, not just a cork rectangle. Tap it again to look closer, and pin your own."]), { ms: 6500 });
-                        saveSoon();
-                    }
-                }
-                return;
-            }
-            po.lookOverride = { x: 0, y: -.8 };
-            po.mouth = "smile";
-            po.eyes = "happy";
-            if (b.doneAt === undefined)
-                b.doneAt = ta;
-            if (ta - b.doneAt > 2.5)
-                p.bt = p.dur;
-        } }),
-    /* up on the nook's platform, an ear to the night door (Strangeness on) */
-    ndoorlisten: nookUp({ act: () => rnd(5, 8), at: () => ndoorX() + R * .85, face: -1, fn(b, p, ta, po) {
-            po.rot = -.3;
-            po.pivot = "feet";
-            po.lookOverride = { x: -1, y: .2 };
-            po.eyes = "half";
-            po.mouth = "flat";
-            if (Math.random() < .006)
-                floatText(choice(["…footsteps?", "…knocking?", "…someone humming"]), p.x - R, GY - (p.ground || 0) - R * 1.8, "#fff");
-        } }),
-    gpossum: nookUp({ act: () => 6, at: (b, p) => possum.x + (p.x > possum.x ? 1 : -1) * R * .95, fn(b, p, ta, po) {
-            p.dir = possum.x > p.x ? 1 : -1;
-            po.lookOverride = { x: p.dir * .6, y: -.9 }; // up at the possum, hanging asleep from its beam
-            po.mouth = ta % 3 < 1.5 ? "o" : "smile";
-        } }),
-    // the wagon's left edge is the nook's right edge; the view goes along (camera.js)
-    toGarden: doorWalk({ w: c => view === "room" && !c.late ? .3 : 0, out: () => -R * .1, room: "garden", enter: p => {
-            gardenSince = performance.now();
-            p.x += W;
-        }, stop: () => W * .42 }),
-    fromGarden: doorWalk({ out: () => W + R * .1, room: "room", enter: p => { p.x -= W; }, stop: () => W * .3 }),
     hop: { d: [1.6, 2.6], w: c => 1.4, step(b, p, t, po) {
             const ph = (t * 2.6) % 1;
             po.lift = Math.max(0, Math.sin(ph * Math.PI)) * R * .9;
@@ -6819,42 +6535,6 @@ const BEH = {
             po.mouth = "flat";
             if (Math.random() < .006)
                 floatText(b.tx !== undefined ? choice(["…footsteps?", "…knocking?", "…someone humming"]) : "…", p.x + R * p.dir, GY - R * 1.8, "#fff");
-        } },
-    ward: { d: [60, 60], w: c => c.strange > 0 && (c.dark > .5 || isFull(c.moonP)) ? .4 * c.strange : 0, init(b) {
-            b.act = rnd(7, 10);
-            if (own("circle") && view === "archive") // (the circle's in the archive)
-                b.tx = circleGeo().x;
-        }, step(b, p, t, po, dt) {
-            let ta = t;
-            if (b.tx !== undefined) {
-                ta = goTo(b, p, po, dt, b.tx, 0, b.act);
-                if (ta < 0)
-                    return;
-            }
-            else if (p.bt > b.act)
-                p.dur = p.bt;
-            po.ward = clamp(ta / 3, 0, 1);
-            po.eyes = "closed";
-            po.arms = [-1.6, -1.6];
-            po.mouth = "o";
-            po.feet = false;
-            po.sy = -.05;
-        } },
-    /* at the edge of the chalk circle, looking back into the past (circle.js: showGlimpse) */
-    scry: { d: [60, 60], w: c => 0, init(b) {
-            b.act = 9;
-        }, step(b, p, t, po, dt) {
-            const ta = goTo(b, p, po, dt, circleGeo().x, 0, b.act);
-            if (ta < 0)
-                return;
-            po.ward = clamp(ta / 1.5, 0, 1);
-            po.eyes = ta < 2.2 ? "closed" : "open";
-            po.arms = [-1.6, -1.6];
-            po.mouth = "o";
-            po.feet = false;
-            po.sy = -.05;
-            if (Math.random() < .08)
-                addP({ type: "spark", x: p.x + rnd(-R * 1.2, R * 1.2), y: GY + rnd(0, (H - GY) * .4), vx: 0, vy: -rnd(8, 20), g: -4, max: 1.2, col: "#e8f0ff", size: 2 });
         } },
     stare: { d: [4, 6], w: c => c.strange > 0 ? .35 * c.strange : 0, init(b) {
             b.side = Math.random() < .5 ? -1 : 1;
@@ -7263,76 +6943,6 @@ const BEH = {
     /* walking between rooms (doorWalk, below): out through one edge, in through the other, then whatever was waiting */
     toArchive: doorWalk({ w: c => view === "room" && !c.late ? .12 : 0, out: () => W + R * .1, room: "archive", enter: p => { p.x -= W; }, stop: () => R * 2.8 }),
     toWagon: doorWalk({ out: () => -R * .1, room: "room", enter: p => { p.x += W; }, stop: () => W - R * 2.2 }),
-    // in the archive: wander along the shelves and read the week tags
-    browse: { d: [6, 11], w: c => 0, init(b, p) {
-            const g = archGeo();
-            b.tx = clamp(rnd(g.x0 + R, g.x1 - R), R * 1.05, W - R * 1.05);
-        }, step(b, p, t, po, dt) {
-            const d = b.tx - p.x;
-            if (Math.abs(d) > 3) {
-                p.dir = Math.sign(d);
-                p.x += Math.sign(d) * Math.min(Math.abs(d), R * 1.2 * dt);
-                po.walk = true;
-                return;
-            }
-            po.lookOverride = { x: Math.sin(t * .7) * .6, y: -.9 };
-            po.mouth = t % 5 < 1 ? "o" : "smile";
-            if (!b.said && t > 3 && Math.random() < .01) {
-                b.said = 1;
-                const w = archWeeks()[ri(0, Math.max(0, Math.min(5, archWeeks().length - 1)))];
-                floatText(w ? choice([`week ${w.n}`, "so many", "hm", "dusty"]) : "hm", p.x, GY - R * 2.3, "#fff");
-            }
-        } },
-    // fetch a box from the shelves: walk over, use the ladder for high ones, read the label
-    fetchBox: { d: [60, 60], w: c => 0, init(b, p) {
-            const g = archGeo();
-            b.need = clamp(GY - b.by - R * 1.75, 0, GY - g.rail - R * .4);
-            b.tx = clamp(b.bx + R * .85, R * 1.05, W - R * 1.05);
-            b.ph = "walk";
-            b.h = 0;
-            if (b.need > 0)
-                archLadder.tx = b.tx - R * .45;
-        }, step(b, p, t, po, dt) {
-            if (b.ph === "walk") {
-                const d = b.tx - p.x;
-                if (Math.abs(d) > 2 || (b.need > 0 && Math.abs(archLadder.x - archLadder.tx) > 2)) {
-                    if (Math.abs(d) > 2) {
-                        p.dir = Math.sign(d);
-                        p.x += Math.sign(d) * Math.min(Math.abs(d), R * 1.8 * dt);
-                        po.walk = true;
-                    }
-                    return;
-                }
-                b.ph = "up";
-            }
-            p.dir = -1;
-            if (b.ph === "up") {
-                b.h = Math.min(b.need, b.h + R * 1.6 * dt);
-                po.arms = Math.sin(t * 9) > 0 ? [-1.3, -.4] : [-.4, -1.3];
-                if (b.h >= b.need) {
-                    b.ph = "look";
-                    b.t0 = t;
-                    if (b.onReveal && !b.revealed) {
-                        b.revealed = 1;
-                        b.onReveal();
-                    }
-                }
-            }
-            else if (b.ph === "look") {
-                po.reach = { x: b.bx - R * .335, y: b.by - R * .25 + R * .483 };
-                po.lookOverride = { x: -.8, y: -.6 };
-                po.mouth = "o";
-                if (t - b.t0 > 4.5)
-                    b.ph = "down";
-            }
-            else {
-                b.h = Math.max(0, b.h - R * 1.8 * dt);
-                po.arms = Math.sin(t * 9) > 0 ? [-1.3, -.4] : [-.4, -1.3];
-                if (b.h <= 0)
-                    p.bt = p.dur;
-            }
-            po.ground = b.h;
-        } },
     descend: { d: [60, 60], w: c => 0, init(b, p) {
             Object.assign(b, routeDown(p));
         }, step(b, p, t, po, dt) {
@@ -7745,6 +7355,482 @@ const BEH = {
             if (ta > b.act - .8)
                 po.fly = { x: jx, y: jy };
         } },
+};
+/* pick the next behaviour: each one's w(c) is its weight right now; repeats are less likely */
+/* in the sleeping nook: potter about, then back to the wagon (at night Mite goes back to sleep on its futon) */
+function chooseGardenBeh() {
+    const c = ctx();
+    c.dark = skyAt(c.h + c.now.getMinutes() / 60).dark;
+    c.late = isLate(c.h);
+    if (S.lightsOut || c.late)
+        return pet.start("sleep");
+    if (performance.now() - gardenSince > rnd(70e3, 140e3))
+        return pet.start("fromGarden");
+    const opts = [["idle", 3], ["wander", 1.4], ["gwater", BEH.gwater.w(c)], ["write", BEH.write.w(c)], ["armread", BEH.armread.w(c)], ["readletter", BEH.readletter.w(c)], ["lookAround", .6], ["stretch", .3], ["yawn", c.dark > .5 ? .8 : .3], ["catvisit", BEH.catvisit.w(c) * 2], ["ndoorlisten", own("ndoor") ? BEH.listen.w(c) * 1.5 : 0], ["listen", BEH.listen.w(c) * .5], ["nookup", .5], ["fbookchair", BEH.fbookchair.w(c)]].filter(([k, w]) => BEH[k] && w > 0 && k !== pet.beh);
+    let r = Math.random() * opts.reduce((a, o) => a + o[1], 0);
+    for (const [k, w] of opts)
+        if ((r -= w) <= 0)
+            return pet.start(k);
+    pet.start("idle");
+}
+function chooseBeh() {
+    if (view === "archive")
+        return chooseArchiveBeh();
+    if (view === "garden")
+        return chooseGardenBeh();
+    if (S.lightsOut) {
+        pet.start("sleep");
+        return;
+    }
+    const c = ctx();
+    c.dark = skyAt(c.h + c.now.getMinutes() / 60).dark;
+    c.late = isLate(c.h);
+    const opts = [];
+    for (const k in BEH) {
+        let w = BEH[k].w(c);
+        if (k === pet.beh)
+            w *= .3;
+        if (reduced && (k === "spin" || k === "hiccup"))
+            w = 0;
+        if (w > 0)
+            opts.push([k, w]);
+    }
+    let t = opts.reduce((a, b) => a + b[1], 0) * Math.random();
+    for (const [k, w] of opts) {
+        t -= w;
+        if (t <= 0) {
+            pet.start(k);
+            return;
+        }
+    }
+    pet.start("idle");
+}
+
+</script>
+<script>/* js/scene/behaviours-nook.js */
+"use strict";
+/*
+ * behaviours-nook.js - What Mite does in the nook (the room to the left of the wagon): writing letters at the desk,
+ * reading in the chesterfield or the armchair, the dried flower book, the chest of drawers and its tenants, the
+ * plants, the vase, the platform up high (the pinboard, the night door, the possum's beam). Added to BEH, the same
+ * as the behaviours in behaviours.js (d, w, init, step); GARDEN_OK (pet.js) lists what may run there.
+ */
+Object.assign(BEH, {
+    write: { d: [60, 60], w: c => view === "garden" && !c.late && num(S.flags.letterDay) < dayNum() ? .25 : 0, init(b, p) { // one letter a day, by itself (tap the desk for more)
+            const g = gardenGeo();
+            b.tx = clamp(g.wcx, R * 1.05, W - R * 1.05);
+            b.act = rnd(16, 24);
+            b.to = choice(pool("penpals").length ? pool("penpals") : ["a friend"]);
+        }, step(b, p, t, po, dt) {
+            const ta = goTo(b, p, po, dt, b.tx, 0, b.act);
+            if (ta < 0)
+                return;
+            po.prop = "letter";
+            po.noArms = true; // the prop draws the paw with the quill
+            po.letter = clamp(ta / (b.act - 3), 0, 1);
+            po.kt = ta;
+            po.feet = false;
+            po.sy = -.1;
+            po.lookOverride = { x: Math.sin(ta * 1.3) * .25, y: .8 };
+            po.eyes = ta % 6 < .15 ? "closed" : "half";
+            po.mouth = ta % 7 < 1.2 ? "o" : "smile";
+            if (Math.random() < .003)
+                floatText(choice(["dear…", "hm", "scratch scratch", "P.S."]), p.x, GY - R * 2.2, "#fff");
+            if (!b.sealed && ta > b.act - 3) { // finished: fold it, note it down
+                b.sealed = 1;
+                const line = fillText(compose("letters") || "Dear {penpal}, all well here. The moss sends regards.", Object.assign(ctx(), { penpal: b.to }));
+                note(`Wrote a letter to ${b.to}: “${line}”`);
+                S.flags.letterDay = dayNum();
+                postSent(b.to); // a reply may come in a few days (post.js)
+                floatText("sealed", p.x, GY - R * 2.3, "#ffd76a");
+                sfx("soft");
+            }
+        } },
+    /* in the armchair in the nook with a book (a tap on the chair: Mite says what it's reading, bookshelf.js) */
+    armread: { d: [60, 60], w: c => view === "garden" && hasChair() ? (c.dark > .45 ? 1.2 : .6) : 0, init(b) {
+            b.act = rnd(14, 24);
+            b.bookCol = choice(["#b6543c", "#3f6fa8", "#5b8a4a", "#8a4fa0", "#c99a3a", "#2e4a5a"]);
+        }, step(b, p, t, po, dt) {
+            const g = gardenGeo();
+            if (b.arr === undefined && Math.abs(p.x - g.chX) < R * 1.6 && catMakeRoom()) { // Midnightcat's in it: she moves up onto the back first
+                p.dir = -1;
+                po.lookOverride = { x: -.3, y: -.4 };
+                po.mouth = "o";
+                return;
+            }
+            const ta = goTo(b, p, po, dt, g.chX, -1, b.act);
+            if (ta < 0)
+                return;
+            if (b.onReveal && !b.revealed && ta >= (b.revealAt || 0)) {
+                b.revealed = 1;
+                b.onReveal();
+            }
+            po.lift = g.chH * .55; // sunk into the cushion
+            po.prop = "book";
+            po.bookCol = b.bookCol;
+            po.noArms = true;
+            po.lookOverride = { x: 0, y: .6 };
+            po.sy = -.12;
+            po.feet = false;
+            po.eyes = ta % 7 < .15 ? "closed" : "half";
+            if (Math.random() < .004)
+                floatText(choice(["…", "hm", "oh", "turn"]), p.x, GY - R * 2.6, "#fff");
+        } },
+    /* very now and then: Mite fetches the dried flower book from the desk, reads it in the chair, and puts it back
+       (so you find out it's there: flowers.js) */
+    fbookchair: { d: [60, 60], w: c => view === "garden" && hasChair() && hasDrawers() && (S.flowerBook || []).length ? .06 : 0, init(b) {
+            b.act = rnd(12, 18);
+            b.ph = "fetch";
+        }, step(b, p, t, po, dt) {
+            const g = gardenGeo(), deskX = clamp(g.dx0 + R * .9, R * 1.05, W - R * 1.05);
+            if (b.ph === "fetch" || b.ph === "return") {
+                if (!walkTo(p, po, deskX, R * 1.8, dt, 3))
+                    return;
+                b.t0 = b.t0 ?? t;
+                po.lookOverride = { x: -.6, y: .5 };
+                if (t - b.t0 < .7)
+                    return;
+                b.t0 = undefined;
+                if (b.ph === "return") { // back on the desk
+                    fbookOut = false;
+                    p.bt = p.dur;
+                    return;
+                }
+                fbookOut = true; // picked up
+                b.ph = "read";
+                return;
+            }
+            if (b.ph === "read") {
+                if (b.ra === undefined && Math.abs(p.x - g.chX) < R * 1.6 && catMakeRoom()) { // waits for Midnightcat to move up
+                    po.prop = "book";
+                    po.bookCol = "#365a2c";
+                    po.noArms = true;
+                    return;
+                }
+                if (!walkTo(p, po, g.chX, R * 1.8, dt, 3)) { // carrying it to the chair: the book's own paws hold it
+                    po.prop = "book";
+                    po.bookCol = "#365a2c";
+                    po.noArms = true;
+                    return;
+                }
+                b.ra = b.ra ?? t;
+                const ta = t - b.ra;
+                p.dir = -1;
+                po.lift = g.chH * .55; // sunk into the cushion, like any other book
+                po.prop = "book";
+                po.bookCol = "#365a2c";
+                po.noArms = true;
+                po.lookOverride = { x: 0, y: .6 };
+                po.sy = -.12;
+                po.feet = false;
+                po.eyes = ta % 7 < .15 ? "closed" : "half";
+                if (!b.said && ta > 2.5) { // a page with a pressed flower on it
+                    b.said = 1;
+                    const f = choice(S.flowerBook);
+                    if (f && roomVisible("garden"))
+                        speak(`The dried flower book. This page: ${f.n.toLowerCase()}${f.from && f.from !== "Mite" ? `, ${f.from === "a walk" ? "from a walk" : "from " + f.from}` : ""}. ${f.odd ? "Still a bit strange, even pressed." : "Still smells a little."}`, { ms: 6000 });
+                }
+                if (ta > b.act)
+                    b.ph = "return";
+                return;
+            }
+        } },
+    /* at the chest of drawers by the armchair: one pulled open (garden.js, openDrawer) */
+    opendrawer: { d: [60, 60], w: c => 0, init(b, p) {
+            const g = gardenGeo(), st = standBy(g.drX, R * 1.15, -1);
+            b.tx = st.x;
+            b.face = st.face;
+            b.act = 8;
+        }, step(b, p, t, po, dt) {
+            const ta = goTo(b, p, po, dt, b.tx, b.face, b.act);
+            if (ta < 0)
+                return;
+            po.arms = b.face > 0 ? [-.2, -1.2 + Math.min(1, ta) * .6] : [-1.2 + Math.min(1, ta) * .6, -.2];
+            po.lookOverride = { x: b.face * .7, y: .5 };
+            po.sy = -.04;
+            po.mouth = ta < 1.5 ? "o" : "smile";
+        } },
+    /* at the desk with the letter rack: a reply read out (post.js) */
+    readletter: { d: [60, 60], w: c => view === "garden" && S.post && S.post.inbox.some(l => !l.read) ? 1.5 : 0, init(b, p) {
+            const g = gardenGeo();
+            b.tx = clamp(g.dx1 - R * .4, R * 1.05, W - R * 1.05);
+            b.act = 8;
+        }, step(b, p, t, po, dt) {
+            const ta = goTo(b, p, po, dt, b.tx, 0, b.act);
+            if (ta < 0)
+                return;
+            if (!b.read) { // (when it's not a tap, which reads it on arrival, Mite reads it by itself)
+                b.read = 1;
+                if (!b.onReveal)
+                    p.dur = p.bt + readLetter();
+            }
+            po.prop = "letter";
+            po.letter = 1;
+            po.kt = 0;
+            po.noArms = true;
+            po.feet = false;
+            po.sy = -.08;
+            po.lookOverride = { x: Math.sin(ta * .9) * .3, y: .7 };
+            po.eyes = "open";
+            po.mouth = ta % 3 < 1.5 ? "o" : "smile";
+        } },
+    /* watering the greenhouse plants (the one you tapped, or one of them) */
+    gwater: { d: [60, 60], w: c => view === "garden" && watered() ? .3 : 0, init(b, p) {
+            waterAt = performance.now();
+            const spots = gardenPlantSpots(), sp = gardenPlantAt ? spots.reduce((a, s) => Math.abs(s.x - gardenPlantAt) < Math.abs(a.x - gardenPlantAt) ? s : a) : choice(spots);
+            gardenPlantAt = 0;
+            const st = standBy(sp.x, R * 1.25, p.x > sp.x ? 1 : -1);
+            b.tx = st.x;
+            b.face = st.face;
+            b.sp = { x: sp.x, y: sp.y };
+            b.act = rnd(5, 7);
+            b.high = sp.k.startsWith("hang"); // the hanging pots: from up on the platform (loft.js)
+            if (b.high) {
+                const g = loftGeo();
+                b.tx = clamp(sp.x + (p.x > sp.x ? 1 : -1) * R * .9, g.balL + R * .7, g.balR - R * .7);
+                b.face = Math.sign(sp.x - b.tx) || 1;
+                b.sp.y = Math.max(sp.y + R * .35, g.balY - R * 2.5); // the can just under the pot, not a long arm up to it
+                Object.assign(b, upTo(p, b.tx));
+                b.ph = "route";
+            }
+            else if ((p.ground || 0) > 0) { // the sill's down below: down the stairs first
+                Object.assign(b, routeDown(p));
+                b.ph = "route";
+            }
+        }, step(b, p, t, po, dt) {
+            if (b.ph === "route") {
+                if (!followRoute(b, p, po, dt))
+                    return;
+                b.ph = null;
+            }
+            po.ground = b.high ? loftGeo().rise : 0;
+            const ta = goTo(b, p, po, dt, b.tx, b.face, b.act);
+            if (ta < 0)
+                return;
+            po.prop = "can";
+            po.reach = b.sp;
+            po.arms = [-1.7, -.3];
+            po.mouth = "o";
+            if (ta > .4 && Math.random() < .5)
+                waterDrop();
+        } },
+    /* at the chest of drawers, nose in the flowers (flowers.js) */
+    gsmell: { d: [60, 60], w: c => 0, init(b, p) {
+            const v = vasePos(), st = standBy(v.x, R * 1.05, p.x > v.x ? 1 : -1);
+            b.tx = st.x;
+            b.face = st.face;
+            b.act = 5;
+        }, step(b, p, t, po, dt) {
+            const ta = goTo(b, p, po, dt, b.tx, b.face, b.act);
+            if (ta < 0)
+                return;
+            po.rot = .22 * p.dir * Math.min(1, ta / .5); // leaning in
+            po.pivot = "feet";
+            po.eyes = ta > .4 ? "closed" : "open";
+            po.mouth = "o";
+            po.lookOverride = { x: p.dir, y: -.2 };
+            if (ta > .6 && !b.sniffed) {
+                b.sniffed = 1;
+                floatText(choice(["sniff", "mm", "sniff sniff"]), p.x + p.dir * R, GY - R * 2.2, "#fff");
+            }
+        } },
+    /* at the writing desk, leafing through the dried flower book (flowers.js) */
+    gfread: { d: [60, 60], w: c => 0, init(b) {
+            b.act = 4;
+        }, step(b, p, t, po, dt) {
+            const g = gardenGeo(), ta = goTo(b, p, po, dt, clamp(g.dx0 + R * .9, R * 1.05, W - R * 1.05), -1, b.act);
+            if (ta < 0)
+                return;
+            po.prop = "book";
+            po.bookCol = "#365a2c";
+            po.noArms = true;
+            po.lookOverride = { x: 0, y: .6 };
+        } },
+    /* up on the nook's platform: up the stairs, then (to) somewhere along it; then fn(b, p, ta, po) once there */
+    nookup: nookUp({ w: c => view === "garden" ? .5 : 0, act: () => rnd(10, 18), at: (b, p) => rnd(loftGeo().balL + R, loftGeo().balR - R), fn(b, p, ta, po) {
+            po.feet = false; // sitting on the edge, legs over
+            po.sy = -.1;
+            po.lookOverride = { x: Math.sin(ta * .4) * .7, y: .3 };
+            po.eyes = ta % 5 < 4 ? "open" : "half";
+            if (!b.said && ta > 2.5) {
+                b.said = 1;
+                const line = compose("nookup");
+                if (line && Math.random() < .6)
+                    speak(line[0].toUpperCase() + line.slice(1) + ".", { ms: 3500 });
+            }
+        } }),
+    gpin: nookUp({ act: () => 6, at: () => gardenPin ? gardenPin.cx : W * .7, face: 0, fn(b, p, ta, po) {
+            po.lookOverride = { x: 0, y: -1 }; // up at the snapshot
+            po.mouth = "o";
+            po.eyes = ta > 1 && ta < 1.4 ? "happy" : "open";
+        } }),
+    ghang: nookUp({ act: () => 10, at: () => { const g = gardenGeo(); return (g.bx0 + g.bx1) / 2; }, face: 0, fn(b, p, ta, po) { // pinning up the first postcards
+            const g = gardenGeo(), k = boardHung();
+            if (k < BOARD_FIRST) {
+                po.lookOverride = { x: 0, y: -1 };
+                po.arms = Math.sin(ta * 9) > 0 ? [-2.6, -.3] : [-.3, -2.6]; // reaching up, paw over paw
+                po.mouth = "o";
+                if (ta > .8 + k * 1.5) { // one more card, pinned
+                    S.flags.boardN = k + 1;
+                    sfx("tock");
+                    const n = BOARD_FIRST, x = g.bx0 + (k + .5) * (g.bx1 - g.bx0) / n;
+                    for (let i = 0; i < 5; i++)
+                        addP({ type: "spark", x: x + rnd(-R * .2, R * .2), y: g.by0 + R * .4, vx: rnd(-30, 30), vy: rnd(-40, -10), g: 80, max: .6, col: "#f4ecd8", size: 2 });
+                    if (k + 1 === BOARD_FIRST) {
+                        b.doneAt = ta;
+                        speak(choice(["There. The sea, the hills, the forest and the lighthouse. Places we've stood. Now the board knows where we've been.", "Four postcards up. It's a pinboard now, not just a cork rectangle. Tap it again to look closer, and pin your own."]), { ms: 6500 });
+                        saveSoon();
+                    }
+                }
+                return;
+            }
+            po.lookOverride = { x: 0, y: -.8 };
+            po.mouth = "smile";
+            po.eyes = "happy";
+            if (b.doneAt === undefined)
+                b.doneAt = ta;
+            if (ta - b.doneAt > 2.5)
+                p.bt = p.dur;
+        } }),
+    /* up on the nook's platform, an ear to the night door (Strangeness on) */
+    ndoorlisten: nookUp({ act: () => rnd(5, 8), at: () => ndoorX() + R * .85, face: -1, fn(b, p, ta, po) {
+            po.rot = -.3;
+            po.pivot = "feet";
+            po.lookOverride = { x: -1, y: .2 };
+            po.eyes = "half";
+            po.mouth = "flat";
+            if (Math.random() < .006)
+                floatText(choice(["…footsteps?", "…knocking?", "…someone humming"]), p.x - R, GY - (p.ground || 0) - R * 1.8, "#fff");
+        } }),
+    gpossum: nookUp({ act: () => 6, at: (b, p) => possum.x + (p.x > possum.x ? 1 : -1) * R * .95, fn(b, p, ta, po) {
+            p.dir = possum.x > p.x ? 1 : -1;
+            po.lookOverride = { x: p.dir * .6, y: -.9 }; // up at the possum, hanging asleep from its beam
+            po.mouth = ta % 3 < 1.5 ? "o" : "smile";
+        } }),
+    // the wagon's left edge is the nook's right edge; the view goes along (camera.js)
+    toGarden: doorWalk({ w: c => view === "room" && !c.late ? .3 : 0, out: () => -R * .1, room: "garden", enter: p => {
+            gardenSince = performance.now();
+            p.x += W;
+        }, stop: () => W * .42 }),
+    fromGarden: doorWalk({ out: () => W + R * .1, room: "room", enter: p => { p.x -= W; }, stop: () => W * .3 }),
+});
+
+</script>
+<script>/* js/scene/behaviours-archive.js */
+"use strict";
+/*
+ * behaviours-archive.js - What Mite does in the archive (the room to the right): browsing the shelves, fetching a
+ * box with the ladder, archival work (archivework), the bigger-inside closet (closetpeek), and the chalk circle's
+ * scrying and warding. Added to BEH like behaviours.js; ARCHIVE_OK and chooseArchiveBeh (archive-room.js) decide
+ * what runs there.
+ */
+Object.assign(BEH, {
+    ward: { d: [60, 60], w: c => c.strange > 0 && (c.dark > .5 || isFull(c.moonP)) ? .4 * c.strange : 0, init(b) {
+            b.act = rnd(7, 10);
+            if (own("circle") && view === "archive") // (the circle's in the archive)
+                b.tx = circleGeo().x;
+        }, step(b, p, t, po, dt) {
+            let ta = t;
+            if (b.tx !== undefined) {
+                ta = goTo(b, p, po, dt, b.tx, 0, b.act);
+                if (ta < 0)
+                    return;
+            }
+            else if (p.bt > b.act)
+                p.dur = p.bt;
+            po.ward = clamp(ta / 3, 0, 1);
+            po.eyes = "closed";
+            po.arms = [-1.6, -1.6];
+            po.mouth = "o";
+            po.feet = false;
+            po.sy = -.05;
+        } },
+    /* at the edge of the chalk circle, looking back into the past (circle.js: showGlimpse) */
+    scry: { d: [60, 60], w: c => 0, init(b) {
+            b.act = 9;
+        }, step(b, p, t, po, dt) {
+            const ta = goTo(b, p, po, dt, circleGeo().x, 0, b.act);
+            if (ta < 0)
+                return;
+            po.ward = clamp(ta / 1.5, 0, 1);
+            po.eyes = ta < 2.2 ? "closed" : "open";
+            po.arms = [-1.6, -1.6];
+            po.mouth = "o";
+            po.feet = false;
+            po.sy = -.05;
+            if (Math.random() < .08)
+                addP({ type: "spark", x: p.x + rnd(-R * 1.2, R * 1.2), y: GY + rnd(0, (H - GY) * .4), vx: 0, vy: -rnd(8, 20), g: -4, max: 1.2, col: "#e8f0ff", size: 2 });
+        } },
+    // in the archive: wander along the shelves and read the week tags
+    browse: { d: [6, 11], w: c => 0, init(b, p) {
+            const g = archGeo();
+            b.tx = clamp(rnd(g.x0 + R, g.x1 - R), R * 1.05, W - R * 1.05);
+        }, step(b, p, t, po, dt) {
+            const d = b.tx - p.x;
+            if (Math.abs(d) > 3) {
+                p.dir = Math.sign(d);
+                p.x += Math.sign(d) * Math.min(Math.abs(d), R * 1.2 * dt);
+                po.walk = true;
+                return;
+            }
+            po.lookOverride = { x: Math.sin(t * .7) * .6, y: -.9 };
+            po.mouth = t % 5 < 1 ? "o" : "smile";
+            if (!b.said && t > 3 && Math.random() < .01) {
+                b.said = 1;
+                const w = archWeeks()[ri(0, Math.max(0, Math.min(5, archWeeks().length - 1)))];
+                floatText(w ? choice([`week ${w.n}`, "so many", "hm", "dusty"]) : "hm", p.x, GY - R * 2.3, "#fff");
+            }
+        } },
+    // fetch a box from the shelves: walk over, use the ladder for high ones, read the label
+    fetchBox: { d: [60, 60], w: c => 0, init(b, p) {
+            const g = archGeo();
+            b.need = clamp(GY - b.by - R * 1.75, 0, GY - g.rail - R * .4);
+            b.tx = clamp(b.bx + R * .85, R * 1.05, W - R * 1.05);
+            b.ph = "walk";
+            b.h = 0;
+            if (b.need > 0)
+                archLadder.tx = b.tx - R * .45;
+        }, step(b, p, t, po, dt) {
+            if (b.ph === "walk") {
+                const d = b.tx - p.x;
+                if (Math.abs(d) > 2 || (b.need > 0 && Math.abs(archLadder.x - archLadder.tx) > 2)) {
+                    if (Math.abs(d) > 2) {
+                        p.dir = Math.sign(d);
+                        p.x += Math.sign(d) * Math.min(Math.abs(d), R * 1.8 * dt);
+                        po.walk = true;
+                    }
+                    return;
+                }
+                b.ph = "up";
+            }
+            p.dir = -1;
+            if (b.ph === "up") {
+                b.h = Math.min(b.need, b.h + R * 1.6 * dt);
+                po.arms = Math.sin(t * 9) > 0 ? [-1.3, -.4] : [-.4, -1.3];
+                if (b.h >= b.need) {
+                    b.ph = "look";
+                    b.t0 = t;
+                    if (b.onReveal && !b.revealed) {
+                        b.revealed = 1;
+                        b.onReveal();
+                    }
+                }
+            }
+            else if (b.ph === "look") {
+                po.reach = { x: b.bx - R * .335, y: b.by - R * .25 + R * .483 };
+                po.lookOverride = { x: -.8, y: -.6 };
+                po.mouth = "o";
+                if (t - b.t0 > 4.5)
+                    b.ph = "down";
+            }
+            else {
+                b.h = Math.max(0, b.h - R * 1.8 * dt);
+                po.arms = Math.sin(t * 9) > 0 ? [-1.3, -.4] : [-.4, -1.3];
+                if (b.h <= 0)
+                    p.bt = p.dur;
+            }
+            po.ground = b.h;
+        } },
     // the closet that's bigger inside: Mite opens it, now and then (at most every eight minutes or so), and
     // something different happens each time (never the same thing twice in a row): an echo, something pulled out,
     // a breeze from somewhere else, a knock from inside, a far-off lantern that waves back, or a box put into
@@ -7874,56 +7960,7 @@ const BEH = {
                 say("archive_" + b.k);
             }
         } },
-};
-/* pick the next behaviour: each one's w(c) is its weight right now; repeats are less likely */
-/* in the sleeping nook: potter about, then back to the wagon (at night Mite goes back to sleep on its futon) */
-function chooseGardenBeh() {
-    const c = ctx();
-    c.dark = skyAt(c.h + c.now.getMinutes() / 60).dark;
-    c.late = isLate(c.h);
-    if (S.lightsOut || c.late)
-        return pet.start("sleep");
-    if (performance.now() - gardenSince > rnd(70e3, 140e3))
-        return pet.start("fromGarden");
-    const opts = [["idle", 3], ["wander", 1.4], ["gwater", BEH.gwater.w(c)], ["write", BEH.write.w(c)], ["armread", BEH.armread.w(c)], ["readletter", BEH.readletter.w(c)], ["lookAround", .6], ["stretch", .3], ["yawn", c.dark > .5 ? .8 : .3], ["catvisit", BEH.catvisit.w(c) * 2], ["ndoorlisten", own("ndoor") ? BEH.listen.w(c) * 1.5 : 0], ["listen", BEH.listen.w(c) * .5], ["nookup", .5], ["fbookchair", BEH.fbookchair.w(c)]].filter(([k, w]) => BEH[k] && w > 0 && k !== pet.beh);
-    let r = Math.random() * opts.reduce((a, o) => a + o[1], 0);
-    for (const [k, w] of opts)
-        if ((r -= w) <= 0)
-            return pet.start(k);
-    pet.start("idle");
-}
-function chooseBeh() {
-    if (view === "archive")
-        return chooseArchiveBeh();
-    if (view === "garden")
-        return chooseGardenBeh();
-    if (S.lightsOut) {
-        pet.start("sleep");
-        return;
-    }
-    const c = ctx();
-    c.dark = skyAt(c.h + c.now.getMinutes() / 60).dark;
-    c.late = isLate(c.h);
-    const opts = [];
-    for (const k in BEH) {
-        let w = BEH[k].w(c);
-        if (k === pet.beh)
-            w *= .3;
-        if (reduced && (k === "spin" || k === "hiccup"))
-            w = 0;
-        if (w > 0)
-            opts.push([k, w]);
-    }
-    let t = opts.reduce((a, b) => a + b[1], 0) * Math.random();
-    for (const [k, w] of opts) {
-        t -= w;
-        if (t <= 0) {
-            pet.start(k);
-            return;
-        }
-    }
-    pet.start("idle");
-}
+});
 
 </script>
 <script>/* js/scene/draw-pet.js */
@@ -9178,7 +9215,7 @@ function drawWindow(rm, sky, d, hf, tsec, dt, dk, arr = wparts, shutters = true)
         }
     }
     drawFireworks(wx - wr, wy - wr, wr * 2, wr * 1.4, tsec, sky.dark); // fireworks over the hills, the evening you bought them (splurge.js)
-    if (spaceOn()) // the detour: space outside (space.js)
+    if (spaceOn()) // the detour: space outside (planeshift.js)
         drawSpace(wx - wr, wy - wr, wr * 2, wr * 2, tsec);
     else if (deepOn()) // or the bottom of the sea
         drawDeep(wx - wr, wy - wr, wr * 2, wr * 2, tsec);
@@ -9476,6 +9513,9 @@ const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () 
             if (t)
                 speak(t, { ms: clamp(3500 + t.length * 50, 5000, 11000) });
             return clamp(3.5 + (t || "").length * .05, 5, 11);
+        } }, journal: { beh: "admire", revealAt: .5, room: "archive", extra: null, show: () => {
+            showJournal(0);
+            return 1.5;
         } }, calendar: { beh: "admire", revealAt: .5, extra: null, show: () => {
             showCalendarCard();
             return 1.5;
@@ -9553,6 +9593,8 @@ function startObj(kind) {
         const side = ph.x > W * .5 ? 1 : -1, tx = clamp(ph.x - side * R * .95, R * 1.05, W - R * 1.05); // stand beside it, facing it
         a = { beh: "answerphone", revealAt: .5, room: ph.room, extra: { tx, face: side, ph }, show: () => answerPhone(ph, side) };
     }
+    if (a && kind === "journal")
+        a = Object.assign({}, a, { extra: { tx: journalHit ? journalHit.cx : pet.x } });
     if (a && kind === "calendar")
         a = Object.assign({}, a, { extra: { tx: calHit ? calHit.cx : pet.x } });
     if (kind === "capsule")
@@ -9625,7 +9667,14 @@ function startObj(kind) {
         cur.shown = true;
         if (userKinds.delete(kind))
             lastInput = performance.now(); // you asked for this one: Mite answers now, even mid-sentence
-        const secs = a.show() || 6;
+        speakReply = true; // (what Mite says here answers your tap: it doesn't wait behind an older line, speech.js)
+        let secs = 6;
+        try {
+            secs = a.show() || 6;
+        }
+        finally {
+            speakReply = false;
+        }
         pet.dur = Math.max(pet.dur, pet.bt + secs);
         cur.until = performance.now() + secs * 1000;
     };
@@ -9688,7 +9737,7 @@ function objTick(now) {
             objDone();
         return;
     }
-    if (cur.shown && (cur.kind === "easel" || cur.kind === "sill" || cur.kind === "book" || cur.kind === "hearth" || cur.kind === "calendar" || cur.kind === "vault" || cur.kind === "jar" || cur.kind === "capsule" || cur.kind.startsWith("refl:") || cur.kind.startsWith("wall:") ? now > cur.until : cur.kind === "brew" ? !brew : !scope))
+    if (cur.shown && (cur.kind === "easel" || cur.kind === "sill" || cur.kind === "book" || cur.kind === "hearth" || cur.kind === "calendar" || cur.kind === "journal" || cur.kind === "vault" || cur.kind === "jar" || cur.kind === "capsule" || cur.kind.startsWith("refl:") || cur.kind.startsWith("wall:") ? now > cur.until : cur.kind === "brew" ? !brew : !scope))
         objDone();
 }
 
@@ -11179,7 +11228,8 @@ function drawPainting(c, x, y, w, h, day, prog) {
     c.strokeRect(x + .5, y + .5, w - 1, h - 1);
 }
 function drawEasel(dk) {
-    drawLayered(() => drawEaselBody(dk));
+    const dq = Math.round(dk * 20) / 20; // (still: kept and copied until the light changes a step)
+    drawLayered(() => drawEaselBody(dq), "easel|" + dq);
 }
 function drawEaselBody(dk) {
     const x = easelX(), w = R * .95, h = R * .72, base = GY + R * .04, top = base - R * 1.55;
@@ -12009,7 +12059,7 @@ const archLadder = { x: -1, tx: -1 };
 const ARCHIVE_OK = new Set(["scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "archivework", "chairSit", "stare", "bow", "dizzy"]);
 /* interactions that live in the archive; asking for one from the wagon walks Mite there first */
 function isArchiveKind(kind) {
-    return kind === "capsule" || kind.startsWith("refl:") || kind.startsWith("box:");
+    return kind === "capsule" || kind === "journal" || kind.startsWith("refl:") || kind.startsWith("box:");
 }
 let archWparts = [], archWinHit = null;
 /* where the bigger-inside closet stands: in the gap between the reading desk and the shelves */
@@ -12182,7 +12232,8 @@ function drawArchiveRoom(now, dt) {
         cx.fillRect(dx0 + R * .08, top + R * .16, dx1 - dx0 - R * .16, R * .3);
         drawTiffany(dk, tsec, dx1 - R * .55, top); // the stained-glass lamp
     });
-    drawLayered(() => drawDeskChair(dk, g)); // a small chair, tucked in at the desk
+    const dq = Math.round(dk * 20) / 20;
+    drawLayered(() => drawDeskChair(dq, g), "deskchair|" + dq); // a small chair, tucked in at the desk (still: kept)
     if (own("closet")) // the bigger-inside closet, built into the left end of the shelves (draw-world.js)
         drawLayered(() => drawCloset(dk, closetX()));
     softGlow(g.deskX1 - R * .55, GY - R * 1.65, R * 1.6, `rgba(255,190,110,${.16 + .18 * dk})`);
@@ -12200,8 +12251,10 @@ function drawArchiveRoom(now, dt) {
     return { top: sky.top, bot: sky.bot, dark: dk * .55, skyDark: sky.dark };
 }
 /* the time capsule tin and this week's reflections, standing on a surface at y (x is the right end) */
+let journalHit = null;
 function drawKeepsakesOn(x, topY, dk, tsec) {
     reflHits = [];
+    journalHit = null;
     capHit = null;
     const caps = KEEP.caps.filter(c => !c.opened), due = dueCapsules().length;
     if (caps.length) {
@@ -12222,20 +12275,22 @@ function drawKeepsakesOn(x, topY, dk, tsec) {
         }
         x -= tw / 2 + R * .18;
     }
-    weekRefl().slice(-4).forEach((r, i) => {
-        const nw = Math.max(R * .28, 13), nh = Math.max(R * .2, 9), xx = x - i * (nw + R * .06), yy = topY - nh - (i % 2);
-        reflHits.push({ id: r.id, x: xx - nw / 2, y: yy, w: nw, h: nh, cx: xx });
-        cx.fillStyle = mix("#f3ead6", "#3a3530", dk * .6);
-        cx.fillRect(xx - nw / 2, yy, nw, nh);
-        cx.fillStyle = mix("#d8ccb0", "#2e2a26", dk * .6);
-        cx.beginPath();
-        cx.moveTo(xx - nw / 2, yy);
-        cx.lineTo(xx, yy + nh * .55);
-        cx.lineTo(xx + nw / 2, yy);
-        cx.fill();
-        cx.fillStyle = mix("#c49a3c", "#3a2e14", dk * .6);
-        cx.fillRect(xx - 1, yy + nh * .45, 2, 2);
-    });
+    { // the journal: a cloth-bound book lying on the desk, a ribbon out of the bottom (journal.js). Tap it to write
+        const bw = Math.round(R * .5 / PX) * PX, bh = Math.max(PX * 3, Math.round(R * .14 / PX) * PX), bx = Math.round((x - bw) / PX) * PX, by = topY - bh;
+        cx.fillStyle = mix("#3f5f8a", "#141c2a", dk * .65); // the cover, deep blue
+        cx.fillRect(bx, by, bw, bh);
+        cx.fillStyle = mix("#f3ead6", "#3a3530", dk * .6); // the pages' edge
+        cx.fillRect(bx + PX, by + PX, bw - PX * 2, Math.max(1, bh - PX * 2));
+        cx.fillStyle = mix("#2c4468", "#0e1420", dk * .65); // the spine
+        cx.fillRect(bx, by, PX, bh);
+        cx.fillStyle = mix("#c2453a", "#3a1414", dk * .6); // the ribbon
+        cx.fillRect(bx + bw * .6, by + bh, PX, PX * 2);
+        if (journalDay(dayKey()).length === 0 && new Date().getHours() >= 17 && Math.sin(tsec * 2) > .6) { // evening, nothing written yet: a tiny glint
+            cx.fillStyle = "#fff6c8";
+            cx.fillRect(bx + bw - PX * 2, by - PX, PX, PX);
+        }
+        journalHit = { x: bx - 4, y: by - R * .3, w: bw + 8, h: bh + R * .4, cx: bx + bw / 2 };
+    }
 }
 /* the boxes flying out of the door when the day's pile is filed */
 function drawFilingFlight(now, dk) {
@@ -12290,7 +12345,7 @@ function archiveTap(p) {
     }
     if (archWallTap(p)) // the filing tube, a key on the rack (archive-wall.js)
         return true;
-    const keeps = [...(capHit ? [Object.assign({ k: "capsule" }, capHit)] : []), ...reflHits.map(r => Object.assign({ k: "refl:" + r.id }, r))];
+    const keeps = [...(capHit ? [Object.assign({ k: "capsule" }, capHit)] : []), ...(journalHit ? [Object.assign({ k: "journal" }, journalHit)] : [])];
     const kh = nearestHit(p, keeps);
     if (kh) {
         requestObj(kh.k, kh.cx, kh.y);
@@ -12849,7 +12904,35 @@ function guestTick(dt, now) {
 function guestOut() {
     return !!guest && (guest.z || 0) > R * .15;
 }
-function drawLayered(fn) {
+/* drawLayered(fn, key): with a key, the finished (outlined) result is kept and simply copied the next time, as long
+   as the key, the scene's size and the room's position on screen are the same. For still things only: the key must
+   change whenever the picture would (callers put a rounded darkness in it). One kept copy per kind of key */
+const layerCache = new Map();
+let lastLayerBB = null;
+function drawLayered(fn, key) {
+    if (key) {
+        const m = cx.getTransform(), full = key + "|" + pc.width + "x" + pc.height + "|" + Math.round(m.e) + "," + Math.round(m.f) + "|" + m.a.toFixed(3), base = key.split("|")[0], hit = layerCache.get(base);
+        if (hit && hit.full === full) {
+            if (hit.c) {
+                cx.save();
+                cx.setTransform(1, 0, 0, 1, 0, 0);
+                cx.drawImage(hit.c, hit.bb.x0, hit.bb.y0);
+                cx.restore();
+            }
+            return;
+        }
+        drawLayered(fn); // drawn the ordinary way once, then kept
+        const bb = lastLayerBB;
+        let c = null;
+        if (bb) {
+            c = (hit && hit.c) || document.createElement("canvas");
+            c.width = bb.w;
+            c.height = bb.h;
+            c.getContext("2d", { willReadFrequently: true }).drawImage(propLayer, bb.x0, bb.y0, bb.w, bb.h, 0, 0, bb.w, bb.h);
+        }
+        layerCache.set(base, { full, c, bb });
+        return;
+    }
     const host = cx;
     if (propLayer.width !== pc.width || propLayer.height !== pc.height) {
         propLayer.width = pc.width;
@@ -12870,7 +12953,7 @@ function drawLayered(fn) {
     finally {
         cx = host;
     }
-    const bb = hardenLayer(plx, propLayer.width, propLayer.height);
+    const bb = lastLayerBB = hardenLayer(plx, propLayer.width, propLayer.height);
     if (!bb)
         return; // nothing drawn
     cx.save();
@@ -13154,7 +13237,7 @@ function spawnAnom(dark, force) { // (force: this kind, for tests)
     if (dark > .45)
         w.push(["eyes", 2], ["figure", 1.3], ["double", .8]); // the creepier ones come after dark
     w.push(["hand", .9], ["drips", .8]);
-    if (shiftOk()) // planeshifts: rare, and one a day at most (space.js)
+    if (shiftOk()) // planeshifts: rare, and one a day at most (planeshift.js)
         w.push(["space", .15], ["deep", .15]);
     if (dark > .3)
         w.push(["moth", 1.2]);
@@ -13195,7 +13278,7 @@ function spawnAnom(dark, force) { // (force: this kind, for tests)
         anom = Object.assign(base, { x: anomX(.25, .75), y: GY, drops: Array.from({ length: 7 }, (_, i) => ({ dx: (i - 3) * R * .22 + rnd(-R * .05, R * .05), sp: rnd(.6, 1.1), ph: Math.random() })) });
     else if (type === "double") // another Mite. Nearly
         anom = Object.assign(base, { x: pet.x < W / 2 ? W * .78 : W * .22, y: GY });
-    else if (SHIFTS.includes(type)) { // nothing in the room: every window shows somewhere else for a while (space.js)
+    else if (SHIFTS.includes(type)) { // nothing in the room: every window shows somewhere else for a while (planeshift.js)
         anom = Object.assign(base, { x: -1e4, y: -1e4 });
         (type === "deep" ? deepStart : spaceStart)(anom);
         eerie = ANOM_EERIE[type];
@@ -13340,7 +13423,7 @@ function resolveAnom() {
     const a = anom;
     if (!a || a.resolved)
         return;
-    if (SHIFTS.includes(a.type)) // nothing to deal with: Mite just remarks on the view (space.js)
+    if (SHIFTS.includes(a.type)) // nothing to deal with: Mite just remarks on the view (planeshift.js)
         return (a.type === "deep" ? deepTap : spaceTap)(a);
     a.resolved = true;
     sfx("low");
@@ -14187,7 +14270,9 @@ function drawVault(dk, tsec) {
     vaultHit = { x: x - 4, y: GY - h, w: w + 8, h: h + 4, cx: x + w / 2 }; // not above its top: the bookshelf hangs there
     if (dreamWaiting())
         softGlow(x + w / 2, GY - h * .55, R * 1.4, `rgba(190,215,255,${.16 + .08 * Math.sin(tsec * 2)})`);
-    const rattle = OA.drawer === 3 && OA.rattle ? Math.sin(tsec * 60) * R * .03 : 0;
+    const rattle = OA.drawer === 3 && OA.rattle ? Math.sin(tsec * 60) * R * .03 : 0, shut = OA.drawer < 0;
+    if (shut) // (shut, it's still: kept and copied until the light changes a step)
+        dk = Math.round(dk * 20) / 20;
     drawLayered(() => {
         // a filing cabinet in darker wood, so it stands out from the wall
         cx.fillStyle = mix("#5e3c26", "#24170e", dk);
@@ -14214,7 +14299,7 @@ function drawVault(dk, tsec) {
             cx.fillStyle = mix("#eef3ff", "#4a5060", dk * .6);
             cx.fillRect(x + w * .55 + dO(OA.drawer), dy - h * .07, w * .3, h * .1);
         }
-    });
+    }, shut ? "dreamcab|" + dk : "");
 }
 /* walk to the cabinet, open the drawer, read */
 BEH.dreamfile = { d: [60, 60], w: c => 0, init(b) {
@@ -16364,7 +16449,7 @@ function openDrawer() {
 }
 /* the snapshots on the pinboard: places the wagon has stood (tap one and Mite remembers it: pool pinboard) */
 const PIN_PHOTOS = ["sea", "hills", "forest", "lighthouse"];
-/* the snapshots that are up: the postcards from planeshifts too, once they've happened (space.js) */
+/* the snapshots that are up: the postcards from planeshifts too, once they've happened (planeshift.js) */
 function shiftCards() {
     return (S.flags.spacecard ? ["space"] : []).concat(S.flags.deepcard ? ["deep"] : []);
 }
@@ -16516,7 +16601,7 @@ function drawGarden(now, dt) {
             cx.fillRect(wx0 + (i * 41.1 + Math.sin(t + i) * 6) % ww, wy0 + ((t * 18 + i * 37) % wh), 2, 2);
         }
     drawFireworks(wx0, wy0, ww, wh * .8, t, sky.dark);
-    if (spaceOn()) // the detour: space outside (space.js)
+    if (spaceOn()) // the detour: space outside (planeshift.js)
         drawSpace(wx0, wy0, ww, wh, t);
     else if (deepOn())
         drawDeep(wx0, wy0, ww, wh, t);
@@ -19283,10 +19368,10 @@ function drawCatEye(t) {
 }
 
 </script>
-<script>/* js/scene/space.js */
+<script>/* js/scene/planeshift.js */
 "use strict";
 /*
- * space.js - Planeshifts: rare anomalies where, for a minute or so, the wagon is somewhere else entirely and every
+ * planeshift.js - Planeshifts: rare anomalies where, for a minute or so, the wagon is somewhere else entirely and every
  * window shows it. Nothing to tap or fix: Mite goes to look, says something, and when it's over makes a postcard
  * of it for the pinboard in the nook. At most one a day (S.flags.shiftDay), and rare even then.
  *   space  drifting through space: stars going by, a nebula, a ringed planet, now and then a comet (S.flags.spacecard)
@@ -20466,9 +20551,10 @@ function drawMess(dk, room) {
  */
 let last = performance.now(), uiAcc = 0, talkAt = performance.now() + rnd(25e3, 45e3);
 /* one frame (about 30 a second): time, Mite, the scene, bubbles, the side panel now and then */
+const IDLE_AFTER = 120e3, IDLE_MS = 1000 / 15; // nothing touched for two minutes: 15 frames a second (easier on a phone's battery), back to 30 at the next tap
 const FRAME_MS = 1000 / 31; // the scene runs at about 30 frames a second (plenty for pixel art, and half the work on a phone); swiping gets every frame
 function frame(now) {
-    if (now - last < FRAME_MS - 2 && !camDrag) {
+    if (now - last < (performance.now() - lastInput > IDLE_AFTER && !game ? IDLE_MS : FRAME_MS) - 2 && !camDrag) {
         requestAnimationFrame(frame);
         return;
     }
@@ -20526,7 +20612,7 @@ function frame(now) {
         anomTick(anom, dt, now);
         if (anom && anom.t > (anom.life || 24)) {
             if (anom.type === "space")
-                spaceEnd(anom); // back from the planeshift: a postcard (space.js)
+                spaceEnd(anom); // back from the planeshift: a postcard (planeshift.js)
             else if (anom.type === "deep")
                 deepEnd(anom);
             anom = null;
@@ -22259,7 +22345,7 @@ $("addForm").addEventListener("submit", e => {
         pet.trigger("lookAround");
     afterChange();
 });
-$("reflBtn").onclick = () => openReflect();
+$("reflBtn").onclick = () => showJournal(0);
 $("capBtn").onclick = () => openCapsule();
 $("reflList").addEventListener("click", e => {
     const b = e.target.closest("[data-rdel]");
@@ -22635,6 +22721,154 @@ $("bkFile").onchange = async () => {
     $("importText").value = await f.text();
     $("importBtn").click();
 };
+
+</script>
+<script>/* js/ui/journal.js */
+"use strict";
+/*
+ * journal.js - The one-line journal on the archive desk. One line a day, at most 144 characters; today's line can be
+ * written or changed, and earlier days' lines can be changed too. A page is a week: tap the book, write at the bottom
+ * of this week's page, scroll up through the week, flip back for the weeks before. You can name the journal; it starts
+ * as "Small things" (S.journal = { name, at }).
+ * The lines are kept with the keepsakes (KEEP.refl, storage.js: synced on their own, never trimmed). Lines written
+ * before the journal (the old reflections, sometimes longer, sometimes more than one a day) are all still there.
+ */
+const JOURNAL_MAX = 144;
+let jPage = 0, jEdit = "";
+function journalName() {
+    return (S.journal && S.journal.name) || "Small things";
+}
+/* the lines of one day (dayKey), oldest first */
+function journalDay(day) {
+    return KEEP.refl.filter(r => dayKey(new Date(r.at)) === day).sort((a, b) => a.at - b.at);
+}
+/* write or change the line of a day: a new one only for today; an existing line keeps its length limit if it was longer */
+function journalWrite(day, text) {
+    text = String(text || "").replace(/\s+/g, " ").trim();
+    const had = journalDay(day)[0], max = Math.max(JOURNAL_MAX, had ? had.text.length : 0);
+    text = text.slice(0, max);
+    if (had) {
+        if (!text) { // emptied: the line goes (it can come back with undo)
+            delReflection(had.id);
+            return null;
+        }
+        had.text = text;
+        had.u = Date.now();
+        saveKeep();
+        return had;
+    }
+    if (!text || day !== dayKey())
+        return null;
+    const r = { id: uidGen(), at: Date.now(), text, u: Date.now() };
+    KEEP.refl.push(r);
+    saveKeep();
+    note("Wrote a line in the journal.");
+    return r;
+}
+/* the seven days of a page (week offset: 0 this week, -1 the one before, ...), only up to today */
+function journalWeek(off) {
+    const start = new Date(weekKey(Date.now()) + "T12:00");
+    start.setDate(start.getDate() + off * 7);
+    const today = dayKey(), days = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(start);
+        d.setDate(start.getDate() + i);
+        const k = dayKey(d);
+        if (k > today)
+            break;
+        days.push({ k, d });
+    }
+    return { start, days };
+}
+/* the oldest page there is (the first line ever, or this week) */
+function journalFirstOff() {
+    if (!KEEP.refl.length)
+        return 0;
+    const first = Math.min(...KEEP.refl.map(r => r.at));
+    return -Math.round((new Date(weekKey(Date.now()) + "T12:00") - new Date(weekKey(first) + "T12:00")) / (7 * 864e5));
+}
+function showJournal(off = 0) {
+    jPage = clamp(off, journalFirstOff(), 0);
+    const { start, days } = journalWeek(jPage), end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    const today = dayKey(), row = ({ k, d }) => {
+        const lines = journalDay(k), wd = d.toLocaleDateString("en-GB", { weekday: "short" }), label = `<span class="jday">${esc(wd)} <small>${esc(dmy(d))}</small></span>`;
+        if (jEdit === k || (k === today && !lines.length)) {
+            const cur = lines[0] ? lines[0].text : "", max = Math.max(JOURNAL_MAX, cur.length);
+            return `<li class="jrow jwrite">${label}<span class="jfield"><input id="jIn" data-day="${esc(k)}" maxlength="${max}" value="${esc(cur)}" placeholder="${k === today ? "One line for today" : "This day's line"}" aria-label="The line for ${esc(wd)} ${esc(dmy(d))}" enterkeyhint="done"><small class="jcount" id="jCount">${cur.length}/${max}</small></span></li>`;
+        }
+        if (!lines.length)
+            return `<li class="jrow jempty">${label}<span class="jtext">—</span></li>`;
+        return `<li class="jrow">${label}<span class="jtext">${lines.map(r => esc(r.text)).join("<br>")}</span><button type="button" class="mini jedit" data-jday="${esc(k)}" aria-label="Change the line for ${esc(wd)} ${esc(dmy(d))}">✎</button></li>`;
+    };
+    const body = `<p class="jweek">Week ${weekNo(start.getTime())} · ${esc(dmy(start))} – ${esc(dmy(end))}</p><ol class="jlist" id="jList">${days.map(row).join("")}</ol>`;
+    const btns = [];
+    if (document.getElementById("jIn") || jEdit || (jPage === 0 && !journalDay(today).length))
+        btns.push(["Write it down", "primary", journalSave]);
+    btns.push(["‹ Earlier week", jPage > journalFirstOff() ? "" : "ghost jdisabled", () => {
+            if (jPage > journalFirstOff()) {
+                jEdit = "";
+                sfx("tock");
+                showJournal(jPage - 1);
+            }
+        }]);
+    if (jPage < 0)
+        btns.push(["Later week ›", "", () => {
+                jEdit = "";
+                sfx("tock");
+                showJournal(jPage + 1);
+            }]);
+    btns.push(["Name it", "ghost", journalRename], ["Close", btns.length && btns[0][1] === "primary" ? "ghost" : "primary", () => {
+            jEdit = "";
+            closeRitual();
+        }]);
+    openRitual(journalName(), jPage === 0 ? choice(["One line a day. That's all it asks.", "What's worth keeping from today?", "A line for today. Small things count."]) : "An earlier page.", body, btns, () => { jEdit = ""; });
+    const list = $("jList"), inp = $("jIn");
+    if (list)
+        list.scrollTop = list.scrollHeight; // (the newest at the bottom, in view)
+    list.querySelectorAll(".jedit").forEach(b => b.onclick = e => {
+        e.stopPropagation();
+        jEdit = b.dataset.jday;
+        showJournal(jPage);
+    });
+    if (inp) {
+        const cnt = $("jCount");
+        inp.oninput = () => cnt.textContent = `${inp.value.length}/${inp.maxLength}`;
+        inp.onkeydown = e => {
+            e.stopPropagation();
+            if (e.key === "Enter") {
+                e.preventDefault();
+                journalSave();
+            }
+        };
+        setTimeout(() => inp.focus({ preventScroll: true }), 80);
+    }
+}
+function journalSave() {
+    const inp = $("jIn");
+    if (!inp)
+        return;
+    const day = inp.dataset.day, r = journalWrite(day, inp.value);
+    jEdit = "";
+    if (r) {
+        sfx("soft");
+        if (day === dayKey() && journalDay(day).length === 1 && r.u === r.at)
+            setTimeout(() => speak(choice(["Written. I'll keep it with the others.", "In the journal. Small things, kept.", "That's today, then. A good line."])), 400);
+    }
+    showJournal(jPage);
+    renderArchive();
+    afterChange();
+}
+function journalRename() {
+    const cur = journalName();
+    openRitual("Name the journal", "Whatever it's for. It started as Small things.", `<input id="jName" maxlength="40" value="${esc(cur)}" aria-label="The journal's name" style="width:100%">`, [["Keep this name", "primary", () => {
+                const v = String($("jName").value || "").replace(/\s+/g, " ").trim().slice(0, 40) || "Small things";
+                S.journal = { name: v, at: Date.now() };
+                afterChange();
+                showJournal(jPage);
+            }], ["Back", "ghost", () => showJournal(jPage)]]);
+    setTimeout(() => { const i = $("jName"); if (i) { i.focus(); i.select(); } }, 60);
+}
 
 </script>
 <script>/* js/core/safekeep.js */
@@ -24726,12 +24960,12 @@ function openEvening(manual) {
                 const n = (S.fixes || []).filter(f => dayKey(new Date(f.at)) === today).length;
                 return n ? `${n} friction note${n > 1 ? "s" : ""}` : "";
             })(), pile.length ? `${pile.length} box${pile.length > 1 ? "es" : ""} to file` : ""].filter(Boolean).join(" · ")}</p>` +
-        `<label class="field" style="margin-top:8px">A line for the shelf (optional)<textarea id="eveRefl" maxlength="1000" rows="2" style="min-height:60px;font-family:var(--f-body);font-size:15px" placeholder="What's worth keeping from today?"></textarea></label>`;
+        `<label class="field" style="margin-top:8px">A line for the journal (optional)<input id="eveRefl" maxlength="${Math.max(JOURNAL_MAX, (journalDay(today)[0] || { text: "" }).text.length)}" value="${esc((journalDay(today)[0] || { text: "" }).text)}" placeholder="What's worth keeping from today?" style="font-family:var(--f-body);font-size:15px"></label>`;
     const nearBed = isLate(c.h) || ((S.settings.bed - c.h + 24) % 24) <= 2;
     const keepLine = () => {
-        const v = ($("eveRefl") || {}).value;
-        if (v && v.trim())
-            addReflection(v);
+        const el = $("eveRefl");
+        if (el && el.value.trim())
+            journalWrite(today, el.value);
     };
     const btns = [[pile.length ? `File the day` : `Close the day`, "primary", () => {
                 keepLine();
