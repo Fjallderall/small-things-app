@@ -21675,15 +21675,7 @@ cv.addEventListener("pointerdown", e => {
     }
     catch (err) { }
     const rm = roomAt(sp.x), p = { x: sp.x - roomOff(rm), y: sp.y }, pv = { x: sp.x - roomOff(view), y: sp.y };
-    if (gold && (gold.room || "room") === rm && Math.hypot(p.x - gold.x, p.y - gold.y) < R * .9) { // in whichever room it is
-        catchGold();
-        return;
-    }
-    if (rm === "garden") {
-        gardenTap(p);
-        return;
-    }
-    if (game && game.id === "leaves") {
+    if (game && game.id === "leaves") { // catching leaves: a tap only catches a leaf (or misses); nothing else in the room reacts
         for (let i = parts.length - 1; i >= 0; i--) {
             const q = parts[i];
             if (q.type === "cleaf" && Math.hypot(q.x - pv.x, q.y - pv.y) < Math.max(24, q.size * 3)) { // the leaves are in Mite's room
@@ -21691,9 +21683,18 @@ cv.addEventListener("pointerdown", e => {
                 game.count++;
                 for (let j = 0; j < 6; j++)
                     addP({ type: "spark", x: q.x, y: q.y, vx: rnd(-90, 90), vy: rnd(-90, 30), g: 200, max: .6, col: "#ffd76a", size: 3 });
-                return;
+                break;
             }
         }
+        return;
+    }
+    if (gold && (gold.room || "room") === rm && Math.hypot(p.x - gold.x, p.y - gold.y) < R * .9) { // in whichever room it is
+        catchGold();
+        return;
+    }
+    if (rm === "garden") {
+        gardenTap(p);
+        return;
     }
     if (rm === "archive") {
         archiveTap(p);
