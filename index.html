@@ -23096,11 +23096,6 @@ $("addForm").addEventListener("submit", e => {
 });
 $("reflBtn").onclick = () => showJournal(0);
 $("capBtn").onclick = () => openCapsule();
-$("reflList").addEventListener("click", e => {
-    const b = e.target.closest("[data-rdel]");
-    if (b)
-        delReflection(b.dataset.rdel);
-});
 // what the typed text will become, shown live under the field
 function addChipsText(p) {
     const bits = [];
@@ -25483,7 +25478,7 @@ function renderKeepsakes() {
             wk = k;
             html += `<h4>Week ${weekNo(r.at)} · ${new Date(r.at).getFullYear()}</h4>`;
         }
-        html += `<div class="arow"><span class="atime">${new Date(r.at).toLocaleDateString("en-GB", { weekday: "short" })}</span><span class="atitle" style="white-space:pre-wrap">${esc(r.text)}</span><span class="aacts"><button class="mini" data-rdel="${esc(r.id)}" aria-label="Remove reflection">✕</button></span></div>`;
+        html += `<div class="arow"><span class="atime">${new Date(r.at).toLocaleDateString("en-GB", { weekday: "short" })}</span><span class="atitle" style="white-space:pre-wrap">${esc(r.text)}</span></div>`; // (no remove button: a line goes only by emptying it in the journal itself)
     }
     $("reflList").innerHTML = html || `<p class="sub">None yet. You can also add one when you end the day.</p>`;
     const sealed = sealedCapsules(), opened = KEEP.caps.filter(c => c.opened).sort((a, b) => b.opened - a.opened);
