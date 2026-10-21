@@ -2397,7 +2397,7 @@ const DEF = {
             "Bargains are like yarn. Pull the wrong end and you're tangled for a hundred years.",
             "I took tea with a duchess once. She was a moth. Lovely woman.",
             "Never trust a candle that burns without being lit. Trust me instead. I'm much more reliable.",
-            "The keys on that rack open more than you think. Don't try them. Fine, try one.",
+            "The eyes in those jars blink when I blink. I checked. Twice.",
             "Mrrp.",
             "Mew.",
             "Mrrrow. ...Yes. That was the whole message.",
@@ -12489,7 +12489,7 @@ function drawArchiveRoom(now, dt) {
         drawSillPlants(sillPlants("archive"), aw.wx, aw.wy + aw.wr * .92, aw.wr * 1.15, dk, tsec);
         archWinHit = { x: aw.wx - aw.wr, y: aw.wy - aw.wr, w: aw.wr * 2, h: aw.wr * 2.2, cx: aw.wx };
     }
-    drawArchWall(dk, tsec); // the filing tube and the key rack above the desk (archive-wall.js)
+    drawArchWall(dk, tsec); // the filing tube, the capsule plank and the eye jars above the desk (archive-wall.js)
     // the wall of shelves
     const wood = mix("#a8744a", "#2e1f14", dk), woodD = mix("#6a4630", "#1a110b", dk);
     cx.fillStyle = mix("#4a3222", "#120c08", dk);
@@ -12718,7 +12718,7 @@ function archiveTap(p) {
         requestObj("snail");
         return true;
     }
-    if (archWallTap(p)) // the filing tube, a key on the rack (archive-wall.js)
+    if (archWallTap(p)) // the filing tube, the capsule plank, the eye jars (archive-wall.js)
         return true;
     const keeps = [...(capHit ? [Object.assign({ k: "capsule" }, capHit)] : []), ...(journalHit ? [Object.assign({ k: "journal" }, journalHit)] : [])];
     const kh = nearestHit(p, keeps);
@@ -13921,7 +13921,7 @@ function resolveAnom() {
         const eye = Math.random() < .25 ? findEye("ghost") : null; // now and then a paper eye for the jar instead (eyes.js)
         if (eye) {
             a.gifted = true;
-            setTimeout(() => speak(`It left a ${eye.name.toLowerCase()}. Folded, blinking. It's in the jar on the key rack now.`), 900);
+            setTimeout(() => speak(`It left a ${eye.name.toLowerCase()}. Folded, blinking. It's in the eye jar in the archive now.`), 900);
             incNote(`Incident ${no}, ${tm}: a ghost at the window. Said: "${a.line}". Left: one paper eye. Filed under: reference.`);
             a.exit = a.t;
             a.life = a.t + 2.5;
@@ -18995,7 +18995,7 @@ $("flowerView").addEventListener("pointerdown", e => e.stopPropagation());
  *                     months are in the paternoster now, paternoster.js.)
  */
 let tubeHit = null, keyHits = [], tubeCaps = [], capPlankHit = null;
-/* where they go: the tube a quarter of the way down the empty wall, the rack below it, both above the window */
+/* where they go: the tube a quarter of the way down the empty wall, the capsule plank and the eye jars below it, above the window */
 function archWallGeo() {
     const g = archGeo(), aw = archWindow(g), top = Math.max(ceilY(0, "archive"), ceilY(g.x0, "archive")) + R * .3, low = aw.wy - aw.wr - R * .35;
     const span = Math.max(R * 2, low - top), tubeY = Math.round((top + span * .2) / PX) * PX, rackY = Math.round((top + span * .55) / PX) * PX;
@@ -19179,7 +19179,7 @@ function showMonthKey(mk) {
     openRitual(`The key for ${name}`, quiet ? "A quiet month. Those count too." : "What this month left behind.", quiet ? "" : body, [["Close", "primary", closeRitual]]);
     sfx("card");
 }
-/* a tap on the wall (archiveTap): true if it was the tube or a key */
+/* a tap on the wall (archiveTap): true if it was the eye jars, the capsule plank or the tube */
 function archWallTap(p) {
     if (eyeJarHit && hitIn(p, eyeJarHit, 16)) {
         showEyeJars();
@@ -19703,14 +19703,14 @@ function drawPastimes(dt) {
 <script>/* js/scene/eyes.js */
 "use strict";
 /*
- * eyes.js - The eye jars on top of the key rack in the archive. Just for reference: a collection of eyes of
+ * eyes.js - The eye jars on their shelf in the archive. Just for reference: a collection of eyes of
  * various creatures, kept in jars, blinking and looking around slowly. Nothing nefarious. It starts as one empty
  * jar; Mite finds eyes now and then (the ghost leaves a paper one, one comes back through a door, one falls out of
  * the dream archive) and puts each one in. Four to a jar, then a new jar (four at most).
  * Midnightcat borrows one for her patron rituals in the chalk circle (circle.js), and sometimes plays with one.
  *   S.eyes      [{ k, at, from }], one per kind
  *   findEye(from)  a new eye, if there's one left to find (null otherwise)
- *   drawEyeJars(dk, t, x1, y)  on the rack (archive-wall.js)
+ *   drawEyeJars(dk, t, x1, y)  on their shelf above the desk (archive-wall.js)
  */
 const EYES = [
     { id: "owl", name: "Owl's eye", ring: "#e8a33c", pupil: "round", note: "Very good in the dark. Disapproves of the bulb." },
@@ -19722,7 +19722,7 @@ const EYES = [
     { id: "deep", name: "Deep-sea eye", ring: "#3a7ac0", pupil: "round", glow: "#7ad0ff", note: "Glows a little blue. Has never seen the sun and isn't sure about it." },
     { id: "door", name: "An eye from beyond a door", ring: "#9a6ad0", pupil: "star", note: "Came back through a door that wasn't there. Looks at things that aren't there either. Politely." },
     { id: "dream", name: "Dream eye", ring: "#e0a0c0", pupil: "round", note: "Fell out of the dream archive. Closes whenever anyone yawns." },
-    { id: "crow", name: "Crow's eye", ring: "#3a3036", pupil: "round", note: "Black and bright. Keeps looking at the shiny keys." },
+    { id: "crow", name: "Crow's eye", ring: "#3a3036", pupil: "round", note: "Black and bright. Keeps looking at the brass filing tube. Shiny." },
     { id: "snail", name: "Eye-stalk tip (spare)", ring: "#8a9a6a", pupil: "round", note: "The snail grew a new one and gave Mite the old one. For the collection." },
     { id: "spider", name: "One spider eye", ring: "#20181c", pupil: "round", note: "Just the one. The spider has seven left and says that's plenty." },
     { id: "lantern", name: "Lantern-fish eye", ring: "#f0d070", pupil: "slit", glow: "#ffe08a", note: "Brings its own light. Useful in the archive." },
@@ -23819,8 +23819,7 @@ function journalRename() {
  * paternoster.js - The bigger-inside closet in the archive is also a paternoster: a chain of shelves going round
  * and round inside it, one shelf for every week that's been filed. Tap the closet (Mite walks over and opens it):
  * the window shows one week's shelf; ▲ and ▼ turn the chain a shelf at a time, and the months along the bottom
- * (the same as the keys on the rack) turn it straight to that month. Tap a key on the rack and the paternoster
- * opens at that month. This week isn't in it yet: its boxes are still on the loose shelf (the first stop).
+ * turn it straight to that month. This week isn't in it yet: its boxes are still on the loose shelf (the first stop).
  */
 let pnPos = 0, pnAnim = null, pnSel = -1;
 /* the shelves: this week first (the loose shelf), then every week before it, newest first */
