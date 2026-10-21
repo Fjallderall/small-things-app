@@ -4997,31 +4997,7 @@ const SONGS = [
     { name: "snail's pace", bpm: 52, keys: "pad", lead: "kalimba", drums: "none", prog: [[50, 57, 60, 64], [48, 55, 59, 64], [46, 53, 57, 62], [48, 55, 60, 64]], b: [[45, 52, 57, 60], [46, 53, 58, 62], [48, 55, 60, 64], [43, 50, 55, 59]], mel: [69, 72, 74, 76, 79, 81], night: 1 },
     { name: "fog over the hill", bpm: 62, keys: "pad", lead: "flute", drums: "shaker", prog: [[50, 53, 57, 60], [55, 59, 62, 64], [50, 53, 57, 60], [48, 52, 55, 62]], b: [[53, 57, 60, 64], [55, 59, 62, 65], [57, 60, 64, 67], [55, 59, 62, 64]], mel: [69, 71, 72, 74, 76, 81] },
     { name: "biscuit tin", bpm: 82, lead: "box", drums: "brush", prog: [[53, 57, 60, 64], [50, 53, 57, 60], [55, 59, 62, 65], [48, 52, 55, 60]], b: [[57, 60, 64, 67], [53, 57, 60, 64], [50, 53, 57, 60], [55, 59, 62, 65]], mel: [72, 74, 76, 77, 79, 81] },
-    { name: "night archive", bpm: 56, keys: "pluck", lead: "kalimba", drums: "rim", prog: [[45, 52, 55, 60], [41, 48, 53, 57], [43, 50, 53, 59], [40, 47, 52, 55]], b: [[41, 48, 53, 57], [43, 50, 55, 59], [45, 52, 57, 60], [44, 52, 56, 59]], mel: [69, 71, 72, 76, 79, 81], night: 1 },
-    /* town songs: bright and bouncy, like a little village square in the afternoon (original tunes). Seventh
-       chords, swung, a walking bass (bass: "walk"), short piano stabs on the off-beats (keys: "stab"), and a fixed
-       tune (motif: one bar per chord, [beat, note] pairs; motif2 for the bridge) so each one is hummable. Clean:
-       no vinyl dust. New leads: marimba, whistle, vibes; new drums: bongo, snap */
-    { name: "morning market", town: 1, bpm: 104, keys: "stab", bass: "walk", lead: "marimba", drums: "bongo",
-        prog: [[53, 57, 60, 64], [50, 53, 57, 60], [55, 58, 62, 65], [48, 52, 55, 58]], b: [[46, 50, 53, 57], [45, 48, 52, 55], [55, 58, 62, 65], [48, 52, 55, 58]],
-        motif: [[[0, 72], [.66, 76], [1, 77], [2, 79], [3, 76]], [[0, 74], [1, 72], [1.66, 69], [2, 72]], [[0, 70], [.66, 74], [1, 77], [2, 74], [3, 72]], [[0, 79], [1, 76], [2, 72], [3, 70]]],
-        motif2: [[[0, 77], [1, 74], [2, 69], [3, 72]], [[0, 76], [1, 72], [2, 69], [2.66, 67]], [[0, 70], [1, 74], [2, 77], [3, 74]], [[0, 72], [1, 76], [2, 79], [3.66, 81]]] },
-    { name: "bus stop shuffle", town: 1, bpm: 112, keys: "stab", bass: "walk", lead: "whistle", drums: "snap",
-        prog: [[55, 59, 62, 66], [52, 55, 59, 62], [57, 60, 64, 67], [50, 54, 57, 60]], b: [[48, 52, 55, 59], [47, 50, 54, 57], [45, 48, 52, 55], [50, 54, 57, 60]],
-        motif: [[[0, 74], [.66, 76], [1, 79], [2, 78], [2.66, 76], [3, 74]], [[0, 71], [1, 74], [2, 76], [3, 79]], [[0, 81], [.66, 79], [1, 76], [2, 72], [3, 76]], [[0, 78], [1, 74], [2, 72], [3, 69]]],
-        motif2: [[[0, 76], [1, 79], [2, 83], [3, 81]], [[0, 78], [1, 74], [2, 71], [3, 74]], [[0, 72], [.66, 74], [1, 76], [2, 79], [3, 76]], [[0, 78], [1, 81], [2, 84], [3, 78]]] },
-    { name: "sleepy pier", town: 1, night: 1, bpm: 80, keys: "stab", bass: "walk", lead: "vibes", drums: "brush",
-        prog: [[50, 53, 57, 60], [55, 59, 62, 65], [48, 52, 55, 59], [45, 49, 52, 55]], b: [[53, 57, 60, 64], [53, 56, 60, 62], [52, 55, 59, 62], [45, 49, 52, 55]],
-        motif: [[[0, 77], [1.66, 76], [2, 74], [3, 72]], [[0, 71], [1, 74], [2, 77], [3, 76]], [[0, 76], [2, 72], [2.66, 74]], [[0, 73], [1, 76], [2, 79], [3, 77]]],
-        motif2: [[[0, 81], [1, 79], [2, 76], [3, 72]], [[0, 80], [1, 77], [2, 74], [3, 72]], [[0, 71], [1, 74], [2, 79], [3, 78]], [[0, 76], [1, 73], [2, 69], [3, 73]]] },
-    { name: "lantern waltz", town: 1, night: 1, bpm: 92, meter: 3, bass: "walk", lead: "box", drums: "shaker",
-        prog: [[51, 55, 58, 62], [48, 51, 55, 58], [53, 56, 60, 63], [46, 50, 53, 56]], b: [[56, 60, 63, 67], [55, 58, 62, 65], [53, 56, 60, 63], [46, 50, 53, 56]],
-        motif: [[[0, 79], [1, 82], [2, 79]], [[0, 75], [1, 77], [2, 79]], [[0, 80], [1, 77], [2, 72]], [[0, 74], [1, 77], [2, 80]]],
-        motif2: [[[0, 84], [1, 82], [2, 79]], [[0, 82], [1, 79], [2, 74]], [[0, 77], [1, 80], [2, 84]], [[0, 82], [1, 80], [2, 77]]] },
-    { name: "acorn hunt", town: 1, bpm: 98, keys: "stab", bass: "walk", lead: "marimba", drums: "snap",
-        prog: [[48, 52, 55, 57], [45, 48, 52, 55], [50, 53, 57, 60], [55, 59, 62, 65]], b: [[53, 57, 60, 64], [52, 56, 59, 62], [57, 60, 64, 67], [55, 59, 62, 65]],
-        motif: [[[0, 76], [.66, 79], [1, 81], [2, 79], [3, 76]], [[0, 72], [1, 76], [1.66, 79], [2, 76], [3, 72]], [[0, 74], [.66, 77], [1, 81], [2, 77], [3, 74]], [[0, 71], [1, 74], [2, 77], [2.66, 79]]],
-        motif2: [[[0, 81], [1, 79], [2, 76], [3, 72]], [[0, 80], [1, 76], [2, 71], [3, 74]], [[0, 76], [1, 79], [2, 84], [3, 81]], [[0, 79], [.66, 77], [1, 74], [2, 71], [3, 67]]] }
+    { name: "night archive", bpm: 56, keys: "pluck", lead: "kalimba", drums: "rim", prog: [[45, 52, 55, 60], [41, 48, 53, 57], [43, 50, 53, 59], [40, 47, 52, 55]], b: [[41, 48, 53, 57], [43, 50, 55, 59], [45, 52, 57, 60], [44, 52, 56, 59]], mel: [69, 71, 72, 76, 79, 81], night: 1 }
 ];
 function pickSong(night) {
     const prev = Snd.lastSong, opts = SONGS.filter(x => x !== prev && !(Snd.recent || []).includes(x.name)), pool = opts.length ? opts : SONGS.filter(x => x !== prev);
@@ -5038,19 +5014,6 @@ function playLead(kind, m, t, bt, fade, M) {
     }
     else if (kind === "flute")
         tone(f, t, bt * 1.3, { vol: .011 * fade, atk: .07, bus: M });
-    else if (kind === "marimba") { // wooden, quick to die away
-        tone(f, t, .32, { vol: .022 * fade, bus: M });
-        tone(f * 4, t, .05, { vol: .004 * fade, bus: M });
-    }
-    else if (kind === "whistle") { // two close sines: a slight warble
-        tone(f, t, bt * .85, { vol: .012 * fade, atk: .035, bus: M });
-        tone(f * 1.006, t, bt * .85, { vol: .006 * fade, atk: .05, bus: M });
-    }
-    else if (kind === "vibes") { // bell-like, the beating of two sines for the vibrato
-        tone(f, t, 1.4, { vol: .014 * fade, bus: M });
-        tone(f * 1.007, t, 1.4, { vol: .009 * fade, bus: M });
-        tone(f * 4, t, .08, { vol: .002 * fade, bus: M });
-    }
     else if (kind === "kalimba") {
         tone(f, t, .7, { vol: .016 * fade, bus: M });
         tone(f * 5.4, t, .08, { vol: .002 * fade, bus: M });
@@ -5063,7 +5026,7 @@ function songTick(t, dk) {
         const night = dk > .6, sg = pickSong(night), carry = Snd.carry && Snd.carry > t ? Snd.carry : t + .3;
         Snd.lastSong = sg;
         const bpm = (sg.bpm || 70) - (night ? 8 : 0);
-        Snd.song = { sg, bar: 0, bars: (sg.meter === 3 ? 40 : 32), beat: bpm / 60, next: carry, drums: (sg.drums || "brush") !== "none" && !(night && !sg.drums) && (sg.town || Math.random() < .9), last: (sg.mel || MEL)[2], first: !Snd.carry };
+        Snd.song = { sg, bar: 0, bars: (sg.meter === 3 ? 40 : 32), beat: bpm / 60, next: carry, drums: (sg.drums || "brush") !== "none" && !(night && !sg.drums) && Math.random() < .9, last: (sg.mel || MEL)[2], first: !Snd.carry };
         const g = document.getElementById("sndG");
         if (g) {
             g.title = "Playing: " + sg.name;
@@ -5086,9 +5049,6 @@ function songTick(t, dk) {
             if (k === 0 || Math.random() < .8)
                 tone(mtof(ch[order[k % 8]]), t0 + k * bt / 2, .45, { type: "triangle", vol: .014 * fade, bus: M });
     }
-    else if (keys === "stab") // short piano chords on the swung off-beats, the root left to the bass
-        for (const k of [.66, 1.66, 2.66, 3.66].filter(k => k === 1.66 || k === 3.66 || Math.random() < .3))
-            ch.slice(1).forEach((m, i) => tone(mtof(m), t0 + bt * k + i * .012, bt * .35, { type: "triangle", vol: .011 * fade, bus: M }));
     else if (mb === 3) // waltz: chord on one, soft stabs on two and three
         ch.forEach((m, i) => {
             tone(mtof(m), t0 + i * .03, bt * 2.4, { vol: .024 * fade, bus: M });
@@ -5106,27 +5066,11 @@ function songTick(t, dk) {
         if (Math.random() < .5)
             ch.slice(1).forEach((m, i) => tone(mtof(m), t0 + bt * 2.5 + i * .03, bt * 1.3, { vol: .016 * fade, bus: M }));
     }
-    if (sg.bass === "walk") { // a walking bass: root, chord notes, then a half step into the next bar's root
-        const nx = ((sec === 2 && so.bar % 8 !== 7) || (sec === 1 && so.bar % 8 === 7) ? sg.b : sg.prog)[(so.bar + 1) % 4][0] - 12, r = ch[0] - 12;
-        const walk = mb === 3 ? [r, r + 7, nx + (nx > r ? -1 : 1)] : [r, ch[1] - 12, ch[2] - 12, nx + (nx > r ? -1 : 1)];
-        walk.forEach((m, k) => {
-            tone(mtof(m), t0 + bt * k, bt * .85, { vol: .06 * fade, bus: M });
-            tone(mtof(m) * 2, t0 + bt * k, .08, { type: "triangle", vol: .008 * fade, bus: M }); // the pluck
-        });
-    }
-    else {
-        tone(mtof(ch[0] - 12), t0, bt * 1.6, { vol: .07 * fade, bus: M });
-        if (Math.random() < .6)
-            tone(mtof(ch[0] - 12 + 7), t0 + bt * (mb === 3 ? 2 : 2.5), bt * .9, { vol: .05 * fade, bus: M });
-    }
-    const tune = sg.motif && (sec === 2 ? sg.motif2 : sg.motif);
-    if (tune && (sec > 0 || so.bar % 8 >= 4)) { // the song's own tune; in the intro its second half, softly and lower
-        for (const [pos, m] of tune[so.bar % 4])
-            if (sec === 0 || Math.random() > .06) // (now and then a note left out, so a repeat isn't quite the same)
-                playLead(sg.lead, sec === 0 ? m - 12 : m, t0 + bt * pos, bt, sec === 0 ? fade * .6 : fade, M);
-    }
+    tone(mtof(ch[0] - 12), t0, bt * 1.6, { vol: .07 * fade, bus: M });
+    if (Math.random() < .6)
+        tone(mtof(ch[0] - 12 + 7), t0 + bt * (mb === 3 ? 2 : 2.5), bt * .9, { vol: .05 * fade, bus: M });
     // a few melody notes, stepping, swung
-    else if (!tune && sec > 0 && (so.bar % 2 === 1 || Math.random() < (sec === 2 ? .7 : .4))) {
+    if (sec > 0 && (so.bar % 2 === 1 || Math.random() < (sec === 2 ? .7 : .4))) {
         let m = so.last;
         for (const pos of mb === 3 ? [0, 1, 2, 2.5] : [0, 1.66, 2, 3, 3.66]) {
             if (Math.random() < .42) {
@@ -5149,16 +5093,6 @@ function songTick(t, dk) {
         else if (dr === "shaker")
             for (let k = 0; k < mb * 2; k++)
                 nburst(t0 + bt * k / 2, .06, { f: 6000, type: "highpass", vol: k % 2 ? .0025 : .0045, bus: M });
-        else if (dr === "bongo") { // two hand drums, high and low, a little pattern
-            for (const [k, hi] of mb === 3 ? [[0, 0], [1.66, 1], [2, 1]] : [[0, 0], [.66, 1], [1.66, 1], [2, 0], [3, 1], [3.66, 1]])
-                if (k === 0 || Math.random() < .85)
-                    tone(hi ? 330 : 220, t0 + bt * k, .09, { vol: hi ? .022 : .03, glide: .75, bus: M });
-        }
-        else if (dr === "snap") { // finger snaps on two and four, a soft kick on one
-            tone(70, t0, .2, { vol: .05, glide: .5, bus: M });
-            for (const k of mb === 3 ? [1, 2] : [1, 3])
-                nburst(t0 + bt * k, .05, { f: 2600, q: 2.5, vol: .02, bus: M });
-        }
         else if (dr === "rim") {
             tone(80, t0, .25, { vol: .06, glide: .5, bus: M });
             if (Math.random() < .5)
@@ -5167,7 +5101,7 @@ function songTick(t, dk) {
                 tone(1700, t0 + bt * k, .025, { type: "square", vol: .006, bus: M });
         }
     }
-    for (let k = 0; k < (sg.town ? 0 : 3); k++) // (town songs are clean: no vinyl dust)
+    for (let k = 0; k < 3; k++)
         if (Math.random() < .5)
             nburst(t0 + Math.random() * bt * mb, .012, { f: 3000, type: "highpass", vol: .006, bus: M }); // vinyl dust
     so.bar++;
