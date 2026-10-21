@@ -8551,6 +8551,8 @@ function drawPet(po) {
     const L = level();
     const stage = Math.min(4, Math.floor((L - 1) / 2));
     drawHat(S.hat, 0, topY + r * .08, r);
+    if (po.noteHat && S.hat !== "postit") // a sticky note it just wrote, stuck to its head for a moment (pastimes.js)
+        drawHat("postit", 0, topY + r * .08, r, po.noteHat);
     const hatLift = S.hat ? (S.hat === "wizard" ? r * .85 : S.hat === "party" ? r * .6 : S.hat === "postit" ? 0 : r * .25) : 0;
     drawSprout(0, topY - hatLift + r * .04, r, stage);
     // props (pixel mode: drawn on their own layer, then hardened and outlined so small things stay visible)
@@ -9055,7 +9057,7 @@ function drawSprout(x, y, r, stage) {
         cx.fill();
     }
 }
-function drawHat(id, x, y, r) {
+function drawHat(id, x, y, r, col) { // (col: the sticky note's colour, when it isn't the hat)
     if (!id)
         return;
     cx.save();
@@ -9064,23 +9066,24 @@ function drawHat(id, x, y, r) {
         cx.translate(r * .3, r * .02); // (off to the right of the sprout)
         cx.rotate(.3);
         const s = r * .62;
-        cx.fillStyle = "#d9b52a"; // its shadow edge
+        const base = col || "#f6dc4c";
+        cx.fillStyle = mix(base, "#000000", .15); // its shadow edge
         cx.fillRect(-s / 2 + r * .03, -s + r * .03, s, s);
-        cx.fillStyle = "#f6dc4c";
+        cx.fillStyle = base;
         cx.fillRect(-s / 2, -s, s, s);
-        cx.fillStyle = "#fbe98a"; // the sticky strip along the top, a shade paler
+        cx.fillStyle = mix(base, "#ffffff", .35); // the sticky strip along the top, a shade paler
         cx.fillRect(-s / 2, -s, s, s * .2);
         cx.fillStyle = "#6a5a8a"; // the writing: three short lines in purple ink
         for (const [f, w] of [[.38, .7], [.56, .55], [.74, .62]])
             cx.fillRect(-s / 2 + s * .14, -s + s * f, s * w, Math.max(1, r * .035));
-        cx.fillStyle = "#e3c43a"; // the curl
+        cx.fillStyle = mix(base, "#000000", .08); // the curl
         cx.beginPath();
         cx.moveTo(s / 2, -s * .26);
         cx.lineTo(s / 2, 0);
         cx.lineTo(s * .24, 0);
         cx.closePath();
         cx.fill();
-        cx.fillStyle = "#fff3b0";
+        cx.fillStyle = mix(base, "#ffffff", .5);
         cx.beginPath();
         cx.moveTo(s / 2, -s * .26);
         cx.lineTo(s * .24, 0);
@@ -19244,7 +19247,8 @@ function renderGlimpses() {
 /*
  * pastimes.js - Small things Mite does on its own, in any room, so it isn't always watering or writing letters:
  *   sorttiny   sits on the floor and sorts tiny things (beads, buttons, a pebble) into a neat row
- *   postit     writes a sticky note and puts it on the wall (they stay up for a while, a few per room)
+ *   postit     writes a sticky note (held low, behind it), wears it on its head for a bit, then puts it on the wall
+ *              (they stay up for a while, a few per room)
  *   sketch     draws something small in a little sketchbook, then says what it was
  *   origami    folds a paper bird, which flaps off and out of the room's window
  *   fftag      plays tag with a firefly from the jar: chases it, then gets chased
@@ -19300,16 +19304,30 @@ Object.assign(BEH, {
             if (Math.random() < .003)
                 floatText(choice(["this one… there", "red, then orange…", "hm, is that a bead or a crumb", "very important work"]), p.x, GY - R * 2.2, "#fff");
         } },
-    postit: { d: [8, 9], w: c => pastimeOk(c) ? .45 : 0, init(b, p) {
+    postit: { d: [11, 12], w: c => pastimeOk(c) ? .45 : 0, init(b, p) {
             b.text = choice(["water fern", "be brave", "tea?", "ask the snail", "♥", "remember: rest", "find the other sock", "door?? (night)", "you're doing fine", "buy moss food"]);
+            b.col = choice(["#f2d06b", "#f4a9b8", "#a8d8a0", "#a9c8f0"]);
         }, step(b, p, t, po) {
-            if (t < 3.5) { // writing it, held low
+            if (t < 3.5) { // writing it, held low (drawn behind it: drawPastimesBehind)
                 po.lookOverride = { x: 0, y: .8 };
                 po.arms = [-.8 + Math.sin(t * 14) * .15, -.5];
                 po.mouth = "o";
                 return;
             }
-            if (t < 5 || !b.stuck) { // reaching up to stick it on the wall
+            if (t < 6.5) { // stuck on its own head for a bit, like the sticky-note hat; very pleased about it
+                po.noteHat = b.col;
+                po.arms = t < 4.1 ? [-2.4, -.25] : [-.25, -.25];
+                po.lookOverride = { x: Math.sin(t * 1.5) * .3, y: -.5 };
+                po.eyes = t > 4.3 && t < 5.6 ? "happy" : "open";
+                po.mouth = "smile";
+                if (!b.worn) {
+                    b.worn = 1;
+                    if (Math.random() < .5)
+                        floatText(choice(["a hat, briefly", "reminder: on my head", "now I can't forget it"]), p.x, GY - R * 2.6, "#fff6c8");
+                }
+                return;
+            }
+            if (t < 8 || !b.stuck) { // reaching up to stick it on the wall
                 po.lookOverride = { x: 0, y: -1 };
                 po.arms = [-2.6, -2.6];
                 po.sy = .1;
@@ -19321,7 +19339,7 @@ Object.assign(BEH, {
                         postits.splice(postits.indexOf(mine[0]), 1);
                     const spot = postitSpot(p);
                     if (spot)
-                        postits.push({ room: view, x: spot.x, y: spot.y, at: performance.now(), rot: (Math.random() < .5 ? -1 : 1) * rnd(.1, .28), curl: Math.random() < .6, tape: Math.random() < .5, sz: rnd(.85, 1.15), col: choice(["#f2d06b", "#f4a9b8", "#a8d8a0", "#a9c8f0"]), text: b.text });
+                        postits.push({ room: view, x: spot.x, y: spot.y, at: performance.now(), rot: (Math.random() < .5 ? -1 : 1) * rnd(.1, .28), curl: Math.random() < .6, tape: Math.random() < .5, sz: rnd(.85, 1.15), col: b.col || "#f2d06b", text: b.text });
                     sfx("soft");
                     floatText(b.text, p.x, GY - R * 2.6, "#fff6c8");
                 }
@@ -19337,7 +19355,7 @@ Object.assign(BEH, {
             po.sy = -.1;
             po.feet = false;
             po.lookOverride = { x: Math.sin(t * 2) * .15, y: .85 };
-            po.arms = [-.9 + Math.sin(t * 11) * .2, -.6];
+            po.noArms = true; // (its paws are on the sketchbook instead, one holding it, one drawing: drawPastimes)
             po.mouth = t % 4 < .6 ? "o" : "smile";
             if (!b.said && t > p.dur - 2.2) {
                 b.said = 1;
@@ -19434,6 +19452,18 @@ Object.assign(BEH, {
     GARDEN_OK.add(k);
     ARCHIVE_OK.add(k);
 });
+/* drawn before Mite: the sticky note being written, held low in front of it but behind its body, a corner peeking
+   out at the side (loop.js) */
+function drawPastimesBehind() {
+    const b = pet.b, p = pet;
+    if (!b || p.beh !== "postit" || p.bt >= 3.5)
+        return;
+    withRoomLight(view, () => {
+        const gy = GY - (p.ground || 0), dk = sceneDark();
+        cx.fillStyle = mix(b.col || "#f2d06b", "#2a2420", dk * .5);
+        cx.fillRect(p.x - R * 1.24, gy - R * .8, R * .36, R * .36);
+    });
+}
 /* drawn after Mite, in Mite's room (and the notes on any wall on screen) */
 function drawPastimes(dt) {
     const now = performance.now(), dk = sceneDark();
@@ -19510,10 +19540,6 @@ function drawPastimes(dt) {
                 cx.fillRect(Math.round(x / q) * q, Math.round(y / q) * q - q, q * 2, q * 2);
             });
         }
-        if (p.beh === "postit" && p.bt < 3.5) { // the note being written
-            cx.fillStyle = mix("#f2d06b", "#2a2420", dk * .5);
-            cx.fillRect(p.x - R * .45, gy - R * .75, R * .32, R * .32);
-        }
         if (p.beh === "sketch") { // a little sketchbook in front, filling up with lines
             const x0 = p.x - R * .35, y0 = gy - R * .55, w = R * .7, h = R * .32;
             cx.fillStyle = mix("#3a5a7a", "#121a24", dk * .5);
@@ -19524,6 +19550,20 @@ function drawPastimes(dt) {
             cx.fillStyle = mix("#4a3a2c", "#1a1612", dk * .5);
             for (let i = 0; i < n; i++)
                 cx.fillRect(x0 + q + (i * 7 % 9) * w / 11, y0 + q + (i * 5 % 4) * h / 5, q * (1 + i % 3), q);
+            { // its paws: the left one holding the book's edge, the right one drawing, the pencil going to and fro
+                const paw = mix("#78a865", "#1e2a16", dk * .5), pawD = mix("#3f5f35", "#10180c", dk * .5), t = p.bt;
+                const px = x0 + w * (.45 + .3 * Math.sin(t * 2.3)) + Math.sin(t * 13) * q, py = y0 + h * (.35 + .25 * Math.sin(t * 3.1));
+                cx.fillStyle = pawD;
+                cx.fillRect(Math.round((x0 - R * .1) / q) * q, Math.round((y0 + h * .2) / q) * q, R * .2 + q, R * .2 + q);
+                cx.fillRect(Math.round((px - R * .08) / q) * q, Math.round(py / q) * q, R * .2 + q, R * .18 + q);
+                cx.fillStyle = paw;
+                cx.fillRect(Math.round((x0 - R * .1) / q) * q, Math.round((y0 + h * .2) / q) * q, R * .2, R * .2);
+                cx.fillRect(Math.round((px - R * .08) / q) * q, Math.round(py / q) * q, R * .2, R * .18);
+                cx.fillStyle = mix("#e8b830", "#3a2a10", dk * .5); // the pencil, tip down on the page
+                cx.fillRect(Math.round((px + R * .02) / q) * q, Math.round((py - R * .22) / q) * q, q, R * .24);
+                cx.fillStyle = mix("#e3a0b2", "#3a2430", dk * .5); // its rubber
+                cx.fillRect(Math.round((px + R * .02) / q) * q, Math.round((py - R * .26) / q) * q, q, q);
+            }
         }
         if (p.beh === "origami" && p.bt < 4) { // the paper, being folded smaller
             const k = p.bt / 4, s = R * (.36 - .18 * k);
@@ -21230,6 +21270,7 @@ function frame(now) {
             withRoomLight("garden", () => drawPossum(sceneDark(), now));
         if (!onNook)
             withRoom("garden", () => drawLoftFront("garden"));
+        drawPastimesBehind(); // (the sticky note being written, behind Mite: pastimes.js)
         if ((pet.ground || 0) > 0 && !(pet.b && pet.b.door)) // up on a platform: kept inside its own room
             withRoom(view, () => drawPet(po));
         else
