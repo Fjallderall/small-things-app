@@ -469,10 +469,10 @@ body.pixel.game .stage{border:0}
 /* the task sheet: list first, the add field at the bottom */
 .tk-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .tk-head h2{margin:0}
-.evecard{background:#efe8f5;border:2px solid #8a6fb0;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.evecard{background:var(--sunk);color:var(--ink);border:2px solid #8a6fb0;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .evecard p{margin:0;font-size:15px;line-height:1.4}
 .evecard[hidden]{display:none}
-.bkcard{background:#eef3e6;border-color:#6f8f4e}
+.bkcard{background:var(--leaf-soft);border-color:var(--leaf)}
 .credits-list{margin:6px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.45}
 .addform.bottom{position:sticky;bottom:0;z-index:2;margin-top:4px;border-top:2px solid var(--line);box-shadow:0 -6px 12px rgba(0,0,0,.06)}
 .addform.bottom input[type=text]{min-height:44px;font-size:16px}
@@ -610,6 +610,20 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .jwrite input{width:100%;font-family:var(--f-body);font-size:15px}
 .jcount{align-self:flex-end;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
 .jdisabled{opacity:.4}
+.jname{cursor:pointer;text-decoration:underline dotted 2px;text-underline-offset:6px}
+.jname:focus-visible{outline:2px solid var(--accent,#c2453a);outline-offset:3px}
+.kstyles{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 10px}
+.kstyles .chipbtn{display:inline-flex;align-items:center;gap:6px}
+.kstyles i{display:inline-block;width:16px;height:16px;border:1px solid rgba(0,0,0,.35)}
+/* the paternoster (paternoster.js): the window, the turning buttons, the months as one scrolling row of keys */
+.pncv{display:block;width:100%;max-width:420px;margin:0 auto 8px;aspect-ratio:160/100;image-rendering:pixelated;image-rendering:crisp-edges}
+.pnnav{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.pnnav b{text-align:center;font-size:13px;line-height:1.3}
+.pnnav .btn{padding:6px 10px;white-space:nowrap}
+.pnmonths{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.pnmonths .chipbtn{flex:0 0 auto;white-space:nowrap}
+.pnlist{max-height:30dvh;overflow:auto}
+.pnlist .linkbtn{text-align:left;padding:0}
 
 </style>
 <div class="app">
@@ -707,9 +721,8 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
       <div><h2>Talk to <span class="pn">Mite</span></h2><p class="sub" id="talkInfo"></p></div>
       <ul class="chatlog" id="chatLog"></ul>
       <form class="row" id="chatForm" autocomplete="off"><input type="text" class="inline-in" id="chatIn" maxlength="600" placeholder="Tell Mite something" aria-label="Message"><button class="btn primary" type="submit">Send</button><button class="btn ai" type="button" id="chatAI">✦ Send with AI</button></form>
-      <div><h3><span class="pn">Mite</span> remembers</h3><p class="sub">Facts from your conversations, used in later chats and suggestions. Remove anything you don't want kept.</p></div>
+      <div><h3><span class="pn">Mite</span> remembers</h3><p class="sub">Things <span class="pn">Mite</span> picked up from your conversations, used in later chats and suggestions. Remove anything you don't want kept.</p></div>
       <ul class="memlist" id="memList"></ul>
-      <form class="row" id="memForm" autocomplete="off"><input type="text" class="inline-in" id="memIn" maxlength="200" placeholder="Add something to remember" aria-label="New memory"><button class="btn" type="submit">Remember</button></form>
       <div><h3>Said recently</h3><p class="sub">Tap a speech bubble to keep it on screen; tap again to let it go.</p></div>
       <ul class="memlist" id="saidList"></ul>
       <div><h3>Coming up</h3><p class="sub">Things <span class="pn">Mite</span> plans to ask you about on a later day.</p></div>
@@ -775,8 +788,8 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
     </div>
 
     <div class="pane" id="tab-notebook" role="tabpanel" hidden>
-      <div><h2><span class="pn">Mite</span>'s notebook</h2><p class="sub">What <span class="pn">Mite</span> has noticed, written down on its own.</p></div>
-      <div><h3>Overheard</h3><p class="sub">The last 50 lines of conversation with the snail and visitors.</p></div>
+      <div><h2><span class="pn">Mite</span>'s notebook</h2><p class="sub">What <span class="pn">Mite</span> noticed today, written down on its own. A fresh page every day, at the hour set under Settings (0500 to start with).</p></div>
+      <div><h3>Overheard</h3><p class="sub">Today's conversations with the snail, the cat, the possum and visitors.</p></div>
       <div class="heard" id="heard"></div>
       <div><h3>Words <span class="pn">Mite</span> invented</h3></div>
       <div class="words" id="words"></div>
@@ -798,6 +811,7 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
         <label class="field">App name<input id="setApp" maxlength="30"></label>
         <label class="field">Work ends at (hour)<input id="setDoneBy" type="number" min="12" max="23"></label>
         <label class="field">Bedtime (hour)<input id="setBed" type="number" min="0" max="23"></label>
+        <label class="field">A new day starts at (hour)<input id="setDayStart" type="number" min="0" max="23" aria-describedby="dayStartHint"><small class="sub" id="dayStartHint">The notebook starts a fresh page then. 5 is 0500; for night shifts, pick when your day really begins.</small></label>
         <label class="field">Strangeness<select id="setStrange"><option value="0">Off: just cosy</option><option value="1">Some: the odd door</option><option value="2">A lot: thin place</option></select></label>
         <label class="field">Weather location (lat, lon)<input id="setLoc" maxlength="30" placeholder="e.g. 48.86, 2.35" inputmode="decimal"></label>
         <label class="field">Talk speed<select id="setTalk"><option value="0">Slow</option><option value="1">Normal</option><option value="2">Fast</option></select></label>
@@ -910,7 +924,7 @@ const POOL_INFO = {
     buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", friction: "Friction noted ({item})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
-    trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
+    trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -1893,6 +1907,12 @@ const DEF = {
             "Field note: {name} has shown more than we have seen. {seen} of {total} observations on file. Continue to observe. Do not rush it.",
             "Research status: open. {name} has not yet said everything it has to say ({seen} of {total}). Patience is a method.",
             "Gap in the record. {name}: {seen} of {total} documented. Recommend keeping a notebook nearby, and the kettle on."
+        ],
+        capsule_remind: [
+            "A new month. Want to write a letter to a later you? I'll keep it in a tin on the plank in the archive.",
+            "First of the month. Capsule weather. Seal one if you like: the plank's above the archive desk, or ask the journal.",
+            "New month, new tin. A few lines for the you of next month, or next year? No pressure. I'll keep them safe.",
+            "It's the first. I've polished the capsule tins. Just saying."
         ],
         closet_echo: [
             "It echoes. Further in than the archive goes. I didn't ask how much further.",
@@ -3231,9 +3251,9 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, splurge: { k: "", at: 0 }, anomLog: {}, journal: { name: "Small things", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
-        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
+        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
 }
 let S = defaultState();
@@ -3395,7 +3415,9 @@ function sanitizeState(raw) {
             if (/^[a-z]{2,12}$/.test(k) && L[k] && typeof L[k] === "object")
                 o.anomLog[k] = { n: clamp(Math.round(num(L[k].n)), 0, 1e6), first: num(L[k].first), last: num(L[k].last), h: (Array.isArray(L[k].h) ? L[k].h : []).filter(x => typeof x === "string" && /^[0-9a-z]{1,8}$/.test(x)).slice(0, 80) };
     }
-    o.journal = { name: str(s.journal && s.journal.name, 40).replace(/\s+/g, " ").trim() || "Small things", at: num(s.journal && s.journal.at) }; // the journal's name (journal.js)
+    o.postcards = arr(s.postcards, 60).map(p => ({ id: str(p.id, 30), y: clamp(Math.round(num(p.y)), 2000, 3000), at: num(p.at) })).filter(p => /^[a-z0-9_-]+$/i.test(p.id)); // postcards kept on the board (festivals.js)
+    o.kettleStyle = { k: ["copper", "blue", "green", "pink", "bluefl"].includes(s.kettleStyle && s.kettleStyle.k) ? s.kettleStyle.k : "copper", at: num(s.kettleStyle && s.kettleStyle.at) }; // the kettle's looks (draw-world.js)
+    o.journal = { name: str(s.journal && s.journal.name, 40).replace(/\s+/g, " ").trim() || "Small journal", at: num(s.journal && s.journal.at) }; // the journal's name (journal.js)
     o.splurge = { k: s.splurge && ["ice", "balloons", "cake", "fireworks"].includes(s.splurge.k) ? s.splurge.k : "", at: num(s.splurge && s.splurge.at) }; // the day's treat (splurge.js)
     { // the raccoon's barter: this week's stock and what's been traded (barter.js)
         const b = s.barter && typeof s.barter === "object" ? s.barter : {};
@@ -3481,6 +3503,8 @@ function sanitizeState(raw) {
         o.settings.doneBy = clamp(num(st.doneBy, 19), 12, 23);
     if ("bed" in st)
         o.settings.bed = clamp(num(st.bed, 1), 0, 23);
+    if ("dayStart" in st) // when a new day begins, for the notebook (0-23, 5 = 0500)
+        o.settings.dayStart = clamp(Math.round(num(st.dayStart, 5)), 0, 23);
     if ("strange" in st)
         o.settings.strange = clamp(num(st.strange, 1), 0, 2);
     if ("sound" in st)
@@ -3636,7 +3660,17 @@ function mergeStates(a, b) {
             o.anomLog[k] = { n: Math.max(num(x.n), num(y.n)), first: firsts.length ? Math.min(...firsts) : 0, last: Math.max(num(x.last), num(y.last)), h: [...new Set([...(x.h || []), ...(y.h || [])])].slice(0, 80) };
         }
     }
-    o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small things", at: 0 }) : Object.assign({}, b.journal); // the newest name
+    { // postcards: every one that came on either side, newest first
+        const m = new Map();
+        for (const p of [...(a.postcards || []), ...(b.postcards || [])]) {
+            const k = p.id + ":" + p.y, c = m.get(k);
+            if (!c || num(p.at) < num(c.at))
+                m.set(k, p);
+        }
+        o.postcards = [...m.values()].sort((x, y) => num(y.at) - num(x.at)).slice(0, 60);
+    }
+    o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
+    o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small journal", at: 0 }) : Object.assign({}, b.journal); // the newest name
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
     { // the barter: the newer week wins; the same week keeps one stock and everything traded on either side
         const ba = a.barter || {}, bb = b.barter || {};
@@ -3744,6 +3778,8 @@ function archClean(list) {
         const x = { id: sid(t.id) || uidGen(), t: str(t.t, 200) || "(untitled)", s: [1, 3, 8].includes(+t.s) ? +t.s : 1, tag: t.tag === "work" ? "work" : "life", c: num(t.c), d: num(t.d), f: num(t.f) };
         if (t.fx)
             x.fx = 1;
+        if (t.cap && sid(t.cap))
+            x.cap = sid(t.cap); // a filed time capsule (keepsake-shelf.js)
         return x;
     }).filter(t => t.d > 0);
 }
@@ -3889,6 +3925,8 @@ async function pullKeep() {
                 }
             }
             keepDirty = JSON.stringify(cleanKeep(r)) !== JSON.stringify(KEEP);
+            if (typeof capsulesToArchive === "function")
+                capsulesToArchive();
         }
     }
     catch (e) {
@@ -4053,6 +4091,14 @@ const wdmy = v => {
     return d.toLocaleDateString("en-GB", { weekday: "short" }) + " " + dmy(d);
 };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* when the current day began, by the hour you set (Settings: a new day starts at, 0500 unless you change it) */
+function dayStartTs(now = Date.now()) {
+    const h = S && S.settings && Number.isFinite(S.settings.dayStart) ? S.settings.dayStart : 5, d = new Date(now);
+    d.setHours(h, 0, 0, 0);
+    if (d.getTime() > now)
+        d.setDate(d.getDate() - 1);
+    return d.getTime();
+}
 /* today as a whole number of local days (for "once a day" counters kept in S.flags, which merge by the highest) */
 const dayNum = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 60e3) / 864e5);
 const dayKey = (d = new Date()) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
@@ -9053,7 +9099,7 @@ function isPicked(t) {
 }
 function drawBox(t, x, y, bw, dk) {
     const w = bw * (t.s === 8 ? 1.25 : t.s === 3 ? 1.05 : .85), h = bw * (t.s === 8 ? 1 : t.s === 3 ? .85 : .7);
-    cx.fillStyle = mix(t.tag === "work" ? "#b98b5a" : "#8fae7a", "#2a2018", dk * .6);
+    cx.fillStyle = mix(t.cap ? "#7a8a92" : t.tag === "work" ? "#b98b5a" : "#8fae7a", "#2a2018", dk * .6); // (a filed time capsule is a grey tin)
     cx.fillRect(x - w / 2, y - h, w, h);
     cx.fillStyle = "rgba(0,0,0,.16)";
     cx.fillRect(x - w / 2, y - h, w, h * .2);
@@ -9581,6 +9627,10 @@ function startObj(kind) {
         if (!sp)
             return;
         a = { beh: "admire", revealAt: .5, room: sp.room, extra: { tx: sp.cx, down: sp.low }, show: () => {
+                if (sp.id === "closet") { // the closet is the paternoster: every filed week (paternoster.js)
+                    showPaternoster(0);
+                    return 1.5;
+                }
                 const t = lookLine(sp);
                 speak(t, { ms: clamp(3500 + t.length * 45, 5000, 9000) });
                 return clamp(3.5 + t.length * .045, 5, 9);
@@ -9620,6 +9670,8 @@ function startObj(kind) {
         const h = archHits.find(x => x.t.id === kind.slice(4));
         if (h)
             a = { beh: "fetchBox", revealAt: 0, extra: { bx: h.cx, by: h.y + h.h / 2 }, show: () => {
+                    if (h.t.cap && showCapsuleLetter(h.t.cap)) // a filed time capsule: read it again
+                        return 3;
                     sfx("tock");
                     const line = boxLine(h.t, h.week);
                     speak(line, { ms: clamp(4000 + line.length * 40, 5000, 11000) });
@@ -9745,7 +9797,9 @@ function objTick(now) {
 <script>/* js/scene/keepsake-shelf.js */
 "use strict";
 /*
- * keepsake-shelf.js - Reflections and time capsules: writing, sealing, opening when the day comes.
+ * keepsake-shelf.js - Time capsules (and the old reflections, now the journal's lines): writing, sealing, opening when
+ * the day comes. Twelve sealed at most, one for every month if you like; they stand on the plank in the archive. On
+ * the first of each month Mite mentions it, once.
  */
 function addReflection(text) {
     text = String(text || "").trim().slice(0, 1000);
@@ -9774,9 +9828,10 @@ function delReflection(id) {
             renderArchive();
         } });
 }
+const CAPSULE_MAX = 12;
 function sealCapsule(text, open) {
     text = String(text || "").trim().slice(0, 3000);
-    if (!text || !dkey(open) || open <= dayKey())
+    if (!text || !dkey(open) || open <= dayKey() || KEEP.caps.filter(c => !c.opened).length >= CAPSULE_MAX)
         return null;
     const c = { id: uidGen(), made: Date.now(), open, text, opened: 0, snap: { done: doneCount(), lvl: level(), open: openTasks().length } };
     KEEP.caps.push(c);
@@ -9798,23 +9853,6 @@ function weekRefl() {
 }
 function fmtLong(ts) {
     return new Date(ts).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-}
-function openReflect() {
-    openRitual("A reflection.", choice(["Something for the shelf. One line is plenty.", "What's worth keeping from today?", "Write it down. I'll look after it."]), `<textarea id="reflIn" maxlength="1000" rows="5" placeholder="What happened, what you noticed, what you'd tell yourself" aria-label="Reflection" style="min-height:120px;font-family:var(--f-body);font-size:15px"></textarea>`, [["Put it on the shelf", "primary", () => {
-                const r = addReflection($("reflIn").value);
-                closeRitual();
-                if (r) {
-                    speak(choice(["Filed. Right next to this week's boxes.", "On the shelf. I'll keep it dusted.", "Kept. That one's a good one."]));
-                    pet.start("tidy");
-                    renderArchive();
-                    afterChange();
-                }
-            }], ["Not now", "ghost", closeRitual]]);
-    setTimeout(() => {
-        const t = $("reflIn");
-        if (t)
-            t.focus();
-    }, 60);
 }
 function openCapsule() {
     const add = (n, u) => {
@@ -9874,6 +9912,7 @@ function openDueCapsule() {
     openRitual("A time capsule.", `Sealed on ${fmtLong(c.made)}. ${days} day${days === 1 ? "" : "s"} ago. It's time.`, `<div class="letter">${esc(c.text).replace(/\n/g, "<br>")}</div><p class="ritmeta">Then: ${c.snap.done} tasks finished, level ${c.snap.lvl}, ${c.snap.open} on the list. Now: ${doneCount()} finished, level ${level()}, ${openTasks().length} on the list.</p>`, [["Keep it", "primary", () => {
                 c.opened = Date.now();
                 saveKeep();
+                capsulesToArchive(); // (and it's filed, as a box of its own: tap it on the shelf to read it again)
                 closeRitual();
                 note(`Opened a time capsule from ${fmtLong(c.made)}.`);
                 speak(choice(["Look at that. You were right about some of it.", "Past you says hello. I said hello back.", "I'm putting it with the others. Opened, but kept."]));
@@ -9881,6 +9920,60 @@ function openDueCapsule() {
                 afterChange();
             }]]);
     return true;
+}
+
+/* an opened time capsule is filed like a finished task: a box on that week's shelf ("Time capsule, sealed ..."), and
+   tapping the box reads the letter again. Done for every opened capsule that isn't on a shelf yet */
+function capsulesToArchive() {
+    let n = 0;
+    for (const c of KEEP.caps.filter(c => c.opened)) {
+        const id = "cap-" + c.id, k = weekKey(c.opened);
+        if ((ARCH[k] || []).some(t => t.id === id))
+            continue;
+        mergeWeek(k, [{ id, t: "Time capsule, sealed " + dmy(new Date(c.made)), s: 3, tag: "life", c: c.made, d: c.opened, f: c.opened, cap: c.id }]);
+        S.archPending = [...new Set((S.archPending || []).concat(k))];
+        n++;
+    }
+    if (n) {
+        rebuildFlat();
+        saveArchLocal();
+    }
+    return n;
+}
+/* reading a filed capsule again */
+function showCapsuleLetter(capId) {
+    const c = KEEP.caps.find(x => x.id === capId);
+    if (!c)
+        return false;
+    openRitual("A time capsule, filed.", `Sealed ${fmtLong(c.made)}, opened ${fmtLong(c.opened)}.`, `<div class="letter">${esc(c.text).replace(/\n/g, "<br>")}</div>`, [["Put it back", "primary", closeRitual]]);
+    sfx("card");
+    return true;
+}
+
+/* every capsule still sealed: when it was made, when it opens; open the ones whose day has come; write a new one */
+function showCapsules() {
+    const sealed = sealedCapsules(), due = dueCapsules(), n = sealed.length + due.length, full = n >= CAPSULE_MAX;
+    const rows = due.map(c => `<li><b>Ready to open</b><br><span class="sub">Sealed ${esc(dmy(new Date(c.made)))} · its day was ${esc(dmy(new Date(c.open + "T12:00")))}</span></li>`).join("") +
+        sealed.map(c => `<li><b>Opens ${esc(wdmy(new Date(c.open + "T12:00")))}</b><br><span class="sub">Sealed ${esc(dmy(new Date(c.made)))}</span></li>`).join("");
+    const btns = [];
+    if (due.length)
+        btns.push(["Open the one that's ready", "primary", () => openDueCapsule()]);
+    if (!full)
+        btns.push(["Write a time capsule", due.length ? "" : "primary", () => openCapsule()]);
+    btns.push(["Close", btns.length ? "ghost" : "primary", closeRitual]);
+    openRitual("Time capsules", n ? `${n} of ${CAPSULE_MAX} on the plank.${full ? " It's full: one has to open before there's room for another." : ""}` : "None sealed. One a month, if you like: twelve fit on the plank.", n ? `<ul class="fbooklist">${rows}</ul>` : "", btns);
+    sfx("card");
+}
+/* the first of the month: Mite mentions a capsule, once (from boot.js's minute tick) */
+function capsuleReminder() {
+    const d = new Date(), mk = d.getFullYear() * 12 + d.getMonth();
+    if (d.getDate() !== 1 || num(S.flags.capMonth) >= mk || document.hidden || !booted || !$("ritual").hidden || objQ.cur || d.getHours() < 7)
+        return;
+    S.flags.capMonth = mk;
+    saveSoon();
+    if (KEEP.caps.filter(c => !c.opened).length >= CAPSULE_MAX)
+        return;
+    speak(compose("capsule_remind") || "A new month. Want to seal a time capsule? It's on the plank in the archive, or from the journal.", { ms: 7000 });
 }
 
 </script>
@@ -10605,16 +10698,21 @@ function scopeFrame(now) {
  * wall.js - The back wall: posters, certificates and oddities in the slots either side of the window.
  */
 let wallHits = [];
+/* the spots for wall pieces: three columns each side of the window, in rows below the origami strings (so nothing
+   hangs in front of a poster), as many rows as fit above the balcony */
 function wallSlots() {
-    const rm = room(), top = Math.max(H * .12 + R * .45, R * 1.3), bot = Math.min(GY - R * 2.75, rm.wy + rm.wr * 1.6);
+    const rm = room(), sz = clamp(R * .62, 16, R * .9), bot = Math.min(GY - R * 2.75, rm.wy + rm.wr * 1.6);
+    const top = Math.min(bot - sz * 1.2, Math.max(H * .12 + R * .45, R * 1.3, (typeof origamiLow === "function" ? origamiLow() : 0) + sz * .85));
     const out = [];
-    const cols = [.09, .2, .8, .91], rows = bot - top > R * 1.6 ? [.28, .75] : [.5];
+    const span = bot - top, nr = clamp(Math.floor(span / (sz * 1.3)) + 1, 1, 3);
+    const cols = [.07, .18, .29, .71, .82, .93], rows = nr === 1 ? [.5] : Array.from({ length: nr }, (_, i) => i / (nr - 1));
     for (const ry of rows)
         for (const cx of cols) {
             const x = W * cx;
-            if (Math.abs(x - rm.wx) < rm.wr * 1.25)
+            const y = top + (bot - top) * ry;
+            if (Math.abs(x - rm.wx) < rm.wr * 1.25 || (Math.abs(x - rm.lx) < R * .75 && Math.abs(y - lampY(rm)) < R * .95)) // (not on the window, not behind the lamp)
                 continue;
-            out.push({ x, y: top + (bot - top) * ry });
+            out.push({ x, y });
         }
     return out;
 }
@@ -12256,25 +12354,7 @@ function drawKeepsakesOn(x, topY, dk, tsec) {
     reflHits = [];
     journalHit = null;
     capHit = null;
-    const caps = KEEP.caps.filter(c => !c.opened), due = dueCapsules().length;
-    if (caps.length) {
-        const tw = R * .42, th = R * .36;
-        capHit = { x: x - tw / 2, y: topY - th, w: tw, h: th, cx: x };
-        cx.fillStyle = mix("#7a8a92", "#2a3034", dk * .7);
-        cx.fillRect(x - tw / 2, topY - th, tw, th);
-        cx.fillStyle = mix("#9aabb3", "#3a4246", dk * .7);
-        cx.fillRect(x - tw / 2 - 1, topY - th - R * .06, tw + 2, R * .08);
-        cx.fillStyle = mix("#b6343c", "#3a1414", dk * .6);
-        cx.beginPath();
-        cx.arc(x, topY - th * .45, R * .07, 0, 7);
-        cx.fill();
-        if (due) {
-            softGlow(x, topY - th * .5, R * .9, `rgba(255,220,140,${.25 + .15 * Math.sin(tsec * 3)})`);
-            if (Math.random() < .05)
-                addP({ type: "spark", x: x + rnd(-tw / 2, tw / 2), y: topY - th, vx: rnd(-10, 10), vy: -rnd(20, 40), g: -5, max: 1, col: "#ffd76a", size: 2 });
-        }
-        x -= tw / 2 + R * .18;
-    }
+    // (the time capsules stand on their plank on the wall now: archive-wall.js)
     { // the journal: a cloth-bound book lying on the desk, a ribbon out of the bottom (journal.js). Tap it to write
         const bw = Math.round(R * .5 / PX) * PX, bh = Math.max(PX * 3, Math.round(R * .14 / PX) * PX), bx = Math.round((x - bw) / PX) * PX, by = topY - bh;
         cx.fillStyle = mix("#3f5f8a", "#141c2a", dk * .65); // the cover, deep blue
@@ -12292,33 +12372,85 @@ function drawKeepsakesOn(x, topY, dk, tsec) {
         journalHit = { x: bx - 4, y: by - R * .3, w: bw + 8, h: bh + R * .4, cx: bx + bw / 2 };
     }
 }
-/* the boxes flying out of the door when the day's pile is filed */
+/* filing the day: a copper vacuum tube pops up out of the floor beside the pile, with a flared mouth like the top of
+   the archive's tube; the boxes are sucked into it one by one (they shrink as they go in), then it sinks away again.
+   (rituals.js: fileDay starts it; the boxes come out through the archive's own tube, archive-wall.js) */
+const FILE_RISE = 350, FILE_GAP = 160, FILE_FLY = 560, FILE_SINK = 400;
+function fileAnimLength(n) {
+    return FILE_RISE + n * FILE_GAP + FILE_FLY + 250 + FILE_SINK;
+}
 function drawFilingFlight(now, dk) {
     if (!fileAnim)
         return;
-    const bw = clamp(R * .3, 9, 22);
+    const n = fileAnim.ids.length, el = now - fileAnim.t0, total = fileAnimLength(n), q = PX;
+    if (el > total) {
+        fileAnim = null;
+        return;
+    }
+    if (fileAnim.tx === undefined) { // the tube comes up just to the left of the pile (to the right if there's no room)
+        const xs = fileAnim.ids.map(id => (fileAnim.from[id] || { x: pet.x }).x), lx = Math.min(...xs) - R * 1.1;
+        fileAnim.tx = clamp(lx > R * .9 ? lx : Math.max(...xs) + R * 1.1, R * .9, W - R * .9);
+    }
+    const rise = Math.min(1, el / FILE_RISE) * Math.min(1, (total - el) / FILE_SINK), e = 1 - Math.pow(1 - rise, 3);
+    const tw = Math.max(q * 5, Math.round(R * .38 / q) * q), x = Math.round(fileAnim.tx / q) * q, full = R * 1.6, top = GY - full * e;
+    const copper = mix("#b8592f", "#4a2414", dk * .6), copperD = mix("#7a3a20", "#2a140a", dk * .6), copperL = mix("#f2b07a", "#6a4028", dk * .6);
+    if (e > 0) {
+        cx.fillStyle = "#1a100a"; // the hole in the floor it comes out of
+        cx.beginPath();
+        cx.ellipse(x, GY + q, tw * .9, q * 1.5, 0, 0, 7);
+        cx.fill();
+        drawLayered(() => {
+            cx.fillStyle = copper; // the pipe
+            cx.fillRect(x - tw / 2, top, tw, GY - top);
+            cx.fillStyle = copperL;
+            cx.fillRect(x - tw / 2 + q, top, q, GY - top);
+            cx.fillStyle = copperD; // collars
+            for (let y = top + R * .45; y < GY - q * 2; y += R * .5)
+                cx.fillRect(x - tw / 2 - q, Math.round(y / q) * q, tw + q * 2, q * 2);
+            const mw = tw * 1.9, mh = Math.max(q * 3, R * .16); // the flared mouth, and the dark inside
+            cx.fillStyle = copperD;
+            cx.fillRect(x - mw / 2, top - mh, mw, mh);
+            cx.fillStyle = copper;
+            cx.fillRect(x - mw / 2 + q, top - mh, mw - q * 2, mh - q);
+            cx.fillStyle = "#120a06";
+            cx.fillRect(x - mw / 2 + q * 2, top - mh, mw - q * 4, q * 2);
+            cx.fillStyle = copperL;
+            cx.fillRect(x - mw / 2 + q, top - mh, q, mh - q);
+        });
+    }
+    const bw = clamp(R * .3, 9, 22), mouthY = top - Math.max(q * 3, R * .16);
     fileAnim.ids.forEach((id, idx) => {
         const t = S.tasks.find(x => x.id === id);
         if (!t)
             return;
-        const p = clamp((now - fileAnim.t0 - idx * 140) / 800, 0, 1);
+        const p = clamp((el - FILE_RISE - idx * FILE_GAP) / FILE_FLY, 0, 1);
         if (p >= 1) {
             if (!fileAnim.landed[id]) {
                 fileAnim.landed[id] = 1;
                 sfx("tock");
+                for (let k = 0; k < 3; k++)
+                    addP({ type: "spark", x: x + rnd(-tw, tw), y: mouthY, vx: rnd(-20, 20), vy: -rnd(20, 50), g: 60, max: .5, col: "#f2b07a", size: 2 });
             }
             return;
         }
-        const fr = fileAnim.from[id] || { x: pet.x, y: GY }, e = 1 - Math.pow(1 - p, 2), tx = W + bw, ty = GY - R * 1.1;
-        drawBox(t, fr.x + (tx - fr.x) * e, fr.y + (ty - fr.y) * e - Math.sin(Math.PI * p) * R * .9, bw, dk);
+        if (p <= 0)
+            return;
+        const fr = fileAnim.from[id] || { x: pet.x, y: GY }, ease = p * p, sx = fr.x + (x - fr.x) * ease, sy = fr.y + (mouthY - fr.y) * ease - Math.sin(Math.PI * p) * R * .5;
+        drawBox(t, sx, sy, bw * (p > .75 ? 1 - (p - .75) * 3.2 : 1), dk); // (squeezed small as it goes in)
     });
-    if (now - fileAnim.t0 > 800 + fileAnim.ids.length * 140 + 200)
-        fileAnim = null;
+    if (!fileAnim.whoosh && el > FILE_RISE) {
+        fileAnim.whoosh = 1;
+        floatText("fwoomp", x, GY - R * 2.1, "#f2b07a");
+    }
 }
 /* taps while in the archive; returns true when the tap was used */
 function archiveTap(p) {
     if (view === "archive")
         archiveSince = performance.now();
+    if (journalHit && hitIn(p, journalHit, 24)) { // the journal, even with Midnightcat sitting beside it
+        requestObj("journal", journalHit.cx, journalHit.y);
+        return true;
+    }
     if (catHit && catHit.room === "archive" && hitIn(p, catHit)) {
         catTap();
         return true;
@@ -13993,11 +14125,16 @@ const ANOM_DRAW = {
 let origHits = [], origSpin = {}, origFresh = 0; // origFresh: the one the ghost just left (it twirls and sparkles the first time you see it)
 function origamiStrands() {
     const all = S.origami || [], from = Math.max(0, all.length - 16), list = all.slice(from), top = Math.max(R * .7, H * .06), bottom = GY - R * 4.15; // the newest sixteen, four to a string
-    // four strings: two in the right corner, two just left of the round window, so none of them gets too long
-    const rm = room(), wl = rm.wx - rm.wr, xs = [W - R * .55, wl - R * .35, W - R * 1.2, wl - R * 1.0];
+    // four strings: two in the right corner, two in the left corner (clear of the lamp), so none of them gets too long
+    const rm = room(), xs = [W - R * .55, R * .55, W - R * 1.2, R * 1.2];
     const low = Math.min(bottom, lampY(rm) - R * .55); // (and they all stop above the hanging lamp)
     const per = Math.ceil(list.length / 4), gap = Math.max(R * .35, Math.min(R * .75, (low - top - R * .9) / Math.max(1, per))); // the first one hangs below the clock chip
     return list.map((o, i) => ({ o, i, k: i % 4, x: xs[i % 4], y: top + R * .8 + gap * Math.floor(i / 4) + (i % 4 > 1 ? gap * .5 : 0), top, fresh: o.at === origFresh }));
+}
+/* how far down the strings reach (the wall pieces hang below them) */
+function origamiLow() {
+    const it = origamiStrands();
+    return it.length ? Math.max(...it.map(o => o.y)) + Math.max(R * .2, 7) * 1.4 : 0;
 }
 function drawGarland(rm, dk) {
     origHits = [];
@@ -14363,6 +14500,27 @@ function activeFestivals(d = new Date()) {
         festCache = { at: now, day: t, list: out };
     return out;
 }
+/* the postcards on the pinboard: any that have come for a festival that's on now, then the ones kept from before
+   (a postcard stays once it has come: S.postcards, newest first). Each as { f, y, start, end } like activeFestivals */
+function boardCards(n) {
+    const act = activeFestivals().filter(a => a.f.kind === "card");
+    S.postcards = S.postcards || [];
+    for (const a of act)
+        if (!S.postcards.some(p => p.id === a.f.id && p.y === a.y)) {
+            S.postcards.unshift({ id: a.f.id, y: a.y, at: Date.now() });
+            S.postcards.length = Math.min(S.postcards.length, 60);
+            saveSoon();
+        }
+    const out = act.slice();
+    for (const p of S.postcards.slice().sort((a, b) => b.at - a.at)) {
+        if (out.length >= n)
+            break;
+        const f = FESTIVALS.find(x => x.id === p.id), r = f && f.when(p.y);
+        if (f && r && !out.some(o => o.f.id === f.id))
+            out.push({ f, y: p.y, start: r[0], end: r[1] });
+    }
+    return out.slice(0, n);
+}
 /* the next festivals from today, soonest first */
 function upcomingFestivals(n = 3, d = new Date()) {
     const t = dayKey(d), Y = d.getFullYear(), out = [];
@@ -14395,7 +14553,7 @@ function showFestival(id, y) {
     const f = FESTIVALS.find(x => x.id === id);
     if (!f)
         return;
-    const act = activeFestivals().find(a => a.f.id === id), yr = y || (act ? act.y : new Date().getFullYear());
+    const act = activeFestivals().find(a => a.f.id === id), kept = (S.postcards || []).find(p => p.id === id), yr = y || (act ? act.y : kept ? kept.y : new Date().getFullYear());
     const r = f.when(yr), a = act || (r ? { f, y: yr, start: r[0], end: r[1] } : null);
     const sub = f.kind === "card" && a ? `A postcard from a friend in ${festFrom(a)} · ${festDates(a)}` : a ? festDates(a) : "";
     const moves = /lunar|holi|nowruz|eid|diwali|hanukkah|midautumn/.test(id);
@@ -15621,6 +15779,10 @@ const yarnBall = { on: false, x: 0, vx: 0, side: 1, home: 0, knit: null };
 const catSize = () => R * .68;
 /* places it likes: in the archive the reading desk and the floor by the shelves; in the wagon the rug,
    by the fire, and next to the crystal cabinet */
+/* the desk is hers (it used to be off limits while a capsule tin stood on it) */
+function catDeskFree() {
+    return true; // (the capsules moved to their plank on the wall; the desk is hers again, the journal beside her)
+}
 function catSpots(room) {
     if (room === "garden") { // the armchair, mostly; the floor of the nook now and then
         const g = gardenGeo(), top = { x: g.drX + g.drW * .18, g: g.drH + R * .02 }, floor = { x: W * .5, g: 0 };
@@ -15629,7 +15791,7 @@ function catSpots(room) {
     }
     if (room === "archive") {
         const g = archGeo();
-        const out = [{ x: g.deskX0 + R * .45, g: R * .95 + R * .16 }, { x: g.x0 + R * 1.2, g: 0 }, { x: (g.x0 + g.x1) / 2, g: 0 }, { x: g.x1 - R * 1.6, g: 0 }];
+        const out = [...(catDeskFree() ? [{ x: g.deskX0 + R * .45, g: R * .95 + R * .16, desk: true }] : []), { x: g.x0 + R * 1.2, g: 0 }, { x: (g.x0 + g.x1) / 2, g: 0 }, { x: g.x1 - R * 1.6, g: 0 }];
         if (own("circle")) { // the middle of the chalk circle: one of her favourite places (circle.js)
             const c = circleGeo(), mid = { x: c.x, g: 0, z: c.y - GY, circle: true };
             out.push(mid, mid, mid);
@@ -15739,7 +15901,7 @@ function catTick(dt, now) {
     if (catYarnTick(dt, now))
         return;
     if (cat.ph === "sit" || cat.ph === "nap") {
-        if (now > cat.until || (cat.room === "room" && !catClear(cat))) // a visitor came to stand here: move along
+        if (now > cat.until || (cat.room === "room" && !catClear(cat)) || (cat.room === "archive" && cat.g > 0 && !catDeskFree())) // a visitor came to stand here, or a capsule's on the desk: move along
             catNext(now);
         return;
     }
@@ -16669,6 +16831,7 @@ function drawGarden(now, dt) {
         }
         if (own("ndoor")) // the night door, up on the platform beside the pinboard (draw-world.js)
             drawNightDoor(dk, ndoorX(), sky, nookLoftGeo().balY);
+        drawIceFlower(dk, t); // the day's ice sculpture, if that's today's treat (splurge.js)
         // the little writing desk under the window: drawer, inkpot and quill, a letter, a candle
         {
             const { dx0, dx1, dTop } = g, lw = Math.max(PX * 2, R * .1);
@@ -16745,7 +16908,7 @@ function drawGarden(now, dt) {
             cx.fillStyle = mix("#a8804e", "#2e2016", dk);
             for (let i = 0; i < 26; i++) // the cork's speckle
                 cx.fillRect(bx0 + (i * 37.7) % bw, by0 + (i * 23.3) % bh, PX, PX);
-            const cards = activeFestivals().filter(a => a.f.kind === "card").slice(0, 3);
+            const cards = boardCards(3);
             const items = [...cards.map(a => ({ fest: a })), ...PIN_PHOTOS.map(k => ({ photo: k }))].slice(0, Math.max(3, Math.floor(bw / (R * .75)))).slice(0, boardHung()).concat(boardHung() >= BOARD_FIRST ? shiftCards().map(k => ({ photo: k })) : []); // (and the planeshift postcards)
             const n = items.length, cw = Math.min(R * 1.05, bw / n - R * .12), chh = cw * .7;
             const slots = Math.max(n, Math.min(BOARD_FIRST, Math.max(3, Math.floor(bw / (R * .75)))));
@@ -16947,6 +17110,8 @@ function gardenCandle(g) {
 }
 /* ---------- taps in the greenhouse (p in its coordinates) ---------- */
 function gardenTap(p) {
+    if (splurgeTap(p, "garden")) // the ice flower up on the platform (splurge.js)
+        return;
     if (drifterTap(p, "garden"))
         return;
     if (anom && anom.room === "garden" && anomHit(p)) {
@@ -17924,7 +18089,7 @@ function pinTurn(d) {
 }
 /* what's on the board, and where, in close-up pixels: photos along the top, postcards top right, notes below */
 function pinItems() {
-    const out = [], cards = activeFestivals().filter(a => a.f.kind === "card").slice(0, 2);
+    const out = [], cards = boardCards(2);
     const ph = pinPhotos(), step = ph.length > 4 ? 14 : 17, pw = ph.length > 4 ? 13 : 15;
     ph.forEach((k, i) => out.push({ kind: "photo", photo: k, x: (ph.length > 4 ? 3 : 6) + i * step, y: 6 + (i % 2) * 3, w: pw, h: 11, rot: (i % 3) - 1 }));
     cards.forEach((a, i) => out.push({ kind: "card", fest: a, x: 74, y: 5 + i * 13, w: 16, h: 11 }));
@@ -18032,7 +18197,7 @@ function pinBuildHits() {
 function pinPick(it) {
     if (it.kind === "card") { // a postcard has its own card
         closePinboard();
-        showFestival(it.fest.f.id);
+        showFestival(it.fest.f.id, it.fest.y);
         return;
     }
     pinSel = it;
@@ -18514,10 +18679,11 @@ $("flowerView").addEventListener("pointerdown", e => e.stopPropagation());
  *                     the shelves. When
  *                     the day's pile is filed, capsules whoosh through it (tubeSend). Tap it: the last few
  *                     things filed.
- *   the key rack      a row of little brass keys, one for every month you've had the wagon (the newest twelve).
- *                     Tap a key: that month in short (tasks done, letters, flowers, paintings, visitors).
+ *   the capsule plank a shelf with a little tin for every sealed time capsule (twelve at most), in the place the key
+ *                     rack used to be. Tap it: the capsules, and a new one to write (keepsake-shelf.js). (The
+ *                     months are in the paternoster now, paternoster.js.)
  */
-let tubeHit = null, keyHits = [], tubeCaps = [];
+let tubeHit = null, keyHits = [], tubeCaps = [], capPlankHit = null;
 /* where they go: the tube a quarter of the way down the empty wall, the rack below it, both above the window */
 function archWallGeo() {
     const g = archGeo(), aw = archWindow(g), top = Math.max(ceilY(0, "archive"), ceilY(g.x0, "archive")) + R * .3, low = aw.wy - aw.wr - R * .35;
@@ -18633,31 +18799,48 @@ function drawArchWall(dk, tsec) {
         }
     }
     tubeHit = { x: w.startX - R * .3, y: w.tubeY - R * .35, w: w.drop - w.startX + R * .6, h: R * .7, cx: (w.startX + w.drop) / 2 };
-    // the key rack: a wooden strip with brass hooks, one key per month
-    const months = keyMonths(), rx0 = w.rackX0, rx1 = Math.max(rx0 + R * 1.5, w.rackX1), n = months.length, step = (rx1 - rx0) / Math.max(1, n);
-    keyHits = [];
-    drawLayered(() => {
+    // the time capsule plank: a shelf on two brackets, a little tin for every sealed capsule (twelve at most), each
+    // with the month it opens on; a tin whose day has come glows (keepsake-shelf.js: showCapsules)
+    const rx0 = w.rackX0, rx1 = Math.max(rx0 + R * 1.5, w.rackX1), caps = sealedCapsules().concat(dueCapsules()).sort((a, b) => a.open < b.open ? -1 : 1).slice(0, CAPSULE_MAX), due = new Set(dueCapsules().map(c => c.id));
+    const spots = new Map(), jy = w.rackY + q * 6, aw = archWindow(w.g), py = Math.round((jy + (aw.wy - aw.wr - jy) * .62) / q) * q, step = (rx1 - rx0) / CAPSULE_MAX; // (the jars' shelf above, the capsules' plank below it, over the window)
+    drawLayered(() => { // the jars' shelf
         cx.fillStyle = mix("#8a5a34", "#24170e", dk);
-        cx.fillRect(rx0 - q * 2, w.rackY - q * 2, rx1 - rx0 + q * 4, q * 3);
+        cx.fillRect(rx0 - q * 2, jy, rx1 - rx0 + q * 4, q * 2);
         cx.fillStyle = mix("#b07a48", "#33221a", dk);
-        cx.fillRect(rx0 - q * 2, w.rackY - q * 2, rx1 - rx0 + q * 4, q);
-        months.forEach((mk, i) => {
-            const kx = Math.round((rx0 + step * (i + .5)) / q) * q, sw = Math.round(Math.sin(tsec * .8 + i) * .4) * q, ky = w.rackY + q * 2, cur = i === n - 1;
-            const col = cur ? brassL : i % 2 ? brass : mix(brass, "#b8592f", .15);
-            cx.fillStyle = brassD; // the hook
-            cx.fillRect(kx, w.rackY + q, q, q * 2);
-            cx.fillStyle = col; // the bow (a ring), the shaft, the teeth
-            cx.fillRect(kx - q + sw, ky + q, q * 3, q);
-            cx.fillRect(kx - q + sw, ky + q * 3, q * 3, q);
-            cx.fillRect(kx - q + sw, ky + q, q, q * 3);
-            cx.fillRect(kx + q + sw, ky + q, q, q * 3);
-            cx.fillRect(kx + sw, ky + q * 4, q, q * 5);
-            cx.fillRect(kx + q + sw, ky + q * 7, q, q);
-            cx.fillRect(kx + q + sw, ky + q * 8, q * (1 + (i % 2)), q);
-            keyHits.push({ x: kx - step / 2 + q, y: w.rackY, w: Math.max(step - q, q * 3), h: q * 12, cx: kx, month: mk });
+        cx.fillRect(rx0 - q * 2, jy, rx1 - rx0 + q * 4, q);
+    });
+    drawLayered(() => {
+        cx.fillStyle = mix("#8a5a34", "#24170e", dk); // the plank and its brackets
+        cx.fillRect(rx0 - q * 2, py, rx1 - rx0 + q * 4, q * 2);
+        cx.fillStyle = mix("#b07a48", "#33221a", dk);
+        cx.fillRect(rx0 - q * 2, py, rx1 - rx0 + q * 4, q);
+        cx.fillStyle = mix("#6a4630", "#1a110b", dk);
+        for (const bx of [rx0 + q, rx1 - q * 2]) {
+            cx.fillRect(bx, py + q * 2, q, q * 3);
+            cx.fillRect(bx - q, py + q * 2, q * 3, q);
+        }
+        const per = CAPSULE_MAX / 2, st = (rx1 - rx0) / per, tw2 = Math.max(q * 2, Math.round(st * .55 / q) * q), th = q * 4;
+        if (caps.length > per) { // a second, shorter plank above for the next six
+            cx.fillStyle = mix("#8a5a34", "#24170e", dk);
+            cx.fillRect(rx0, py - th - q * 4, rx1 - rx0, q * 2);
+        }
+        caps.forEach((c, i) => {
+            const row = Math.floor(i / per), tx = Math.round((rx0 + st * (i % per + .5)) / q) * q, by = py - row * (th + q * 4);
+            cx.fillStyle = mix("#7a8a92", "#2a3034", dk * .7); // the tin
+            cx.fillRect(tx - tw2 / 2, by - th, tw2, th);
+            cx.fillStyle = mix("#9aabb3", "#3a4246", dk * .7); // its lid
+            cx.fillRect(tx - tw2 / 2 - Math.max(1, q / 2), by - th - q, tw2 + q, q);
+            cx.fillStyle = due.has(c.id) ? "#ffd76a" : mix("#b6343c", "#3a1414", dk * .6); // the seal (gold: ready)
+            cx.fillRect(tx - q / 2, by - th + q, q, q);
+            spots.set(c.id, [tx, by - th / 2]);
         });
     });
-    drawEyeJars(dk, tsec, rx1 + q * 2, w.rackY - q * 2); // the eye jars, standing on the rack (eyes.js)
+    for (const c of caps)
+        if (due.has(c.id) && spots.has(c.id))
+            softGlow(spots.get(c.id)[0], spots.get(c.id)[1], R * .5, `rgba(255,220,140,${.25 + .15 * Math.sin(tsec * 3)})`);
+    capPlankHit = { x: rx0 - q * 3, y: py - q * 18, w: rx1 - rx0 + q * 6, h: q * 21, cx: (rx0 + rx1) / 2 };
+    keyHits = [];
+    drawEyeJars(dk, tsec, rx1 + q * 2, jy); // the eye jars, on their own shelf (eyes.js)
 }
 /* the last few things that came through the tube */
 function showTube() {
@@ -18691,9 +18874,9 @@ function archWallTap(p) {
         showEyeJars();
         return true;
     }
-    const k = keyHits.find(h => hitIn(p, h, 24));
-    if (k) {
-        showMonthKey(k.month);
+    if (capPlankHit && hitIn(p, capPlankHit, 20)) { // the time capsule plank
+        if (!openDueCapsule())
+            showCapsules();
         return true;
     }
     if (tubeHit && hitIn(p, tubeHit, 30)) {
@@ -19195,7 +19378,7 @@ const EYES = [
     { id: "star", name: "Something's eye, from very far up", ring: "#1a2050", pupil: "star", glow: "#c8d8ff", note: "There are stars in it. It's looking at somewhere we haven't been." },
     { id: "kind", name: "A kind eye", ring: "#a07850", pupil: "round", note: "Nobody knows whose. It just looks kind. Mite put it in the front." }
 ];
-const EYES_PER_JAR = 4, EYE_JARS = 4;
+const EYES_PER_JAR = 4, EYE_JARS = 5; // (three on the rack, two on top: room to grow)
 /* where each eye comes from (some are only found one way) */
 const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door" };
 function findEye(from) {
@@ -19211,11 +19394,22 @@ function findEye(from) {
     return e;
 }
 let eyeJarHit = null, eyeLook = { x: 0, y: 0, tx: 0, ty: 0, at: 0 };
-/* the jars, standing on the rack, the last one at its right end */
+/* the jars, on the rack at its right end: three side by side, and two more standing on their lids (as many as are
+   needed, one per four eyes). Round-shouldered glass with a cork and a paper label, cloudy green liquid with a few
+   bubbles, and the eyes crowded in it at all heights, each looking about and blinking in its own time */
+function eyeJarSpots(n, xRight, yTop, jw, jh, gap) {
+    const out = [], bottom = Math.min(3, n), top = n - bottom, rowW = k => k * jw + (k - 1) * gap, x0 = xRight - rowW(bottom);
+    for (let i = 0; i < bottom; i++)
+        out.push({ x: x0 + i * (jw + gap), y: yTop - jh });
+    const tx0 = x0 + (rowW(bottom) - rowW(top)) / 2; // the top two sit over the gaps between the bottom three
+    for (let i = 0; i < top; i++)
+        out.push({ x: tx0 + i * (jw + gap), y: yTop - jh * 2 - PX });
+    return out;
+}
 function drawEyeJars(dk, t, xRight, yTop) {
     const q = PX, have = (S.eyes || []).map(s => EYES.find(e => e.id === s.k)).filter(Boolean);
     const jars = Math.max(1, Math.min(EYE_JARS, Math.ceil(have.length / EYES_PER_JAR) || 1));
-    const jw = q * 9, jh = q * 10;
+    const jw = q * 10, jh = q * 11, gap = q * 2;
     if (t * 1000 > eyeLook.at) { // they all look somewhere new, slowly, every few seconds
         eyeLook.tx = rnd(-1, 1);
         eyeLook.ty = rnd(-.6, .6);
@@ -19223,40 +19417,57 @@ function drawEyeJars(dk, t, xRight, yTop) {
     }
     eyeLook.x += (eyeLook.tx - eyeLook.x) * .02;
     eyeLook.y += (eyeLook.ty - eyeLook.y) * .02;
-    const x0 = xRight - jars * (jw + q * 2);
-    for (let j = 0; j < jars; j++) {
-        const jx = Math.round((x0 + j * (jw + q * 2)) / q) * q, jy = yTop - jh;
+    const spots = eyeJarSpots(jars, Math.round(xRight / q) * q, yTop, jw, jh, gap);
+    spots.forEach((sp, j) => {
+        const jx = Math.round(sp.x / q) * q, jy = Math.round(sp.y / q) * q;
         drawLayered(() => {
-            cx.fillStyle = mix("#9fc0b8", "#1e2a30", dk * .6); // the glass, a little green
-            cx.fillRect(jx, jy + q * 2, jw, jh - q * 2);
-            cx.fillStyle = mix("#2f4a44", "#0e1614", dk * .5); // and dark liquid inside, so the eyes show
+            const glass = mix("#9fc0b8", "#1e2a30", dk * .6), liquid = mix("#3f6a58", "#0e1a16", dk * .5);
+            cx.fillStyle = glass; // a round-shouldered jar: the body, the shoulders, the neck
+            cx.fillRect(jx, jy + q * 3, jw, jh - q * 4);
+            cx.fillRect(jx + q, jy + q * 2, jw - q * 2, q);
+            cx.fillRect(jx + q, jy + jh - q, jw - q * 2, q);
+            cx.fillRect(jx + q * 2, jy + q, jw - q * 4, q);
+            cx.fillStyle = liquid; // full nearly to the top
             cx.fillRect(jx + q, jy + q * 4, jw - q * 2, jh - q * 5);
-            cx.fillStyle = mix("#d8eae4", "#3a4a50", dk * .6);
-            cx.fillRect(jx + q, jy + q * 3, q, jh - q * 5); // a shine
-            cx.fillStyle = mix("#8a5a34", "#24170e", dk); // the lid
-            cx.fillRect(jx - q, jy, jw + q * 2, q * 2);
+            cx.fillRect(jx + q * 2, jy + q * 3, jw - q * 4, q);
+            cx.fillStyle = mix("#e2f0ea", "#3a4a50", dk * .6); // the shine down one side
+            cx.fillRect(jx + q, jy + q * 4, q, jh - q * 7);
+            cx.fillStyle = mix("#b08a5a", "#2e2416", dk * .7); // the cork
+            cx.fillRect(jx + q * 3, jy - q, jw - q * 6, q * 2);
+            cx.fillStyle = mix("#f1e6cc", "#4a4436", dk * .6); // a paper tag tied round the neck
+            cx.fillRect(jx + jw - q * 3, jy + q, q * 2, q * 2);
         });
         const mine = have.slice(j * EYES_PER_JAR, (j + 1) * EYES_PER_JAR);
+        const pos = [[.32, .76], [.7, .66], [.36, .46], [.68, .36]]; // crowded in at all heights
         mine.forEach((e, i) => {
-            const ex = jx + q * 3 + (i % 2) * q * 3.5, ey = jy + jh - q * 2.5 - Math.floor(i / 2) * q * 3.2 + Math.sin(t * .7 + i) * q * .4; // two by two (bobbing a little)
+            const ex = jx + jw * pos[i][0] + Math.sin(t * .5 + i * 2 + j) * q * .5, ey = jy + jh * pos[i][1] + Math.sin(t * .7 + i + j) * q * .5;
             const blink = ((t + i * 1.37 + j * 2.1) % (4 + (i % 3))) < .14 || (e.id === "dream" && pet.beh === "yawn");
-            const er = q;
+            const er = q * 1.5;
             if (e.glow)
-                glow(ex, ey, 1.2, e.glow + "88");
+                glow(ex, ey, 1.4, e.glow + "88");
+            const X = Math.round((ex - er) / q) * q, Y = Math.round((ey - er) / q) * q, sz = q * 3;
             cx.fillStyle = blink ? mix(e.paper ? "#e8e0d0" : "#c99a8a", "#2a2020", dk * .5) : mix(e.paper ? "#f4ecd8" : "#f4efe6", "#4a4844", dk * .45);
-            cx.fillRect(Math.round((ex - er) / q) * q, Math.round((ey - er) / q) * q, er * 2, blink ? q : er * 2);
-            if (blink)
+            if (blink) {
+                cx.fillRect(X, Y + q, sz, q);
                 return;
-            const lx = Math.round((ex - q / 2 + eyeLook.x * er * .5) / q) * q, ly = Math.round((ey - q / 2 + eyeLook.y * er * .4) / q) * q;
+            }
+            cx.fillRect(X + q, Y, q, sz); // a round eye: a plus of white, three across
+            cx.fillRect(X, Y + q, sz, q);
+            const lx = X + q + Math.round(eyeLook.x * .9) * q * (e.pupil === "none" ? 0 : 1), ly = Y + q + Math.round(eyeLook.y * .9) * q;
             cx.fillStyle = mix(e.ring, "#141018", dk * .35);
-            cx.fillRect(lx - (e.pupil === "none" ? q / 2 : 0), ly, q * (e.pupil === "none" ? 2 : 1), q);
+            cx.fillRect(clamp(lx, X, X + q * 2), clamp(ly, Y, Y + q * 2), q, q);
             if (e.pupil === "star") {
                 cx.fillStyle = "#fff6d0";
-                cx.fillRect(lx, ly, Math.max(1, q / 2), Math.max(1, q / 2));
+                cx.fillRect(clamp(lx, X, X + q * 2), clamp(ly, Y, Y + q * 2), Math.max(1, q / 2), Math.max(1, q / 2));
             }
         });
-    }
-    eyeJarHit = { x: x0 - q, y: yTop - jh - q, w: jars * (jw + q * 2) + q * 2, h: jh + q * 2, cx: x0 + jars * (jw + q * 2) / 2 };
+        if (Math.sin(t * 1.3 + j * 2) > .9) { // a bubble rising
+            cx.fillStyle = mix("#cfe8e0", "#2a3a38", dk * .5);
+            cx.fillRect(jx + jw * .55, jy + q * 4 + ((t * 8 + j * 5) % (jh - q * 6)), Math.max(1, q / 2), Math.max(1, q / 2));
+        }
+    });
+    const xs = spots.map(s => s.x), ys = spots.map(s => s.y);
+    eyeJarHit = { x: Math.min(...xs) - q, y: Math.min(...ys) - q * 2, w: Math.max(...xs) + jw - Math.min(...xs) + q * 2, h: yTop - Math.min(...ys) + q * 2, cx: (Math.min(...xs) + Math.max(...xs) + jw) / 2 };
 }
 /* the card: every eye in the jars, what it is and where it came from */
 function showEyeJars() {
@@ -19587,7 +19798,7 @@ function spaceEnd(a) {
 /*
  * splurge.js - Something special, for 100 glimmers: a treat for the wagon that lasts one day and then is gone.
  * One at a time (S.splurge: { k, at }); buying another replaces it.
- *   ice        an ice sculpture of Mite on the wagon floor, melting into a puddle over the day
+ *   ice        an ice sculpture of a flower, up on the nook's platform beside the pinboard, melting over the day
  *   balloons   a bunch of balloons tied to a little weight; by evening they've sagged and drifted down
  *   cake       a towering cake on a stand; slices go missing through the day (nobody admits anything)
  *   fireworks  that evening, small fireworks over the hills in every window
@@ -19595,7 +19806,7 @@ function spaceEnd(a) {
  */
 const SPLURGE_PRICE = 100, SPLURGE_DAY = 864e5;
 const SPLURGES = [
-    { id: "ice", name: "Ice sculpture", note: "A sculpture of Mite in clear ice, on the wagon floor. It melts away over a day. Mite is very flattered and slightly worried." },
+    { id: "ice", name: "Ice sculpture", note: "A tall flower carved from clear ice, up on the nook's platform beside the pinboard. It melts away over a day, one petal at a time." },
     { id: "balloons", name: "Bunch of balloons", note: "Six balloons tied to a little weight. Over the day they sag, and drift, and in the end there's just the string." },
     { id: "cake", name: "Towering cake", note: "Three tiers on a stand. Slices go missing through the day. Nobody knows who. Everybody knows who." },
     { id: "fireworks", name: "Fireworks", note: "That evening, tiny fireworks over the hills in every window. Bought now, they go off when it's dark." }
@@ -19621,44 +19832,15 @@ function buySplurge(id) {
 }
 /* in the wagon (drawWorld), after the floor: the day's treat */
 function drawSplurge(dk, t) {
-    splurgeHit = null;
+    if (!splurgeHit || splurgeHit.room !== "garden")
+        splurgeHit = null;
     const k = splurgeOn(), left = splurgeLeft(), q = PX;
     if (!k || k === "fireworks")
         return;
     const x = Math.round(W * .66 / q) * q;
-    if (k === "ice") { // Mite in ice: round, two ears, a sprout; lower and smaller as it melts, the puddle grows
-        const h = R * 1.5 * (.25 + .75 * left), w = R * 1.1 * (.45 + .55 * left), base = GY;
-        cx.fillStyle = "rgba(160,205,235,.55)"; // the puddle
-        cx.beginPath();
-        cx.ellipse(x, base + q, R * (.5 + 1.1 * (1 - left)), R * (.08 + .12 * (1 - left)), 0, 0, 7);
-        cx.fill();
-        drawLayered(() => {
-            cx.fillStyle = "#cfe8f5";
-            cx.fillRect(x - w * .55, base - R * .14, w * 1.1, R * .14); // the plinth of ice
-            cx.beginPath();
-            cx.ellipse(x, base - R * .14 - h * .45, w * .5, h * .45, 0, 0, 7);
-            cx.fill();
-            if (left > .35) { // ears and sprout, until they've melted off
-                for (const sd of [-1, 1]) {
-                    cx.beginPath();
-                    cx.moveTo(x + sd * w * .28, base - R * .14 - h * .8);
-                    cx.lineTo(x + sd * w * .48, base - R * .14 - h * 1.02);
-                    cx.lineTo(x + sd * w * .46, base - R * .14 - h * .6);
-                    cx.fill();
-                }
-                cx.fillRect(x - q / 2, base - R * .14 - h * 1.05, q, h * .14);
-            }
-            cx.fillStyle = "#ffffff"; // shine
-            cx.fillRect(Math.round((x - w * .25) / q) * q, Math.round((base - R * .14 - h * .7) / q) * q, q, Math.max(q, h * .25));
-            cx.fillStyle = "#9cc8e4"; // eyes, carved
-            cx.fillRect(x - w * .2, base - R * .14 - h * .55, q, q);
-            cx.fillRect(x + w * .2 - q, base - R * .14 - h * .55, q, q);
-        });
-        if (Math.random() < .05) // a drip
-            addP({ type: "spark", x: x + rnd(-w * .4, w * .4), y: base - R * .2, vx: 0, vy: 20, g: 200, max: .5, col: "#cfe8f5", size: 2, room: "room" });
-        splurgeHit = { x: x - w * .6, y: base - R * .14 - h * 1.05, w: w * 1.2, h: h * 1.05 + R * .14, cx: x };
-    }
-    else if (k === "balloons") { // tied to a little weight; the bunch hangs lower and limper as the day goes
+    if (k === "ice") // (the ice flower stands in the nook, up on the platform: drawIceFlower)
+        return;
+    if (k === "balloons") { // tied to a little weight; the bunch hangs lower and limper as the day goes
         const top = GY - R * (1.2 + 2.2 * left), cols = ["#c2453a", "#e8a33c", "#3f9e9a", "#8a4fa0", "#6aa84f", "#f4a9b8"], n = Math.max(2, Math.round(6 * (.35 + .65 * left)));
         cx.fillStyle = mix("#5a4030", "#1e150f", dk);
         cx.fillRect(x - q * 2, GY - q * 2, q * 4, q * 2); // the weight
@@ -19714,6 +19896,44 @@ function drawSplurge(dk, t) {
         splurgeHit = { x: x - R * .6, y: GY - R * 1.6, w: R * 1.2, h: R * 1.6, cx: x };
     }
 }
+/* the ice flower, up on the nook's platform to the left of the night door (garden.js, inside its drawing): a stem and
+   two leaves, a cup of petals, on a block of ice. Over the day it sinks, the petals go one by one, and a puddle spreads */
+function drawIceFlower(dk, t) {
+    if (splurgeOn() !== "ice")
+        return;
+    const q = PX, left = splurgeLeft(), lg = nookLoftGeo(), base = lg.balY, x = Math.round(Math.max(lg.balL + R * .45, (own("ndoor") ? ndoorX() : nookGeoBoard()) - R * 1.0) / q) * q;
+    const ice = mix("#cfe8f5", "#3a4a58", dk * .6), iceD = mix("#9cc8e4", "#24323e", dk * .6), shine = "#ffffff";
+    const h = R * (.45 + .95 * left), sw = Math.max(q, Math.round(R * .08 / q) * q);
+    cx.fillStyle = mix("#a0c8e0", "#2a3a48", dk * .6); // the puddle on the planks
+    cx.fillRect(x - R * (.25 + .6 * (1 - left)), base - q, R * (.5 + 1.2 * (1 - left)), q);
+    cx.fillStyle = ice; // the block it stands on
+    cx.fillRect(x - R * .22, base - R * .16, R * .44, R * .16);
+    cx.fillStyle = iceD;
+    cx.fillRect(x - R * .22, base - R * .04, R * .44, q);
+    const top = base - R * .16 - h;
+    cx.fillStyle = ice; // the stem
+    cx.fillRect(x - sw / 2, top + R * .2, sw, h - R * .2);
+    if (left > .25) { // two leaves, until they've melted
+        cx.fillRect(x - sw / 2 - R * .2, top + h * .55, R * .2, q * 2);
+        cx.fillRect(x + sw / 2, top + h * .4, R * .18, q * 2);
+    }
+    const petals = Math.max(0, Math.round(6 * Math.min(1, left * 1.25))), pr = R * (.12 + .1 * left); // the flower: petals round a middle
+    for (let i = 0; i < petals; i++) {
+        const a = -Math.PI / 2 + i / 6 * Math.PI * 2; // (all the way round, like a daisy)
+        cx.fillStyle = i % 2 ? iceD : ice;
+        cx.fillRect(Math.round((x + Math.cos(a) * pr * 1.3 - pr * .4) / q) * q, Math.round((top + R * .15 + Math.sin(a) * pr * 1.1 - pr * .4) / q) * q, Math.max(q * 2, pr * .8), Math.max(q * 2, pr * .8));
+    }
+    cx.fillStyle = iceD; // the middle
+    cx.fillRect(Math.round(x / q) * q - q, Math.round((top + R * .15) / q) * q - q, q * 2, q * 2);
+    cx.fillStyle = shine; // a glint
+    cx.fillRect(x + sw / 2 - q, top + h * .3, q, Math.max(q, h * .2));
+    if (Math.random() < .05) // a drip
+        addP({ type: "spark", x: x + rnd(-R * .15, R * .15), y: base - R * .2, vx: 0, vy: 20, g: 200, max: .4, col: "#cfe8f5", size: 2, room: "garden" });
+    splurgeHit = { x: x - R * .4, y: top - R * .1, w: R * .8, h: base - top + R * .1, cx: x, room: "garden" };
+}
+function nookGeoBoard() {
+    return gardenGeo().bx0;
+}
 /* fireworks over the hills, in a window (room.js, garden.js: inside the window's clip), once it's dark */
 function drawFireworks(x0, y0, w, h, t, dark) {
     if (splurgeOn() !== "fireworks" || dark < .4)
@@ -19738,8 +19958,8 @@ function drawFireworks(x0, y0, w, h, t, dark) {
     }
 }
 /* a tap on the treat: Mite says something about it */
-function splurgeTap(p) {
-    if (!splurgeHit || !hitIn(p, splurgeHit, 10))
+function splurgeTap(p, room = "room") {
+    if (!splurgeHit || (splurgeHit.room || "room") !== room || !hitIn(p, splurgeHit, 10))
         return false;
     const k = splurgeOn();
     speak(compose("splurge_" + k + "_tap") || compose("splurge_" + k) || "Ours, for today.", { ms: 5000 });
@@ -19903,7 +20123,8 @@ function drawWorld(now, dt) {
             cx.translate(x, ky);
             cx.rotate(OA.tilt);
             cx.translate(-x, -ky);
-            const body = mix("#b8592f", "#4a2414", dk * .6), dark = mix("#7a3a20", "#2a140a", dk * .6), lite = mix("#f2b07a", "#6a4028", dk * .6); // (copper)
+            const ks = KETTLE_STYLES.find(k => k.id === kettleStyle()) || KETTLE_STYLES[0];
+            const body = mix(ks.body, "#1a1410", dk * .6), dark = mix(ks.dark, "#0e0a08", dk * .6), lite = mix(ks.lite, "#4a4038", dk * .6);
             cx.strokeStyle = body; // the spout and the handle first, so the body sits over their ends
             cx.lineWidth = Math.max(q, R * .07);
             cx.beginPath();
@@ -19922,6 +20143,19 @@ function drawWorld(now, dt) {
             cx.fillRect(x - R * .28, ky - R * .12, R * .56, R * .1);
             cx.fillStyle = lite; // a shine on the side
             cx.fillRect(Math.round((x - R * .2) / q) * q, Math.round((ky - R * .38) / q) * q, q, Math.max(q, R * .12));
+            if (ks.flower) // painted flowers: a few little blooms with a leaf each
+                for (const [fx, fy] of [[-.08, -.3], [.14, -.22], [-.02, -.16], [.2, -.36]]) {
+                    const px0 = Math.round((x + R * fx) / q) * q, py0 = Math.round((ky + R * fy) / q) * q;
+                    cx.fillStyle = mix("#6aa84f", "#16231a", dk * .6);
+                    cx.fillRect(px0 + q, py0 + q, q, q);
+                    cx.fillStyle = mix(ks.flower, "#1a1418", dk * .6);
+                    cx.fillRect(px0 - q, py0, q, q);
+                    cx.fillRect(px0 + q, py0, q, q);
+                    cx.fillRect(px0, py0 - q, q, q);
+                    cx.fillRect(px0, py0 + q, q, q);
+                    cx.fillStyle = mix("#f2c14e", "#4a3a10", dk * .6);
+                    cx.fillRect(px0, py0, q, q);
+                }
             cx.fillStyle = dark; // the lid, and its knob resting on it
             cx.fillRect(x - R * .16, ky - R * .52, R * .32, Math.max(q, R * .05));
             cx.fillRect(x - R * .05, ky - R * .52 - Math.max(q, R * .07), R * .1, Math.max(q, R * .07));
@@ -20345,6 +20579,18 @@ function drawPlankFloor(dk) {
     });
     cx.fillStyle = mix("#4f3a2a", "#1a120c", dk);
     cx.fillRect(0, GY - 3, W, 4);
+}
+/* the kettle's looks: copper to start with; the others are chosen in the shop, under the kettle (S.kettleStyle) */
+const KETTLE_STYLES = [
+    { id: "copper", name: "Copper", body: "#b8592f", dark: "#7a3a20", lite: "#f2b07a" },
+    { id: "blue", name: "Blue enamel", body: "#3f6aa8", dark: "#24406e", lite: "#a8c8ec" },
+    { id: "green", name: "Green enamel", body: "#4f8a4a", dark: "#2c5a2c", lite: "#b8dc9a" },
+    { id: "pink", name: "White, pink flowers", body: "#f1ece0", dark: "#b8b0a0", lite: "#ffffff", flower: "#e3a0b2" },
+    { id: "bluefl", name: "White, blue flowers", body: "#f1ece0", dark: "#b8b0a0", lite: "#ffffff", flower: "#5a86c8" }
+];
+function kettleStyle() {
+    const k = S.kettleStyle && S.kettleStyle.k;
+    return KETTLE_STYLES.some(x => x.id === k) ? k : "copper";
 }
 /* the ball, drawn after Mite so it's in front */
 function drawBall() {
@@ -21587,6 +21833,21 @@ function renderShop() {
         if (bb)
             bb.onclick = () => buy(b);
         shop.appendChild(el);
+        if (b.id === "kettle" && own) { // its looks, to pick from (free)
+            const ks = document.createElement("div");
+            ks.className = "kstyles";
+            ks.setAttribute("role", "group");
+            ks.setAttribute("aria-label", "The kettle's looks");
+            ks.innerHTML = KETTLE_STYLES.map(k => `<button type="button" class="chipbtn" data-ks="${k.id}" aria-pressed="${kettleStyle() === k.id}"><i style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 3px ${k.body},inset 0 0 0 6px ${k.flower}` : ""}"></i>${esc(k.name)}</button>`).join("");
+            ks.querySelectorAll("[data-ks]").forEach(x => x.onclick = () => {
+                S.kettleStyle = { k: x.dataset.ks, at: Date.now() };
+                sfx("tock");
+                if (Math.random() < .6)
+                    speak(choice(["A new kettle! Well, the same kettle, dressed up.", "Oh, that's nice. The tea will taste the same, but nicer.", "The kettle approves. It whistled a bit."]), { ms: 3500 });
+                afterChange();
+            });
+            shop.appendChild(ks);
+        }
     });
     const ws = $("wallShop");
     ws.innerHTML = "";
@@ -21842,7 +22103,7 @@ function renderHeard() {
     if (!el)
         return;
     const groups = [];
-    for (const h of S.heard || []) {
+    for (const h of (S.heard || []).filter(x => x.at >= dayStartTs())) {
         const g = groups[groups.length - 1];
         if (g && g.c === h.c)
             g.l.push(h);
@@ -21854,12 +22115,22 @@ function renderHeard() {
         return `<section><time>${wdmy(d)} ${hhmm(d)}</time>${g.l.map(h => `<p class="${h.w === S.settings.pet ? "" : "o"}"><b>${esc(h.w)}</b>${esc(h.t)}</p>`).join("")}</section>`;
     }).join("") || `<span class="sub">Nothing yet. When ${esc(S.settings.pet)} talks with the snail or a visitor, it's written down here.</span>`;
 }
+/* a new day (at the hour set in Settings): the notebook and what was overheard start on a fresh page. The incident
+   reports are kept in their own log (S.inc), so they're not lost with it */
+function notebookNewDay() {
+    const t = dayStartTs(), n0 = S.notes.length, h0 = (S.heard || []).length;
+    S.notes = S.notes.filter(n => n.at >= t);
+    S.heard = (S.heard || []).filter(h => h.at >= t);
+    if (S.notes.length !== n0 || S.heard.length !== h0)
+        saveSoon();
+}
 function renderNotebook() {
     renderHeard();
-    $("notes").innerHTML = S.notes.map(n => {
+    notebookNewDay();
+    $("notes").innerHTML = S.notes.filter(n => n.at >= dayStartTs()).map(n => {
         const d = new Date(n.at);
         return `<li><time>${dmy(d)} ${hhmm(d)}</time><span>${esc(n.text)}</span></li>`;
-    }).join("") || `<li><time></time><span>Nothing yet.</span></li>`;
+    }).join("") || `<li><time></time><span>A fresh page. Nothing yet today.</span></li>`;
     $("words").innerHTML = S.words.map(w => `<span class="word"><i>${esc(w.w)}</i> ${esc(w.m)}</span>`).join("") || `<span class="sub">None yet. Mite invents them now and then.</span>`;
 }
 function renderFiles() {
@@ -22002,6 +22273,7 @@ function renderContent() {
     $("setPossum").value = possumName();
     $("setDoneBy").value = st.doneBy;
     $("setBed").value = st.bed;
+    $("setDayStart").value = st.dayStart ?? 5;
     $("setStrange").value = String(strangeness());
     $("setTalk").value = String(S.settings.talk ?? 1);
     $("setBackup").value = String(S.settings.backup ?? 1);
@@ -22424,6 +22696,10 @@ $("saveSettings").onclick = () => {
     else
         nextAnom = Math.min(nextAnom, performance.now() + anomalyInterval());
     st.bed = clamp(+$("setBed").value || 0, 0, 23);
+    st.dayStart = clamp(Math.round(+$("setDayStart").value), 0, 23);
+    if (!Number.isFinite(st.dayStart))
+        st.dayStart = 5;
+    notebookNewDay();
     st.work = [...document.querySelectorAll("#setWork input:checked")].map(i => +i.dataset.d);
     st.office = [...document.querySelectorAll("#setOffice input:checked")].map(i => +i.dataset.d);
     if (st.pet !== oldPet) {
@@ -22728,15 +23004,15 @@ $("bkFile").onchange = async () => {
 /*
  * journal.js - The one-line journal on the archive desk. One line a day, at most 144 characters; today's line can be
  * written or changed, and earlier days' lines can be changed too. A page is a week: tap the book, write at the bottom
- * of this week's page, scroll up through the week, flip back for the weeks before. You can name the journal; it starts
- * as "Small things" (S.journal = { name, at }).
+ * of this week's page, scroll up through the week, flip back for the weeks before. Tap its name to rename it; it starts
+ * as "Small journal" (S.journal = { name, at }).
  * The lines are kept with the keepsakes (KEEP.refl, storage.js: synced on their own, never trimmed). Lines written
  * before the journal (the old reflections, sometimes longer, sometimes more than one a day) are all still there.
  */
 const JOURNAL_MAX = 144;
 let jPage = 0, jEdit = "";
 function journalName() {
-    return (S.journal && S.journal.name) || "Small things";
+    return (S.journal && S.journal.at && S.journal.name) || "Small journal"; // (until you name it yourself)
 }
 /* the lines of one day (dayKey), oldest first */
 function journalDay(day) {
@@ -22818,11 +23094,19 @@ function showJournal(off = 0) {
                 sfx("tock");
                 showJournal(jPage + 1);
             }]);
-    btns.push(["Name it", "ghost", journalRename], ["Close", btns.length && btns[0][1] === "primary" ? "ghost" : "primary", () => {
+    btns.push(["Time capsules", "ghost", () => { jEdit = ""; showCapsules(); }]);
+    btns.push(["Close", btns.length && btns[0][1] === "primary" ? "ghost" : "primary", () => {
             jEdit = "";
             closeRitual();
         }]);
     openRitual(journalName(), jPage === 0 ? choice(["One line a day. That's all it asks.", "What's worth keeping from today?", "A line for today. Small things count."]) : "An earlier page.", body, btns, () => { jEdit = ""; });
+    const title = $("ritTitle"); // the name is the way to rename it
+    title.classList.add("jname");
+    title.setAttribute("role", "button");
+    title.tabIndex = 0;
+    title.title = "Tap to rename";
+    title.onclick = journalRename;
+    title.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); journalRename(); } };
     const list = $("jList"), inp = $("jIn");
     if (list)
         list.scrollTop = list.scrollHeight; // (the newest at the bottom, in view)
@@ -22861,13 +23145,158 @@ function journalSave() {
 }
 function journalRename() {
     const cur = journalName();
-    openRitual("Name the journal", "Whatever it's for. It started as Small things.", `<input id="jName" maxlength="40" value="${esc(cur)}" aria-label="The journal's name" style="width:100%">`, [["Keep this name", "primary", () => {
-                const v = String($("jName").value || "").replace(/\s+/g, " ").trim().slice(0, 40) || "Small things";
+    openRitual("Name the journal", "Whatever it's for.", `<input id="jName" maxlength="40" value="${esc(cur)}" aria-label="The journal's name" style="width:100%">`, [["Keep this name", "primary", () => {
+                const v = String($("jName").value || "").replace(/\s+/g, " ").trim().slice(0, 40) || "Small journal";
                 S.journal = { name: v, at: Date.now() };
                 afterChange();
                 showJournal(jPage);
             }], ["Back", "ghost", () => showJournal(jPage)]]);
     setTimeout(() => { const i = $("jName"); if (i) { i.focus(); i.select(); } }, 60);
+}
+
+</script>
+<script>/* js/ui/paternoster.js */
+"use strict";
+/*
+ * paternoster.js - The bigger-inside closet in the archive is also a paternoster: a chain of shelves going round
+ * and round inside it, one shelf for every week that's been filed. Tap the closet (Mite walks over and opens it):
+ * the window shows one week's shelf; ▲ and ▼ turn the chain a shelf at a time, and the months along the bottom
+ * (the same as the keys on the rack) turn it straight to that month. Tap a key on the rack and the paternoster
+ * opens at that month. This week isn't in it yet: its boxes are still on the loose shelf (the first stop).
+ */
+let pnPos = 0, pnAnim = null, pnSel = -1;
+/* the shelves: this week first (the loose shelf), then every week before it, newest first */
+function pnWeeks() {
+    const cur = weekKey(Date.now()), list = archWeeks().slice();
+    if (!list.length || list[0].k !== cur)
+        list.unshift({ k: cur, n: weekNo(Date.now()), tasks: [] });
+    return list;
+}
+function pnMonthOf(w) {
+    const d = new Date(w.k + "T12:00");
+    d.setDate(d.getDate() + 3); // (a week belongs to the month its Thursday is in)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+/* open it (at = a week index, or "YYYY-MM" for the newest week of that month) */
+function showPaternoster(at = 0) {
+    const ws = pnWeeks();
+    pnPos = typeof at === "string" ? Math.max(0, ws.findIndex(w => pnMonthOf(w) <= at)) : clamp(at, 0, ws.length - 1);
+    pnSel = -1;
+    openRitual("The paternoster", "", `<canvas id="pnCv" class="pncv" width="160" height="100" aria-hidden="true"></canvas>
+        <div class="pnnav"><button type="button" class="btn" id="pnUp" aria-label="Turn to the week before">▲ Earlier</button><b id="pnWeek" aria-live="polite"></b><button type="button" class="btn" id="pnDown" aria-label="Turn to the week after">Later ▼</button></div>
+        <div class="pnmonths" id="pnMonths" role="group" aria-label="Turn to a month"></div><p class="sub" id="pnMonthLine"></p><ul class="fbooklist pnlist" id="pnList"></ul>`, [["Close", "primary", closeRitual]]);
+    sfx("card");
+    $("ritBody").scrollTop = 0;
+    $("pnUp").onclick = () => pnTurn(1);
+    $("pnDown").onclick = () => pnTurn(-1);
+    pnFill(true);
+    const draw = now => {
+        if ($("ritual").hidden || !$("pnCv"))
+            return;
+        pnDraw(now);
+        requestAnimationFrame(draw);
+    };
+    requestAnimationFrame(draw);
+}
+function pnTurn(d, to) {
+    const ws = pnWeeks(), next = to !== undefined ? to : clamp(pnPos + d, 0, ws.length - 1);
+    if (next === pnPos)
+        return;
+    pnAnim = { from: pnPos, to: next, t0: performance.now() };
+    pnPos = next;
+    pnSel = -1;
+    sfx("tock");
+    pnFill(false);
+}
+/* the label, the month keys, the month in short and the list of boxes, for the shelf in the window */
+function pnFill(first) {
+    const ws = pnWeeks(), w = ws[pnPos], start = new Date(w.k + "T12:00"), end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    $("pnWeek").textContent = pnPos === 0 ? "This week · the loose shelf" : `Week ${w.n} · ${dmy(start)} – ${dmy(end)}`;
+    $("ritLine").textContent = pnPos === 0 ? "This week's boxes aren't in the paternoster yet. They go in when the week's done." : `${w.tasks.length} box${w.tasks.length === 1 ? "" : "es"} on this shelf. ${pnPos} shel${pnPos === 1 ? "f" : "ves"} round from the loose one.`;
+    $("pnUp").disabled = pnPos >= ws.length - 1;
+    $("pnDown").disabled = pnPos <= 0;
+    const months = [...new Set(ws.map(pnMonthOf))], cur = pnMonthOf(w), el = $("pnMonths");
+    el.innerHTML = months.map(m => { const d = new Date(m + "-15T12:00"); return `<button type="button" class="chipbtn" data-pnm="${m}" aria-pressed="${m === cur}">${esc(d.toLocaleDateString("en-GB", { month: "short" }))} ${String(d.getFullYear()).slice(2)}</button>`; }).join("");
+    el.querySelectorAll("[data-pnm]").forEach(b => b.onclick = () => pnTurn(0, Math.max(0, pnWeeks().findIndex(x => pnMonthOf(x) === b.dataset.pnm))));
+    const on = el.querySelector('[aria-pressed="true"]');
+    if (on)
+        el.scrollLeft = on.offsetLeft - el.clientWidth / 2 + on.offsetWidth / 2; // (only the row scrolls, not the card)
+    $("pnMonthLine").textContent = monthSummary(cur);
+    $("pnList").innerHTML = w.tasks.length ? w.tasks.map((t, i) => `<li><button type="button" class="linkbtn pnbox" data-pni="${i}"><b>${esc(t.t)}</b></button><br><span class="sub">${esc(new Date(t.d).toLocaleDateString("en-GB", { weekday: "short" }))} ${esc(dmy(new Date(t.d)))} · ${t.cap ? "a time capsule" : t.tag}${t.s === 8 ? " · big" : t.s === 3 ? " · medium" : ""}</span></li>`).join("") : `<li class="sub">${pnPos === 0 ? "Nothing filed yet this week." : "An empty shelf."}</li>`;
+    $("pnList").querySelectorAll("[data-pni]").forEach(b => b.onclick = () => {
+        const t = w.tasks[+b.dataset.pni];
+        pnSel = +b.dataset.pni;
+        if (t && t.cap)
+            return showCapsuleLetter(t.cap);
+        sfx("tock");
+    });
+}
+/* one month in short (what the key on the rack used to say) */
+function monthSummary(mk) {
+    const [y, m] = mk.split("-").map(Number), inM = ts => { const d = new Date(ts); return d.getFullYear() === y && d.getMonth() === m - 1; };
+    const tasks = allDone().filter(t => t.d && inM(t.d)).length, letters = ((S.post && S.post.sent) || []).filter(l => inM(l.at)).length;
+    const flowers = (S.flowerBook || []).filter(f => f.at > 1e9 && inM(f.at)).length, paintings = (S.gallery || []).filter(g => g.day && inM(new Date(g.day + "T12:00").getTime())).length;
+    const lines = KEEP.refl.filter(r => inM(r.at)).length;
+    const name = new Date(y, m - 1, 15).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+    const bits = [[tasks, "thing finished", "things finished"], [lines, "journal line", "journal lines"], [letters, "letter", "letters"], [flowers, "new flower", "new flowers"], [paintings, "painting", "paintings"]].filter(b => b[0]).map(([n, a, b]) => `${n} ${n === 1 ? a : b}`);
+    return `${name}: ${bits.length ? bits.join(", ") : "a quiet month. Those count too"}.`;
+}
+/* the window: the shelf on the chain, the boxes on it, the shelves above and below sliding by when it turns */
+function pnDraw(now) {
+    const cv = $("pnCv"), g = cv.getContext("2d"), W2 = cv.width, H2 = cv.height, ws = pnWeeks();
+    const px = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
+    let off = 0; // in shelves: how far the chain still has to go
+    if (pnAnim) {
+        const k = clamp((now - pnAnim.t0) / Math.min(900, 260 + Math.abs(pnAnim.to - pnAnim.from) * 40), 0, 1), e = 1 - Math.pow(1 - k, 3);
+        off = (pnAnim.from - pnAnim.to) * (1 - e);
+        if (k >= 1)
+            pnAnim = null;
+    }
+    px("#3a2416", 0, 0, W2, H2); // the walnut cabinet
+    px("#5a3a24", 3, 3, W2 - 6, H2 - 6);
+    const wx = 16, wy = 12, ww = W2 - 32, wh = H2 - 24, pitch = 44;
+    px("#0d0a08", wx, wy, ww, wh); // inside, dark
+    g.save();
+    g.beginPath();
+    g.rect(wx, wy, ww, wh);
+    g.clip();
+    for (let k = -2; k <= 2; k++) { // the shelf in front, and the ones above and below it on the chain
+        const idx = pnPos + k + Math.round(off), y = wy + wh * .72 - (k + Math.round(off) - off) * pitch;
+        if (idx < 0 || idx >= ws.length)
+            continue;
+        const w = ws[idx], lit = Math.abs(k + Math.round(off) - off) < .5;
+        px(lit ? "#8a5a34" : "#4a3020", wx + 4, y, ww - 8, 3); // the plank
+        px(lit ? "#a8744a" : "#5a3a26", wx + 4, y, ww - 8, 1);
+        const n = w.tasks.length, per = Math.min(n, 18), pitchB = (ww - 16) / Math.max(per, 6);
+        w.tasks.slice(0, 18).forEach((t, i) => {
+            const bw = t.s === 8 ? 6 : t.s === 3 ? 5 : 4, bh = t.s === 8 ? 6 : t.s === 3 ? 5 : 4, bx = wx + 8 + i * pitchB;
+            const c = t.cap ? "#7a8a92" : t.tag === "work" ? "#b98b5a" : "#8fae7a";
+            px(lit ? c : "#3a3028", bx, y - bh, bw, bh);
+            if (lit) {
+                px("#f4ecd8", bx + 1, y - bh + 1, bw - 2, 1);
+                if (i === pnSel)
+                    px("#fff6c8", bx, y - bh - 2, bw, 1);
+            }
+        });
+        if (n > 18 && lit)
+            px("#f4ecd8", wx + ww - 10, y - 4, 2, 2);
+        if (lit) { // a little brass label on the front of the shelf
+            px("#c9a24a", wx + ww / 2 - 8, y + 4, 16, 6);
+            g.fillStyle = "#2a1c10";
+            g.font = "6px monospace";
+            g.textAlign = "center";
+            g.fillText(idx === 0 ? "now" : "w" + w.n, wx + ww / 2, y + 9);
+        }
+    }
+    g.restore();
+    const ch = ((performance.now() / 1000) * 0 + off * pitch) % 6; // the chains either side, moving with the shelves
+    for (const cx0 of [wx - 6, wx + ww + 3])
+        for (let y = wy - 6 + (ch + 6) % 6; y < wy + wh + 4; y += 6) {
+            px("#8a8a92", cx0, y, 3, 3);
+            px("#3a3a40", cx0 + 1, y + 1, 1, 1);
+        }
+    px("#c9a24a", W2 / 2 - 10, 2, 20, 6); // the maker's plate
 }
 
 </script>
@@ -23348,8 +23777,14 @@ function welcome(prevSeen, isNew) {
     paintDayCheck();
     if (own("hearth") && Math.abs(pet.x - hearthX()) < R * 1.2)
         pet.x = clamp(hearthX() + R * 1.8, W * .12, W * .88);
-    if (!isNew && dueCapsules().length)
-        setTimeout(() => speak("The time capsule tin is glowing. One of them is ready. Tap it when you want to open it."), 6500);
+    { // a capsule whose day has come: Mite says so once for each (the tin on the plank keeps glowing after that)
+        const fresh = dueCapsules().filter(c => c.made > num(S.flags.capTold));
+        if (!isNew && fresh.length) {
+            S.flags.capTold = Math.max(...fresh.map(c => c.made));
+            saveSoon();
+            setTimeout(() => speak("A time capsule's day has come. Its tin is glowing on the plank in the archive. Tap it when you want to open it."), 6500);
+        }
+    }
     if (S.migratedEco && !S.flags.eco2) {
         S.flags.eco2 = 1;
         delete S.migratedEco;
@@ -24138,17 +24573,7 @@ $("fuList").addEventListener("click", e => {
     renderTalk();
     saveSoon();
 });
-$("memForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const t = $("memIn").value.trim().slice(0, 220);
-    if (!t)
-        return;
-    $("memIn").value = "";
-    S.memories.unshift({ t, at: Date.now() });
-    speak("Noted. Filed under things that matter.");
-    renderTalk();
-    afterChange();
-});
+/* (the field to add a memory by hand is gone: the journal, the pinboard and the time capsules are for that) */
 
 </script>
 <script>/* js/ai/offline.js */
@@ -24869,6 +25294,14 @@ function openRitual(title, line, bodyHTML, buttons, onClose) {
     ritOpener = document.activeElement;
     ritClose = onClose || null;
     $("ritTitle").textContent = title;
+    { // (only the journal's name is a button: journal.js sets it again after this)
+        const t = $("ritTitle");
+        t.classList.remove("jname");
+        t.removeAttribute("role");
+        t.removeAttribute("tabindex");
+        t.removeAttribute("title");
+        t.onclick = t.onkeydown = null;
+    }
     $("ritLine").textContent = line || "";
     $("ritBody").innerHTML = bodyHTML;
     const bb = $("ritBtns");
@@ -25137,6 +25570,48 @@ document.addEventListener("keydown", e => {
 setGame();
 
 </script>
+<script>/* js/app/native.js */
+"use strict";
+/*
+ * native.js - Only in the Android app (Capacitor; nothing happens in a browser).
+ *   Back button: closes whatever is open on top (a card, a close-up, the sheet, the Desk), one at a time; with
+ *   nothing open it puts the app in the background instead of closing it, so Mite is where you left it.
+ *   Status bar: the wagon's dark brown, with light icons, and the page kept below it (capacitor.config.json also
+ *   keeps the page clear of the system bars).
+ */
+function appBack() {
+    for (const id of ["scopeView", "brewView", "bakeView", "paintView", "flowerView"]) { // the little close-up cards close on a tap
+        const el = $(id);
+        if (el && !el.hidden && !el.classList.contains("out")) {
+            el.click();
+            return true;
+        }
+    }
+    const open = pinOpen || (typeof cabOpen !== "undefined" && cabOpen) || !$("ritual").hidden || !$("desk").hidden || document.body.classList.contains("sheet") || !$("tray").hidden || !$("talkBar").hidden || !!game;
+    if (open) { // everything else closes with Escape (game-view.js, pinboard.js, crystals.js)
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+        return true;
+    }
+    return false;
+}
+(function nativeSetup() {
+    if (!nativeApp())
+        return;
+    const P = Capacitor.Plugins || {};
+    if (P.App)
+        P.App.addListener("backButton", () => {
+            if (!appBack())
+                P.App.minimizeApp();
+        });
+    if (P.StatusBar) {
+        P.StatusBar.setOverlaysWebView({ overlay: false }).catch(() => { });
+        P.StatusBar.setBackgroundColor({ color: "#241812" }).catch(() => { });
+        P.StatusBar.setStyle({ style: "DARK" }).catch(() => { }); // (DARK: light icons, for a dark bar)
+    }
+    document.body.classList.add("native");
+})();
+
+</script>
 <script>/* js/app/boot.js */
 "use strict";
 /*
@@ -25165,6 +25640,7 @@ function boot() {
     const prevSeen = S.lastSeen || Date.now();
     loadArchLocal();
     loadKeepLocal();
+    capsulesToArchive(); // (opened time capsules go on the shelves too)
     migrateCounts();
     if (!S.flags.m_rental) { // the renter's chest used to come by itself: a save that already had it keeps it
         S.flags.m_rental = 1;
@@ -25280,6 +25756,12 @@ setInterval(() => {
         save();
 }, 45e3);
 setInterval(() => {
+    if (S.notes.some(n => n.at < dayStartTs()) || (S.heard || []).some(h => h.at < dayStartTs())) { // the day started: a fresh notebook page
+        notebookNewDay();
+        if (curTab === "notebook")
+            renderNotebook();
+    }
+    capsuleReminder(); // the first of the month: a capsule? (keepsake-shelf.js)
     if (dayKey() !== S.lastDay) {
         S.lastDay = dayKey();
         autoFileOld();
