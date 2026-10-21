@@ -8,8 +8,8 @@
 <meta name="theme-color" content="#241812">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<script>if ("serviceWorker" in navigator && location.protocol === "https:") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 20-10-2026 -->
+<script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
+<!-- Small Things, shared build of 21-10-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -887,7 +887,7 @@ const POOL_INFO = {
     late: "After bedtime", after_work: "After work hours on a workday", day_off: "On non-workdays",
     buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
-    uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", friction: "Friction noted ({item})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
+    uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", friction: "Friction noted ({item})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
     trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
 };
 const DEF = {
@@ -1505,6 +1505,12 @@ const DEF = {
             "Space. We went there for about a minute. I'd go again. I'd bring a scarf.",
             "The stars were going by sideways. I tried to draw that. It's hard to draw sideways.",
             "[night] I look at the space postcard at night and think: that's out there right now. Just above the roof."
+        ],
+        pin_deep: [
+            "The postcard from the bottom of the sea. The wagon was dry the whole time. I still don't trust it.",
+            "That's the jellyfish. It waved. I'm almost sure it waved.",
+            "I didn't draw the big one. It wouldn't fit on a postcard. It wouldn't fit on anything.",
+            "[night] Down there it's always night. The fish don't seem to mind. They've got the jellyfish."
         ],
         pin_lighthouse: [
             "The lighthouse. The keeper's cat writes to me sometimes.",
@@ -8857,6 +8863,8 @@ function drawWindow(rm, sky, d, hf, tsec, dt, dk, arr = wparts, shutters = true)
     drawFireworks(wx - wr, wy - wr, wr * 2, wr * 1.4, tsec, sky.dark); // fireworks over the hills, the evening you bought them (splurge.js)
     if (spaceOn()) // the detour: space outside (space.js)
         drawSpace(wx - wr, wy - wr, wr * 2, wr * 2, tsec);
+    else if (deepOn()) // or the bottom of the sea
+        drawDeep(wx - wr, wy - wr, wr * 2, wr * 2, tsec);
     cx.restore();
     const fr = mix("#7a5636", "#2e2015", dk);
     cx.strokeStyle = fr;
@@ -12775,7 +12783,7 @@ const ORIGAMI = [
     { id: "lily", name: "paper lily", col: "#f6e7ef" }, { id: "moon", name: "paper moon", col: "#e8d58a" }
 ];
 /* how the room tints while each one is here (the red vignette is for the eerie ones) */
-const ANOM_EERIE = { figure: 1.3, double: 1.2, hand: 1.1, drips: 1, space: .3, door: 1, phone: 1, eyes: 1, tentacle: .75, letter: .5, moth: .45, chair: .25, ghost: .15, cloud: .15 };
+const ANOM_EERIE = { figure: 1.3, double: 1.2, hand: 1.1, drips: 1, space: .3, deep: .35, door: 1, phone: 1, eyes: 1, tentacle: .75, letter: .5, moth: .45, chair: .25, ghost: .15, cloud: .15 };
 const ANOM_LIFE = { figure: 20, double: 18, hand: 16, drips: 22,  tentacle: 12.5, chair: 14, ghost: 16, cloud: 20, moth: 22, letter: 24 };
 /* where the window (for the ghost) and the light (for the moth) are in a room */
 function anomGeo(rmName) {
@@ -12808,11 +12816,13 @@ function anomX(lo, hi) {
         x = rnd(W * lo, W * hi);
     return x;
 }
-function spawnAnom(dark) {
-    const w = [["space", .45], ["door", 1], ["phone", 1], ["tentacle", 1], ["chair", 1], ["ghost", 1 + (dark > .45 ? 1.5 : 0)], ["letter", .8], ["cloud", raining() ? 1.6 : .8]];
+function spawnAnom(dark, force) { // (force: this kind, for tests)
+    const w = [["door", 1], ["phone", 1], ["tentacle", 1], ["chair", 1], ["ghost", 1 + (dark > .45 ? 1.5 : 0)], ["letter", .8], ["cloud", raining() ? 1.6 : .8]];
     if (dark > .45)
         w.push(["eyes", 2], ["figure", 1.3], ["double", .8]); // the creepier ones come after dark
     w.push(["hand", .9], ["drips", .8]);
+    if (shiftOk()) // planeshifts: rare, and one a day at most (space.js)
+        w.push(["space", .15], ["deep", .15]);
     if (dark > .3)
         w.push(["moth", 1.2]);
     let r = Math.random() * w.reduce((a, x) => a + x[1], 0), type = w[0][0];
@@ -12821,6 +12831,8 @@ function spawnAnom(dark) {
             type = k;
             break;
         }
+    if (force)
+        type = force;
     const rm = anomGeo(view), base = { type, room: view, t: 0, life: ANOM_LIFE[type] || 24 };
     if (type === "door")
         anom = Object.assign(base, { x: anomX(.22, .78), y: GY - R * .7 });
@@ -12850,10 +12862,10 @@ function spawnAnom(dark) {
         anom = Object.assign(base, { x: anomX(.25, .75), y: GY, drops: Array.from({ length: 7 }, (_, i) => ({ dx: (i - 3) * R * .22 + rnd(-R * .05, R * .05), sp: rnd(.6, 1.1), ph: Math.random() })) });
     else if (type === "double") // another Mite. Nearly
         anom = Object.assign(base, { x: pet.x < W / 2 ? W * .78 : W * .22, y: GY });
-    else if (type === "space") { // nothing in the room: every window shows space for a while (space.js)
+    else if (SHIFTS.includes(type)) { // nothing in the room: every window shows somewhere else for a while (space.js)
         anom = Object.assign(base, { x: -1e4, y: -1e4 });
-        spaceStart(anom);
-        eerie = ANOM_EERIE.space;
+        (type === "deep" ? deepStart : spaceStart)(anom);
+        eerie = ANOM_EERIE[type];
         return;
     }
     else
@@ -12893,7 +12905,7 @@ function anomPoof(x, y) {
 /* where to tap: most are a circle around (x, y); some move */
 function anomHit(p) {
     const a = anom;
-    if (!a || a.resolved || a.t < .8 || a.type === "space")
+    if (!a || a.resolved || a.t < .8 || SHIFTS.includes(a.type))
         return false;
     if (a.type === "eyes")
         return Math.hypot(p.x - a.x, p.y - a.y) < R * 1.7;
@@ -12947,8 +12959,8 @@ function resolveAnom() {
     const a = anom;
     if (!a || a.resolved)
         return;
-    if (a.type === "space") // nothing to deal with: Mite just remarks on the view (space.js)
-        return spaceTap(a);
+    if (SHIFTS.includes(a.type)) // nothing to deal with: Mite just remarks on the view (space.js)
+        return (a.type === "deep" ? deepTap : spaceTap)(a);
     a.resolved = true;
     sfx("low");
     nextAnom = performance.now() + anomalyInterval();
@@ -15969,14 +15981,26 @@ function openDrawer() {
 }
 /* the snapshots on the pinboard: places the wagon has stood (tap one and Mite remembers it: pool pinboard) */
 const PIN_PHOTOS = ["sea", "hills", "forest", "lighthouse"];
-/* the snapshots that are up: the space postcard too, once the wagon's been on its detour (space.js) */
+/* the snapshots that are up: the postcards from planeshifts too, once they've happened (space.js) */
+function shiftCards() {
+    return (S.flags.spacecard ? ["space"] : []).concat(S.flags.deepcard ? ["deep"] : []);
+}
 function pinPhotos() {
-    return (S.flags.spacecard ? ["space"] : []).concat(PIN_PHOTOS);
+    return shiftCards().concat(PIN_PHOTOS);
 }
 function drawPinPhoto(k, w, h, dk) {
     const D = c => mix(c, "#1a1a20", dk * .6), m = Math.max(PX, w * .08), iw = w - m * 2, ih = h - m * 2.2;
-    cx.fillStyle = D(k === "space" ? "#0a0c20" : k === "forest" ? "#b5d0e6" : "#7fa2c8");
+    cx.fillStyle = D(k === "space" ? "#0a0c20" : k === "deep" ? "#123a4e" : k === "forest" ? "#b5d0e6" : "#7fa2c8");
     cx.fillRect(m, m, iw, ih);
+    if (k === "deep") { // the sea floor: kelp, a fish, a bubble
+        cx.fillStyle = D("#2a5a32");
+        cx.fillRect(m + iw * .15, m + ih * .45, Math.max(1, PX), ih * .55);
+        cx.fillRect(m + iw * .75, m + ih * .35, Math.max(1, PX), ih * .65);
+        cx.fillStyle = D("#e8a33c");
+        cx.fillRect(m + iw * .4, m + ih * .4, iw * .2, ih * .15);
+        cx.fillStyle = D("#bfe8f0");
+        cx.fillRect(m + iw * .55, m + ih * .15, PX, PX);
+    }
     if (k === "space") { // the detour: stars and a ringed planet
         cx.fillStyle = D("#ffffff");
         for (let i = 0; i < 6; i++)
@@ -16111,6 +16135,8 @@ function drawGarden(now, dt) {
     drawFireworks(wx0, wy0, ww, wh * .8, t, sky.dark);
     if (spaceOn()) // the detour: space outside (space.js)
         drawSpace(wx0, wy0, ww, wh, t);
+    else if (deepOn())
+        drawDeep(wx0, wy0, ww, wh, t);
     cx.restore();
     // the frame, like the wagon window's: a round edge, spokes like a sunrise, and a sill
     const fr = mix("#7a5636", "#2e2015", dk);
@@ -16252,7 +16278,7 @@ function drawGarden(now, dt) {
             for (let i = 0; i < 26; i++) // the cork's speckle
                 cx.fillRect(bx0 + (i * 37.7) % bw, by0 + (i * 23.3) % bh, PX, PX);
             const cards = activeFestivals().filter(a => a.f.kind === "card").slice(0, 3);
-            const items = [...cards.map(a => ({ fest: a })), ...PIN_PHOTOS.map(k => ({ photo: k }))].slice(0, Math.max(3, Math.floor(bw / (R * .75)))).slice(0, boardHung()).concat(S.flags.spacecard && boardHung() >= BOARD_FIRST ? [{ photo: "space" }] : []); // (and the space postcard, after the detour)
+            const items = [...cards.map(a => ({ fest: a })), ...PIN_PHOTOS.map(k => ({ photo: k }))].slice(0, Math.max(3, Math.floor(bw / (R * .75)))).slice(0, boardHung()).concat(boardHung() >= BOARD_FIRST ? shiftCards().map(k => ({ photo: k })) : []); // (and the planeshift postcards)
             const n = items.length, cw = Math.min(R * 1.05, bw / n - R * .12), chh = cw * .7;
             const slots = Math.max(n, Math.min(BOARD_FIRST, Math.max(3, Math.floor(bw / (R * .75)))));
             items.forEach((it, i) => {
@@ -17417,7 +17443,16 @@ function pinPhotoArt(g, k, x, y, w, h) {
         g.fillStyle = c;
         g.fillRect(x + a, y + b, ww, hh);
     };
-    px(k === "space" ? "#0a0c20" : k === "forest" ? "#b5d0e6" : "#7fa2c8", 1, 1, w - 2, h - 3);
+    px(k === "space" ? "#0a0c20" : k === "deep" ? "#123a4e" : k === "forest" ? "#b5d0e6" : "#7fa2c8", 1, 1, w - 2, h - 3);
+    if (k === "deep") { // the bottom of the sea
+        px("#1a2a26", 1, h - 4, w - 2, 2);
+        px("#2a5a32", 2, 4, 1, h - 7);
+        px("#2a5a32", w - 4, 3, 1, h - 6);
+        px("#e8a33c", 5, 5, 3, 2);
+        px("#c2782a", 4, 5, 1, 1);
+        px("#c9a8e8", 8, 2, 3, 1);
+        px("#bfe8f0", 6, 2, 1, 1);
+    }
     if (k === "space") {
         for (const [a, b] of [[2, 2], [9, 1], [11, 6], [3, 6], [6, 3]])
             px("#ffffff", a, b, 1, 1);
@@ -17513,7 +17548,7 @@ function pinPick(it) {
         $("pinDlgText").textContent = it.q.t; // (your words: textContent, never HTML)
     }
     else {
-        $("pinDlgName").textContent = { sea: "The sea", hills: "The hills", forest: "The forest", lighthouse: "The lighthouse" }[it.photo] || "A snapshot";
+        $("pinDlgName").textContent = { sea: "The sea", hills: "The hills", forest: "The forest", lighthouse: "The lighthouse", space: "The detour through space", deep: "The bottom of the sea" }[it.photo] || "A snapshot";
         $("pinDlgText").textContent = compose("pin_" + it.photo) || compose("pinboard") || "That one's from a while ago. Good place.";
     }
     $("pinDlg").hidden = false;
@@ -18830,12 +18865,120 @@ function drawCatEye(t) {
 <script>/* js/scene/space.js */
 "use strict";
 /*
- * space.js - The detour: an anomaly where, for a minute or so, every window shows the wagon drifting through
- * space (stars going by, a nebula, a ringed planet, now and then a comet). Nothing to tap or fix: Mite goes to
- * look, says something, and when it's over makes a postcard of it for the pinboard in the nook (S.flags.spacecard).
- *   spaceOn()            is the detour happening now?
- *   drawSpace(x,y,w,h,t) the view, inside a window's clip (room.js, garden.js)
+ * space.js - Planeshifts: rare anomalies where, for a minute or so, the wagon is somewhere else entirely and every
+ * window shows it. Nothing to tap or fix: Mite goes to look, says something, and when it's over makes a postcard
+ * of it for the pinboard in the nook. At most one a day (S.flags.shiftDay), and rare even then.
+ *   space  drifting through space: stars going by, a nebula, a ringed planet, now and then a comet (S.flags.spacecard)
+ *   deep   sunk to the bottom of the sea: green-blue gloom, bubbles, kelp, little fish, a glowing jellyfish, and
+ *          once, something very large going past with one patient eye (S.flags.deepcard)
+ *   spaceOn(), deepOn()            is one happening now?
+ *   drawSpace(...), drawDeep(...)  the view, inside a window's clip (room.js, garden.js)
+ *   shiftOk()                      may one start today?
  */
+const SHIFTS = ["space", "deep"];
+function shiftOk() {
+    return S.flags.shiftDay !== dayNum();
+}
+function deepOn() {
+    return !!(anom && anom.type === "deep" && !anom.exit);
+}
+/* the sea floor, through a window */
+function drawDeep(x0, y0, w, h, t) {
+    const q = PX, k = anom ? clamp(anom.t / 2.5, 0, 1) * clamp(((anom.life || 70) - anom.t) / 3, 0, 1) : 0;
+    if (k <= 0)
+        return;
+    const P = (c, x, y, ww = q, hh = q) => {
+        cx.fillStyle = c;
+        cx.fillRect(Math.round(x / q) * q, Math.round(y / q) * q, ww, hh);
+    };
+    cx.save();
+    cx.globalAlpha = k;
+    const g = cx.createLinearGradient(0, y0, 0, y0 + h); // light from far above, fading to dark
+    g.addColorStop(0, "#1f5a6e");
+    g.addColorStop(1, "#08182a");
+    cx.fillStyle = g;
+    cx.fillRect(x0, y0, w, h);
+    for (let i = 0; i < 4; i++) { // shafts of light, slowly swaying, in dithered specks
+        const sx = x0 + w * (.15 + i * .25) + Math.sin(t * .3 + i) * w * .05;
+        for (let yy = 0; yy < h * .7; yy += q * 2)
+            if (((yy / q) + i) % 4 < 2)
+                P("#3f8a8e", sx + yy * .25 + ((yy / q) % 2) * q, y0 + yy);
+    }
+    cx.fillStyle = "#1a2a26"; // the sand
+    cx.fillRect(x0, y0 + h * .86, w, h * .14);
+    for (let i = 0; i < 3; i++) { // kelp, swaying
+        const kx = x0 + w * (.12 + i * .36);
+        for (let s = 0; s < 5 + i % 2 * 2; s++)
+            P(s % 3 ? "#2a5a32" : "#365a2c", kx + Math.sin(t * .9 + s * .5 + i) * q * 1.5, y0 + h * .86 - s * h * .06, q, h * .06);
+    }
+    { // something very large going past, slowly, once a minute: a dark flank, then one eye
+        const p = ((t * .018) % 1.6) - .3, bx = x0 + w * (1.2 - p * 1.6), by = y0 + h * .42;
+        if (p > -.2 && p < 1.25) {
+            cx.fillStyle = "#06101c";
+            cx.beginPath();
+            cx.ellipse(bx, by, w * .75, h * .22, 0, 0, 7);
+            cx.fill();
+            const ex = bx - w * .55, blink = (t % 7) < .25;
+            P("#d8c87a", ex, by - q, q * 2, blink ? q / 2 : q * 2); // the eye. It looks in, kindly enough
+            if (!blink)
+                P("#06101c", ex + q / 2, by - q / 2, q, q);
+        }
+    }
+    for (let i = 0; i < 4; i++) { // little fish, crossing
+        const fx = x0 + ((w * (.1 + i * .3) + t * w * (.05 + i * .015)) % (w * 1.2)) - w * .1, fy = y0 + h * (.2 + i * .15) + Math.sin(t * 2 + i) * q;
+        P(["#e8a33c", "#bcd8ff", "#e3a0b2", "#d1e49a"][i], fx, fy, q * 2, q);
+        P(["#c2782a", "#7fa2c8", "#b8708a", "#a0c86a"][i], fx - q, fy, q, q);
+    }
+    { // a jellyfish, pulsing up and drifting down
+        const jx = x0 + w * (.7 + Math.sin(t * .2) * .1), jy = y0 + h * (.35 + Math.sin(t * .6) * .08), pulse = Math.sin(t * 2.4) > 0 ? q : 0;
+        P("#c9a8e8", jx - q * 2 - pulse / 2, jy, q * 4 + pulse, q * 2);
+        P("#f0e0ff", jx - q, jy, q, q);
+        for (let i = -1; i <= 1; i++)
+            for (let s = 1; s < 4; s++)
+                P("#a77cb8", jx + i * q * 1.4 + Math.sin(t * 3 + s + i) * q * .5, jy + q * 2 + s * q * 1.3);
+    }
+    for (let i = 0; i < 9; i++) { // bubbles, rising
+        const by = y0 + h - ((t * h * .12 + i * h * .37) % h), bx = x0 + w * ((i * .113 + .05) % 1) + Math.sin(t * 2 + i) * q;
+        P("#bfe8f0", bx, by, i % 3 ? q : q * 2, i % 3 ? q : q * 2);
+    }
+    cx.restore();
+}
+function deepStart(a) {
+    a.life = 75;
+    shiftMark();
+    setTimeout(() => {
+        if (anom !== a)
+            return;
+        speak(choice(["Nobody panic. The wagon is at the bottom of the sea. It's quite dry in here. Somehow.", "Look out of the window. We've gone under. There's a fish. There's a lot of fish.", "Hold your breath. Actually don't, it's fine in here. It's only fine in here."]), { ms: 6000 });
+        if (pet.beh !== "sleep" && !objQ.cur)
+            pet.start("lookAround");
+    }, 1500);
+}
+function deepTap(a) {
+    if (!a.paid) {
+        a.paid = true;
+        anomPay(a);
+    }
+    speak(choice(["The jellyfish is waving. I think. It's hard to tell with jellyfish.", "Something very big just went past. It looked in. It seemed polite about it.", "The bubbles go up and up. I wonder who's up there, catching them.", "I'm going to draw that fish later. The orange one. It had opinions."]), { ms: 5000 });
+}
+function deepEnd(a) {
+    const { no, tm } = (S.incidents++, anomStamp());
+    S.incidents--;
+    incNote(`Incident ${no}, ${tm}: every window showed the bottom of the sea for about a minute. One large eye was observed. The wagon is dry. The wagon is back. One postcard made.`);
+    S.flags.deep = 1;
+    if (!S.flags.deepcard) {
+        S.flags.deepcard = 1;
+        setTimeout(() => speak("Back up. I made a postcard of the deep, so we remember. It's on the board in the nook.", { ms: 5500 }), 1200);
+    }
+    else
+        setTimeout(() => speak("Surfaced. Everything's dry. My ears still feel a bit underwater.", { ms: 4000 }), 1200);
+    afterChange();
+}
+/* one planeshift a day at most */
+function shiftMark() {
+    S.flags.shiftDay = dayNum();
+    saveSoon();
+}
 function spaceOn() {
     return !!(anom && anom.type === "space" && !anom.exit);
 }
@@ -18898,6 +19041,7 @@ function drawSpace(x0, y0, w, h, t) {
 /* it starts: Mite notices (the anomaly is spawned in anomalies.js) */
 function spaceStart(a) {
     a.life = 70;
+    shiftMark();
     setTimeout(() => {
         if (anom !== a)
             return;
@@ -19925,7 +20069,9 @@ function frame(now) {
         anomTick(anom, dt, now);
         if (anom && anom.t > (anom.life || 24)) {
             if (anom.type === "space")
-                spaceEnd(anom); // back from the detour: a postcard (space.js)
+                spaceEnd(anom); // back from the planeshift: a postcard (space.js)
+            else if (anom.type === "deep")
+                deepEnd(anom);
             anom = null;
             nextAnom = now + anomalyInterval();
         }
@@ -20258,7 +20404,21 @@ cv.addEventListener("pointerleave", () => {
     mouse.in = false;
     swipeEnd();
 });
+/* a tap on the scene acts on pointerdown. If it opens a card or a view, the click that the same tap makes a moment
+   later lands on that card instead (its backdrop: "tap outside to close"), and it closed again at once. That one
+   click is swallowed: the first click after a tap on the scene, in the same spot, if it isn't on the scene itself,
+   within 700 ms */
+let sceneTapAt = -1e9, sceneTapXY = [0, 0];
+document.addEventListener("click", e => {
+    if (performance.now() - sceneTapAt < 700 && e.target !== cv && Math.hypot(e.clientX - sceneTapXY[0], e.clientY - sceneTapXY[1]) < 30) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+    sceneTapAt = -1e9;
+}, true);
 cv.addEventListener("pointerdown", e => {
+    sceneTapAt = performance.now();
+    sceneTapXY = [e.clientX, e.clientY];
     const sp = evPos(e);
     setMouse(sp);
     swipe = { x0: sp.x, y0: sp.y, c0: camX, on: false, swept: false };
@@ -21916,9 +22076,42 @@ async function claudeSave(text) {
         return e && e.code === "declined" ? "declined" : null;
     }
 }
+/* in the Android app (Capacitor) the page can't download or use the browser's share menu: the app writes the file
+   itself, into Documents/Small Things (save) or a temporary file handed to Android's share menu (send).
+   Resolves "saved", "shared", "declined", or null when this isn't the app or it didn't work */
+function nativeApp() {
+    return !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
+}
+async function nativeBackup(text, share) {
+    const P = (window.Capacitor && Capacitor.Plugins) || {}, fsys = P.Filesystem, sh = P.Share;
+    if (!nativeApp() || !fsys)
+        return null;
+    try {
+        if (!share)
+            try {
+                await fsys.writeFile({ path: "Small Things/" + backupName(), data: text, directory: "DOCUMENTS", encoding: "utf8", recursive: true });
+                return "saved";
+            }
+            catch (e) { // (no access to Documents on this phone: share it instead)
+            }
+        if (!sh)
+            return null;
+        const r = await fsys.writeFile({ path: backupName(), data: text, directory: "CACHE", encoding: "utf8" });
+        await sh.share({ title: "Small Things backup", files: [r.uri] });
+        return "shared";
+    }
+    catch (e) {
+        return /cancel/i.test(String(e && (e.message || e))) ? "declined" : null;
+    }
+}
 /* the share sheet (messengers, mail, files) where the device has one for files; otherwise a download */
 async function sendBackup() {
     const text = backupText();
+    const n = await nativeBackup(text, true);
+    if (n === "shared" || n === "saved")
+        return backupDone("Backup sent");
+    if (n === "declined")
+        return;
     try {
         const f = new File([text], backupName(), { type: "application/json" });
         if (navigator.canShare && navigator.canShare({ files: [f] })) {
@@ -21934,6 +22127,13 @@ async function sendBackup() {
 }
 async function saveBackup(text, fromShare) {
     text = text || backupText();
+    const n = await nativeBackup(text, false);
+    if (n === "saved")
+        return backupDone("Backup saved in Documents, in the Small Things folder");
+    if (n === "shared")
+        return backupDone("Backup sent");
+    if (n === "declined")
+        return;
     const c = await claudeSave(text);
     if (c === "saved")
         return backupDone(fromShare ? "Backup saved: send it on from your files" : "Backup saved");
