@@ -13917,7 +13917,11 @@ function anomTick(a, dt, now) {
         }
     }
 }
-function drawAnom(a, tsec) {
+/* the ones that hang in the air in front of Mite: drawn after it (drawAnomFront, loop.js), not with the room */
+const ANOM_FRONT = new Set(["cloud"]);
+function drawAnom(a, tsec, front) {
+    if (ANOM_FRONT.has(a.type) !== !!front)
+        return;
     const life = a.life || 24, fade = Math.min(1, a.t / 1.2, Math.max(0, (life - a.t) / 1.5));
     cx.save();
     cx.globalAlpha = fade;
@@ -13925,6 +13929,10 @@ function drawAnom(a, tsec) {
     if (f)
         f(a, tsec);
     cx.restore();
+}
+function drawAnomFront(tsec) {
+    if (anom && ANOM_FRONT.has(anom.type) && anom.room)
+        withRoomLight(anom.room, () => drawAnom(anom, tsec, true));
 }
 /* the red phone's handset at Mite's ear, on its curly cord: drawn after Mite (loop.js) */
 function drawHandset(a) {
@@ -21276,6 +21284,7 @@ function frame(now) {
         else
             withRoomLight(view, () => drawPet(po)); // not clipped: Mite walks across from one room into the next
         drawPastimes(dt);
+        drawAnomFront(now / 1000); // the indoor raincloud, in front of Mite (anomalies.js)
         withRoomLight("archive", () => drawCatEye(now / 1000)); // Midnightcat batting an eye from the jar about (eyes.js) // sticky notes, paper birds, the tiny things Mite's sorting (pastimes.js)
         if (anom && anom.held && anom.room === view) // the red phone's handset, at Mite's ear (anomalies.js)
             withRoomLight(view, () => drawLayered(() => drawHandset(anom)));
