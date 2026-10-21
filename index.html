@@ -9964,15 +9964,14 @@ function showCapsules() {
     openRitual("Time capsules", n ? `${n} of ${CAPSULE_MAX} on the plank.${full ? " It's full: one has to open before there's room for another." : ""}` : "None sealed. One a month, if you like: twelve fit on the plank.", n ? `<ul class="fbooklist">${rows}</ul>` : "", btns);
     sfx("card");
 }
-/* the first of the month: Mite mentions a capsule, once (from boot.js's minute tick) */
+/* once a month, from the first: Mite suggests a capsule (from boot.js's minute tick). Not while the plank is full:
+   then it waits, and suggests one as soon as a capsule has opened and there's room again (still once that month) */
 function capsuleReminder() {
     const d = new Date(), mk = d.getFullYear() * 12 + d.getMonth();
-    if (d.getDate() !== 1 || num(S.flags.capMonth) >= mk || document.hidden || !booted || !$("ritual").hidden || objQ.cur || d.getHours() < 7)
+    if (num(S.flags.capMonth) >= mk || KEEP.caps.filter(c => !c.opened).length >= CAPSULE_MAX || document.hidden || !booted || !$("ritual").hidden || objQ.cur || d.getHours() < 7)
         return;
     S.flags.capMonth = mk;
     saveSoon();
-    if (KEEP.caps.filter(c => !c.opened).length >= CAPSULE_MAX)
-        return;
     speak(compose("capsule_remind") || "A new month. Want to seal a time capsule? It's on the plank in the archive, or from the journal.", { ms: 7000 });
 }
 
