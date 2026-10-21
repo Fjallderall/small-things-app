@@ -632,6 +632,11 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .itemnew{margin-left:6px}
 @media (prefers-reduced-motion:reduce){.shopsec>summary::before{transition:none}}
 
+/* sound chosen, but the browser hasn't let it start yet (it needs a tap first): the notes pulse gently */
+#sndG.snd-wait{animation:sndwait 1.6s ease-in-out infinite}
+@keyframes sndwait{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){#sndG.snd-wait{animation:none;opacity:.5}}
+
 </style>
 <div class="app">
   <section class="world" aria-label="Pet">
@@ -4752,6 +4757,7 @@ function sndInit() {
     try {
         const a = new C();
         Snd.ctx = a;
+        a.onstatechange = () => typeof updSndUI === "function" && updSndUI();
         const master = a.createGain();
         master.gain.value = .55;
         master.connect(a.destination);
@@ -5141,8 +5147,10 @@ function updSndUI() {
     g.textContent = ["♪", "♪", "♪♪", "♪♪♪"][m];
     g.classList.toggle("snd-off", !m);
     g.dataset.n = m;
-    g.setAttribute("aria-label", sndLabel());
-    g.title = sndLabel();
+    const wait = !!m && !(Snd.ctx && Snd.ctx.state === "running");
+    g.classList.toggle("snd-wait", wait);
+    g.setAttribute("aria-label", sndLabel() + (wait ? " (tap anywhere to start it)" : ""));
+    g.title = sndLabel() + (wait ? " · tap anywhere to start it" : "");
 }
 function cycleSound() {
     S.settings.sound = (sndMode() + 1) % 4;
@@ -5152,15 +5160,24 @@ function cycleSound() {
     updSndUI();
     saveSoon();
 }
-document.addEventListener("pointerdown", () => {
-    if (sndMode()) {
-        if (!Snd.ctx)
-            sndInit();
-        if (Snd.ctx && Snd.ctx.state !== "running")
-            Snd.ctx.resume().catch(() => {
-            });
-    }
-}, true);
+/* browsers only let sound start from a tap or a key (never by itself after a reload). A touch only counts once the
+   finger lifts (pointerup, touchend, click), so all of these are tried, until it runs. Until then the sound button
+   says so (snd-wait) */
+function sndUnlock() {
+    if (!sndMode())
+        return;
+    if (!Snd.ctx)
+        sndInit();
+    if (Snd.ctx && Snd.ctx.state !== "running")
+        Snd.ctx.resume().then(updSndUI).catch(() => {
+        });
+}
+for (const ev of ["pointerdown", "pointerup", "touchend", "click", "keydown"])
+    document.addEventListener(ev, sndUnlock, true);
+document.addEventListener("visibilitychange", () => { // (back to the app: a phone may have paused it)
+    if (!document.hidden && Snd.ctx && Snd.ctx.state !== "running")
+        sndUnlock();
+});
 function hash01(str) {
     let h = 2166136261;
     for (const ch of str) {
@@ -26008,6 +26025,7 @@ function boot() {
     resetAdd();
     renderAll();
     updSndUI();
+    sndUnlock(); // (some places let it start straight away: the Android app, a browser that knows you)
     updAiUI();
     if (!S.settings.app || S.settings.app === "Mossling")
         S.settings.app = "Small Things";
