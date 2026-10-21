@@ -19742,6 +19742,15 @@ const EYES_PER_JAR = 6, EYE_JARS = 3; // (two on the shelf, one on top: eighteen
 const isRaccEye = id => EYE_FROM[id] === "raccoon";
 const inRaccJar = s => s.from === "raccoon" || isRaccEye(s.k);
 const ownEyes = () => (S.eyes || []).filter(s => !inRaccJar(s));
+/* once, on each device: before the raccoon kept to its own kinds, a visit could leave any eye. Those go again;
+   one traded for in the barter stays (it was paid for) */
+function raccEyeCleanup() {
+    if (S.flags.m_raccEye)
+        return;
+    S.flags.m_raccEye = 1;
+    const traded = e => (S.barter && S.barter.got || []).includes(e.k) || (S.notes || []).some(n => /^Traded /.test(n.text || "") && n.text.toLowerCase().includes((EYES.find(x => x.id === e.k) || { name: "\u0000" }).name.toLowerCase()));
+    S.eyes = (S.eyes || []).filter(e => !(e.from === "raccoon" && !isRaccEye(e.k) && !traded(e)));
+}
 /* where each eye comes from (some are only found one way) */
 const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door", glassdoll: "raccoon", heron: "raccoon", lighthouse: "raccoon", bureau: "raccoon" };
 function findEye(from) {
@@ -26238,6 +26247,7 @@ function boot() {
     loadKeepLocal();
     capsulesToArchive(); // (opened time capsules go on the shelves too)
     migrateCounts();
+    raccEyeCleanup(); // (eyes.js)
     if (!S.flags.m_rental) { // the renter's chest used to come by itself: a save that already had it keeps it
         S.flags.m_rental = 1;
         if (!isNew && S.drawers && S.drawers.at && !S.b.rental)
