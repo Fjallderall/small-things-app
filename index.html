@@ -830,7 +830,7 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
         <label class="field">App name<input id="setApp" maxlength="30"></label>
         <label class="field">Work ends at (hour)<input id="setDoneBy" type="number" min="12" max="23"></label>
         <label class="field">Bedtime (hour)<input id="setBed" type="number" min="0" max="23"></label>
-        <label class="field">A new day starts at (hour)<input id="setDayStart" type="number" min="0" max="23" aria-describedby="dayStartHint"><small class="sub" id="dayStartHint">The notebook starts a fresh page then. 5 is 0500; for night shifts, pick when your day really begins.</small></label>
+        <label class="field">A new day starts at (hour)<input id="setDayStart" type="number" min="0" max="23" aria-describedby="dayStartHint"><small class="sub" id="dayStartHint">Until then it still counts as the day before: what you finish, the journal, filing the day, the notebook page. Due dates and times keep the clock. 5 is 0500; for night shifts, pick when your day really begins.</small></label>
         <label class="field">Strangeness<select id="setStrange"><option value="0">Off: just cosy</option><option value="1">Some: the odd door</option><option value="2">A lot: thin place</option></select></label>
         <label class="field">Weather location (lat, lon)<input id="setLoc" maxlength="30" placeholder="e.g. 48.86, 2.35" inputmode="decimal"></label>
         <label class="field">Talk speed<select id="setTalk"><option value="0">Slow</option><option value="1">Normal</option><option value="2">Fast</option></select></label>
@@ -3562,7 +3562,7 @@ function sanitizeState(raw) {
         o.settings.doneBy = clamp(num(st.doneBy, 19), 12, 23);
     if ("bed" in st)
         o.settings.bed = clamp(num(st.bed, 1), 0, 23);
-    if ("dayStart" in st) // when a new day begins, for the notebook (0-23, 5 = 0500)
+    if ("dayStart" in st) // when a new day of activity begins (actDay; 0-23, 5 = 0500)
         o.settings.dayStart = clamp(Math.round(num(st.dayStart, 5)), 0, 23);
     if ("strange" in st)
         o.settings.strange = clamp(num(st.strange, 1), 0, 2);
@@ -4154,9 +4154,17 @@ function dayStartTs(now = Date.now()) {
         d.setDate(d.getDate() - 1);
     return d.getTime();
 }
-/* today as a whole number of local days (for "once a day" counters kept in S.flags, which merge by the highest) */
-const dayNum = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 60e3) / 864e5);
+/* Two kinds of day. dayKey is the calendar: due dates, planned dates, "tomorrow", capsules, festivals, anything with a
+   date or a time on it. actDay is the day of activity, which begins at the day start (Settings): what's done today,
+   the streak, filing, the journal, rituals and every once-a-day thing. At 0130 with the day start at 0500, dayKey()
+   is already tomorrow's date and actDay() is still today's. Both give "YYYY-MM-DD". */
 const dayKey = (d = new Date()) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+const actDay = (ts = Date.now()) => dayKey(new Date(dayStartTs(+ts)));
+/* the activity day as a whole number of days (for "once a day" counters kept in S.flags, which merge by the highest) */
+const dayNum = () => {
+    const t = dayStartTs();
+    return Math.floor((t - new Date(t).getTimezoneOffset() * 60e3) / 864e5);
+};
 const uidGen = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 function fmt(n) {
     if (n < 1000)
@@ -4349,8 +4357,8 @@ function doneTasks() {
     return S.tasks.filter(t => t.d);
 }
 function doneOn(key) {
-    const wk = weekKey(new Date(key + "T12:00").getTime());
-    return S.tasks.filter(t => t.d && dayKey(new Date(t.d)) === key).length + (ARCH[wk] || []).filter(t => dayKey(new Date(t.d)) === key).length;
+    const wk = weekKey(key);
+    return S.tasks.filter(t => t.d && actDay(t.d) === key).length + (ARCH[wk] || []).filter(t => actDay(t.d) === key).length;
 }
 function doneCount() {
     return Math.max(S.doneTotal || 0, 0);
@@ -4389,7 +4397,7 @@ function ctx() {
     const mp = moonPhase(now);
     return { now, h, dow, month: now.getMonth(), workday: st.work.includes(dow), office: st.office.includes(dow),
         you: st.you || null, pet: st.pet, open: open.length, oldest: oldest ? oldest.t : null, oldestAge: oldest ? fmtAge(Date.now() - oldest.c) : null,
-        smallest: smallest ? smallest.t : null, doneToday: doneOn(dayKey()), week: allDone().filter(t => t.d > weekAgo).length, total: doneCount(),
+        smallest: smallest ? smallest.t : null, doneToday: doneOn(actDay()), week: allDone().filter(t => t.d > weekAgo).length, total: doneCount(),
         streak: S.streak.n, level: level(), favHour: fav, daysTogether: Math.max(1, Math.round((Date.now() - S.created) / 864e5)),
         doneBy: st.doneBy, bed: st.bed, pats: S.pats, n: ri(3, 42),
         possum: possumName(), snail: own("snail") ? snailName() : null, moon: moonName(mp), moonP: mp, clearance: CLEAR[clearance()].name, incidents: S.incidents, strange: strangeness(), halloween: isHalloween(now), mess: (S.mess || []).length, memory: S.memories && S.memories.length ? choice(S.memories).t : null, wx: weather() };
@@ -5395,7 +5403,7 @@ function completeTask(id, src) {
     S.doneTotal = doneCount() + 1;
     const now = new Date();
     const h = now.getHours();
-    if (S.paint && S.paint.day === dayKey())
+    if (S.paint && S.paint.day === actDay())
         S.paint.prog = Math.max(S.paint.prog, Math.min(paintTarget(), S.paint.prog + .05 * t.s / 3 + .03));
     const g = addG((PAY.task[t.s] || 1) + (isPicked(t) ? PAY.pick : 0) + (t.fx ? PAY.fixDone : 0));
     const wasPick = isPicked(t);
@@ -5416,7 +5424,7 @@ function completeTask(id, src) {
     if (h >= 23 || h < 4)
         S.flags.owl = 1;
     // streak
-    const today = dayKey();
+    const today = actDay();
     if (S.streak.last !== today) {
         let broken = false;
         if (S.streak.last) {
@@ -5643,7 +5651,7 @@ function toast(text, { undo, cls, act } = {}) {
         $("toasts").firstChild.remove();
 }
 function checkAch() {
-    const s = { done: doneCount(), today: doneOn(dayKey()), owned: boughtCount(), trinkets: Object.keys(S.trinkets).length };
+    const s = { done: doneCount(), today: doneOn(actDay()), owned: boughtCount(), trinkets: Object.keys(S.trinkets).length };
     for (const [id, name, desc, test] of ACH) {
         if (!S.ach[id] && test(s)) {
             S.ach[id] = Date.now();
@@ -6811,7 +6819,7 @@ const BEH = {
                 }
             }
             if (Math.random() < .03)
-                addP({ type: "spark", x: easelX() + rnd(-R * .3, R * .3), y: GY - R * rnd(.5, 1), vx: rnd(-10, 10), vy: -rnd(5, 20), g: 60, max: .6, col: choice(paintingOf(S.paint.day || dayKey()).pal), size: 2 });
+                addP({ type: "spark", x: easelX() + rnd(-R * .3, R * .3), y: GY - R * rnd(.5, 1), vx: rnd(-10, 10), vy: -rnd(5, 20), g: 60, max: .6, col: choice(paintingOf(S.paint.day || actDay()).pal), size: 2 });
         } },
     guestchat: { d: [60, 60], w: () => 0, init(b, p) {
             if (!guest) {
@@ -7342,7 +7350,7 @@ const BEH = {
                 po.arms = [-1.6, -1.6];
             }
         } },
-    knit: { d: [10, 18], w: c => ((c.dark > .4 ? .9 : .3) + (c.month >= 9 || c.month <= 2 ? .5 : 0)) * (knitDoneToday() || S.knitRest === dayKey() ? .15 : 1), init(b) {
+    knit: { d: [10, 18], w: c => ((c.dark > .4 ? .9 : .3) + (c.month >= 9 || c.month <= 2 ? .5 : 0)) * (knitDoneToday() || S.knitRest === actDay() ? .15 : 1), init(b) {
             knitStart(b); // knitting.js: the project on the needles
         }, step(b, p, t, po) {
             po.prop = "knit";
@@ -9230,14 +9238,19 @@ function room() {
 function lampY(rm) {
     return Math.max(H * .1, rm.wy - rm.wr * .25);
 }
-function weekKey(ts) {
-    const d = new Date(ts);
+/* a moment (a timestamp) belongs to the week of its activity day (actDay), so a box finished on Monday at 0130 is still
+   last week's; a Date or a day key ("YYYY-MM-DD") is taken as that calendar day */
+function weekDay(v) {
+    return typeof v === "number" ? new Date(actDay(v) + "T12:00") : toDate(v);
+}
+function weekKey(v) {
+    const d = new Date(weekDay(v));
     d.setHours(12, 0, 0, 0);
     d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
     return dayKey(d);
 }
-function weekNo(ts) {
-    const d = new Date(ts);
+function weekNo(v) {
+    const d = new Date(weekDay(v));
     d.setHours(12, 0, 0, 0);
     d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
     const y1 = new Date(d.getFullYear(), 0, 4);
@@ -9251,7 +9264,7 @@ function pileBoxes() {
     return S.tasks.filter(t => t.d && !t.f).sort((a, b) => a.d - b.d);
 }
 function isPicked(t) {
-    return !!(S.plan && S.plan.d === dayKey() && S.plan.ids.includes(t.id));
+    return !!(S.plan && S.plan.d === actDay() && S.plan.ids.includes(t.id));
 }
 function drawBox(t, x, y, bw, dk) {
     const w = bw * (t.s === 8 ? 1.25 : t.s === 3 ? 1.05 : .85), h = bw * (t.s === 8 ? 1 : t.s === 3 ? .85 : .7);
@@ -9696,7 +9709,7 @@ const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () 
             ovenJob = null;
             return showBake();
         } }, easel: { beh: "paint", revealAt: 1.5, show: () => {
-            const pr = Math.round((S.paint.prog || 0) * 100), P = paintingOf(S.paint.day || dayKey());
+            const pr = Math.round((S.paint.prog || 0) * 100), P = paintingOf(S.paint.day || actDay());
             if (pr >= 100)
                 showToday();
             const t = pr >= 100 ? `Today's painting is finished: “${P.title}”. It goes out with the post tomorrow.` : pr < 5 ? "A blank canvas. I'm thinking. Thinking is part of painting." : `Today's painting is about ${pr}% done. No peeking at the bare bits.`;
@@ -11251,7 +11264,7 @@ function drawCalendar(x, y, dk) {
 }
 /* the calendar card: the day's meta (moon, done, streak, level, incidents) lives here instead of on top of the scene */
 function showCalendarCard() {
-    const d = new Date(), today = dayKey(), L = level(), a = xpFor(L), b = xpFor(L + 1), td = doneOn(today);
+    const d = new Date(), today = dayKey(), L = level(), a = xpFor(L), b = xpFor(L + 1), td = doneOn(actDay());
     const pl = S.tasks.filter(t => !t.d && t.on === today).sort((x, y) => (x.at || "99") < (y.at || "99") ? -1 : 1), ahead = aheadTasks();
     const fedLeft = S.fedUntil - Date.now(), odd = strangeness() > 0;
     const row = (k, v) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`;
@@ -11500,7 +11513,7 @@ function drawEaselBody(dk) {
     cx.stroke();
     cx.fillStyle = wood;
     cx.fillRect(x - w * .55, top + h + R * .02, w * 1.1, R * .06);
-    const d = S.paint && S.paint.day || dayKey();
+    const d = S.paint && S.paint.day || actDay();
     drawPainting(cx, x - w / 2, top, w, h, d, S.paint ? S.paint.prog : 0);
     if (dk > .35) {
         cx.fillStyle = `rgba(10,8,20,${(dk - .35) * .6})`;
@@ -11709,7 +11722,7 @@ function galleryBackfill() {
         const m = /^Sent yesterday's painting, “(.+)”, to (.+)\.$/.exec(n.text || "");
         if (!m)
             continue;
-        const sent = new Date(n.at);
+        const sent = new Date(actDay(n.at) + "T12:00");
         for (let k = 1; k <= 60; k++) {
             const d = new Date(sent);
             d.setDate(d.getDate() - k);
@@ -11727,7 +11740,7 @@ function galleryBackfill() {
 function paintDayCheck() {
     galleryBackfill();
     S.paint = S.paint || { day: "", prog: 0, sent: "" };
-    const today = dayKey();
+    const today = actDay();
     if (S.paint.day === today)
         return;
     const old = S.paint.day, prog = S.paint.prog;
@@ -11740,7 +11753,7 @@ function paintDayCheck() {
 }
 /* tapping the easel once today's painting is finished: Mite shows it on a card */
 function showToday() {
-    const day = S.paint && S.paint.day || dayKey(), P = paintingOf(day), cv = $("paintCv");
+    const day = S.paint && S.paint.day || actDay(), P = paintingOf(day), cv = $("paintCv");
     cv.width = 96;
     cv.height = Math.round(cv.width * .76);
     const c = cv.getContext("2d");
@@ -12532,7 +12545,7 @@ function drawKeepsakesOn(x, topY, dk, tsec) {
         cx.fillRect(bx, by, PX, bh);
         cx.fillStyle = mix("#c2453a", "#3a1414", dk * .6); // the ribbon
         cx.fillRect(bx + bw * .6, by + bh, PX, PX * 2);
-        if (journalDay(dayKey()).length === 0 && new Date().getHours() >= 17 && Math.sin(tsec * 2) > .6) { // evening, nothing written yet: a tiny glint
+        if (journalDay(actDay()).length === 0 && new Date().getHours() >= 17 && Math.sin(tsec * 2) > .6) { // evening, nothing written yet: a tiny glint
             cx.fillStyle = "#fff6c8";
             cx.fillRect(bx + bw - PX * 2, by - PX, PX, PX);
         }
@@ -14450,7 +14463,7 @@ function vaultGeo() {
 }
 /* a new dream is waiting once per day, from 0600 */
 function dreamWaiting() {
-    return new Date().getHours() >= 6 && S.dreamDay !== dayKey();
+    return new Date().getHours() >= 6 && S.dreamDay !== actDay();
 }
 function darkNow() {
     const d = new Date();
@@ -14480,7 +14493,7 @@ function logDream(p) {
     }
     S.dreams = (S.dreams || []).concat({ at: Date.now(), d: p.d, k: p.kind, s: p.stamp || "", t: p.text }).slice(-80);
     if (p.fresh)
-        S.dreamDay = dayKey();
+        S.dreamDay = actDay();
     saveSoon();
 }
 /* the index card: drawer, number, stamp, the dream itself */
@@ -15115,7 +15128,7 @@ function finishKnit() {
         return;
     S.knits = (S.knits || []).concat({ item: k.item, c1: k.c1, c2: k.c2, pat: k.pat, at: Date.now() }).slice(-40);
     S.knit = null;
-    S.knitRest = dayKey(); // nothing new on the needles until tomorrow
+    S.knitRest = actDay(); // nothing new on the needles until tomorrow
     sfx("done", { step: 2 });
     speak(choice([`Finished: a ${knitName(k)}. I'm very proud. Don't look at the back.`, `Done! One ${knitName(k)}. It's with my crafts now.`, `Cast off. A ${knitName(k)}. Slightly wonky. Completely loved.`]), { ms: 6000 });
     note(`Knitted a ${knitName(k)}.`);
@@ -15230,7 +15243,7 @@ function drawKnitPiece(g, k, p, x, y, s) {
 }
 /* the knit behaviour asks for this once a session: start a project if there isn't one */
 function knitStart(b) {
-    if (!S.knit && S.knitRest === dayKey()) { // just finished one today: tidying the yarn basket instead
+    if (!S.knit && S.knitRest === actDay()) { // just finished one today: tidying the yarn basket instead
         b.p0 = 0;
         b.rest = true;
         return;
@@ -15243,7 +15256,7 @@ function knitStart(b) {
         }, 1500);
         saveSoon();
     }
-    const today = dayKey();
+    const today = actDay();
     if (S.knit.day !== today) { // a new day: today's share starts from here
         S.knit.day = today;
         S.knit.ds = S.knit.prog || 0;
@@ -15252,7 +15265,7 @@ function knitStart(b) {
 }
 /* has today's bit of knitting been done? (then Mite knits less often until tomorrow) */
 function knitDoneToday() {
-    return !!S.knit && S.knit.day === dayKey() && (S.knit.prog || 0) >= Math.min(1, (S.knit.ds || 0) + KNIT_PER_DAY) - .001;
+    return !!S.knit && S.knit.day === actDay() && (S.knit.prog || 0) >= Math.min(1, (S.knit.ds || 0) + KNIT_PER_DAY) - .001;
 }
 function knitStep(b, t) {
     if (!S.knit || b.rest)
@@ -17563,7 +17576,7 @@ function drawSnail(dk) {
         cx.fillRect(x - R * .22, y - R * .62, R * .34, R * .28);
         cx.fillStyle = "#f7f1e3";
         cx.fillRect(x - R * .19, y - R * .59, R * .28, R * .22);
-        drawPainting(cx, x - R * .19, y - R * .59, R * .28, R * .22, S.paint.sent || dayKey(), 1);
+        drawPainting(cx, x - R * .19, y - R * .59, R * .28, R * .22, S.paint.sent || actDay(), 1);
     }
     // a knitted snail cosy, once Mite has made one
     const cosy = (S.knits || []).filter(k => k.item === "cosy").slice(-1)[0];
@@ -18671,8 +18684,8 @@ function flowerTick() {
         return;
     flowerCheckAt = now + 60e3;
     const d = new Date(), dark = skyAt(d.getHours() + d.getMinutes() / 60).dark;
-    if (own("ndoor") && dark > .6 && S.ndoorFlowers !== dayKey() && Math.random() < .03) {
-        S.ndoorFlowers = dayKey();
+    if (own("ndoor") && dark > .6 && S.ndoorFlowers !== actDay() && Math.random() < .03) {
+        S.ndoorFlowers = actDay();
         oddFlowers("the night door");
         return;
     }
@@ -19235,8 +19248,8 @@ function glimpseFill(t) {
     return homeTxt(fillNames(String(t))).replace(/\{possum\}/g, possumName()).replace(/\{snail\}/g, snailName()).replace(/\{raccoon\}/g, raccoonName()).replace(/\{cat\}/g, CAT_NAME);
 }
 function glimpsesToday() {
-    const t = dayKey();
-    return (S.glimpses || []).filter(g => dayKey(new Date(g.at)) === t).length;
+    const t = actDay();
+    return (S.glimpses || []).filter(g => actDay(g.at) === t).length;
 }
 /* one glimpse: one not seen yet if there is one, and someone different from last time */
 function pickGlimpse() {
@@ -21844,7 +21857,7 @@ function renderMeters() {
     if (nuShow && Date.now() > nuShow.until)
         hideNextUp();
     const L = level(), a = xpFor(L), b = xpFor(L + 1);
-    const td = doneOn(dayKey());
+    const td = doneOn(actDay());
     $("kbd").querySelectorAll("[data-k]").forEach(b => {
         const k = b.dataset.k;
         b.hidden = k === "calendar" ? false : k === "capsule" ? !KEEP.caps.some(c => !c.opened) : !own({ book: "books", brew: "kettle", oven: "oven", scope: "scope", jar: "jar", hearth: "hearth" }[k]);
@@ -22111,8 +22124,8 @@ function renderTasks() {
     $("dBadge").textContent = open.length;
     $("dBadge").hidden = !open.length;
     renderAhead();
-    const today = dayKey();
-    const dt = doneTasks().filter(t => dayKey(new Date(t.d)) === today).sort((a, b) => b.d - a.d);
+    const today = actDay();
+    const dt = doneTasks().filter(t => actDay(t.d) === today).sort((a, b) => b.d - a.d);
     $("doneSum").textContent = `Done today (${dt.length})`;
     $("doneList").innerHTML = dt.map(t => `<li><span>${esc(t.t)}</span><span class="sync">${new Date(t.d).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</span></li>`).join("") || `<li><span style="text-decoration:none">Nothing yet.</span></li>`;
 }
@@ -23426,12 +23439,13 @@ function backupName() {
     return `small-things-backup-${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}.json`;
 }
 /* the reminder: every morning there's been no backup yet that day (or once a week: seven days on), when there's
-   something worth keeping. By the calendar, not by hours: a backup in the evening doesn't hide the next morning's */
+   something worth keeping. By the day (actDay, from the day start), not by hours: a backup in the evening doesn't hide
+   the next morning's, and the hours after midnight still belong to the evening */
 function backupDue() {
     const k = S.settings.backup ?? 1;
-    if (!k || S.flags.bkLater === dayKey() || new Date().getHours() < 5)
+    if (!k || S.flags.bkLater === actDay())
         return false;
-    const last = num(S.backupAt), days = last ? Math.round((new Date(dayKey() + "T12:00") - new Date(dayKey(new Date(last)) + "T12:00")) / 864e5) : 99;
+    const last = num(S.backupAt), days = last ? Math.round((new Date(actDay() + "T12:00") - new Date(actDay(last) + "T12:00")) / 864e5) : 99;
     const age = Date.now() - num(S.created);
     return days >= (k === 2 ? 7 : 1) && age > 864e5 && (S.tasks.length + doneTasks().length + (S.notes || []).length) > 0;
 }
@@ -23537,7 +23551,7 @@ async function saveBackup(text, fromShare) {
 $("bkSend").onclick = $("bkSend2").onclick = () => sendBackup();
 $("bkSave").onclick = $("bkSave2").onclick = () => saveBackup();
 $("bkLater").onclick = () => {
-    S.flags.bkLater = dayKey();
+    S.flags.bkLater = actDay();
     saveSoon();
     renderTasks();
 };
@@ -23571,7 +23585,7 @@ function journalName() {
 }
 /* the lines of one day (dayKey), oldest first */
 function journalDay(day) {
-    return KEEP.refl.filter(r => dayKey(new Date(r.at)) === day).sort((a, b) => a.at - b.at);
+    return KEEP.refl.filter(r => actDay(r.at) === day).sort((a, b) => a.at - b.at);
 }
 /* write or change the line of a day: a new one only for today; an existing line keeps its length limit if it was longer */
 function journalWrite(day, text) {
@@ -23588,7 +23602,7 @@ function journalWrite(day, text) {
         saveKeep();
         return had;
     }
-    if (!text || day !== dayKey())
+    if (!text || day !== actDay())
         return null;
     const r = { id: uidGen(), at: Date.now(), text, u: Date.now() };
     KEEP.refl.push(r);
@@ -23600,7 +23614,7 @@ function journalWrite(day, text) {
 function journalWeek(off) {
     const start = new Date(weekKey(Date.now()) + "T12:00");
     start.setDate(start.getDate() + off * 7);
-    const today = dayKey(), days = [];
+    const today = actDay(), days = [];
     for (let i = 0; i < 7; i++) {
         const d = new Date(start);
         d.setDate(start.getDate() + i);
@@ -23622,7 +23636,7 @@ function showJournal(off = 0) {
     jPage = clamp(off, journalFirstOff(), 0);
     const { start, days } = journalWeek(jPage), end = new Date(start);
     end.setDate(start.getDate() + 6);
-    const today = dayKey(), row = ({ k, d }) => {
+    const today = actDay(), row = ({ k, d }) => {
         const lines = journalDay(k), wd = d.toLocaleDateString("en-GB", { weekday: "short" }), label = `<span class="jday">${esc(wd)} <small>${esc(dmy(d))}</small></span>`;
         if (jEdit === k || (k === today && !lines.length)) {
             const cur = lines[0] ? lines[0].text : "", max = Math.max(JOURNAL_MAX, cur.length);
@@ -23632,7 +23646,7 @@ function showJournal(off = 0) {
             return `<li class="jrow jempty">${label}<span class="jtext">—</span></li>`;
         return `<li class="jrow">${label}<span class="jtext">${lines.map(r => esc(r.text)).join("<br>")}</span><button type="button" class="mini jedit" data-jday="${esc(k)}" aria-label="Change the line for ${esc(wd)} ${esc(dmy(d))}">✎</button></li>`;
     };
-    const body = `<p class="jweek">Week ${weekNo(start.getTime())} · ${esc(dmy(start))} – ${esc(dmy(end))}</p><ol class="jlist" id="jList">${days.map(row).join("")}</ol>`;
+    const body = `<p class="jweek">Week ${weekNo(start)} · ${esc(dmy(start))} – ${esc(dmy(end))}</p><ol class="jlist" id="jList">${days.map(row).join("")}</ol>`;
     const btns = [];
     if (document.getElementById("jIn") || jEdit || (jPage === 0 && !journalDay(today).length))
         btns.push(["Write it down", "primary", journalSave]);
@@ -23691,7 +23705,7 @@ function journalSave() {
     jEdit = "";
     if (r) {
         sfx("soft");
-        if (day === dayKey() && journalDay(day).length === 1 && r.u === r.at)
+        if (day === actDay() && journalDay(day).length === 1 && r.u === r.at)
             setTimeout(() => speak(choice(["Written. I'll keep it with the others.", "In the journal. Small things, kept.", "That's today, then. A good line."])), 400);
     }
     showJournal(jPage);
@@ -24118,7 +24132,7 @@ async function chatterAI() {
     const st = S.settings, c = ctx();
     const btn = {}; // started from the Mite tray; nothing to disable
     btn.disabled = true;
-    const doneT = doneTasks().filter(t => dayKey(new Date(t.d)) === dayKey()).map(t => t.t).join("; ") || "nothing yet";
+    const doneT = doneTasks().filter(t => actDay(t.d) === actDay()).map(t => t.t).join("; ") || "nothing yet";
     const mems = (S.memories || []).slice(0, 40).sort(() => Math.random() - .5).slice(0, 4).map(m => dq(m.t, 220)).join("\n") || "(none)";
     const said = (S.said || []).slice(0, 12).map(x => dq(x.t, 200)).join("\n") || "(none)";
     const ex = pool("chatter").slice(-25).map(l => dq(l, 400)).join("\n");
@@ -24166,7 +24180,7 @@ async function askAI() {
     const st = S.settings, c = ctx();
     const btn = {};
     btn.disabled = true;
-    const doneT = doneTasks().filter(t => dayKey(new Date(t.d)) === dayKey()).map(t => t.t).join("; ") || "nothing yet";
+    const doneT = doneTasks().filter(t => actDay(t.d) === actDay()).map(t => t.t).join("; ") || "nothing yet";
     const hp = harvestPools(c);
     const prompt = GUARD + `You are writing dialogue for a virtual pet.\n\nCharacter:\n${dataBlock("character", dq(fillNames(personaFull()), 2000))}\n\nSituation: It is ${c.now.toLocaleDateString("en-GB", { weekday: "long" })} ${String(c.h).padStart(2, "0")}:${String(c.now.getMinutes()).padStart(2, "0")}, ${c.moon}. ${youN()} works on ${st.work.map(d => DAYS[d]).join(", ") || "no fixed days"} (office on ${st.office.map(d => DAYS[d]).join(", ") || "none"}), wants to stop working by ${st.doneBy}:00 and be in bed by ${st.bed}:00. Today is ${c.workday ? "a workday" : "a day off"}. \n${dataBlock("done-today", dq(doneT, 1500))}\n${dataBlock("open-tasks", taskDigest())}\n\n` +
         `1. "say": what ${st.pet} says to ${youN()} now. Suggest ONE specific next task from the list (or rest, if the time or day fits that better) with a concrete reason from the data: deadline, size, time of day, how long it has waited, work vs life. Rule: ${isWorkHours(c) ? `it is work hours on a workday, so pick a work task if there is one; life tasks only when no work is open` : `it is outside work hours, so never suggest a work task`}. Max 45 words.\n` +
@@ -24348,12 +24362,12 @@ function welcome(prevSeen, isNew) {
         saveSoon();
     }
     const away = Date.now() - prevSeen;
-    const today = dayKey();
+    const today = actDay();
     // offline earnings
     if (!isNew && away > 60e3)
         decayMom(away);
     if (S.lastDay && S.lastDay !== today) {
-        const y = new Date();
+        const y = new Date(today + "T12:00");
         y.setDate(y.getDate() - 1);
         const n = doneOn(dayKey(y));
         if (n)
@@ -24486,8 +24500,8 @@ function renderUsage() {
         return;
     const a = S.ai && S.ai.calls ? S.ai : { calls: [], tot: {} };
     const K = { chat: "Talking", chatter: "Chat (bit of dialogue)", ask: "Ask what's next", split: "Split a task", lines: "Write more lines" };
-    const today = dayKey();
-    const tc = a.calls.filter(c => dayKey(new Date(c.at)) === today);
+    const today = actDay();
+    const tc = a.calls.filter(c => actDay(c.at) === today);
     const todayTok = tc.reduce((s, c) => s + c.i + c.o, 0);
     let all = 0;
     const rows = Object.keys(K).map(k => {
@@ -24566,11 +24580,10 @@ function toggleLights() {
         say("goodnight");
         if (own("snail"))
             setTimeout(() => snailSay(choice(["Coming. Save me a spot.", "Bedtime? I'm on my way. Give me a minute. Or ten.", "Night night. Scooch over.", "I'll be there by the time you're dreaming."]), 4000), 2200);
-        const d = new Date(), h = d.getHours(), diff = (h - S.settings.bed + 24) % 24;
-        if (diff <= 1 || diff >= 22) {
-            const t = new Date(d);
-            if (h >= 12)
-                t.setDate(t.getDate() + 1);
+        const h = new Date().getHours(), diff = (h - S.settings.bed + 24) % 24;
+        if (diff <= 1 || diff >= 22) { // on time: the bonus comes when the next day starts
+            const t = new Date(actDay() + "T12:00");
+            t.setDate(t.getDate() + 1);
             S.goodnight = dayKey(t);
         }
     }
@@ -24581,7 +24594,7 @@ function toggleLights() {
     afterChange();
 }
 function checkRested() {
-    if (!S.goodnight || dayKey() < S.goodnight || new Date().getHours() < 5)
+    if (!S.goodnight || actDay() < S.goodnight || Date.now() - num(S.lightsAt) < 4 * 3600e3) // the next day has started, and a night's sleep in between
         return;
     S.goodnight = "";
     S.lightsOut = false;
@@ -24596,7 +24609,7 @@ function selfCare(id) {
     const it = SELF.find(x => x.id === id);
     if (!it)
         return;
-    const k = dayKey();
+    const k = actDay();
     S.selfcare[k] = S.selfcare[k] || {};
     const n = (S.selfcare[k][id] || 0) + 1;
     S.selfcare[k][id] = n;
@@ -24682,8 +24695,8 @@ setInterval(() => {
 }, 60e3);
 /* games */
 function gameFactor() {
-    if (S.gamesDay.d !== dayKey())
-        S.gamesDay = { d: dayKey(), n: 0 };
+    if (S.gamesDay.d !== actDay())
+        S.gamesDay = { d: actDay(), n: 0 };
     return S.gamesDay.n < 3 ? 1 : .25;
 }
 function startGame(id) {
@@ -24817,8 +24830,8 @@ function closeGame() {
 }
 /* care tab */
 function renderCare() {
-    const pn = esc(S.settings.pet), today = S.selfcare[dayKey()] || {};
-    const played = S.gamesDay.d === dayKey() ? S.gamesDay.n : 0;
+    const pn = esc(S.settings.pet), today = S.selfcare[actDay()] || {};
+    const played = S.gamesDay.d === actDay() ? S.gamesDay.n : 0;
     const n = (S.mess || []).length;
     $("careBody").innerHTML = `<div><h2>Look after <span class="pn">${pn}</span></h2><p class="sub">Nothing runs down here. Each snack makes ${pn} well fed for a while. You have ${S.g} glimmer${S.g === 1 ? "" : "s"}.</p></div>
   <div class="care-grid">${snacks().map(s => {
@@ -24904,7 +24917,7 @@ function renderTray(level) {
             }, fmt(c), "", S.g < c);
         });
     if (level === "me") {
-        const today = S.selfcare[dayKey()] || {};
+        const today = S.selfcare[actDay()] || {};
         SELF.forEach(x => add(x.label, () => {
             selfCare(x.id);
             closeTray();
@@ -25595,10 +25608,10 @@ function migrateCounts() {
     }
 }
 function autoFileOld() {
-    const today = dayKey();
+    const today = actDay();
     let n = 0;
     S.tasks.forEach(t => {
-        if (t.d && !t.f && dayKey(new Date(t.d)) < today) {
+        if (t.d && !t.f && actDay(t.d) < today) {
             t.f = t.d;
             t.u = Math.max(t.u || 0, t.d);
             n++;
@@ -25872,7 +25885,7 @@ function fileDay(lights) {
         pet.start("tidy");
         addG(PAY.file * Math.min(n, 5));
     }
-    S.rit.evening = dayKey();
+    S.rit.evening = actDay();
     const line = n ? choice([`Filed ${n} box${n > 1 ? "es" : ""}. Labels straight.`, `${n} on the shelf. Neat.`, `All filed. Week ${weekNo(Date.now())} is coming along.`]) : "Nothing to file. The shelf will wait.";
     setTimeout(() => speak(line), n ? 700 + n * 140 : 0);
     note(n ? `Filed the day: ${n} box${n > 1 ? "es" : ""}.` : "Closed a quiet day.");
@@ -25884,8 +25897,8 @@ function fileDay(lights) {
     afterChange();
 }
 function openEvening(manual) {
-    const today = dayKey(), c = ctx();
-    const done = doneTasks().filter(t => dayKey(new Date(t.d)) === today).sort((a, b) => a.d - b.d);
+    const today = actDay(), c = ctx();
+    const done = doneTasks().filter(t => actDay(t.d) === today).sort((a, b) => a.d - b.d);
     const pile = pileBoxes();
     const plan = S.plan && S.plan.d === today ? S.plan.ids : [];
     const planDone = plan.filter(id => {
@@ -25927,9 +25940,9 @@ function openEvening(manual) {
 function ritualTick() {
     if (document.hidden || !booted || game || !$("ritual").hidden)
         return;
-    const c = ctx(), today = dayKey();
+    const c = ctx(), today = actDay();
     const eveH = c.workday ? S.settings.doneBy : 20;
-    if (S.rit.evening !== today && (c.h >= eveH || isLate(c.h)) && c.h >= 12 && doneTasks().some(t => dayKey(new Date(t.d)) === today || !t.f)) {
+    if (S.rit.evening !== today && (c.h >= eveH || isLate(c.h)) && c.h >= 12 && doneTasks().some(t => actDay(t.d) === today || !t.f)) {
         openEvening(false);
         return;
     }
@@ -25937,12 +25950,12 @@ function ritualTick() {
 }
 /* the "Done for today?" card in the task list: evenings only, when there's something to file */
 function eveCardDue() {
-    const c = ctx(), today = dayKey(), eveH = c.workday ? S.settings.doneBy : 20;
-    return S.rit.evening !== today && S.flags.eveLater !== today && (c.h >= eveH || isLate(c.h)) && c.h >= 12 && doneTasks().some(t => dayKey(new Date(t.d)) === today || !t.f);
+    const c = ctx(), today = actDay(), eveH = c.workday ? S.settings.doneBy : 20;
+    return S.rit.evening !== today && S.flags.eveLater !== today && (c.h >= eveH || isLate(c.h)) && c.h >= 12 && doneTasks().some(t => actDay(t.d) === today || !t.f);
 }
 setInterval(ritualTick, 60e3);
 $("eveLater").onclick = () => {
-    S.flags.eveLater = dayKey();
+    S.flags.eveLater = actDay();
     saveSoon();
     renderTasks();
 };
@@ -26267,8 +26280,8 @@ setInterval(() => {
             renderNotebook();
     }
     capsuleReminder(); // the first of the month: a capsule? (keepsake-shelf.js)
-    if (dayKey() !== S.lastDay) {
-        S.lastDay = dayKey();
+    if (actDay() !== S.lastDay) {
+        S.lastDay = actDay();
         autoFileOld();
         compact();
         renderAll();
