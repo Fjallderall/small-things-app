@@ -590,6 +590,12 @@ body.pixel .desk .desk-h,.desk .desk-h{font-family:var(--f-body);font-size:14px;
 body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .jot-more{grid-column:1/-1;list-style:none}
 
+/* the incident log: one entry per kind, [SEEKING] in red while there's more to learn */
+.inclog .increp{font-size:.88em;opacity:.8}
+.seeking{background:none;border:0;padding:2px 4px;margin:-2px 0;font:700 .85em var(--f-mono);color:#c2453a;cursor:pointer;letter-spacing:.04em}
+.seeking:focus-visible{outline:2px solid #c2453a;outline-offset:2px}
+.seeknote{margin:6px 0 0;padding:6px 8px;border-left:3px solid #c2453a;font:.86em var(--f-mono);background:rgba(194,69,58,.07)}
+
 </style>
 <div class="app">
   <section class="world" aria-label="Pet">
@@ -888,7 +894,7 @@ const POOL_INFO = {
     buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", friction: "Friction noted ({item})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
-    trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
+    trinkets: "Trinkets: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -1814,6 +1820,154 @@ const DEF = {
             "I measured the closet from the inside. I ran out of tape. Then out of afternoon.",
             "[night] I don't open the closet after dark. Not because it's bad. It's just busy.",
             "[strange] Somebody's hung a coat in the closet. It isn't ours. It's very nice.",
+        ],
+        anom_door: [
+            "I looked inside. It looked back. Nice door.",
+            "There was a hallway, and at the end of it, another door, and at the end of that, us. I came back.",
+            "It smelled of pencil shavings and rain in there. I didn't stay. It wasn't ours.",
+            "[night] I knocked before I went in. Something knocked back from further in. I took that as 'not tonight'.",
+            "The door's gone. The wall's a bit warm where it was."
+        ],
+        anom_eyes: [
+            "Neighbours. They're shy.",
+            "They just wanted to see you work.",
+            "Eyes in the dark. Friendly ones. I checked.",
+            "I counted them. Then I counted again and got a different number. I've stopped counting.",
+            "[strange] They blinked in turn, like a little wave. I think that was hello."
+        ],
+        anom_tentacle: [
+            "It took the tea. It always takes the tea. I've started making two.",
+            "I offered it a biscuit. It took the biscuit. And then, politely, the tea.",
+            "It brought the cup back last week. Washed. I didn't know it could do that.",
+            "Milk, no sugar. I've learned how it likes it. I'm not sure how."
+        ],
+        anom_chair: [
+            "Oof.",
+            "The chair has left. I have not.",
+            "That's the third chair this month. I'm starting to take it personally.",
+            "Comfortable, briefly.",
+            "[strange] I sat down and for a second I was somewhere else, in a waiting room. Then the chair left."
+        ],
+        anom_cloud: [
+            "Freshly watered. I feel like a fern.",
+            "It rained itself out into a tiny rainbow. Show-off.",
+            "Indoor weather. Mostly harmless. Slightly damp.",
+            "[rainy] Raining outside and inside. The cloud was keeping me company, I think."
+        ],
+        anom_moth: [
+            "It bowed. Moths bow. I didn't know that.",
+            "It said thank you for the light. Then it went to find the moon.",
+            "It left a bit of dust on my nose. Lucky dust, I think.",
+            "[fullmoon] It's off to the moon tonight. It said the moon's very full. It meant it as a compliment."
+        ],
+        anom_space: [
+            "The stars are going by sideways. I think we're being taken somewhere scenic.",
+            "I waved at the planet. It didn't wave back. Planets are like that.",
+            "It's very quiet out there. Like the archive, but bigger.",
+            "If we're lucky we'll be back for tea. If we're very lucky, we won't, for a bit."
+        ],
+        anom_deep: [
+            "The jellyfish is waving. I think. It's hard to tell with jellyfish.",
+            "Something very big just went past. It looked in. It seemed polite about it.",
+            "The bubbles go up and up. I wonder who's up there, catching them.",
+            "I'm going to draw that fish later. The orange one. It had opinions."
+        ],
+        seeking: [
+            "Observation incomplete. {name}: {seen} of {total} recorded behaviours documented. Further encounters are recommended.",
+            "Field note: {name} has shown more than we have seen. {seen} of {total} observations on file. Continue to observe. Do not rush it.",
+            "Research status: open. {name} has not yet said everything it has to say ({seen} of {total}). Patience is a method.",
+            "Gap in the record. {name}: {seen} of {total} documented. Recommend keeping a notebook nearby, and the kettle on."
+        ],
+        closet_echo: [
+            "It echoes. Further in than the archive goes. I didn't ask how much further.",
+            "The echo came back in a slightly different voice. Politer than mine.",
+            "[strange] The echo said hello before I did. I'll let it have that one.",
+            "I'll leave the shouting for another day. Something in there was having a nap."
+        ],
+        closet_reach: [
+            "{Item}. I didn't put that in there. I'm keeping it anyway. Finders, archivists.",
+            "Look: {item}. I'll log it. Every find gets written down, even the odd ones. Especially the odd ones.",
+            "{Item}, a bit dusty. The closet gives things back when it's done with them.",
+            "[strange] {Item}. It was warm. Somebody was holding it a moment ago."
+        ],
+        closet_items: [
+            "a scarf", "an umbrella from 1974", "a moth with a ticket", "one very small boot", "a key labelled 'not this one'",
+            "a jar of buttons", "a postcard with no stamp", "a teaspoon", "a ball of red string", "a hat that's slightly too polite",
+            "a map of the closet (unfinished)", "a library card, expired"
+        ],
+        closet_breeze: [
+            "A breeze, from somewhere with weather. The closet opens onto more than shelves, sometimes.",
+            "[autumn] Leaves. Somewhere in there it's autumn too. Good. We match.",
+            "[winter] Snow, out of a closet. I'll sweep it later. It'll be gone before I find the broom.",
+            "[spring] Petals. Somewhere far in, something's flowering.",
+            "That breeze smelled of the sea. We are not near the sea."
+        ],
+        closet_knock: [
+            "Something knocked. I knocked back. That's just manners.",
+            "Two knocks from inside, then one. I think that means 'not now'. I'll come back later.",
+            "[strange] It knocked first. I've decided it's a neighbour. Neighbours are allowed to be odd.",
+            "I didn't open it. You don't open the door on someone who's knocking from the other side. Rules."
+        ],
+        closet_lantern: [
+            "Someone far in waved a lantern. I waved back. We're on waving terms now.",
+            "There's a light, very far in, and someone holding it. They looked busy. Shelving, probably.",
+            "[strange] The one with the lantern is always there when I look. Never closer. That's fine. That's a good distance.",
+            "I think it's another archivist. Same tired-but-happy wave."
+        ],
+        closet_store: [
+            "Offsite storage. Things we don't need often go further away, but we write down exactly where. Very far away, in this case.",
+            "Into the closet it goes, and into the location register: shelf, bay, row. The row number is quite high.",
+            "Technically it's onsite. The site just goes on for a while.",
+            "Stored. If anyone asks for it, I'll know where it is. I'll need a packed lunch to fetch it."
+        ],
+        archive_ingest: [
+            "Ingest: a new box comes in, gets checked, gets an accession number, and only then goes on a shelf. Nothing skips the queue. Not even the cat.",
+            "Accessioning is writing down that we've taken something in: what it is, who from, when. This one: a tin, from the possum, Tuesday.",
+            "With digital things, what arrives is a submission package. After the checks it becomes an archival package. In here it's a box, but the idea's the same.",
+            "Checked, counted, numbered. Now it officially belongs to the archive. It looks relieved.",
+            "[strange] The box was ingested. In the archival sense. Nobody ate it. I checked twice."
+        ],
+        archive_provenance: [
+            "Provenance: where something came from, and who had it before. Without that, a thing is just a thing. With it, it's a story.",
+            "I'm writing down the chain of custody: the snail had it, then the possum borrowed it, then it was under the rug. All of that counts.",
+            "This teaspoon came from the snail. Before that, unclear. 'Origin unknown' is allowed, as long as you write it down honestly.",
+            "If we don't know where it came from, someone later won't know what it means. So I write it down now, while I remember."
+        ],
+        archive_arrange: [
+            "Respect des fonds: the snail's papers stay with the snail's papers, the possum's with the possum's. No mixing, however tidy it would look.",
+            "Original order: I keep things in the order their maker kept them. Even if the maker kept them in a teapot.",
+            "Series, then files, then items. Boxes in boxes, but on purpose.",
+            "I could sort these alphabetically. I won't. The order they came in tells you how they were used. That's information too."
+        ],
+        archive_describe: [
+            "A finding aid, so someone can find this later. Even if that someone is me, next week, confused.",
+            "Title, dates, extent, who made it. Extent: one box, slightly squashed.",
+            "Describing at the right level: I don't list every crumb. I say 'crumbs, various', and move on.",
+            "Metadata: the writing about the thing, so you can find the thing. I like it. It's like a label that tells stories."
+        ],
+        archive_rehouse: [
+            "Rehousing: out of the old shoebox, into an acid-free one. The shoebox was very attached. I thanked it.",
+            "Paperclips out. They rust, and the rust stains. I keep them in a jar. The jar is not part of the collection.",
+            "Cool, dark and steady, not too damp, not too dry. Archives like it the way a quiet cellar does.",
+            "A new box, a new label. Pencil, never pen. Ink doesn't come out, and neither do mistakes in ink."
+        ],
+        archive_appraise: [
+            "Appraisal: deciding what's worth keeping for the long run. Tuesday's shopping list: no. The shopping list with a drawing of the possum on it: yes.",
+            "An archive isn't everything. It's a careful choice of things. The everything is in the loft.",
+            "Does it have enduring value? This receipt, no. This letter from the snail, very much yes.",
+            "Taking something out of the collection is called deaccessioning. It needs a reason and a record. You can't just sneak things out. I tried, once, with a sock."
+        ],
+        archive_fixity: [
+            "A fixity check: I make the file's checksum again and compare it with the one we wrote down. Same number, so nothing's changed. Lovely.",
+            "Digital files can quietly decay. Bit rot. So now and then we check them, and keep more than one copy, in more than one place.",
+            "Checksums match. Every bit where we left it. I find that very soothing.",
+            "Old formats get harder to open over time. Part of the job is making sure the files stay readable. Even the ones nobody's asked for yet."
+        ],
+        archive_access: [
+            "A request came in. I fetch the box and bring it to the reading room. That's what all the careful keeping is for: being used.",
+            "Reading room rules: pencils only, clean hands, one box at a time. No tea near the documents. I know. I'm sorry too.",
+            "Some files are closed for a while, to protect the people in them. Then they open. Patience is part of archives.",
+            "It's back on its shelf, exactly where it was. Putting things back in the right place is half of archiving."
         ],
         look_ndoor: [
             "The night door. In the daytime it's only a door-shaped thought.",
@@ -3061,7 +3215,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, splurge: { k: "", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, splurge: { k: "", at: 0 }, anomLog: {}, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3218,6 +3372,13 @@ function sanitizeState(raw) {
     o.possumAt = num(s.possumAt); // when it was named (two devices: the first name given is the one that stays)
     // the notes on the pinboard (pinboard.js): text, when pinned, when taken down (0: still up). A save from before
     // the notes existed gets the first few
+    { // the encounter log: per kind of anomaly, how often, first and latest, and the lines heard (anomalies.js)
+        const L = s.anomLog && typeof s.anomLog === "object" && !Array.isArray(s.anomLog) ? s.anomLog : {};
+        o.anomLog = {};
+        for (const k of Object.keys(L).slice(0, 40))
+            if (/^[a-z]{2,12}$/.test(k) && L[k] && typeof L[k] === "object")
+                o.anomLog[k] = { n: clamp(Math.round(num(L[k].n)), 0, 1e6), first: num(L[k].first), last: num(L[k].last), h: (Array.isArray(L[k].h) ? L[k].h : []).filter(x => typeof x === "string" && /^[0-9a-z]{1,8}$/.test(x)).slice(0, 80) };
+    }
     o.splurge = { k: s.splurge && ["ice", "balloons", "cake", "fireworks"].includes(s.splurge.k) ? s.splurge.k : "", at: num(s.splurge && s.splurge.at) }; // the day's treat (splurge.js)
     { // the raccoon's barter: this week's stock and what's been traded (barter.js)
         const b = s.barter && typeof s.barter === "object" ? s.barter : {};
@@ -3449,6 +3610,14 @@ function mergeStates(a, b) {
             }
         }
         o.quotes = [...m.values()].map(q => Object.assign(q, { off: q.off > q.at ? q.off : 0 })).sort((x, y) => x.at - y.at).slice(-40);
+    }
+    { // the encounter log: the higher count, the earliest first, the latest last, every line heard on either side
+        const la = a.anomLog || {}, lb = b.anomLog || {};
+        o.anomLog = {};
+        for (const k of new Set([...Object.keys(la), ...Object.keys(lb)])) {
+            const x = la[k] || {}, y = lb[k] || {}, firsts = [num(x.first), num(y.first)].filter(Boolean);
+            o.anomLog[k] = { n: Math.max(num(x.n), num(y.n)), first: firsts.length ? Math.min(...firsts) : 0, last: Math.max(num(x.last), num(y.last)), h: [...new Set([...(x.h || []), ...(y.h || [])])].slice(0, 80) };
+        }
     }
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
     { // the barter: the newer week wins; the same week keeps one stock and everything traded on either side
@@ -5779,7 +5948,7 @@ function lessonOk(id) {
 /* where the stove (oven and kettle) and the firefly jar stand in the wagon */
 const stoveX = () => W * .325, jarX = () => W * .195;
 /* objects in the wagon: where they stand, and how Mite walks up to one */
-const OA = { bookOut: -1, scope: 0, tilt: 0, jar: 0, drawer: -1, closet: 0 };
+const OA = { bookOut: -1, scope: 0, tilt: 0, jar: 0, drawer: -1, closet: 0, closetFigure: 0 };
 function resetOA() {
     OA.oven = 0;
     OA.bookOut = -1;
@@ -5789,6 +5958,7 @@ function resetOA() {
     OA.drawer = -1;
     OA.rattle = false;
     OA.closet = 0;
+    OA.closetFigure = 0;
 }
 function scopeBase() {
     if (own("loft")) {
@@ -7051,7 +7221,7 @@ const BEH = {
                 sfx("tock");
                 for (let i = 0; i < 5; i++)
                     addP({ type: "spark", x: p.x + rnd(-R * .5, R * .5), y: GY - R * 2, vx: rnd(-20, 20), vy: -rnd(20, 50), g: 60, max: 1, col: "#ffd76a", size: 3 });
-                setTimeout(() => speak(choice(["Oof.", "The chair has left. I have not.", "That's the third chair this month. I'm starting to take it personally.", "Comfortable, briefly."])), 500);
+                setTimeout(() => speak(anomLine("chair") || "The chair has left. I have not."), 500);
             }
             if (k2 > 3)
                 p.bt = p.dur;
@@ -7542,29 +7712,133 @@ const BEH = {
             if (ta > b.act - .8)
                 po.fly = { x: jx, y: jy };
         } },
-    closetpeek: { d: [60, 60], w: c => own("closet") && view === "archive" ? .4 + .2 * c.strange : 0, init(b) { // (the closet's in the archive)
-            b.act = rnd(5, 7);
-            const st = standBy(OBJX.closet(), R * .9, 1);
+    // the closet that's bigger inside: Mite opens it, now and then (at most every eight minutes or so), and
+    // something different happens each time (never the same thing twice in a row): an echo, something pulled out,
+    // a breeze from somewhere else, a knock from inside, a far-off lantern that waves back, or a box put into
+    // offsite storage. Each ends with a line from its pool (closet_echo, closet_reach, ...)
+    closetpeek: { d: [60, 60], w: c => own("closet") && view === "archive" && performance.now() - closetAt > CLOSET_GAP ? .25 + .15 * c.strange : 0, init(b) {
+            closetAt = performance.now();
+            const kinds = CLOSET_KINDS.filter(k => k !== closetLast && (k !== "lantern" || strangeness() > 0 || Math.random() < .5));
+            b.v = choice(kinds);
+            closetLast = b.v;
+            b.act = { echo: 6, reach: 7, breeze: 6.5, knock: 6.5, lantern: 7.5, store: 7 }[b.v];
+            const st = standBy(OBJX.closet(), R * 1.2, 1); // (beside it, so you can see in)
             b.tx = st.x;
             b.face = st.face;
+            if (b.v === "reach")
+                b.item = choice(pool("closet_items").map(x => String(x).trim()).filter(Boolean)) || "a scarf";
+        },
+        step(b, p, t, po, dt) {
+            if (b.v === "store" && b.arr === undefined)
+                po.prop = "box"; // (carried over)
+            const ta = goTo(b, p, po, dt, b.tx, b.face, b.act), cxl = OBJX.closet();
+            if (ta < 0)
+                return;
+            const opening = Math.min(1, ta / .6, Math.max(0, (b.act - ta) / .5));
+            OA.closet = b.v === "knock" ? (ta > 3.6 ? Math.min(.25, (ta - 3.6) / 2) * Math.max(0, (b.act - ta) / .5) : 0) : opening; // (the knock: it stays shut, then just a crack)
+            po.pivot = "feet";
+            po.lookOverride = { x: b.face, y: .1 };
+            po.mouth = "o";
+            const once = (k, at, f) => {
+                if (ta > at && !b[k]) {
+                    b[k] = 1;
+                    f();
+                }
+            };
+            if (b.v === "echo") {
+                po.rot = -.28 * b.face * Math.min(1, ta / .6);
+                po.eyes = ta > 2.4 && ta < 3.4 ? "wide" : "open";
+                once("s1", 1.1, () => floatText("hello?", p.x + R * b.face, GY - R * 2, "#fff"));
+                once("s2", 2.6, () => floatText("…llo? …lo?", cxl, GY - R * 1.9, "#c9c3e8"));
+            }
+            else if (b.v === "reach") {
+                po.rot = -.2 * b.face;
+                if (ta > 1 && ta < 3.4)
+                    po.reach = { x: cxl, y: GY - R * .9 };
+                po.eyes = ta > 3.4 ? "happy" : "open";
+                once("s1", 3.4, () => floatText(b.item, p.x, GY - R * 2.2, "#ffe39a"));
+            }
+            else if (b.v === "breeze") {
+                po.eyes = ta > 1 && ta < 4.5 ? "happy" : "open";
+                po.rot = .12 * b.face * Math.min(1, ta / .8) * (ta < 4.5 ? 1 : 0);
+                if (ta > .7 && ta < 4.5 && Math.random() < .35) { // something blows out of it, from wherever it opens onto
+                    const se = season(new Date().getMonth()), kind = se === "winter" ? "snow" : se === "spring" ? "petal" : "leaf";
+                    addP({ type: kind, x: cxl + rnd(-R * .2, R * .2), y: GY - rnd(R * .4, R * 1.4), vx: b.face * -rnd(60, 130), vy: rnd(-20, 10), g: 30, max: 2.4, size: rnd(2.5, 4), col: choice(["#c2453a", "#e8a33c", "#946c4c"]), rot: rnd(0, 6), vr: rnd(-4, 4), room: "archive" });
+                }
+                once("s1", 1.2, () => floatText("whoosh", cxl, GY - R * 2, "#c9c3e8"));
+            }
+            else if (b.v === "knock") {
+                po.eyes = ta < 1.4 ? "wide" : "open";
+                po.rot = ta > .9 && ta < 1.8 ? -.15 * b.face : 0;
+                if (ta > 1.8 && ta < 2.6)
+                    po.reach = { x: cxl, y: GY - R * (1 + (Math.sin(ta * 18) > 0 ? .08 : 0)) }; // knocking back, politely
+                once("s1", .6, () => floatText("knock knock", cxl, GY - R * 1.9, "#c9c3e8"));
+                once("s2", 1.9, () => floatText("knock knock", p.x + R * b.face * .4, GY - R * 2.1, "#fff"));
+                once("s3", 3.1, () => floatText("…knock.", cxl, GY - R * 1.9, "#c9c3e8"));
+            }
+            else if (b.v === "lantern") {
+                OA.closetFigure = opening; // far in, someone with a lantern
+                po.rot = -.2 * b.face * Math.min(1, ta / .6);
+                po.eyes = ta > 2 ? "happy" : "open";
+                if (ta > 2.4 && ta < 4.6)
+                    po.arms = Math.sin(ta * 10) > 0 ? [-1.5, -.2] : [-1.1, -.2]; // waving back
+                once("s1", 2, () => floatText("hello!", p.x + R * b.face, GY - R * 2, "#fff"));
+            }
+            else if (b.v === "store") {
+                if (ta < 2.6)
+                    po.prop = "box";
+                else
+                    po.eyes = "happy";
+                po.rot = ta > 1.6 && ta < 2.6 ? -.25 * b.face : 0;
+                once("s1", 2.6, () => floatText("offsite storage", cxl, GY - R * 2, "#ffe39a"));
+            }
+            once("said", b.act - 1.6, () => say("closet_" + b.v, { item: b.item || "" }));
+        } },
+    // archival work at the desk or the shelves, now and then: taking in a new box, recording where things came from,
+    // arranging, describing, rehousing, appraising, checking files. Little labels float up as Mite works, and it
+    // explains a bit after (pools archive_ingest, archive_provenance, ...: simplified, sometimes absurd, never wrong)
+    archivework: { d: [60, 60], w: c => 0, init(b) {
+            const g = archGeo(), kinds = ARCHIVE_TASKS.filter(k => k !== archiveTaskLast);
+            b.k = choice(kinds);
+            archiveTaskLast = b.k;
+            const desk = ["ingest", "provenance", "describe", "fixity", "access"].includes(b.k);
+            b.desk = desk;
+            b.tx = desk ? clamp((g.deskX0 + g.deskX1) / 2 + R * .2, R * 1.05, W - R * 1.05) : clamp(rnd(g.x0 + R, g.x1 - R), R * 1.05, W - R * 1.05);
+            b.face = desk ? -1 : (Math.random() < .5 ? -1 : 1);
+            b.act = rnd(9, 12);
+            b.tags = (ARCHIVE_TAGS[b.k] || ["hm"]).slice().sort(() => Math.random() - .5);
         },
         step(b, p, t, po, dt) {
             const ta = goTo(b, p, po, dt, b.tx, b.face, b.act);
             if (ta < 0)
                 return;
-            OA.closet = Math.min(1, ta / .6, Math.max(0, (b.act - ta) / .5));
-            po.rot = -.28 * b.face * Math.min(1, ta / .6);
-            po.pivot = "feet";
-            po.lookOverride = { x: b.face, y: .1 };
-            po.eyes = ta > 2.4 && ta < 3.4 ? "wide" : "open";
-            po.mouth = "o";
-            if (ta > 1.1 && !b.s1) {
-                b.s1 = 1;
-                floatText("hello?", p.x + R * b.face, GY - R * 2, "#fff");
+            if (b.desk) {
+                po.prop = b.k === "fixity" ? "ledger" : b.k === "access" ? "box" : "ledger";
+                po.lookOverride = { x: .1 * b.face, y: .6 };
             }
-            if (ta > 2.6 && !b.s2) {
-                b.s2 = 1;
-                floatText("…llo? …lo?", OBJX.closet(), GY - R * 1.9, "#c9c3e8");
+            else if (b.k === "arrange") {
+                po.prop = "cards";
+                po.ct = ta;
+                po.lookOverride = { x: Math.sin(ta) * .3, y: .4 };
+            }
+            else { // at the shelves: reaching up to a box, looking it over
+                po.lookOverride = { x: b.face * .5, y: -.7 };
+                if (Math.sin(ta * .9) > -.2)
+                    po.reach = { x: p.x + b.face * R * .7, y: GY - R * 1.9 };
+                if (b.k === "rehouse" && ta > b.act * .5)
+                    po.prop = "box";
+            }
+            po.mouth = Math.sin(ta * 1.3) > .6 ? "o" : "smile";
+            po.eyes = ta % 4 < .25 ? "happy" : "open";
+            const n = Math.floor((ta - 1) / 2.6); // a little label every few seconds
+            if (n >= 0 && n < Math.min(3, b.tags.length) && b.shown !== n) {
+                b.shown = n;
+                const half = b.tags[n].length * 6 + 8; // (kept on screen: the desk is near the edge)
+                floatText(b.tags[n], clamp(p.x + b.face * R * .3, half, W - half), GY - R * 2.3, "#ffe39a", "archive");
+            }
+            if (ta > b.act - 2 && !b.said) {
+                b.said = 1;
+                say("archive_" + b.k);
             }
         } },
 };
@@ -8137,6 +8411,16 @@ function drawPet(po) {
             cx.ellipse(k * r * .25, by + r * .14, r * .1, r * .06, 0, 0, 7);
             cx.fill();
         }
+    }
+    if (po.prop === "box") { // an archive box, held in front: grey board, a white label
+        cx.fillStyle = "#8c8a80";
+        cx.fillRect(-r * .38, by + r * .02, r * .76, r * .5);
+        cx.fillStyle = "#6e6c64";
+        cx.fillRect(-r * .38, by + r * .02, r * .76, r * .08);
+        cx.fillStyle = "#f4ecd7";
+        cx.fillRect(-r * .15, by + r * .2, r * .3, r * .14);
+        cx.fillStyle = "#6b5a48";
+        cx.fillRect(-r * .11, by + r * .25, r * .22, Math.max(1, r * .03));
     }
     if (po.prop === "ledger") {
         cx.fillStyle = "#6b4a30";
@@ -11689,7 +11973,7 @@ function routeDown(p) {
 let view = "room", archHits = [], archiveSince = 0;
 const archLadder = { x: -1, tx: -1 };
 /* behaviours that may run in the archive; anything else walks Mite back to the wagon first */
-const ARCHIVE_OK = new Set(["scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "chairSit", "stare", "bow", "dizzy"]);
+const ARCHIVE_OK = new Set(["scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "archivework", "chairSit", "stare", "bow", "dizzy"]);
 /* interactions that live in the archive; asking for one from the wagon walks Mite there first */
 function isArchiveKind(kind) {
     return kind === "capsule" || kind.startsWith("refl:") || kind.startsWith("box:");
@@ -12008,12 +12292,28 @@ function boxLine(t, week) {
     return `Week ${week.n}, box ${i} of ${week.tasks.length}: “${t.t}”. Finished ${dd.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })} at ${hhmm(dd)}.${size}`;
 }
 /* which behaviour to pick while in the archive; after a while without taps, Mite heads home */
+/* the closet (closetpeek): how long between openings, and what it does (never the same twice running) */
+const CLOSET_GAP = 8 * 60e3, CLOSET_KINDS = ["echo", "reach", "breeze", "knock", "lantern", "store"];
+let closetAt = -1e9, closetLast = "";
+/* archival work (archivework): the tasks, and the little labels that float up while Mite does them */
+const ARCHIVE_TASKS = ["ingest", "provenance", "arrange", "describe", "rehouse", "appraise", "fixity", "access"];
+const ARCHIVE_TAGS = {
+    ingest: ["received: 1 box", "accession no. 0" + (100 + (Date.now() / 864e5 | 0) % 900), "checked", "logged"],
+    provenance: ["source: the possum", "custody: noted", "from: the snail", "where from?"],
+    arrange: ["original order", "series 2", "file 4", "respect des fonds"],
+    describe: ["title", "dates", "extent: 1 box", "finding aid"],
+    rehouse: ["acid-free", "no paperclips", "new box", "labelled"],
+    appraise: ["keep", "keep", "not this", "enduring value?"],
+    fixity: ["checksum", "match", "no bit rot", "✓"],
+    access: ["request", "reading room", "pencils only", "returned"]
+};
+let archiveTaskLast = "";
 function chooseArchiveBeh() {
     if (performance.now() - archiveSince > rnd(70e3, 120e3)) {
         pet.start("toWagon");
         return;
     }
-    const opts = [["idle", 3], ["browse", 3.5], ["wander", 1.2], ["lookAround", .6], ["stretch", .3], ["yawn", .3], ["catvisit", BEH.catvisit.w(ctx()) * 3], ["closetpeek", BEH.closetpeek.w(ctx()) * 1.5]].filter(([k, w]) => BEH[k] && w > 0);
+    const opts = [["idle", 3], ["browse", 3], ["archivework", 1.6], ["wander", 1.2], ["lookAround", .6], ["stretch", .3], ["yawn", .3], ["catvisit", BEH.catvisit.w(ctx()) * 3], ["closetpeek", BEH.closetpeek.w(ctx())]].filter(([k, w]) => BEH[k] && w > 0).map(([k, w]) => [k, k === pet.beh ? w * .2 : w]); // (the same thing again: much less likely)
     let r = Math.random() * opts.reduce((a, o) => a + o[1], 0);
     for (const [k, w] of opts) {
         if ((r -= w) <= 0)
@@ -12881,7 +13181,9 @@ function answerPhone(a, side) {
     a.held = side;
     sfx("tock");
     const c = a.call || anomStamp();
-    const t = say("phone") || "";
+    const t = anomLine("phone") || "";
+    if (t)
+        speak(t);
     incNote(`Incident ${c.no}, ${c.tm}: the phone rang. ${S.settings.pet} answered. Transcript: ${t || "[blank]"}${c.it ? " Something was left by the phone: " + c.it + "." : ""}`);
     const secs = clamp(3 + t.length * .05, 5, 11);
     setTimeout(() => hangUp(a), secs * 1000);
@@ -12927,12 +13229,58 @@ function anomHit(p) {
         return Math.hypot(p.x - a.x, p.y - a.y) < R * 1.1;
     return Math.hypot(p.x - a.x, p.y - a.y) < R * .9;
 }
+/* ---------- the encounter log: per kind of anomaly, how often, the first and the latest time, and how much of
+   what it can say or do has been heard (the rest: [SEEKING] in the log). S.anomLog: { kind: { n, first, last, h } },
+   h the short hashes of the lines heard. ANOM_TALK: the pool each kind's remarks come from ---------- */
+const ANOM_TALK = { door: "anom_door", phone: "phone", eyes: "anom_eyes", figure: "anom_figure", hand: "anom_hand", drips: "anom_drips", double: "anom_double", tentacle: "anom_tentacle", chair: "anom_chair", ghost: "ghosthi", letter: "bureaumemo", cloud: "anom_cloud", moth: "anom_moth", space: "anom_space", deep: "anom_deep" };
+const ANOM_NAMES = { door: "The door that wasn't there", phone: "Red telephone event", eyes: "Eyes in the dark", figure: "The tall figure in the corner", hand: "The hand through the floor", drips: "Upward drips", double: "The other one", tentacle: "The tea-taking tentacle", chair: "The chair that wasn't there", ghost: "The paper ghost at the window", letter: "Memo from the Bureau", cloud: "Indoor raincloud", moth: "The courteous moth", space: "Planeshift: space", deep: "Planeshift: the deep" };
+function lineHash(t) {
+    let h = 5381;
+    for (const ch of String(t))
+        h = ((h * 33) ^ ch.charCodeAt(0)) >>> 0;
+    return h.toString(36);
+}
+function anomEntry(k) {
+    S.anomLog = S.anomLog || {};
+    return S.anomLog[k] = S.anomLog[k] || { n: 0, first: 0, last: 0, h: [] };
+}
+/* an anomaly dealt with (tapped) or lived through (a planeshift): counted once */
+function anomSeen(a) {
+    if (!a || a.logged || !ANOM_TALK[a.type])
+        return;
+    a.logged = 1;
+    const e = anomEntry(a.type), now = Date.now();
+    e.n++;
+    e.first = e.first || now;
+    e.last = now;
+}
+/* a line of that kind's, heard */
+function anomHeard(k, raw) {
+    if (!raw || !ANOM_TALK[k])
+        return;
+    const e = anomEntry(k), h = lineHash(String(raw).trim());
+    if (!e.h.includes(h))
+        e.h.push(h);
+}
+/* a remark from that kind's pool (and it's marked as heard) */
+function anomLine(k, extra) {
+    const p = ANOM_TALK[k], t = p && compose(p, extra);
+    if (t)
+        anomHeard(k, recent[recent.length - 1]); // (compose keeps the line it picked, as written)
+    return t;
+}
+/* how much of a kind has been heard: { seen, total } (only lines that are in its pool now count) */
+function anomKnown(k) {
+    const all = pool(ANOM_TALK[k] || "").map(x => String(x).trim()).filter(Boolean), have = new Set(((S.anomLog || {})[k] || {}).h || []);
+    return { seen: all.filter(l => have.has(lineHash(l))).length, total: all.length };
+}
 /* the incident number and time, for the log */
 function anomStamp() {
     const d = new Date();
     return { no: String(S.incidents).padStart(4, "0"), tm: hhmm(d) };
 }
 function anomPay(a) {
+    anomSeen(a);
     S.incidents++;
     const g = addG(PAY.anomaly);
     floatText("+" + g, a.x, a.y - R, "#f3d9ff");
@@ -12981,7 +13329,7 @@ function resolveAnom() {
             incNote(`Incident ${no}, ${tm}: a door in the wagon wall. ${pn} went through and came back with an eye (${eye.name.toLowerCase()}). It seems content.`);
             return end();
         }
-        setTimeout(() => speak(fl ? `I went in for a second. There were flowers on the other side. I brought some back: ${fl.n.toLowerCase()}.` : it ? `I went in for a second. Came back with this: ${it}.` : "I looked inside. It looked back. Nice door."), 2600);
+        setTimeout(() => speak(fl ? `I went in for a second. There were flowers on the other side. I brought some back: ${fl.n.toLowerCase()}.` : it ? `I went in for a second. Came back with this: ${it}.` : anomLine("door") || "I looked inside. It looked back. Nice door."), 2600);
         incNote(`Incident ${no}, ${tm}: a door in the wagon wall. ${pn} went through for ████ seconds.${it ? " Retrieved: " + it + "." : ""}`);
         return end();
     }
@@ -12996,14 +13344,14 @@ function resolveAnom() {
     if (a.type === "eyes") {
         anomPay(a);
         pet.start("wave");
-        setTimeout(() => speak(choice(["Neighbours. They're shy.", "They just wanted to see you work.", "Eyes in the dark. Friendly ones. I checked."])), 700);
+        setTimeout(() => speak(anomLine("eyes") || "Neighbours. They're shy."), 700);
         incNote(`Incident ${no}, ${tm}: eyes in the dark. They left when ${youN()} looked back.`);
         return end();
     }
     if (a.type === "figure") { // gone the moment Mite looks properly
         anomPay(a);
         pet.start("curious", { tx: clamp(a.x + (a.x < W / 2 ? R * 1.3 : -R * 1.3), W * .1, W * .9) });
-        setTimeout(() => speak(compose("anom_figure") || "There was nobody in the corner. There was nobody very still."), 1500);
+        setTimeout(() => speak(anomLine("figure") || "There was nobody in the corner. There was nobody very still."), 1500);
         incNote(`Incident ${no}, ${tm}: a tall figure in the corner of the ${a.room === "room" ? "wagon" : a.room === "garden" ? "nook" : "archive"}. Gone on approach. Height: more than the ceiling allows.`);
         a.exit = a.t;
         a.life = a.t + .8; // (quickly)
@@ -13014,7 +13362,7 @@ function resolveAnom() {
         a.fed = a.t;
         pet.start("curious", { tx: clamp(a.x - R * 1.2, W * .1, W * .9) });
         const it = Math.random() < .3 ? findTrinket() : null;
-        setTimeout(() => speak(compose("anom_hand") || "I gave it a biscuit. It gave me a little wave. Then it went back down."), 1300);
+        setTimeout(() => speak(anomLine("hand") || "I gave it a biscuit. It gave me a little wave. Then it went back down."), 1300);
         if (it)
             setTimeout(() => speak(`It left something on the floor where it was: ${it}.`, { ms: 4000 }), 6000);
         incNote(`Incident ${no}, ${tm}: a hand came up through the floor. Pale, polite, four fingers. Given: one biscuit.${it ? " Left: " + it + "." : ""}`);
@@ -13025,7 +13373,7 @@ function resolveAnom() {
     if (a.type === "drips") { // Mite wipes the wall; they stop going up
         anomPay(a);
         pet.start("curious", { tx: clamp(a.x, W * .1, W * .9) });
-        setTimeout(() => speak(compose("anom_drips") || "Water running up the wall. I wiped it. It's running down now, like it should. Mostly."), 1400);
+        setTimeout(() => speak(anomLine("drips") || "Water running up the wall. I wiped it. It's running down now, like it should. Mostly."), 1400);
         incNote(`Incident ${no}, ${tm}: dark drips ran up the wall towards the roof. Wiped. Source: below. Destination: above. Neither confirmed.`);
         a.exit = a.t + .6;
         a.life = a.exit + 1.5;
@@ -13034,7 +13382,7 @@ function resolveAnom() {
     if (a.type === "double") { // the other Mite waves back, a moment too late, and steps back into the wall
         anomPay(a);
         pet.start("wave");
-        setTimeout(() => speak(compose("anom_double") || "That wasn't me. I'd remember. It waved back a bit late."), 1600);
+        setTimeout(() => speak(anomLine("double") || "That wasn't me. I'd remember. It waved back a bit late."), 1600);
         incNote(`Incident ${no}, ${tm}: a second ${pn} stood in the ${a.room === "room" ? "wagon" : a.room === "garden" ? "nook" : "archive"}. It waved a moment too late and stepped back into the wall. ${pn} is the original. Probably.`);
         a.waved = a.t + .7;
         a.exit = a.t + 2;
@@ -13045,7 +13393,7 @@ function resolveAnom() {
         anomPay(a);
         a.kept = a.t < 7.5; // tapped before it got the cup
         pet.start("curious", { tx: clamp(a.x - R * 1.3, W * .1, W * .9) });
-        setTimeout(() => speak(a.kept ? "I offered it a biscuit instead. It took the biscuit. And then, politely, the tea." : "It took the tea. It always takes the tea. I've started making two."), 1200);
+        setTimeout(() => speak(anomLine("tentacle", { kept: a.kept ? "yes" : "" }) || "It took the tea. It always takes the tea. I've started making two."), 1200);
         incNote(`Incident ${no}, ${tm}: a cup of tea was taken through the floor of the wagon. The floor has no opening. ${pn} has started making two.`);
         a.exit = Math.max(a.t, 7.5); // let it finish sinking
         a.life = a.exit + 4;
@@ -13071,6 +13419,7 @@ function resolveAnom() {
         }
         const o = leaveOrigami(a);
         setTimeout(() => speak(choice([`It said hi. I said hi. It left a ${o ? o.name : "something folded"}. We're friends now, I think.`, `The paper ghost again. It folds things while it waits. This one's a ${o ? o.name.replace("paper ", "") : "surprise"}.`, "It waved. I waved. That's the whole story and it's a good one."])), 900);
+        anomHeard("ghost", a.line);
         incNote(`Incident ${no}, ${tm}: a ghost at the window. Said: "${a.line}". Left: ${o ? "a " + o.name : "nothing"}. Threat level: none. Cuteness: classified.`);
         a.exit = a.t;
         a.life = a.t + 2.5;
@@ -13079,7 +13428,7 @@ function resolveAnom() {
     if (a.type === "letter") {
         anomPay(a);
         pet.start("curious", { tx: clamp(a.x - R * .9, W * .1, W * .9) });
-        const memo = choice(pool("bureaumemo").length ? pool("bureaumemo") : ["MEMO: ████████."]);
+        const memo = anomLine("letter") || "MEMO: ████████.";
         setTimeout(() => speak(`It's a memo. "${memo}"`, { ms: clamp(4000 + memo.length * 50, 6000, 12000) }), 1800);
         incNote(`Incident ${no}, ${tm}: a memo slid under the archive door. It read: "${memo}" Sender: [REDACTED].`);
         return end();
@@ -13087,7 +13436,7 @@ function resolveAnom() {
     if (a.type === "cloud") {
         anomPay(a);
         a.rainbow = a.t;
-        setTimeout(() => speak(choice(["Freshly watered. I feel like a fern.", "It rained itself out into a tiny rainbow. Show-off.", "Indoor weather. Mostly harmless. Slightly damp."])), 900);
+        setTimeout(() => speak(anomLine("cloud") || "Indoor weather. Mostly harmless. Slightly damp."), 900);
         incNote(`Incident ${no}, ${tm}: a raincloud formed inside the wagon. It rained only on ${pn}. Then it made a rainbow, apparently to apologise.`);
         a.exit = a.t + 1.5;
         a.life = a.exit + 1.3;
@@ -13096,7 +13445,7 @@ function resolveAnom() {
     // moth
     anomPay(a);
     a.leaving = a.t;
-    setTimeout(() => speak(choice(["It bowed. Moths bow. I didn't know that.", "It said thank you for the light. Then it went to find the moon.", "It left a bit of dust on my nose. Lucky dust, I think."])), 900);
+    setTimeout(() => speak(anomLine("moth") || "It bowed. Moths bow. I didn't know that."), 900);
     incNote(`Incident ${no}, ${tm}: a moth with a wingspan of ████ cm visited the lamp. It was courteous.`);
     a.exit = a.t + 1.4;
     a.life = a.exit + 1.2;
@@ -13110,6 +13459,7 @@ function anomTick(a, dt, now) {
         leaveOrigami(a);
     if (a.type === "ghost" && !a.said && a.t > 1.6) {
         a.said = true;
+        anomHeard("ghost", a.line);
         addP({ type: "text", text: a.line, room: a.room, x: a.x, y: a.y - anomGeo(a.room).wr * .55, vy: -8, max: 3.2, col: "#ffffff", size: 14 });
         a.line.split("").forEach((ch, i) => i % 2 === 0 && setTimeout(() => blip(ch, "ghost"), i * 45));
     }
@@ -18959,9 +19309,10 @@ function deepTap(a) {
         a.paid = true;
         anomPay(a);
     }
-    speak(choice(["The jellyfish is waving. I think. It's hard to tell with jellyfish.", "Something very big just went past. It looked in. It seemed polite about it.", "The bubbles go up and up. I wonder who's up there, catching them.", "I'm going to draw that fish later. The orange one. It had opinions."]), { ms: 5000 });
+    speak(anomLine("deep") || "The jellyfish is waving. I think.", { ms: 5000 });
 }
 function deepEnd(a) {
+    anomSeen(a);
     const { no, tm } = (S.incidents++, anomStamp());
     S.incidents--;
     incNote(`Incident ${no}, ${tm}: every window showed the bottom of the sea for about a minute. One large eye was observed. The wagon is dry. The wagon is back. One postcard made.`);
@@ -19056,10 +19407,11 @@ function spaceTap(a) {
         a.paid = true;
         anomPay(a);
     }
-    speak(choice(["The stars are going by sideways. I think we're being taken somewhere scenic.", "I waved at the planet. It didn't wave back. Planets are like that.", "It's very quiet out there. Like the archive, but bigger.", "If we're lucky we'll be back for tea. If we're very lucky, we won't, for a bit."]), { ms: 5000 });
+    speak(anomLine("space") || "It's very quiet out there. Like the archive, but bigger.", { ms: 5000 });
 }
 /* over: back where we were. A postcard of it for the board */
 function spaceEnd(a) {
+    anomSeen(a);
     const { no, tm } = (S.incidents++, anomStamp());
     S.incidents--;
     incNote(`Incident ${no}, ${tm}: the view from every window was space for about a minute. The wagon did not move. The wagon is back. One postcard made.`);
@@ -19654,6 +20006,14 @@ function drawCloset(dk, x) {
         }
         cx.globalAlpha = 1;
         glow(vx, vy, 1.4 + Math.sin(t * 1.3) * .2, `rgba(255,214,150,${.8 * open})`); // a lamp, very far in
+        if (OA.closetFigure > .3) { // someone far in, with a lantern, waving it
+            const fx = Math.round((vx + iw * .08) / q) * q, fy = Math.round((vy + ih * .12) / q) * q, sw = Math.round(Math.sin(t * 5) * q);
+            cx.fillStyle = "#050408";
+            cx.fillRect(fx, fy - q * 3, q, q * 3);
+            cx.fillRect(fx - q / 2, fy - q * 4, q * 2, q);
+            cx.fillStyle = "#ffd696";
+            cx.fillRect(fx + q + sw, fy - q * 4, Math.max(1, q / 2), Math.max(1, q / 2));
+        }
         softGlow(x, y0 + h * .5, w * 1.5 * open, "rgba(200,190,255,.25)");
     }
     // the door: raised panels, a brass label card and a keyhole; it swings open to the left
@@ -24003,24 +24363,74 @@ $("deskBtn").onclick = () => openDesk();
  * rituals.js - Morning and evening rituals, the incident log, and the weather refresh.
  */
 let ritOpener = null, ritClose = null;
-function showIncidents() {
+/* which kind of anomaly an old report was about (for reports written before the encounter log) */
+const INC_KINDS = [["phone", /the phone rang/], ["chair", /a chair appeared/], ["tentacle", /cup of tea was taken/], ["door", /a door in the /], ["ghost", /a ghost at the window/], ["hand", /a hand came up/], ["letter", /a memo slid/], ["moth", /a moth with a wingspan/], ["cloud", /a raincloud formed/], ["double", /a second .+ stood in/], ["figure", /a tall figure/], ["drips", /drips ran up the wall/], ["eyes", /eyes in the dark/], ["deep", /bottom of the sea/], ["space", /was space for/]];
+function incKind(text) {
+    const m = INC_KINDS.find(([, re]) => re.test(text));
+    return m ? m[0] : "";
+}
+function incReports() {
     const seen = new Set(), list = [];
-    for (const n of [...(S.inc || []), ...S.notes.filter(n => /^Incident \d+/.test(n.text))]) {
-        const k = n.text;
-        if (seen.has(k))
+    for (const n of [...(S.inc || []), ...S.notes.filter(n => /^Incident \d+/.test(n.text))])
+        if (!seen.has(n.text)) {
+            seen.add(n.text);
+            list.push(n);
+        }
+    return list.sort((a, b) => b.at - a.at);
+}
+/* once: the encounter log filled in from the reports already on file (counts, dates, and what was said in them) */
+function migrateAnomLog() {
+    if (S.flags.anomLogMig)
+        return;
+    S.flags.anomLogMig = 1;
+    const by = {};
+    for (const r of incReports()) {
+        const k = incKind(r.text);
+        if (!k)
             continue;
-        seen.add(k);
-        list.push(n);
+        const b = by[k] = by[k] || { n: 0, first: 0, last: 0 };
+        b.n++;
+        b.first = b.first ? Math.min(b.first, r.at) : r.at;
+        b.last = Math.max(b.last, r.at);
+        const said = r.text.match(/Said: "(.+?)"\./) || r.text.match(/It read: "(.+?)" Sender/) || r.text.match(/Transcript: (.+?)(?: Something was left by the phone|$)/);
+        if (said) { // the ghost's words and the memos are in the reports: those count as heard
+            const raw = pool(ANOM_TALK[k]).find(l => fillText(String(l)).trim() === said[1].trim() || String(l).trim() === said[1].trim());
+            if (raw)
+                anomHeard(k, raw);
+        }
     }
-    list.sort((a, b) => b.at - a.at);
-    const fmtD = at => {
-        const d = new Date(at);
-        return dmy(d);
-    };
-    const missing = Math.max(0, num(S.incidents) - list.length);
-    const body = list.length ? `<ul class="inclog">${list.map(n => `<li><time>${esc(fmtD(n.at))}</time>${esc(n.text)}</li>`).join("")}</ul>${missing ? `<p class="ritmeta">${missing} older report${missing > 1 ? "s" : ""} misfiled. Redacted, probably.</p>` : ""}`
-        : `<p class="ritmeta">${S.incidents ? "The reports are missing. That's its own kind of incident." : "Nothing yet. When something odd shows up in the wagon, tap it."}</p>`;
-    openRitual("Incident log", `${S.incidents} incident${S.incidents === 1 ? "" : "s"} on file. All handled. Mostly by ${S.settings.pet}.`, body, [["Close", "primary", closeRitual]]);
+    for (const k in by) {
+        const e = anomEntry(k);
+        e.n = Math.max(e.n, by[k].n);
+        e.first = e.first ? Math.min(e.first, by[k].first) : by[k].first;
+        e.last = Math.max(e.last, by[k].last);
+    }
+    saveSoon();
+}
+/* the incident log: one entry per kind of anomaly met so far. How often, the first and the latest time, the latest
+   report, and [SEEKING] while it still has things to say or do that haven't been seen (tap it for a research note) */
+function showIncidents() {
+    migrateAnomLog();
+    const L = S.anomLog || {}, reports = incReports();
+    const kinds = Object.keys(L).filter(k => L[k].n > 0 && ANOM_NAMES[k]).sort((a, b) => L[b].last - L[a].last);
+    const name = k => k === "double" ? `The other ${S.settings.pet}` : ANOM_NAMES[k];
+    const rows = kinds.map(k => {
+        const e = L[k], kn = anomKnown(k), seeking = kn.total > 0 && kn.seen < kn.total, last = reports.find(r => incKind(r.text) === k);
+        return `<li class="incent"><b>${esc(name(k))}</b>${seeking ? ` <button type="button" class="seeking" data-k="${esc(k)}" aria-label="Seeking: there is more to learn about this one">[SEEKING]</button>` : ""}<br><span class="sub">Encountered ${e.n}× · first encountered ${esc(dmy(new Date(e.first)))}${e.last && e.last !== e.first ? ` · most recent encounter ${esc(dmy(new Date(e.last)))}` : ""}</span>${last ? `<br><span class="increp">${esc(last.text.replace(/^Incident \d+, \d{4}: /, ""))}</span>` : ""}<p class="seeknote" hidden></p></li>`;
+    }).join("");
+    const body = rows ? `<ul class="inclog">${rows}</ul>` : `<p class="ritmeta">${S.incidents ? "The reports are missing. That's its own kind of incident." : "Nothing yet. When something odd shows up in the wagon, tap it."}</p>`;
+    openRitual("Incident log", `${S.incidents} incident${S.incidents === 1 ? "" : "s"} on file, ${kinds.length} kind${kinds.length === 1 ? "" : "s"} of anomaly. All handled. Mostly by ${S.settings.pet}.`, body, [["Close", "primary", closeRitual]]);
+    document.querySelectorAll("#ritBody .seeking").forEach(b => b.onclick = e => {
+        e.stopPropagation();
+        const k = b.dataset.k, kn = anomKnown(k), p = b.closest("li").querySelector(".seeknote");
+        if (!p.hidden) {
+            p.hidden = true;
+            return;
+        }
+        p.textContent = compose("seeking", { name: name(k), seen: String(kn.seen), total: String(kn.total) }) || `Observation incomplete: ${kn.seen} of ${kn.total} documented. Further encounters are recommended.`;
+        p.hidden = false;
+        sfx("tock");
+    });
 }
 let ritOpenedAt = 0;
 function openRitual(title, line, bodyHTML, buttons, onClose) {
