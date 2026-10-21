@@ -16747,6 +16747,7 @@ function drawerLabels(t = Date.now()) {
     if (!S.drawers || !S.drawers.at)
         return [null, null, null, null];
     const at = S.drawers.at, days = (t - at) / 864e5, lines = pool("drawers").filter(l => l.includes("|"));
+    const used = new Set(); // (no tenant in two drawers at once: a clash moves on to the next line)
     return [0, 1, 2, 3].map(i => {
         if (!lines.length)
             return null;
@@ -16756,9 +16757,12 @@ function drawerLabels(t = Date.now()) {
             if (days < start)
                 return null; // to let
             if (days < start + stay) {
-                const k = (Math.floor(hash01(at + "t" + i + "_" + c) * lines.length) + i * 3) % lines.length;
+                let k = (Math.floor(hash01(at + "t" + i + "_" + c) * lines.length) + i * 3) % lines.length;
+                for (let n = 0; n < lines.length && used.has(lines[k].split("|")[0].trim()); n++)
+                    k = (k + 1) % lines.length;
                 const [label, ...rest] = lines[k].split("|");
-                return { label: label.trim(), text: rest.join("|").trim() };
+                used.add(label.trim());
+                return { label: label.trim(), text: rest.join("|").trim(), since: at + start * 864e5 };
             }
             start += stay + gap;
         }
@@ -16783,17 +16787,17 @@ function drawerTick() {
     now.forEach((d, i) => {
         const old = was[i] || "";
         if (d && d.label !== old) {
-            note(`New tenant in the drawers: ${d.label}.`);
-            news = ["drawermovein", d.label];
+            note(`New tenant in drawer ${i + 1}: ${d.label}.`);
+            news = ["drawermovein", d.label, i + 1];
         }
         else if (!d && old) {
-            note(`${old} moved out of the drawers.`);
-            news = news || ["drawermoveout", old];
+            note(`${old} moved out of drawer ${i + 1}.`);
+            news = news || ["drawermoveout", old, i + 1];
         }
     });
     S.drawers.sig = sig;
     if (news)
-        say(news[0], { label: news[1] });
+        say(news[0], { label: news[1], drawer: news[2] });
     saveSoon();
 }
 /* Mite at the drawers: opens one that has decided (the newest, mostly) and says what's in it */
@@ -16806,9 +16810,16 @@ function openDrawer() {
     }
     const i = Math.random() < .6 ? ok[ok.length - 1] : choice(ok), d = dec[i];
     gardenDrawer = { i, until: performance.now() + 6000 };
-    const text = `This one's rented to ${d.label}. ${d.text}`;
+    const text = `Drawer ${i + 1}, rented to ${d.label}. ${d.text}`;
     speak(text, { whole: true, ms: clamp(4000 + text.length * 50, 6000, 14000) });
     return clamp(4 + text.length * .05, 6, 14);
+}
+/* the framed tenants' list above the chest: who has which drawer, and since when */
+function showTenants() {
+    const dec = drawerLabels();
+    const rows = dec.map((d, i) => `<li><b>Drawer ${i + 1}</b> ${d ? `${esc(d.label)} <span class="sub">since ${esc(dmy(new Date(d.since)))}</span>` : `<span class="sub">to let</span>`}</li>`).join("");
+    openRitual("Tenants", "Who rents which drawer. Tap the chest and " + S.settings.pet + " opens one.", `<ul class="fbooklist">${rows}</ul>`, [["Close", "primary", closeRitual]]);
+    sfx("card");
 }
 /* the snapshots on the pinboard: places the wagon has stood (tap one and Mite remembers it: pool pinboard) */
 const PIN_PHOTOS = ["sea", "hills", "forest", "lighthouse"];
@@ -16997,7 +17008,7 @@ function drawGarden(now, dt) {
     drawMess(dk, "garden"); // mess on the nook floor
     drawNookLoft(dk); // the platform high on the wall, and its stairs (loft.js)
     drawLanterns(lanternString("garden"), dk); // and the lanterns underneath it, as many as along the wagon's ceiling (draw-world.js)
-    gardenHits = { plants: [], desk: null, letters: null, chair: null, board: [], drawers: null, table: null };
+    gardenHits = { plants: [], desk: null, letters: null, chair: null, board: [], drawers: null, table: null, tenants: null };
     drawLayered(() => {
         // the plants you've bought share the two window sills: every other one stands here (easel.js, sillPlants)
         {
@@ -17175,6 +17186,24 @@ function drawGarden(now, dt) {
                 cx.fillRect(drX - PX, y + dh * .68, PX * 2, PX * 2);
             }
             gardenHits.drawers = { x: x0, y: top - R * .1, w: drW, h: drH + R * .1, cx: drX };
+            { // the tenants' list on the wall above it, in a little frame: four lines, one per drawer (tap it to read)
+                const q = PX, fw = Math.round(R * .5 / q) * q, fh = Math.round(R * .56 / q) * q, fx = Math.round((drX + drW * .12) / q) * q, fy = Math.round((top - R * 1.15) / q) * q;
+                cx.fillStyle = mix("#3a2416", "#100a06", dk * .7); // the frame
+                cx.fillRect(fx - q, fy - q, fw + q * 2, fh + q * 2);
+                cx.fillStyle = mix("#c9a24a", "#3a2a10", dk * .7);
+                cx.fillRect(fx, fy, fw, fh);
+                cx.fillStyle = mix("#f1e6cc", "#3a3630", dk * .6); // the card behind the glass
+                cx.fillRect(fx + q, fy + q, fw - q * 2, fh - q * 2);
+                cx.fillStyle = mix("#7a5a3a", "#201810", dk * .5); // the heading
+                cx.fillRect(fx + q * 2, fy + q * 2, fw - q * 4, q);
+                for (let i = 0; i < 4; i++) { // a line per drawer: written when it's let, a dash when it's to let
+                    const ly = fy + q * 4 + i * Math.max(q * 2, (fh - q * 6) / 4);
+                    cx.fillStyle = mix("#55392a", "#1a120c", dk * .5);
+                    cx.fillRect(fx + q * 2, ly, q, q); // the number
+                    cx.fillRect(fx + q * 4, ly, dec[i] ? fw - q * (6 + (i % 2) * 2) : q * 2, q);
+                }
+                gardenHits.tenants = { x: fx - q * 2, y: fy - q * 2, w: fw + q * 4, h: fh + q * 4, cx: fx + fw / 2 };
+            }
         }
         if (hasDrawers())
             drawVase(dk, t); // the vase of flowers on the drawers (flowers.js)
@@ -17361,6 +17390,10 @@ function gardenTap(p) {
     }
     if (fbookHit && hitIn(p, fbookHit, 30)) { // the dried flower book
         requestObj("gfbook", fbookHit.cx, fbookHit.y);
+        return;
+    }
+    if (gardenHits.tenants && hitIn(p, gardenHits.tenants, 16)) { // the framed list of who rents which drawer
+        showTenants();
         return;
     }
     if (gardenHits.drawers && hitIn(p, gardenHits.drawers)) {
