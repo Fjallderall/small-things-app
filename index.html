@@ -1705,6 +1705,9 @@ const DEF = {
         possumtalk: [
             "M: Hello, {possum}. / P: Hhh. Hello. / M: Find anything good today? / P: A bottle cap. And a crumb shaped like a moon. / M: Lucky. / P: Very.",
             "M: Do you ever sleep the right way up? / P: There is no right way up. There is only the beam. / M: Fair.",
+            "M: Do you ever sleep the right way up? / P: I used to. Then I saw a cartoon once. A possum, hanging by its tail from a branch, so content. / P: I've slept like that ever since. / M: Cartoons aren't documentaries. / P: Hhh. Too late.",
+            "M: Is hanging upside down a possum thing? / P: It is a cartoon thing. I learned it from the cartoons. / M: And real possums? / P: Mostly they curl up in a ball. Like I do when the beam's cold. / M: So it's a choice. / P: It is a lifestyle.",
+            "M: You slept in the chair today. Curled up. / P: Even a beam needs a day off. / M: You looked very normal. / P: Don't tell anyone.",
             "M: You played dead at me yesterday. / P: I was very convincing. / M: You were. I brought flowers. / P: Hhh. I ate them.",
             "M: What's it like, hanging up there all day? / P: Like being a lantern that nobody lights. / M: That sounds lonely. / P: No. Restful.",
             "M: Thank you for cleaning the floor. / P: It was not cleaning. It was dinner. / M: Thank you for dinner, then.",
@@ -13415,12 +13418,12 @@ function introBeat(who) {
     S.flags["met_" + k] = 1;
     saveSoon();
     const t = {
-        cat: `(to you) This is ${CAT_NAME}. She was here before the wagon, she says, and she'll be here after. A warlock's patron, mostly retired. Mostly.`,
-        possum: `(to you) This is ${possumName()}, the possum. It sleeps upside down from the beam in the nook, and comes down for crumbs and whatever's on the floor. A tidier, in its way.`,
-        snail: `(to you) This is ${snailName()}, the snail. It carries the post. Slowly. It's never been late by its own clock.`,
-        raccoon: `(to you) This is {visitor}, my raccoon friend. It goes through bins and attics and lost-property boxes, and brings the good things by.`,
-        mouse: `(to you) This is {visitor}, a mouse from outside. Visitors come in now and then, for the warm and a bit of {treat}. Always welcome.`,
-        rat: `(to you) This is {visitor}, a rat from outside. Visitors come in now and then, for the warm and a bit of {treat}. Always welcome.`
+        cat: `This is ${CAT_NAME}. She was here before the wagon, she says, and she'll be here after. A warlock's patron, mostly retired. Mostly.`,
+        possum: `This is ${possumName()}, the possum. It sleeps upside down from the beam in the nook, and comes down for crumbs and whatever's on the floor. A tidier, in its way.`,
+        snail: `This is ${snailName()}, the snail. It carries the post. Slowly. It's never been late by its own clock.`,
+        raccoon: `This is {visitor}, my raccoon friend. It goes through bins and attics and lost-property boxes, and brings the good things by.`,
+        mouse: `This is {visitor}, a mouse from outside. Visitors come in now and then, for the warm and a bit of {treat}. Always welcome.`,
+        rat: `This is {visitor}, a rat from outside. Visitors come in now and then, for the warm and a bit of {treat}. Always welcome.`
     }[k];
     return t ? { who: "M", t } : null;
 }
@@ -18512,6 +18515,15 @@ const POSSUM_SPRITES = { // small: about the size of Midnightcat's head and shou
         "..gggggggg....",
         "...pg...gp....",
         "...p.....p...."],
+    curl: [ // curled up asleep in a ball, its tail wrapped round, nose tucked in (the chair, by the hearth)
+        "..............",
+        "..............",
+        "....gggggg....",
+        "..ggggggggk...",
+        ".gglllllgwww..",
+        "pgglllllgw-wp.",
+        "pggggggggwww..",
+        ".ppppppgggg..."],
     eat: [ // nose down to the floor
         "..............",
         ".........kk...",
@@ -18565,6 +18577,8 @@ function possumSprite() {
         return POSSUM_SPRITES.beg;
     if (p.ph === "eat")
         return POSSUM_SPRITES.eat;
+    if (p.ph === "curl")
+        return POSSUM_SPRITES.curl;
     if (p.ph === "walk")
         return Math.floor(performance.now() / 180) % 2 ? POSSUM_SPRITES.walk2 : POSSUM_SPRITES.walk1;
     if (p.ph === "fly" || p.ph === "flyup") // legs dangling under the propeller
@@ -18575,6 +18589,23 @@ function possumSprite() {
 function possumHangX() {
     const sp = gardenPlantSpots(), a = sp.find(s => s.k === "hang"), b = sp.find(s => s.k === "hang2");
     return (a.x + b.x) / 2;
+}
+/* where it sleeps today: mostly the beam, upside down, but now and then curled up like the others do, in the
+   chesterfield or in front of the hearth (decided once a day; not the chair if Midnightcat has it) */
+function possumCurlSpot() {
+    const p = possum, key = actDay();
+    if (p.curlKey !== key) {
+        p.curlKey = key;
+        const opts = [];
+        if (hasChair())
+            opts.push({ room: "garden", x: gardenGeo().chX - R * .15, y: GY - gardenGeo().chH, chair: true });
+        if (own("hearth"))
+            opts.push({ room: "room", x: hearthX() + R * 1.1, y: GY });
+        p.curl = opts.length && Math.random() < .3 ? choice(opts) : null;
+    }
+    if (p.curl && p.curl.chair && cat.room === "garden" && cat.g > 0) // (her chair today)
+        return null;
+    return p.curl;
 }
 function possumAwake() {
     return S.lightsOut || skyAt(new Date().getHours() + new Date().getMinutes() / 60).dark > .5;
@@ -18652,6 +18683,14 @@ function possumTick(dt, now) {
         return;
     }
     switch (p.ph) {
+        case "curl": // asleep in a ball: until it's dark, or there's something to eat
+            p.ate = 0;
+            if (possumAwake() || possumCookies() || possumHungry() || p.carry) {
+                Object.assign(p, { ph: "sit", fy: GY, until: now + 900 }); // (a stretch, and down onto the floor)
+                if (roomVisible(p.room))
+                    addP({ type: "text", text: "*yawn*", x: p.x, y: GY - R * 1.1, vy: -12, max: 1.6, col: "#f3e7c8", size: 10, room: p.room });
+            }
+            return;
         case "hang":
             p.ate = 0; // (a sleep and it's hungry again)
             p.saidBasket = false;
@@ -18835,7 +18874,8 @@ function possumTick(dt, now) {
         p.goal = pickRoom({ garden: .5, room: .3, archive: .2 });
         p.goalUntil = now + rnd(120e3, 240e3);
     }
-    const goal = p.carry ? "garden" : possumCookies() ? "room" : possumHungry() ? messRoom((S.mess || []).find(m => messRoom(m) === p.room) || S.mess[0]) : !possumAwake() || basketN() ? "garden" : p.goal; // (its basket's in the nook) // (mess: in this room first, else wherever it is)
+    const cs = !p.carry && !possumAwake() ? possumCurlSpot() : null; // (curled up somewhere today, not on the beam)
+    const goal = p.carry ? "garden" : possumCookies() ? "room" : possumHungry() ? messRoom((S.mess || []).find(m => messRoom(m) === p.room) || S.mess[0]) : cs ? cs.room : !possumAwake() || basketN() ? "garden" : p.goal; // (its basket's in the nook) // (mess: in this room first, else wherever it is)
     if (p.room !== goal) {
         const dir = Math.sign(ROOM_X[goal] - ROOM_X[p.room]);
         if (dir < 0 ? p.x < -u * 10 : p.x > W + u * 10) { // through into the next room
@@ -18846,6 +18886,14 @@ function possumTick(dt, now) {
             return;
         }
         Object.assign(p, { ph: "walk", tx: dir < 0 ? -u * 12 : W + u * 12, ty: p.fy > GY + R * .2 && Math.random() < .5 ? p.fy : GY });
+        return;
+    }
+    if (cs && p.room === cs.room) { // over to its spot, then up (onto the seat) and curled up
+        if (Math.abs(p.x - cs.x) > 3 || Math.abs(p.fy - GY) > 2) {
+            Object.assign(p, { ph: "walk", tx: cs.x, ty: GY });
+            return;
+        }
+        Object.assign(p, { ph: "curl", fy: cs.y, dir: cs.chair ? -1 : 1 });
         return;
     }
     if (goal === "garden" && (!possumAwake() || p.carry)) { // daytime: back up to the beam, by the stairs and its tail, or flying
@@ -18972,6 +19020,8 @@ function drawPossum(dk, now) {
         if (hang && p.cookie && Math.random() < .01)
             addP({ type: "text", text: "nom", x: cxp + u * 3, y: cyp, vy: -10, max: 1.4, col: "#f3e7c8", size: 10, room: p.room });
     }
+    if (p.ph === "curl" && Math.random() < .004)
+        addP({ type: "text", text: "z", x: p.x + u * 3, y: y0, vy: -10, vx: 6, max: 2, col: "#dfe7ff", size: 9 + Math.random() * 3 });
     if (p.ph === "hang" && !munching && Math.random() < .004)
         addP({ type: "text", text: "z", x: p.x + u * 4, y: y0 + h, vy: -10, vx: 6, max: 2, col: "#dfe7ff", size: 9 + Math.random() * 3 });
 }
