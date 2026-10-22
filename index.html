@@ -681,6 +681,14 @@ body.pixel .scopeview .mlabel .ml-credit{font-size:12px}
 .fmonth summary{cursor:pointer;display:flex;flex-direction:column;gap:1px;min-height:40px;justify-content:center}
 .fmonth summary b{font-style:italic}
 .fmonth .fbooklist{max-height:none;overflow:visible}
+/* the add form's quick row: size S/M/L and the area, as buttons (tabs.js) */
+.addquick{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.addquick .seg button,.tedit .seg button{min-height:40px;min-width:40px;padding:6px 12px}
+.seg-size button{font-family:var(--f-mono);min-width:44px}
+.tedit .seg{vertical-align:middle}
+.hud .wx{display:inline-flex;align-items:center;gap:6px}
+.wxicon{width:14px;height:14px;image-rendering:pixelated;flex:0 0 auto}
+body.pixel .wxicon{width:18px;height:18px}
 
 </style>
 <div class="app">
@@ -743,22 +751,25 @@ body.pixel .scopeview .mlabel .ml-credit{font-size:12px}
       <details id="doneBox"><summary id="doneSum">Done today</summary><ul class="donelist" id="doneList"></ul></details>
       <form class="addform bottom" id="addForm" autocomplete="off">
         <div class="row">
-          <input type="text" id="tTitle" placeholder="Add a task… e.g. 16-10-2026 0900 big #work" aria-label="New task" aria-describedby="addChips" maxlength="160" required>
+          <input type="text" id="tTitle" placeholder="Add a task… e.g. 16-10-2026 0900 #work" aria-label="New task" aria-describedby="addChips" maxlength="160" required>
           <button class="btn primary" type="submit">Add</button>
           <button class="btn jotbtn" type="button" id="jotBtn" title="Just write it down: no date, no reminders, off the list">Jot</button>
         </div>
-        <div class="addchips" id="addChips" aria-live="polite"></div>
-        <button class="linkbtn" type="button" id="optBtn" aria-expanded="false" aria-controls="addOpts">More options</button>
-        <div class="addopts" id="addOpts" hidden><div class="row">
-          <div class="seg" id="tSize" role="group" aria-label="Size">
-            <button type="button" data-v="1" aria-pressed="true">Small</button>
-            <button type="button" data-v="3" aria-pressed="false">Medium</button>
-            <button type="button" data-v="8" aria-pressed="false">Big</button>
+        <div class="addquick">
+          <div class="seg seg-size" id="tSize" role="group" aria-label="Size">
+            <button type="button" data-v="1" aria-pressed="true" aria-label="Small" title="Small">S</button>
+            <button type="button" data-v="3" aria-pressed="false" aria-label="Medium" title="Medium">M</button>
+            <button type="button" data-v="8" aria-pressed="false" aria-label="Large" title="Large">L</button>
           </div>
           <div class="seg" id="tTag" role="group" aria-label="Area">
             <button type="button" data-v="work" aria-pressed="false">Work</button>
             <button type="button" data-v="life" aria-pressed="false">Life</button>
+            <button type="button" data-v="" aria-pressed="true">Other</button>
           </div>
+        </div>
+        <div class="addchips" id="addChips" aria-live="polite"></div>
+        <button class="linkbtn" type="button" id="optBtn" aria-expanded="false" aria-controls="addOpts">More options</button>
+        <div class="addopts" id="addOpts" hidden><div class="row">
           <label class="toggle"><input type="checkbox" id="tWeek"> This week</label>
           <label class="toggle">Due <input type="date" id="tDue"></label>
           <label class="toggle">Plan for <input type="date" id="tOn"></label>
@@ -5505,6 +5516,41 @@ function sunAmt(sky) {
 function raining() {
     const w = weather();
     return w.rain > 0 && !w.snow;
+}
+/* a little pixel picture of the weather, for next to the temperature (render.js): sun or moon, a cloud with the sun
+   or moon behind it, clouds, drizzle, rain, snow, and frost when it's freezing. 9 by 9, one letter a pixel */
+const WX_PIX = {
+    sun: ["....y....", ".y.....y.", "...yyy...", "..yyyyy..", "y.yyyyy.y", "..yyyyy..", "...yyy...", ".y.....y.", "....y...."],
+    moon: ["...mmm...", "..mmm....", ".mmm.....", ".mmm.....", ".mmm.....", ".mmm.....", "..mmm....", "...mmm...", "........."],
+    partsun: [".....y...", "...y.y.y.", "....yyy..", "...yyyyy.", "..cccyy..", ".ccccc.y.", "ccccccc..", "sssssss..", "........."],
+    partmoon: ["....mmm..", "...mmm...", "...mm....", "...mm....", "..cccm...", ".ccccc...", "ccccccc..", "sssssss..", "........."],
+    cloud: [".........", ".........", "...ccc...", "..ccccc..", ".ccccccc.", "ccccccccc", "sssssssss", ".........", "........."],
+    grey: [".........", "...sss...", "..sssss..", ".sssssss.", "sssssssss", "ggggggggg", ".........", ".........", "........."],
+    drizzle: [".........", "...ccc...", "..ccccc..", ".ccccccc.", "ccccccccc", "sssssssss", ".........", "..b...b..", "....b...."],
+    rain: ["...ccc...", "..ccccc..", ".ccccccc.", "ccccccccc", "sssssssss", ".b..b..b.", "b..b..b..", ".b..b..b.", "b..b..b.."],
+    snow: ["...ccc...", "..ccccc..", ".ccccccc.", "sssssssss", ".........", ".w...w...", "...w...w.", ".w...w...", "...w...w."],
+    frost: ["....i....", ".i..i..i.", "..i.i.i..", "...iii...", "iiiiiiiii", "...iii...", "..i.i.i..", ".i..i..i.", "....i...."]
+};
+const WX_COL = { y: "#f2c14e", m: "#f3e6a8", c: "#eeeae0", s: "#b9b4a8", g: "#8a867c", b: "#7fb2e0", w: "#ffffff", i: "#a8d8f0" };
+function wxKind(w, night) {
+    if (w.snow)
+        return "snow";
+    if (w.rain > .6)
+        return "rain";
+    if (w.rain > 0)
+        return "drizzle";
+    if (w.temp <= 0)
+        return "frost";
+    return w.cloud < .25 ? (night ? "moon" : "sun") : w.cloud < .55 ? (night ? "partmoon" : "partsun") : w.cloud < .85 ? "cloud" : "grey";
+}
+function wxIcon(kind) {
+    const rows = WX_PIX[kind] || WX_PIX.cloud;
+    let r = "";
+    rows.forEach((row, y) => [...row].forEach((ch, x) => {
+        if (WX_COL[ch])
+            r += `<rect x="${x}" y="${y}" width="1" height="1" fill="${WX_COL[ch]}"/>`;
+    }));
+    return `<svg class="wxicon" viewBox="0 0 9 9" width="14" height="14" aria-hidden="true" shape-rendering="crispEdges">${r}</svg>`;
 }
 
 </script>
@@ -22531,10 +22577,12 @@ function renderMeters() {
     const d = new Date();
     $("hudClock").textContent = hhmm(d);
     {
-        const w = weather(), el = $("hudWx");
-        const t = `${$("hudClock").textContent} · ${Math.round(w.temp)}°`; // short: the weather itself is on tap and on the calendar card
-        if (el.textContent !== t)
-            el.textContent = t;
+        const w = weather(), el = $("hudWx"), night = skyAt(d.getHours() + d.getMinutes() / 60).dark > .6, kind = wxKind(w, night);
+        const t = `${$("hudClock").textContent} · ${Math.round(w.temp)}°`, key = t + "|" + kind; // short: the weather itself is on tap and on the calendar card
+        if (el.dataset.k !== key) { // (a little picture of it next to the temperature: weather.js)
+            el.dataset.k = key;
+            el.innerHTML = `${esc(t)}${wxIcon(kind)}`;
+        }
         el.title = `${wxName(w)}. ` + (w.src === "live" ? "Live weather" : "Estimated from climate averages for this date and hour");
         el.setAttribute("aria-label", `${$("hudClock").textContent}, ${wxName(w)}, ${Math.round(w.temp)} degrees`);
     }
@@ -22585,7 +22633,7 @@ function renderNextUp() {
     nu.hidden = false;
     const d = dueInfo(nt);
     $("nuTitle").textContent = nt.t;
-    $("nuMeta").textContent = (isPicked(nt) ? "today's pick · " : "suggested · ") + (d ? d.txt : (nt.s === 1 ? "small" : nt.s === 3 ? "medium" : "big")) + (nt.p ? " · first step" : "");
+    $("nuMeta").textContent = (isPicked(nt) ? "today's pick · " : "suggested · ") + (d ? d.txt : (nt.s === 1 ? "small" : nt.s === 3 ? "medium" : "large")) + (nt.p ? " · first step" : "");
     $("nuCheck").onclick = e => {
         hideNextUp();
         completeTask(nt.id, e.currentTarget);
@@ -22679,13 +22727,14 @@ function renderTasks() {
         const age = Date.now() - t.c;
         if (editingId === t.id) {
             li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="eTitle" value="${esc(t.t)}" maxlength="160" aria-label="Task">
-        <select id="eSize" aria-label="Size"><option value="1">Small</option><option value="3">Medium</option><option value="8">Big</option></select>
-        <select id="eTag" aria-label="Area"><option value="">No area</option><option value="work">Work</option><option value="life">Life</option></select>
+        <span class="seg seg-size" id="eSize" role="group" aria-label="Size">${[[1, "S", "Small"], [3, "M", "Medium"], [8, "L", "Large"]].map(([v, l, n]) => `<button type="button" data-v="${v}" aria-pressed="${t.s === v}" aria-label="${n}" title="${n}">${l}</button>`).join("")}</span>
+        <span class="seg" id="eTag" role="group" aria-label="Area">${[["work", "Work"], ["life", "Life"], ["", "Other"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(t.tag || "") === v}">${l}</button>`).join("")}</span>
         <input type="date" id="eDue" value="${esc(t.due)}" aria-label="Due date"><label class="toggle">Plan for <input type="date" id="eOn" value="${esc(t.on || "")}"></label><input type="time" id="eAt" value="${esc(t.at || "")}" step="300" aria-label="Time"><label class="toggle"><input type="checkbox" id="eWeek" ${t.wk ? "checked" : ""}> This week</label>
         <button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button>
         <span class="tedit-more">${!child ? `<button class="btn" type="button" data-act="split">Split into steps</button><button class="btn ai" type="button" data-act="splitai" ${aiOn() ? "" : "disabled"}>✦ Split with AI</button>` : ""}<button class="btn danger" type="button" data-act="del">Delete</button></span></form>`;
-            li.querySelector("#eSize").value = String(t.s);
-            li.querySelector("#eTag").value = t.tag || "";
+            for (const id of ["eSize", "eTag"]) // (buttons, one of each pressed)
+                li.querySelectorAll(`#${id} button`).forEach(b => b.onclick = () => li.querySelectorAll(`#${id} button`).forEach(x => x.setAttribute("aria-pressed", x === b)));
+            const segVal = id => { const b = li.querySelector(`#${id} button[aria-pressed="true"]`); return b ? b.dataset.v : null; };
             const f = li.querySelector("form");
             f.onsubmit = e => {
                 e.preventDefault();
@@ -22693,8 +22742,8 @@ function renderTasks() {
                 t.u = Date.now();
                 if (v)
                     t.t = v;
-                t.s = +$("eSize").value;
-                t.tag = $("eTag").value;
+                t.s = +(segVal("eSize") || t.s);
+                t.tag = segVal("eTag") ?? t.tag;
                 t.due = $("eDue").value;
                 t.wk = $("eWeek").checked;
                 t.at = $("eAt").value || "";
@@ -22756,7 +22805,7 @@ function renderTasks() {
         }
         li.innerHTML = `<button class="check" aria-label="Done: ${esc(t.t)}"></button>
       <div style="min-width:0"><button class="tname" data-act="edit" title="Edit">${esc(t.t)}</button><div class="tmeta">
-      ${isPicked(t) ? `<span class="chip sun">today</span>` : ""}${t.s > 1 ? `<span class="chip">${t.s === 3 ? "medium" : "big"}</span>` : ""}${t.tag ? `<span class="chip">${t.tag}</span>` : ""}
+      ${isPicked(t) ? `<span class="chip sun">today</span>` : ""}${t.s > 1 ? `<span class="chip">${t.s === 3 ? "medium" : "large"}</span>` : ""}${t.tag ? `<span class="chip">${t.tag}</span>` : ""}
       ${d ? `<span class="chip ${d.cls}">${d.txt}</span>` : ""}${t.on ? `<span class="chip ${planInfo(t).past ? "amber" : "plan"}">${esc(planInfo(t).txt)}</span><a class="mini gcal" href="${esc(gcalUrl(t))}" target="_blank" rel="noopener noreferrer" title="Opens Google Calendar with this filled in">+ Google Calendar</a>` : ""}
       ${age > 7 * 864e5 ? `<span class="chip">waiting ${fmtAge(age)}</span>` : ""}
       <button class="weekbtn" data-act="week" aria-pressed="${t.wk}">${t.wk ? "★ this week" : "☆ this week"}</button></div></div>
@@ -23662,7 +23711,7 @@ function segInit(id, cb, optional) { // optional: a second tap on the pressed on
     });
 }
 segInit("tSize", v => newSize = +v);
-segInit("tTag", v => newTag = v, true);
+segInit("tTag", v => newTag = v); // (Work, Life, or Other: no area)
 function setSeg(id, v) {
     $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === String(v)));
 }
@@ -23736,7 +23785,7 @@ function parseShort(raw) {
             }
         }
         if (sig === "!") {
-            const v = { s: 1, small: 1, m: 3, med: 3, medium: 3, b: 8, big: 8 }[w];
+            const v = { s: 1, small: 1, m: 3, med: 3, medium: 3, b: 8, big: 8, l: 8, large: 8 }[w];
             if (v) {
                 o.s = v;
                 return sp;
@@ -23812,9 +23861,9 @@ function parseShort(raw) {
     // a size word only counts at the end, or next to another code ("0900 big #work"), so "a small lamp" stays a small lamp
     if (!o.s) {
         const words = raw.trim().split(/\s+/), code = w => /^[!#@^]/.test(w) || !!parseDMY(w) || /^(([01]?\d|2[0-3])[:.][0-5]\d|([01]\d|2[0-3])(00|15|30|45))$/.test(w) || /^(today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/i.test(w);
-        const i = words.findIndex((w, k) => /^(big|medium|small)$/i.test(w) && (k === words.length - 1 || code(words[k - 1] || "") || code(words[k + 1] || "")));
+        const i = words.findIndex((w, k) => /^(big|large|medium|small)$/i.test(w) && (k === words.length - 1 || code(words[k - 1] || "") || code(words[k + 1] || "")));
         if (i >= 0)
-            take(new RegExp("(^|\\s)(" + words[i] + ")(?=\\s|$)"), m => { o.s = { big: 8, medium: 3, small: 1 }[m[2].toLowerCase()]; });
+            take(new RegExp("(^|\\s)(" + words[i] + ")(?=\\s|$)"), m => { o.s = { big: 8, large: 8, medium: 3, small: 1 }[m[2].toLowerCase()]; });
     }
     return { text: rest || text, ...o };
 }
@@ -23858,7 +23907,7 @@ $("addForm").addEventListener("submit", e => {
     const nt = addTask(p.text, s, tag, wk, due, null, on, at);
     $("tTitle").value = "";
     $("addChips").innerHTML = "";
-    const bits = [s === 8 ? "big" : s === 3 ? "medium" : "", tag !== ctxTag() ? tag : "", wk ? "this week" : "", due ? dueInfo({ due }).txt : "", on ? "planned " + planInfo(nt).txt : ""].filter(Boolean);
+    const bits = [s === 8 ? "large" : s === 3 ? "medium" : "", tag !== ctxTag() ? tag : "", wk ? "this week" : "", due ? dueInfo({ due }).txt : "", on ? "planned " + planInfo(nt).txt : ""].filter(Boolean);
     if (bits.length)
         toast(`Added: ${p.text} · ${bits.join(" · ")}`);
     resetAdd();
@@ -23876,10 +23925,7 @@ function addChipsText(p) {
         bits.push(wdmy(new Date(p.on + "T12:00")));
     if (p.at)
         bits.push(p.at);
-    if (p.s)
-        bits.push(p.s === 8 ? "Big" : p.s === 3 ? "Medium" : "Small");
-    if (p.tag)
-        bits.push(p.tag === "work" ? "Work" : "Life");
+    // (size and area aren't chips: the buttons under the field light up instead)
     if (p.wk)
         bits.push("This week");
     if (p.jot)
@@ -23890,6 +23936,8 @@ function addChipsText(p) {
 }
 $("tTitle").addEventListener("input", () => {
     const raw = $("tTitle").value, p = raw.trim() ? parseShort(raw) : {}, bits = addChipsText(p);
+    setSeg("tSize", p.s || newSize); // (what's typed shows on the buttons too: "big" or #work lights them)
+    setSeg("tTag", p.tag || newTag);
     $("addChips").innerHTML = bits.length ? bits.map(b => `<span class="chip">${esc(b)}</span>`).join("") : "";
 });
 
