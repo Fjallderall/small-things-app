@@ -3378,7 +3378,8 @@ const BUILDINGS = [
     { id: "snail", name: "Snail courier", price: 30, max: 1, note: "Brings the post. Slowly. Reliably." },
     { id: "scope", name: "Observatory", price: 45, max: 1, note: "A brass telescope for very distant things." },
     { id: "vault", name: "Dream archive", price: 60, max: 1, note: "Drawers full of carefully filed dreams." },
-    { id: "rental", name: "Renter's chest & pressed flowers", price: 20, max: 1, note: "For the nook: a chest of drawers whose drawers are let out to tenants, a vase on top, and a book for drying what's been in the vase." },
+    { id: "rental", name: "Renter's chest", price: 16, max: 1, note: "For the nook: a chest of drawers whose drawers are let out to tenants. Brass labels, a list of who's in." },
+    { id: "vase", name: "Vase & pressed flowers", price: 10, max: 1, needs: "rental", note: "A vase for the top of the renter's chest, with a book for drying what's been in it. Visitors bring flowers; Mite picks some on walks." },
     { id: "closet", name: "Bigger-inside closet", price: 80, max: 1, note: "Measured from the inside, it doesn't end. Built into the archive's shelves." },
     { id: "circle", name: "Chalk circle", price: 100, max: 1, note: "Chalked onto the blue rug in the archive, with candles and old signs. Tap it and Mite looks back into the past: a little of everyone's family history. Midnightcat likes to sit in the middle." },
     { id: "ndoor", name: "Night door", price: 130, max: 1, note: "Opens onto somewhere else. At the far end of the nook." },
@@ -7919,7 +7920,7 @@ Object.assign(BEH, {
         } },
     /* very now and then: Mite fetches the dried flower book from the desk, reads it in the chair, and puts it back
        (so you find out it's there: flowers.js) */
-    fbookchair: { d: [60, 60], w: c => view === "garden" && hasChair() && hasDrawers() && (S.flowerBook || []).length ? .06 : 0, init(b) {
+    fbookchair: { d: [60, 60], w: c => view === "garden" && hasChair() && hasVase() && (S.flowerBook || []).length ? .06 : 0, init(b) {
             b.act = rnd(12, 18);
             b.ph = "fetch";
         }, step(b, p, t, po, dt) {
@@ -17357,8 +17358,8 @@ function drawPinPhoto(k, w, h, dk) {
         cx.fillRect(m + iw * .45, m + ih * .25, iw * .12, ih * .1);
     }
 }
-/* what's in the nook so far: the chesterfield (and its side table) comes with the first book; the renter's chest,
-   the vase and the dried flower book are bought together (rental) */
+/* what's in the nook so far: the chesterfield (and its side table) comes with the first book; the renter's chest
+   (rental), then the vase on top of it with the dried flower book for the desk (vase) */
 function hasChair() {
     return (S.b.books || 0) > 0;
 }
@@ -17369,6 +17370,10 @@ function boardHung() {
 }
 function hasDrawers() {
     return own("rental") > 0;
+}
+/* the vase (on top of the chest) and the dried flower book that comes with it (on the desk) */
+function hasVase() {
+    return hasDrawers() && own("vase") > 0;
 }
 let gardenHits = { plants: [], desk: null, letters: null, chair: null, board: [], drawers: null }, gwparts = []; // gwparts: leaves and such falling outside the window
 /* the snail's bedtime: at night, or when the lights are out (it sleeps next to Mite, snail.js) */
@@ -17555,7 +17560,7 @@ function drawGarden(now, dt) {
                 cx.fillStyle = "#f2c14e";
                 cx.fillRect(Math.floor(kx / PX) * PX - PX / 2, Math.floor((dTop - R * .27) / PX) * PX, PX, PX * 2);
             }
-            if (hasDrawers())
+            if (hasVase())
                 drawFlowerBook(dk); // the dried flower book on the left of the desk (flowers.js)
             else
                 fbookHit = null;
@@ -17677,7 +17682,7 @@ function drawGarden(now, dt) {
                 gardenHits.tenants = { x: fx - q * 2, y: fy - q * 2, w: fw + q * 4, h: fh + q * 4, cx: fx + fw / 2 };
             }
         }
-        if (hasDrawers())
+        if (hasVase())
             drawVase(dk, t); // the vase of flowers on the drawers (flowers.js)
         else
             flowerHit = null;
@@ -18782,7 +18787,7 @@ function obsThings(rm) {
         add("pinboard", "the pinboard", gardenHits.boardAll);
     }
     else if (rm === "archive") {
-        add("eyes", "the eye jars", eyeJarHit);
+        add("eyes", (S.eyes || []).length ? "the eye jars" : "the empty jar", eyeJarHit); // (an eye jar only once there's an eye in it)
         add("tube", "the filing tube", tubeHit);
     }
     return out.filter(t => t.name && t.cx > R * .6 && t.cx < W - R * .6);
@@ -19279,7 +19284,7 @@ function pickFlower(odd) {
 }
 /* new flowers in the vase (from: who brought them) */
 function newFlowers(f, from) {
-    if (!f || !hasDrawers()) // (no vase yet: it comes with the renter's chest)
+    if (!f || !hasVase()) // (no vase yet: it's in the shop)
         return null;
     S.vase = Object.assign({}, f, { from: String(from || "").slice(0, 40), at: Date.now() });
     S.flowerBook = S.flowerBook || [];
@@ -19310,7 +19315,7 @@ function oddFlowers(from) {
 /* now and then (from postTick): the night door's step at night, or a walk when the vase has been the same a week */
 function flowerTick() {
     const now = performance.now();
-    if (now < flowerCheckAt || !S || !hasDrawers())
+    if (now < flowerCheckAt || !S || !hasVase())
         return;
     flowerCheckAt = now + 60e3;
     const d = new Date(), dark = skyAt(d.getHours() + d.getMinutes() / 60).dark;
@@ -20526,7 +20531,7 @@ function showEyeJars() {
     const have = (S.eyes || []).map(s => ({ s, e: EYES.find(e => e.id === s.k) })).filter(x => x.e);
     const from = { ghost: "left by the ghost", door: "through a door", dream: "from the dream archive", raccoon: "from the raccoon" };
     const body = have.length ? `<ul class="fbooklist eyelist">${have.map(x => `<li><canvas class="eyepic" width="24" height="16" data-eye="${esc(x.e.id)}" aria-hidden="true"></canvas><span><b>${esc(x.e.name)}</b> <span class="sub">${esc(from[x.s.from] || "found")} · ${esc(dmy(new Date(x.s.at)))}</span><br>${esc(x.e.note)}</span></li>`).join("")}</ul>` : "";
-    openRitual("The eye jars", have.length ? `${have.length} of ${EYES.length} eyes, for reference. They're only looking.` : "An empty jar, waiting. Mite keeps an eye out. Ha.", body, [["Close", "primary", closeRitual]]);
+    openRitual(have.length ? "The eye jars" : "An empty jar", have.length ? `${have.length} of ${EYES.length} eyes, for reference. They're only looking.` : `Nothing in it yet. ${S.settings.pet} keeps it here, just in case.`, body, [["Close", "primary", closeRitual]]);
     sfx("card");
     animateEyePics();
 }
@@ -23098,8 +23103,8 @@ function renderShop() {
         const el = document.createElement("div");
         el.className = "bld";
         shopFurnShown.add(b.id);
-        const shown = Math.min(own, b.max);
-        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
+        const shown = Math.min(own, b.max), needs = !own && b.needs && !S.b[b.needs] ? BUILDINGS.find(x => x.id === b.needs) : null; // (the vase stands on the chest)
+        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : needs ? `<span class="owned">Needs the ${esc(needs.name.toLowerCase())}</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
         const bb = el.querySelector("[data-b]");
         if (bb)
             bb.onclick = () => buy(b);
@@ -23231,7 +23236,7 @@ function buyKettle(k) {
 }
 function buy(b) {
     const c = cost(b);
-    if (S.g < c || maxed(b))
+    if (S.g < c || maxed(b) || (b.needs && !S.b[b.needs]))
         return;
     sfx("coin");
     S.g -= c;
@@ -23243,10 +23248,14 @@ function buy(b) {
         note("Got a tiny library. A chesterfield turned up in the nook to read in.");
     }
     else if (S.b[b.id] === 1 && b.id === "rental") {
-        speak("The chest is in the nook. Four drawers to let. The vase goes on top, the flower book on the desk. Lavender first, it's tradition.", { ms: 7000 });
-        note("Got the renter's chest, a vase and a book for pressed flowers.");
-        if (S.vase && S.vase.at > 1e9)
-            S.vase.at = Date.now();
+        speak("The chest is in the nook. Four drawers to let. The top's bare. It looks like it's waiting for a vase.", { ms: 7000 });
+        note("Got the renter's chest.");
+    }
+    else if (S.b[b.id] === 1 && b.id === "vase") {
+        speak("The vase goes on the chest, the flower book on the desk. Lavender first, it's tradition.", { ms: 6000 });
+        note("Got a vase and a book for pressed flowers.");
+        if (S.vase)
+            S.vase.at = Date.now(); // (fresh from today: a week before Mite picks new ones)
     }
     else if (S.b[b.id] === 1) {
         say("buy", { item: b.name.toLowerCase() });
@@ -24309,7 +24318,8 @@ function eraseAll() {
     rebuildFlat();
     saveArchLocal();
     S = defaultState();
-    S.g = S.gTotal = RESTART_G; // a start-over gift, so the shop isn't empty-handed on day one
+    S.g = S.gTotal = RESTART_G; // the starting gift again, so the shop isn't empty-handed on day one
+    S.flags.starter = 1; // (it's the gift, not earned: earnedG)
     note(`We met. Again, technically. ${RESTART_G} glimmers to start with.`);
     save();
     renderContent();
@@ -27231,6 +27241,11 @@ function boot() {
         S.flags.m_rental = 1;
         if (!isNew && S.drawers && S.drawers.at && !S.b.rental)
             S.b.rental = 1;
+    }
+    if (!S.flags.m_vase) { // the vase and the flower book used to come with the chest: a save with the chest keeps them
+        S.flags.m_vase = 1;
+        if (S.b.rental && !S.b.vase)
+            S.b.vase = 1;
     }
     {
         const n = autoFileOld();
