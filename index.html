@@ -984,6 +984,8 @@ const POOL_INFO = {
     buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
+    observe: "A resident sits looking at something, then talks about it ({thing}): who | A: ... / B: ... (who: cat, possum, snail or any; A is the one looking, B whoever answers: Mite or another resident)",
+    observe_solo: "A resident looking at something, to itself ({thing}): who | text",
     paint_medium: "While painting, about what it's painting with: medium | text (oils, acrylic, watercolour, gouache, pastel, chalk, pencil, marker, charcoal, ink, crayon, tempera)",
     paint_smell: "Now and then through the day: what the wagon smells like from the paint (medium | text, as paint_medium)",
     paint_carry: "A painting that wasn't finished goes on the next day ({item}: its title)",
@@ -1489,6 +1491,18 @@ const DEF = {
             "M: I made tea. Do you want some? / C: Mrrow. I want the saucer. Not the tea. The idea of the tea. / M: …I'll get the saucer.",
             "M: The archive's very quiet today. / C: Mew. It's listening. You should whisper something nice to it.",
             "C: Mrrp. / M: Hello to you too. / C: The window remembers you waving. Keep doing it.",
+            "M: Midnightcat, where do you go at night? / C: Mrrp. Down the hall. / M: We don't have a hall. / C: Not here, we don't.",
+            "M: You were sitting in my spot. / C: Mew. I was keeping it warm. / M: For me? / C: For the spot. It gets lonely.",
+            "C: Mrow. You walk too loudly. / M: I'm made of moss. / C: Loud moss.",
+            "M: What's your favourite room? / C: Mrrp. The one I'm not in. / M: Then why don't you go there? / C: Then it wouldn't be.",
+            "M: Do you ever get bored? / C: Prrt. Cats don't get bored. We get thorough.",
+            "M: I had a dream about you. / C: Mew. I know. I was in it. You left the door open, by the way.",
+            "C: Mrrp. The snail owes me a favour. / M: For what? / C: Mew. It knows. That's enough.",
+            "M: Can you teach me a ritual? / C: Mrow. Sit very still. / M: …And? / C: That's it. Most people can't do it.",
+            "M: Your whiskers are twitching. / C: Mrrp. Something is coming. Something with crumbs. / M: That's the possum. / C: Mew. As I said.",
+            "C: Mew. You smell like paint. / M: I've been painting. / C: Mrrp. You smell like a good painting. The bad ones smell of hurry.",
+            "M: Do you like it here? / C: …Mrrp. / M: Is that a yes? / C: It is a cat who is still here. Draw your own conclusions.",
+            "M: What do cats think about? / C: Mrow. Doors. Which side of them we're on. Which side we'd rather be on. / M: And? / C: The other one. Always.",
             "M: Where do you go at night? / C: Mrow. Midnight. / M: Is it far? / C: It's under the stairs. Mrrp.",
             "M: You're very warm. / C: Prrrrr. I borrow it from the fireplace. I always give it back.",
             "[night] M: You're up late. / C: Mew. You're up early. / M: It's the same time. / C: Is it? Mrrp.",
@@ -2995,6 +3009,41 @@ const DEF = {
             "[night] The Moon's Own Diary | Mostly about how it feels being looked at.",
             "[autumn] Leaves, and Where to Put Them | A whole chapter on not raking. I agree with it.",
             "[winter] Hibernation for the Ambitious | Step one: a warm corner. Step two: see step one."
+        ],
+        observe: [
+            "any | A: Have you ever really looked at {thing}? / B: Not really. / A: Neither had I. It's been here the whole time. / B: That's the trouble with things. They wait.",
+            "any | A: {Thing} is different today. / B: Different how? / A: I don't know yet. That's why I'm watching it.",
+            "any | A: I think {thing} likes it here. / B: How can you tell? / A: It hasn't left.",
+            "any | B: What are you looking at? / A: {Thing}. / B: Is it doing anything? / A: Not while we're watching.",
+            "any | A: If {thing} could talk, what do you think it would say? / B: Probably 'stop staring'. / A: Fair.",
+            "any | A: {Thing} was here before any of us. / B: Was it? / A: Look at it. It's definitely the oldest thing in the room. In spirit.",
+            "any | B: You've been sitting there a long time. / A: {Thing} has been sitting here longer. I'm catching up.",
+            "any | A: I'm learning {thing} by heart. / B: Why? / A: In case it goes missing. Then I'll still have it.",
+            "cat | A: Mrrp. Something lives behind {thing}. / B: What sort of something? / A: A polite one. It only comes out when the kettle's on.",
+            "cat | A: Mew. {Thing} hums at night. Very low. / B: I've never heard it. / A: You're always asleep. Someone has to listen.",
+            "cat | B: Midnightcat, why are you staring at {thing}? / A: Mrow. It stared first.",
+            "cat | A: Prrt. My great-grandmother had {thing}. Or one exactly like it. / B: In the old house? / A: In the old dream. Same thing.",
+            "cat | A: Mrrp. When the moon is right, {thing} casts two shadows. / B: Two? / A: One for the room, one for somewhere else. Don't worry about the second one.",
+            "cat | B: Is {thing} haunted? / A: Mew. Only a little. The nice kind. It tidies.",
+            "cat | A: Mrow. I'm keeping an eye on {thing}. / B: Why? / A: Someone should. You're busy. I'm a cat.",
+            "possum | A: Is {thing} food? / B: No. / A: Are you sure? / B: Very sure. / A: …I'll check later.",
+            "possum | A: {Thing} is very nice to hang next to. Upside down it looks like a different thing. / B: What does it look like? / A: Also nice.",
+            "possum | B: What do you see? / A: {Thing}. And a crumb. Mostly the crumb, now.",
+            "possum | A: I'd like to sleep on {thing}. / B: It's not for sleeping on. / A: Everything's for sleeping on, if you believe in yourself.",
+            "snail | A: I've been looking at {thing} since this morning. / B: And? / A: I'm about a third of the way along it. It's very good so far.",
+            "snail | A: I'd like to climb {thing} one day. / B: It's quite far. / A: I've got time. I'm mostly made of time.",
+            "snail | A: From down here, {thing} is enormous. / B: It's not that big. / A: Everything is big if you're the right size."
+        ],
+        observe_solo: [
+            "any | Hm. {Thing}. Still there.",
+            "any | {Thing}. I'll remember this one.",
+            "cat | Mrrp. {Thing} is behaving itself today.",
+            "cat | Mew. I know what {thing} did.",
+            "cat | Prrt. Sit still, {thing}. I'm watching you.",
+            "possum | {Thing}. Not food. Still lovely.",
+            "possum | Hello, {thing}. You smell like the wagon.",
+            "snail | {Thing}. I'll get to you. Eventually.",
+            "snail | Nice {thing}. Steady. I like a steady thing."
         ],
         paint_medium: [
             "oils | Oils take forever to dry. Good. I'm not in a hurry either.",
@@ -16477,6 +16526,8 @@ function catSettle(now) {
     }
     if (cat.room !== cat.goal && !catNight()) // just passing through
         Object.assign(cat, { ph: "sit", until: now + rnd(1500, 4000) });
+    if (cat.obs) // she came over to look at something (observe.js): sitting up, a good while
+        Object.assign(cat, { ph: "sit", until: now + 45e3 });
 }
 function catPos() {
     return { x: cat.x, y: catBox().y0 - 4 }; // in her room's coordinates (the loop adds where that room is on screen)
@@ -18598,6 +18649,174 @@ function lookSpot(id) {
 /* what Mite says when it gets there */
 function lookLine(s) {
     return compose(s.pool) || "Hm. I'd never really looked at that before.";
+}
+
+</script>
+<script>/* js/scene/observe.js */
+"use strict";
+/*
+ * observe.js - The residents look at things. Now and then Midnightcat (most often), the possum or the snail goes and
+ * sits by something in its room: a wall piece, the painting on the easel, the window, the Tiffany lamp, the moss,
+ * the eye jars... and has a good long look at it. Then it says something about it: to Mite, if Mite's in the room
+ * (Mite comes over to look too), to another resident in the room, or just to itself.
+ *   observeTick(now)   every frame (loop.js); starts one now and then, and moves it along
+ *   obsThings(room)    what there is to look at in a room right now: { id, name, cx, y }
+ * Lines: observe ("who | A: ... / B: ...", A the one looking, B whoever answers: M, C, P or S) and observe_solo
+ * ("who | text"); who is cat, possum, snail or any. {thing} is what they're looking at ({Thing} at the start).
+ */
+let obs = null, obsAt = performance.now() + rnd(50e3, 100e3);
+const OBS_NAMES = { window: "the window", lamp: "the lamp", lanterns: "the lanterns", nookwindow: "the plant window", sidetable: "the side table", beam: "the beam", ndoor: "the night door", archwindow: "the little window", nameplate: "the name plate", bulb: "the bulb", ladder: "the ladder", desklamp: "the Tiffany lamp", closet: "the closet" };
+/* what there is to look at in a room, from what was drawn there last (the hit areas the scene keeps) */
+function obsThings(rm) {
+    const out = [], add = (id, name, h) => h && out.push({ id, name, cx: h.cx !== undefined ? h.cx : h.x + h.w / 2, y: h.y });
+    for (const s of lookSpots(rm))
+        if (!/rug$/.test(s.id))
+            add(s.id, /^moss/.test(s.id) ? "the moss" : OBS_NAMES[s.id], s);
+    if (rm === "room") {
+        for (const h of wallHits) {
+            const w = WALL.find(x => x.id === h.id);
+            if (w)
+                add("wall:" + h.id, "the " + (/^[A-Z][a-z]/.test(w.name) ? w.name[0].toLowerCase() + w.name.slice(1) : w.name), h);
+        }
+        if (easelHit && S.paint && S.paint.prog > .05)
+            add("easel", `the painting on the easel`, easelHit);
+        add("calendar", "the calendar", calHit);
+        add("crystals", "the crystal shelf", cabHit);
+    }
+    else if (rm === "garden") {
+        add("vase", "the flowers in the vase", flowerHit);
+        add("pinboard", "the pinboard", gardenHits.boardAll);
+    }
+    else if (rm === "archive") {
+        add("eyes", "the eye jars", eyeJarHit);
+        add("tube", "the filing tube", tubeHit);
+    }
+    return out.filter(t => t.name && t.cx > R * .6 && t.cx < W - R * .6);
+}
+/* who's free to have a look: sitting about, awake, in a room that's on screen */
+function obsWho() {
+    const out = [], now = performance.now();
+    if (cat.ready && cat.ph === "sit" && cat.g === 0 && roomVisible(cat.room) && !catNight() && !yarnBall.on && !catInCircle())
+        out.push({ k: "C", kind: "cat", room: cat.room, x: cat.x }, { k: "C", kind: "cat", room: cat.room, x: cat.x }); // (twice: she's the one who stares at things)
+    if (possum.ready && (possum.ph === "sit" || possum.ph === "walk") && !possum.chat && possum.talkUntil < now && roomVisible(possum.room) && Math.abs(possum.fy - GY) < R)
+        out.push({ k: "P", kind: "possum", room: possum.room, x: possum.x });
+    if (own("snail") && !snailAsleep && !snailPause && !snailCarry && snailTalkUntil < now && roomVisible(snailRoom))
+        out.push({ k: "S", kind: "snail", room: snailRoom, x: snailX * W });
+    return out;
+}
+const obsBusy = () => !$("dlg").hidden || objQ.cur || S.lightsOut || document.hidden || !$("ritual").hidden || !$("bubble2").hidden || (anom && !anom.resolved);
+function observeTick(now) {
+    if (obs)
+        return obsStep(now);
+    if (now < obsAt)
+        return;
+    obsAt = now + rnd(70e3, 150e3);
+    if (obsBusy())
+        return;
+    const who = choice(obsWho());
+    if (!who)
+        return;
+    const things = obsThings(who.room);
+    if (!things.length)
+        return;
+    // the cat goes and sits under something; the possum and the snail look at what's nearest
+    const near = things.slice().sort((a, b) => Math.abs(a.cx - who.x) - Math.abs(b.cx - who.x)), th = who.k === "C" ? choice(things) : near[0];
+    obs = { who, th, t0: now, stage: "go", room: who.room };
+    if (who.k === "C") {
+        const tx = clamp(th.cx + (th.cx > W / 2 ? -1 : 1) * R * .5, R * .7, W - R * .7);
+        Object.assign(cat, { ph: "walk", tx, tg: 0, tz: 0, after: null, obs: true });
+        obs.tx = tx;
+    }
+    else
+        obsHold(now + 45e3);
+}
+/* keep the one looking where it is, facing the thing */
+function obsHold(until) {
+    const { who, th } = obs, dir = Math.sign(th.cx - who.x) || 1;
+    if (who.k === "C")
+        Object.assign(cat, { ph: "sit", until, dir });
+    if (who.k === "P")
+        Object.assign(possum, { talkUntil: until, dir });
+    if (who.k === "S") {
+        snailTalkUntil = until;
+        snailDir = dir;
+    }
+}
+function obsStep(now) {
+    const o = obs;
+    if (o.stage === "go") { // the cat on her way there
+        if (o.who.k !== "C" || (cat.room === o.room && cat.ph === "sit" && Math.abs(cat.x - o.tx) < 4)) {
+            o.who.x = o.who.k === "C" ? cat.x : o.who.x;
+            obsHold(now + 45e3);
+            o.stage = "look";
+            o.t0 = now;
+            if (roomVisible(o.room))
+                snailSay("…", 2600, o.who.kind, true); // a long, quiet look
+        }
+        else if (now - o.t0 > 25e3 || cat.room !== o.room) // didn't get there: never mind
+            return obsEnd();
+        return;
+    }
+    if (o.stage === "look" && now - o.t0 > 3500) {
+        if (obsBusy() || !roomVisible(o.room))
+            return obsEnd();
+        o.stage = "talk";
+        obsTalk(now);
+    }
+}
+function obsEnd() {
+    if (obs && obs.who.k === "C")
+        cat.obs = false;
+    obs = null;
+}
+/* who answers: Mite if it's in the room (it comes over to look too), otherwise someone else in the room, or nobody */
+function obsTalk(now) {
+    const o = obs, a = o.who, fill = t => t.replace(/\{Thing\}/g, o.th.name[0].toUpperCase() + o.th.name.slice(1)).replace(/\{thing\}/g, o.th.name);
+    const others = obsWho().filter(x => x.k !== a.k && x.room === o.room), miteHere = view === o.room && pet.beh !== "sleep" && !objQ.cur;
+    const partner = miteHere && Math.random() < .65 ? "M" : others.length ? others[0].k : miteHere ? "M" : "";
+    if (partner) {
+        const line = obsLine("observe", a.kind);
+        if (line) {
+            if (partner === "M")
+            { // Mite comes and stands beside them, on the far side, room enough that neither hides the other
+                let side = a.x < o.th.cx ? 1 : -1, tx = a.x + side * R * 2.6;
+                if (tx < W * .1 || tx > W * .9)
+                    tx = a.x - side * R * 2.6;
+                pet.start("curious", { tx: clamp(tx, W * .1, W * .9) });
+                pet.dur = 24; // (and stays there for the talk)
+            }
+            else {
+                const b = others.find(x => x.k === partner);
+                if (b.k === "P")
+                    Object.assign(possum, { talkUntil: now + 40e3, dir: Math.sign(a.x - b.x) || 1 });
+                if (b.k === "S") {
+                    snailTalkUntil = now + 40e3;
+                    snailDir = Math.sign(a.x - b.x) || 1;
+                }
+                if (b.k === "C")
+                    Object.assign(cat, { ph: "sit", until: now + 40e3, dir: Math.sign(a.x - b.x) || 1 });
+            }
+            const convo = fill(line).split(/\s+\/\s+/).map(x => x.replace(/^A:/, a.k + ":").replace(/^B:/, partner + ":")).join(" / ");
+            setTimeout(() => runConvo(convo, obsEnd), partner === "M" ? 1800 : 300);
+            return;
+        }
+    }
+    const solo = obsLine("observe_solo", a.kind);
+    if (solo) {
+        const t = fill(solo), name = a.k === "C" ? CAT_NAME : a.k === "P" ? possumName() : snailName();
+        snailSay(t, clamp(2500 + t.length * 60, 4000, 9000), a.kind);
+        heard(name, t, Date.now());
+    }
+    setTimeout(obsEnd, 4000);
+}
+/* a line for this resident: its own, or one anyone could say */
+function obsLine(k, kind) {
+    const c = ctx(), ls = pool(k).map(parseLine).filter(l => l.conds.every(x => condOk(x, c) !== false)).map(l => {
+        const i = l.text.indexOf("|");
+        return i > 0 ? { who: l.text.slice(0, i).trim().toLowerCase(), t: l.text.slice(i + 1).trim() } : null;
+    }).filter(l => l && (l.who === kind || l.who === "any"));
+    const own = ls.filter(l => l.who === kind);
+    return (own.length && Math.random() < .6 ? choice(own) : ls.length ? choice(ls) : { t: "" }).t;
 }
 
 </script>
@@ -21740,6 +21959,7 @@ function frame(now) {
         possumTick(dt, now); // and so does the possum (possum.js)
         snailTick(dt); // and the snail, slowly (snail.js)
         animalTalkTick(now); // and now and then two of them have a little chat (conversations.js)
+        observeTick(now); // or one of them sits and looks at something, and talks about it (observe.js)
         postTick(now); // has a reply come for one of Mite's letters? (post.js)
         const sky = drawScene(now, dt); // whichever rooms are on screen (camera.js)
         withRoom("room", () => {
