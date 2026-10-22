@@ -4122,7 +4122,7 @@ function loadArchLocal() {
  * so nothing trims them). saveSoon() is what everything else calls after a change.
  */
 const KEEP_KEY = "mossling.keep";
-let KEEP = { refl: [], caps: [], cat: [], del: {}, wipe: 0 }, keepDirty = false; // wipe: when you last started over (nothing older is kept)
+let KEEP = { refl: [], caps: [], cat: [], del: {}, wipe: 0 }, keepDirty = false; // wipe: when you last started over (mergeKeep)
 function cleanKeep(raw) {
     const s = cleanJSON(raw) || {}, o = { refl: [], caps: [], cat: [], del: {}, wipe: Math.max(0, num(s.wipe)) };
     o.refl = arr(s.refl, 20000).map(r => ({ id: sid(r.id) || uidGen(), at: num(r.at, Date.now()), text: str(r.text, 1000), u: num(r.u, num(r.at)) })).filter(r => r.text);
@@ -4143,8 +4143,14 @@ function cleanCat(r) {
         return { s: r.s, t: "k", item: r.item, c1: yarnOf(r.c1).id, c2: yarnOf(r.c2).id, pat: KNIT_PATTERNS.includes(r.pat) ? r.pat : "plain", at: num(r.at) };
     return null;
 }
+/* Two copies of the keepsakes, merged. When one side started over since the other was made (a later wipe), that
+   side wins whole: the other is the old game, still on some device or in the account. Otherwise everything from
+   both is kept. (A backup file imported after starting over is taken on as part of the new game: importSave) */
 function mergeKeep(a, b) {
-    const o = { refl: [], caps: [], cat: [], del: {}, wipe: Math.max(num(a.wipe), num(b.wipe)) }, w = o.wipe; // (started over: what's older than that stays gone, whichever device still has it)
+    const wa = num(a.wipe), wb = num(b.wipe);
+    if (wa !== wb)
+        return JSON.parse(JSON.stringify(Object.assign({ refl: [], caps: [], cat: [], del: {} }, wa > wb ? a : b)));
+    const o = { refl: [], caps: [], cat: [], del: {}, wipe: wa };
     for (const k of new Set([...Object.keys(a.del || {}), ...Object.keys(b.del || {})]))
         o.del[k] = Math.max(num((a.del || {})[k]), num((b.del || {})[k]));
     const m = new Map();
@@ -4153,18 +4159,18 @@ function mergeKeep(a, b) {
         if (!c || num(r.u) > num(c.u))
             m.set(r.id, r);
     }
-    o.refl = [...m.values()].filter(r => !(o.del[r.id] >= num(r.u)) && num(r.u, num(r.at)) >= w).sort((x, y) => x.at - y.at);
+    o.refl = [...m.values()].filter(r => !(o.del[r.id] >= num(r.u))).sort((x, y) => x.at - y.at);
     const cm = new Map();
     for (const c of [...(a.caps || []), ...(b.caps || [])]) {
         const p = cm.get(c.id);
         cm.set(c.id, p ? Object.assign({}, c, { opened: Math.max(num(p.opened), num(c.opened)) }) : c);
     }
-    o.caps = [...cm.values()].filter(c => !o.del[c.id] && num(c.made) >= w).sort((x, y) => x.made - y.made);
+    o.caps = [...cm.values()].filter(c => !o.del[c.id]).sort((x, y) => x.made - y.made);
     const ck = r => r.t === "p" ? "p" + r.day : "k" + r.at + r.item, cat = new Map(); // (the catalogue only grows: records are never changed)
     for (const r of [...(a.cat || []), ...(b.cat || [])])
         if (!cat.has(ck(r)))
             cat.set(ck(r), r);
-    o.cat = [...cat.values()].filter(r => num(r.at) >= w);
+    o.cat = [...cat.values()];
     return o;
 }
 function loadKeepLocal() {
@@ -24618,7 +24624,7 @@ function importSave(o) {
         saveArchLocal();
     }
     if (o.keepsakes) {
-        KEEP = mergeKeep(KEEP, cleanKeep(o.keepsakes));
+        KEEP = mergeKeep(KEEP, Object.assign(cleanKeep(o.keepsakes), { wipe: num(KEEP.wipe) })); // (a backup brought in after starting over: it joins the new game, it isn't the old one)
         saveKeep();
     }
     migrateCounts();
