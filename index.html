@@ -1001,6 +1001,7 @@ body.pixel .wxicon{width:18px;height:18px}
  * Lines you add in the app live in your save (S.content.pools), not here.
  */
 const POOL_INFO = {
+    possum_basket: "The possum, eating out of its basket, on why rubbish never makes it ill (an old pact, a family thing: its own lore)", look_basket: "Tapping the possum's basket on the nook's platform",
     look_sill: "Tapping a window sill (in the wagon, the nook or the archive)",
     look_jarshelf: "Tapping the shelf the jar stands on, in the archive (what it's for, no spoilers)", look_capplank: "Tapping the plank under it, for the time capsules (what it's for)",
     world_letters: "Letters to you from the world, every couple of weeks (use / for a new paragraph; sign it from the world)",
@@ -1597,6 +1598,23 @@ const DEF = {
             "[autumn] Dear Mite, the leaves here are mostly red this year. I've enclosed the best one. Don't file it. — {penpal}",
             "[winter] Dear Mite, it snowed on the letterbox and your letter was the only warm thing in it. — {penpal}",
             "[strange] Dear Mite, your letter arrived before you wrote it. I've kept it in a drawer until it caught up. — {penpal}",
+        ],
+        possum_basket: [
+            "My great-great-grandmother made a pact with the Rubbish Moon. We eat what's thrown away and none of it can hurt us. In return we never waste a crumb. Never.",
+            "It runs in the family. Possum stomachs are lined with something old. Grandad said it was moonlight. Grandad said a lot of things.",
+            "Thrown-away things want to be useful one more time. I help them. They're grateful. That's why I'm never ill.",
+            "There's a clause in the pact about orange peel. I don't talk about the clause.",
+            "Once a year we go to the Rubbish Moon's tip and say thank you. It's a very long night. Very good snacks.",
+            "My mother could eat a whole candle and feel fine. Then she'd glow a bit. Family thing.",
+            "Nothing is rubbish to a possum. Everything is just dinner that's been through a lot.",
+            "The pact says: eat what's swept up, keep the house quiet, and never, ever bite a postman. I've kept all three.",
+            "[night] The Rubbish Moon's up. I can feel it. Everything in this basket tastes a little bit blessed.",
+            "[strange] The sticky notes taste of what was written on them. This one's a bit anxious. Lovely though.",
+        ],
+        look_basket: [
+            "The possum's basket. Whatever I sweep up goes in here, and it has it for supper when it wakes.",
+            "That's the possum's. Swept things, scraps, old sticky notes. It's a sort of larder. A possum larder.",
+            "The basket. Don't worry, it's all on purpose. The possum's very particular about its menu, in that it has no menu.",
         ],
         look_sill: [
             "The window sill. Good for plants, and for sitting and watching the weather go by.",
@@ -3509,7 +3527,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, basket: { t: [], at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3675,6 +3693,7 @@ function sanitizeState(raw) {
     }
     o.postcards = arr(s.postcards, 60).map(p => ({ id: str(p.id, 30), y: clamp(Math.round(num(p.y)), 2000, 3000), at: num(p.at) })).filter(p => /^[a-z0-9_-]+$/i.test(p.id)); // postcards kept on the board (festivals.js)
     o.kettleStyle = { k: ["copper", "blue", "green", "pink", "bluefl"].includes(s.kettleStyle && s.kettleStyle.k) ? s.kettleStyle.k : "copper", at: num(s.kettleStyle && s.kettleStyle.at) }; // the kettle's looks (draw-world.js)
+    o.basket = { t: (Array.isArray(s.basket && s.basket.t) ? s.basket.t.slice(-20) : []).filter(k => ["dust", "paper", "crumb", "leaf", "postit"].includes(k)), at: num(s.basket && s.basket.at) }; // the possum's basket (basket.js)
     o.tiffany = { k: ["classic", "dragonfly", "blossom", "autumn", "sea", "nebula"].includes(s.tiffany && s.tiffany.k) ? s.tiffany.k : "classic", at: num(s.tiffany && s.tiffany.at) }; // the lamp's shade (archive-room.js)
     if (o.kettleStyle.at && o.kettleStyle.k !== "copper" && !o.b["kt_" + o.kettleStyle.k]) // (picked for free before the kettles were sold: it's yours)
         o.b["kt_" + o.kettleStyle.k] = 1;
@@ -3950,6 +3969,7 @@ function mergeStates(a, b) {
         }
         o.postcards = [...m.values()].sort((x, y) => num(y.at) - num(x.at)).slice(0, 60);
     }
+    o.basket = num((a.basket || {}).at) >= num((b.basket || {}).at) ? { t: ((a.basket || {}).t || []).slice(), at: num((a.basket || {}).at) } : { t: ((b.basket || {}).t || []).slice(), at: num((b.basket || {}).at) };
     o.tiffany = num((a.tiffany || {}).at) >= num((b.tiffany || {}).at) ? Object.assign({ k: "classic", at: 0 }, a.tiffany) : Object.assign({ k: "classic", at: 0 }, b.tiffany);
     o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
     o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small journal", at: 0 }) : Object.assign({}, b.journal); // the newest name
@@ -12713,7 +12733,10 @@ function drawLoftFront(where = "room") {
     }
     if (own("scope") && where === "room")
         drawLayered(() => drawScope(loftDk));
-    for (let x = g.balL + R * .1; x <= g.balR - R * .05; x += R * .32) {
+    const railL = where === "garden" ? basketGeo().right + R * .12 : g.balL; // (the nook's railing stops short of the possum's basket)
+    if (where === "garden")
+        drawLayered(() => drawBasket(nookDk));
+    for (let x = railL + R * .1; x <= g.balR - R * .05; x += R * .32) {
         cx.fillStyle = dark;
         cx.fillRect(x - lw / 2 - u, g.balY - R * .55, lw + 2 * u, R * .55);
         cx.fillStyle = wood;
@@ -12721,11 +12744,17 @@ function drawLoftFront(where = "room") {
     }
     const rh = Math.max(3, R * .07, 2 * u);
     cx.fillStyle = dark;
-    cx.fillRect(g.balL - u, g.balY - R * .6 - u, g.balR - g.balL + 2 * u, rh + 2 * u);
+    cx.fillRect(railL - u, g.balY - R * .6 - u, g.balR - railL + 2 * u, rh + 2 * u);
     cx.fillStyle = wood;
-    cx.fillRect(g.balL, g.balY - R * .6, g.balR - g.balL, rh);
+    cx.fillRect(railL, g.balY - R * .6, g.balR - railL, rh);
     cx.fillStyle = lite;
-    cx.fillRect(g.balL, g.balY - R * .6, g.balR - g.balL, Math.max(1, u));
+    cx.fillRect(railL, g.balY - R * .6, g.balR - railL, Math.max(1, u));
+    if (railL > g.balL) { // a newel post where it ends
+        cx.fillStyle = dark;
+        cx.fillRect(railL - lw - u, g.balY - R * .66 - u, lw * 2 + 2 * u, R * .66 + u);
+        cx.fillStyle = wood;
+        cx.fillRect(railL - lw, g.balY - R * .66, lw * 2, R * .66);
+    }
 }
 /* walk a route of points [{x,g}], easing ground height between them; returns true when the route is done */
 function followRoute(b, p, po, dt) {
@@ -18505,6 +18534,8 @@ function possumTick(dt, now) {
     }
     switch (p.ph) {
         case "hang":
+            p.ate = 0; // (a sleep and it's hungry again)
+            p.saidBasket = false;
             if (p.carry) { // home with the cookie (by the stairs or flying up): eaten upside down, then sleep
                 p.carry = false;
                 p.cookie = now + 7000;
@@ -18560,6 +18591,31 @@ function possumTick(dt, now) {
             }
             return;
         case "eat":
+            if (now > p.until && p.meal === "basket") { // a bite out of the basket (basket.js)
+                const k = S.basket && S.basket.t.shift();
+                if (k) {
+                    S.basket.at = Date.now();
+                    const b = basketGeo();
+                    for (let j = 0; j < 3; j++)
+                        addP({ type: "spark", x: b.cx, y: b.y - b.h, vx: rnd(-30, 30), vy: rnd(-50, -10), g: 160, max: .5, col: BASKET_COL[k], size: 2, room: "garden" });
+                    saveSoon();
+                }
+                p.ate++;
+                if (!p.saidBasket && roomVisible("garden") && Math.random() < .35) { // why it never gets ill from it
+                    p.saidBasket = true;
+                    const line = compose("possum_basket");
+                    if (line)
+                        snailSay(line, clamp(3000 + line.length * 45, 4500, 9000), "possum");
+                }
+                if (basketN() && p.ate < 14) // another
+                    p.until = now + rnd(1400, 2200);
+                else {
+                    p.meal = null;
+                    p.ph = "sit";
+                    p.until = now + rnd(800, 1500);
+                }
+                return;
+            }
             if (now > p.until) {
                 const i = (S.mess || []).indexOf(p.meal);
                 if (i >= 0) {
@@ -18643,13 +18699,24 @@ function possumTick(dt, now) {
         return;
     }
     p.meal = null;
+    // awake, and something in its basket up on the nook's platform: supper (basket.js)
+    if (possumAwake() && basketN() && p.ate < 14 && !p.carry && !possumCookies() && p.room === "garden") {
+        const b = basketGeo(), lg = nookLoftGeo(), tx = b.right + u * 5;
+        if (Math.abs(p.x - tx) < 3 && Math.abs(p.fy - lg.balY) < 2) {
+            Object.assign(p, { ph: "eat", meal: "basket", dir: -1, until: now + rnd(1400, 2200) });
+            sfx("munch");
+            return;
+        }
+        Object.assign(p, { ph: "walk", tx, ty: lg.balY });
+        return;
+    }
     // where it wants to be: the wagon for cookies or mess, its beam in the nook by day, and in the evening
     // wherever it fancies (home most likely)
     if (now > p.goalUntil) {
         p.goal = pickRoom({ garden: .5, room: .3, archive: .2 });
         p.goalUntil = now + rnd(120e3, 240e3);
     }
-    const goal = p.carry ? "garden" : possumCookies() ? "room" : possumHungry() ? messRoom((S.mess || []).find(m => messRoom(m) === p.room) || S.mess[0]) : !possumAwake() ? "garden" : p.goal; // (mess: in this room first, else wherever it is)
+    const goal = p.carry ? "garden" : possumCookies() ? "room" : possumHungry() ? messRoom((S.mess || []).find(m => messRoom(m) === p.room) || S.mess[0]) : !possumAwake() || basketN() ? "garden" : p.goal; // (its basket's in the nook) // (mess: in this room first, else wherever it is)
     if (p.room !== goal) {
         const dir = Math.sign(ROOM_X[goal] - ROOM_X[p.room]);
         if (dir < 0 ? p.x < -u * 10 : p.x > W + u * 10) { // through into the next room
@@ -18836,6 +18903,91 @@ function possumTap() {
 }
 
 </script>
+<script>/* js/scene/basket.js */
+"use strict";
+/*
+ * basket.js - The possum's basket. A little wicker basket at the left end of the nook's platform (the railing stops
+ * short of it, so you can see it). Whatever gets swept off a floor floats into it, wherever it was: dust, paper,
+ * crumbs, leaves, and the sticky notes Mite takes down. When the possum's awake it goes up and has its supper out of
+ * it, and now and then it explains why rubbish never makes it ill (lines: possum_basket). Tap the basket and Mite
+ * says something about it (look_basket).
+ *   S.basket          { t: [kinds, oldest first], at }  at most BASKET_MAX
+ *   basketAdd(kind, room, x, y)   into the basket, flying there from (x, y) in that room
+ *   drawBasket(dk)    on the platform (loft.js, drawLoftFront), drawBasketFly() the bits on their way (loop.js)
+ */
+const BASKET_MAX = 20, BASKET_KINDS = ["dust", "paper", "crumb", "leaf", "postit"];
+const BASKET_COL = { dust: "#bdb6a4", paper: "#efe8d6", crumb: "#c98a4a", leaf: "#c9783a", postit: "#f2d06b" };
+let basketFly = [];
+/* where it stands: on the platform's floor, right at its left end */
+function basketGeo() {
+    const lg = nookLoftGeo(), q = PX, w = Math.round(R * .74 / q) * q, h = Math.round(R * .46 / q) * q, x = Math.round((lg.balL + R * .1) / q) * q;
+    return { x, y: lg.balY, w, h, cx: x + w / 2, right: x + w };
+}
+const basketN = () => ((S.basket && S.basket.t) || []).length;
+/* something into the basket: it floats over from where it was (room coordinates in its room) */
+function basketAdd(kind, room, x, y, col) {
+    S.basket = S.basket && Array.isArray(S.basket.t) ? S.basket : { t: [], at: 0 };
+    if (S.basket.t.length >= BASKET_MAX || !BASKET_KINDS.includes(kind))
+        return false;
+    S.basket.t.push(kind);
+    S.basket.at = Date.now();
+    saveSoon();
+    basketFly.push({ kind, col: col || BASKET_COL[kind], room, x, y, t0: performance.now(), d: 1100 + Math.random() * 500, spin: rnd(-1, 1) });
+    return true;
+}
+/* the bits on their way, drawn over the rooms in screen coordinates: up in a soft arc and down into the basket
+   (when the nook isn't on screen they float off towards it) */
+function drawBasketFly() {
+    const now = performance.now();
+    basketFly = basketFly.filter(f => now - f.t0 < f.d);
+    if (!basketFly.length)
+        return;
+    const b = basketGeo(), ex = b.cx + roomOff("garden"), ey = b.y - b.h * .7, q = PX;
+    for (const f of basketFly) {
+        const k = (now - f.t0) / f.d, e = k * k * (3 - 2 * k), sx = f.x + roomOff(f.room);
+        const x = sx + (ex - sx) * e, y = f.y + (ey - f.y) * e - Math.sin(k * Math.PI) * R * 1.3;
+        const s = (f.kind === "postit" ? 3 : 2) * q * (1 - k * .3);
+        cx.save();
+        cx.globalAlpha = k > .85 ? (1 - k) / .15 : 1;
+        cx.translate(Math.round(x / q) * q, Math.round(y / q) * q);
+        cx.rotate(Math.round(f.spin * k * 6) * Math.PI / 4); // (turning in quarter steps: it stays pixel-shaped)
+        cx.fillStyle = "#2a1c16";
+        cx.fillRect(-s / 2 - 1, -s / 2 - 1, s + 2, s + 2);
+        cx.fillStyle = f.col;
+        cx.fillRect(-s / 2, -s / 2, s, s);
+        cx.restore();
+        if (Math.random() < .25)
+            addP({ type: "spark", x: x - roomOff(view), y, vx: rnd(-10, 10), vy: rnd(-10, 10), g: 0, max: .4, col: "#f3e7c8", size: 1.5 });
+    }
+}
+/* the basket: round-bellied wicker with a handle, what's in it heaped up over the rim */
+function drawBasket(dk) {
+    const b = basketGeo(), q = PX, n = basketN(), wick = mix("#b08850", "#2e2214", dk), wickD = mix("#7a5a32", "#1a120a", dk), wickL = mix("#d8b47a", "#4a3a24", dk);
+    const x = b.x, y = b.y - b.h, w = b.w, h = b.h;
+    // what's in it, peeking over the rim (the newest on top)
+    const t = (S.basket && S.basket.t) || [], heap = Math.min(3, Math.ceil(n / 5));
+    for (let i = 0; i < Math.min(n, 12); i++) {
+        const k = t[t.length - 1 - i], col = mix(BASKET_COL[k] || "#bdb6a4", "#1a1410", dk * .6), cx0 = x + q + ((i * 5) % Math.max(1, w / q - 3)) * q, cy0 = y - q * (1 + (i % heap));
+        cx.fillStyle = col;
+        cx.fillRect(cx0, cy0, k === "postit" ? q * 2 : q, q * (k === "postit" ? 2 : 1));
+    }
+    cx.fillStyle = wickD; // the outline and the handle
+    cx.fillRect(x - 1, y - 1, w + 2, h + 2);
+    cx.fillRect(x + q, y - q * 4, q, q * 4);
+    cx.fillRect(x + w - q * 2, y - q * 4, q, q * 4);
+    cx.fillRect(x + q, y - q * 5, w - q * 2, q);
+    cx.fillStyle = wick; // the body, a little narrower at the foot
+    cx.fillRect(x, y, w, h - q);
+    cx.fillRect(x + q, y + h - q, w - q * 2, q);
+    cx.fillStyle = wickD; // the weave: rows of short stitches, offset row to row
+    for (let r = 0, yy = y + q * 2; yy < y + h - q; r++, yy += q * 2)
+        for (let xx = x + (r % 2 ? q : q * 2); xx < x + w - q; xx += q * 3)
+            cx.fillRect(xx, yy, q, q);
+    cx.fillStyle = wickL; // the rim
+    cx.fillRect(x, y, w, q);
+}
+
+</script>
 <script>/* js/scene/looks.js */
 "use strict";
 /*
@@ -18861,6 +19013,7 @@ function lookSpots(rm) {
     }
     else if (rm === "garden") {
         const g = gardenGeo();
+        { const b = basketGeo(); add("basket", "look_basket", { x: b.x - R * .1, y: b.y - b.h - R * .3, w: b.w + R * .2, h: b.h + R * .35 }); }
         add("nooksill", "look_sill", { x: g.wx0, y: g.wy1 - R * .2, w: g.wx1 - g.wx0, h: R * .36 });
         add("nookwindow", "look_nookwindow", { x: g.wx0, y: g.wy0, w: g.wx1 - g.wx0, h: g.wy1 - g.wy0 });
         if (hasChair())
@@ -18932,7 +19085,7 @@ function lookLine(s) {
  * ("who | text"); who is cat, possum, snail or any. {thing} is what they're looking at ({Thing} at the start).
  */
 let obs = null, obsAt = performance.now() + rnd(50e3, 100e3);
-const OBS_NAMES = { window: "the window", lamp: "the lamp", lanterns: "the lanterns", nookwindow: "the plant window", sidetable: "the side table", beam: "the beam", ndoor: "the night door", archwindow: "the little window", nameplate: "the name plate", bulb: "the bulb", ladder: "the ladder", desklamp: "the Tiffany lamp", closet: "the closet", jarshelf: "the jar shelf", wsill: "the window sill", nooksill: "the window sill", archsill: "the window sill", capplank: "the capsule plank" };
+const OBS_NAMES = { window: "the window", lamp: "the lamp", lanterns: "the lanterns", nookwindow: "the plant window", sidetable: "the side table", beam: "the beam", ndoor: "the night door", archwindow: "the little window", nameplate: "the name plate", bulb: "the bulb", ladder: "the ladder", desklamp: "the Tiffany lamp", closet: "the closet", basket: "the possum's basket", jarshelf: "the jar shelf", wsill: "the window sill", nooksill: "the window sill", archsill: "the window sill", capplank: "the capsule plank" };
 /* what there is to look at in a room, from what was drawn there last (the hit areas the scene keeps) */
 function obsThings(rm) {
     const out = [], add = (id, name, h) => h && out.push({ id, name, cx: h.cx !== undefined ? h.cx : h.x + h.w / 2, y: h.y });
@@ -20214,7 +20367,9 @@ function renderGlimpses() {
 const POSTIT_MAX = 4, POSTIT_LIFE = 40 * 60e3;
 let postits = [], paperBirds = [];
 const TINY = ["#c2453a", "#e8a33c", "#f2d06b", "#6aa84f", "#3f9e9a", "#7a6fc0"];
-const SKETCHES = ["a snail, from the side", "the moon, slightly wrong", "Midnightcat, who moved", "a door that isn't there", "the kettle, mid-thought", "you, from memory. Roughly", "a very small mountain", "the possum, upside down. Or the right way up for the possum", "a cloud shaped like a cloud", "the wagon, if it had legs"];
+/* what Mite sketches: [what, the shop thing it needs to have] (nothing it hasn't got yet) */
+const SKETCHES = [["a snail, from the side", "snail"], ["the moon, slightly wrong"], ["Midnightcat, who moved"], ["a door that isn't there"], ["the kettle, mid-thought", "kettle"], ["you, from memory. Roughly"], ["a very small mountain"], ["the possum, upside down. Or the right way up for the possum"], ["a cloud shaped like a cloud"], ["the wagon, if it had legs"], ["a leaf from outside the window"], ["its own sprout, which it can't see very well"], ["the firefly jar, glowing", "jar"], ["the telescope, pointing at nothing yet", "scope"], ["the oven, with something in it", "oven"], ["a lantern, swaying", "lantern"]];
+const sketchSubjects = () => SKETCHES.filter(([, need]) => !need || own(need)).map(([w]) => w);
 function pastimeOk(c) { // not in the middle of the night, not when it's sleep time
     return !c.late;
 }
@@ -20296,8 +20451,11 @@ Object.assign(BEH, {
                     b.stuck = 1;
                     postits = postits.filter(n => !(n.room === view && performance.now() - n.at > POSTIT_LIFE));
                     const mine = postits.filter(n => n.room === view);
-                    if (mine.length >= POSTIT_MAX)
-                        postits.splice(postits.indexOf(mine[0]), 1);
+                    if (mine.length >= POSTIT_MAX) { // the oldest comes down, into the possum's basket
+                        const old = mine[0];
+                        postits.splice(postits.indexOf(old), 1);
+                        basketAdd("postit", old.room, old.x, old.y, old.col);
+                    }
                     const spot = postitSpot(p);
                     if (spot)
                         postits.push({ room: view, x: spot.x, y: spot.y, at: performance.now(), rot: (Math.random() < .5 ? -1 : 1) * rnd(.1, .28), curl: Math.random() < .6, tape: Math.random() < .5, sz: rnd(.85, 1.15), col: b.col || "#f2d06b", text: b.text });
@@ -20311,7 +20469,7 @@ Object.assign(BEH, {
             po.mouth = "smile";
         } },
     sketch: { d: [9, 12], w: c => pastimeOk(c) ? .45 : 0, init(b) {
-            b.what = choice(SKETCHES);
+            b.what = choice(sketchSubjects());
         }, step(b, p, t, po) {
             po.sy = -.1;
             po.feet = false;
@@ -20428,7 +20586,12 @@ function drawPastimesBehind() {
 /* the sticky notes on the walls: part of the room, so drawn with it, behind Mite and the cat (drawScene, camera.js) */
 function drawWallNotes() {
     const now = performance.now(), dk = sceneDark();
-    postits = postits.filter(n => now - n.at < POSTIT_LIFE);
+    postits = postits.filter(n => {
+        if (now - n.at < POSTIT_LIFE)
+            return true;
+        basketAdd("postit", n.room, n.x, n.y, n.col); // (come unstuck: into the basket)
+        return false;
+    });
     for (const n of postits)
         withRoomLight(n.room, () => {
             const s = R * .46 * (n.sz || 1), q = PX, sw = Math.sin(performance.now() / 1300 + n.x) * .03; // (a little flutter)
@@ -22276,6 +22439,7 @@ function frame(now) {
         });
         if (onNook) // Mite's up on the nook's platform: behind its railing
             withRoom("garden", () => drawLoftFront("garden"));
+        drawBasketFly(); // swept bits on their way into the possum's basket (basket.js)
         if (sky.dark > .15) {
             cx.fillStyle = `rgba(10,14,40,${sky.dark * .18})`;
             cx.fillRect(0, 0, W, H);
@@ -25925,8 +26089,9 @@ function sweepAt(x, y, room = "room") {
             S.care.swept++;
             if (S.care.swept % 3 === 0)
                 addG(PAY.sweep);
-            for (let j = 0; j < 7; j++)
-                addP({ type: "spark", x: mx, y: my, vx: rnd(-70, 70), vy: rnd(-90, -10), g: 160, max: .7, col: "#d8d2c0", size: 2.5, room });
+            basketAdd(m.t, room, mx, my); // up and into the possum's basket in the nook (basket.js)
+            for (let j = 0; j < 4; j++)
+                addP({ type: "spark", x: mx, y: my, vx: rnd(-50, 50), vy: rnd(-70, -10), g: 160, max: .5, col: "#d8d2c0", size: 2, room });
         }
     }
     if (any) {
