@@ -20004,10 +20004,15 @@ function postitSpot(p) {
     }
     if (view === "garden" && gardenHits.boardAll)
         busy.push(gardenHits.boardAll);
+    if ((view === "room" && own("loft")) || view === "garden") { // not on the balcony or the platform (its railing, floor and beam are in front of the wall) or behind the stairs
+        const g = loftGeo(view), t = Math.max(4, R * .12);
+        busy.push({ x: g.balL - R * .4, y: g.balY - R * .75, w: g.balR - g.balL + R * .8, h: R * .75 + t + R * .15 });
+        busy.push({ x: Math.min(g.stX0, g.stX1) - R * .2, y: g.balY, w: Math.abs(g.stX1 - g.stX0) + R * .4, h: GY - g.balY });
+    }
     busy.push(...postits.filter(n => n.room === view).map(n => ({ x: n.x - s, y: n.y - s, w: s * 2, h: s * 2 })));
     const free = (x, y) => x > s && x < W - s && !busy.some(b => x + s / 2 > b.x - 4 && x - s / 2 < b.x + b.w + 4 && y + s / 2 > b.y - 4 && y - s / 2 < b.y + b.h + 4);
     for (const dx of [0, .4, -.4, .8, -.8, 1.2, -1.2, 1.6, -1.6])
-        for (const dy of [0, -.3, .25]) {
+        for (const dy of [0, -.3, .25, -.7, .55]) {
             const x = p.x + dx * R, y = y0 + dy * R;
             if (free(x, y))
                 return { x, y };
