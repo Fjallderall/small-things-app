@@ -683,8 +683,8 @@ body.pixel .scopeview .mlabel .ml-credit{font-size:12px}
 .fmonth .fbooklist{max-height:none;overflow:visible}
 /* the add form's quick row: size S/M/L and the area, as buttons (tabs.js) */
 .addquick{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.addquick .seg button,.tedit .seg button{min-height:40px;min-width:40px;padding:6px 12px}
-.seg-size button{font-family:var(--f-mono);min-width:44px}
+.addquick .seg button,.tedit .seg button{min-height:40px;min-width:40px;padding:6px 9px}
+.addquick{gap:6px}
 .tedit .seg{vertical-align:middle}
 .hud .wx{display:inline-flex;align-items:center;gap:6px}
 .wxicon{width:14px;height:14px;image-rendering:pixelated;flex:0 0 auto}
@@ -761,9 +761,9 @@ body.pixel .wxicon{width:18px;height:18px}
         </div>
         <div class="addquick">
           <div class="seg seg-size" id="tSize" role="group" aria-label="Size">
-            <button type="button" data-v="1" aria-pressed="true" aria-label="Small" title="Small">S</button>
-            <button type="button" data-v="3" aria-pressed="false" aria-label="Medium" title="Medium">M</button>
-            <button type="button" data-v="8" aria-pressed="false" aria-label="Large" title="Large">L</button>
+            <button type="button" data-v="1" aria-pressed="true">Small</button>
+            <button type="button" data-v="3" aria-pressed="false">Medium</button>
+            <button type="button" data-v="8" aria-pressed="false">Big</button>
           </div>
           <div class="seg" id="tTag" role="group" aria-label="Area">
             <button type="button" data-v="work" aria-pressed="false">Work</button>
@@ -22638,7 +22638,7 @@ function renderNextUp() {
     nu.hidden = false;
     const d = dueInfo(nt);
     $("nuTitle").textContent = nt.t;
-    $("nuMeta").textContent = (isPicked(nt) ? "today's pick · " : "suggested · ") + (d ? d.txt : (nt.s === 1 ? "small" : nt.s === 3 ? "medium" : "large")) + (nt.p ? " · first step" : "");
+    $("nuMeta").textContent = (isPicked(nt) ? "today's pick · " : "suggested · ") + (d ? d.txt : (nt.s === 1 ? "small" : nt.s === 3 ? "medium" : "big")) + (nt.p ? " · first step" : "");
     $("nuCheck").onclick = e => {
         hideNextUp();
         completeTask(nt.id, e.currentTarget);
@@ -22732,7 +22732,7 @@ function renderTasks() {
         const age = Date.now() - t.c;
         if (editingId === t.id) {
             li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="eTitle" value="${esc(t.t)}" maxlength="160" aria-label="Task">
-        <span class="seg seg-size" id="eSize" role="group" aria-label="Size">${[[1, "S", "Small"], [3, "M", "Medium"], [8, "L", "Large"]].map(([v, l, n]) => `<button type="button" data-v="${v}" aria-pressed="${t.s === v}" aria-label="${n}" title="${n}">${l}</button>`).join("")}</span>
+        <span class="seg seg-size" id="eSize" role="group" aria-label="Size">${[[1, "Small"], [3, "Medium"], [8, "Big"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${t.s === v}">${l}</button>`).join("")}</span>
         <span class="seg" id="eTag" role="group" aria-label="Area">${[["work", "Work"], ["life", "Life"], ["", "Other"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(t.tag || "") === v}">${l}</button>`).join("")}</span>
         <input type="date" id="eDue" value="${esc(t.due)}" aria-label="Due date"><label class="toggle">Plan for <input type="date" id="eOn" value="${esc(t.on || "")}"></label><input type="time" id="eAt" value="${esc(t.at || "")}" step="300" aria-label="Time"><label class="toggle"><input type="checkbox" id="eWeek" ${t.wk ? "checked" : ""}> This week</label>
         <button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button>
@@ -22810,7 +22810,7 @@ function renderTasks() {
         }
         li.innerHTML = `<button class="check" aria-label="Done: ${esc(t.t)}"></button>
       <div style="min-width:0"><button class="tname" data-act="edit" title="Edit">${esc(t.t)}</button><div class="tmeta">
-      ${isPicked(t) ? `<span class="chip sun">today</span>` : ""}${t.s > 1 ? `<span class="chip">${t.s === 3 ? "medium" : "large"}</span>` : ""}${t.tag ? `<span class="chip">${t.tag}</span>` : ""}
+      ${isPicked(t) ? `<span class="chip sun">today</span>` : ""}${t.s > 1 ? `<span class="chip">${t.s === 3 ? "medium" : "big"}</span>` : ""}${t.tag ? `<span class="chip">${t.tag}</span>` : ""}
       ${d ? `<span class="chip ${d.cls}">${d.txt}</span>` : ""}${t.on ? `<span class="chip ${planInfo(t).past ? "amber" : "plan"}">${esc(planInfo(t).txt)}</span><a class="mini gcal" href="${esc(gcalUrl(t))}" target="_blank" rel="noopener noreferrer" title="Opens Google Calendar with this filled in">+ Google Calendar</a>` : ""}
       ${age > 7 * 864e5 ? `<span class="chip">waiting ${fmtAge(age)}</span>` : ""}
       <button class="weekbtn" data-act="week" aria-pressed="${t.wk}">${t.wk ? "★ this week" : "☆ this week"}</button></div></div>
@@ -23912,7 +23912,7 @@ $("addForm").addEventListener("submit", e => {
     const nt = addTask(p.text, s, tag, wk, due, null, on, at);
     $("tTitle").value = "";
     $("addChips").innerHTML = "";
-    const bits = [s === 8 ? "large" : s === 3 ? "medium" : "", tag !== ctxTag() ? tag : "", wk ? "this week" : "", due ? dueInfo({ due }).txt : "", on ? "planned " + planInfo(nt).txt : ""].filter(Boolean);
+    const bits = [s === 8 ? "big" : s === 3 ? "medium" : "", tag !== ctxTag() ? tag : "", wk ? "this week" : "", due ? dueInfo({ due }).txt : "", on ? "planned " + planInfo(nt).txt : ""].filter(Boolean);
     if (bits.length)
         toast(`Added: ${p.text} · ${bits.join(" · ")}`);
     resetAdd();
