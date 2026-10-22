@@ -4123,9 +4123,10 @@ function loadArchLocal() {
  * so nothing trims them). saveSoon() is what everything else calls after a change.
  */
 const KEEP_KEY = "mossling.keep";
-let KEEP = { refl: [], caps: [], cat: [], del: {}, wipe: 0 }, keepDirty = false; // wipe: when you last started over (mergeKeep)
+let KEEP = { refl: [], caps: [], cat: [], corr: [], del: {}, wipe: 0 }, keepDirty = false; // wipe: when you last started over (mergeKeep)
 function cleanKeep(raw) {
-    const s = cleanJSON(raw) || {}, o = { refl: [], caps: [], cat: [], del: {}, wipe: Math.max(0, num(s.wipe)) };
+    const s = cleanJSON(raw) || {}, o = { refl: [], caps: [], cat: [], corr: [], del: {}, wipe: Math.max(0, num(s.wipe)) };
+    o.corr = arr(s.corr, 20000).map(cleanCorr).filter(Boolean); // the correspondence register (post.js)
     o.refl = arr(s.refl, 20000).map(r => ({ id: sid(r.id) || uidGen(), at: num(r.at, Date.now()), text: str(r.text, 1000), u: num(r.u, num(r.at)) })).filter(r => r.text);
     o.caps = arr(s.caps, 2000).map(c => ({ id: sid(c.id) || uidGen(), made: num(c.made, Date.now()), open: dkey(c.open) || dayKey(), text: str(c.text, 3000), opened: Math.max(0, num(c.opened)),
         snap: { done: Math.max(0, num(c.snap && c.snap.done)), lvl: Math.max(1, num(c.snap && c.snap.lvl, 1)), open: Math.max(0, num(c.snap && c.snap.open)) } })).filter(c => c.text);
@@ -4133,6 +4134,15 @@ function cleanKeep(raw) {
     for (const k of Object.keys(s.del && typeof s.del === "object" ? s.del : {}).slice(0, 3000))
         o.del[str(k, 40)] = num(s.del[k]);
     return o;
+}
+/* one letter in the correspondence register: in (received) or out (Mite's copy of one it sent) */
+function cleanCorr(r) {
+    if (!r || typeof r !== "object" || !num(r.at))
+        return null;
+    const o = { id: str(r.id, 40) || "c" + num(r.at), d: r.d === "out" ? "out" : "in", who: str(r.who, 80), text: str(r.text, 1200), at: num(r.at) };
+    if (r.you)
+        o.you = 1;
+    return o.who ? o : null;
 }
 /* one record of the craft catalogue: a painting (rebuilt from its day) or a knit (item, yarns, pattern) */
 function cleanCat(r) {
@@ -4150,8 +4160,15 @@ function cleanCat(r) {
 function mergeKeep(a, b) {
     const wa = num(a.wipe), wb = num(b.wipe);
     if (wa !== wb)
-        return JSON.parse(JSON.stringify(Object.assign({ refl: [], caps: [], cat: [], del: {} }, wa > wb ? a : b)));
-    const o = { refl: [], caps: [], cat: [], del: {}, wipe: wa };
+        return JSON.parse(JSON.stringify(Object.assign({ refl: [], caps: [], cat: [], corr: [], del: {} }, wa > wb ? a : b)));
+    const o = { refl: [], caps: [], cat: [], corr: [], del: {}, wipe: wa };
+    { // the correspondence register: every letter once (a registered letter is never changed)
+        const m = new Map();
+        for (const r of [...(a.corr || []), ...(b.corr || [])])
+            if (!m.has(r.id))
+                m.set(r.id, r);
+        o.corr = [...m.values()].sort((x, y) => x.at - y.at);
+    }
     for (const k of new Set([...Object.keys(a.del || {}), ...Object.keys(b.del || {})]))
         o.del[k] = Math.max(num((a.del || {})[k]), num((b.del || {})[k]));
     const m = new Map();
@@ -7951,7 +7968,7 @@ Object.assign(BEH, {
                 const line = fillText(compose("letters") || "Dear {penpal}, all well here. The moss sends regards.", Object.assign(ctx(), { penpal: b.to }));
                 note(`Wrote a letter to ${b.to}: “${line}”`);
                 S.flags.letterDay = dayNum();
-                postSent(b.to); // a reply may come in a few days (post.js)
+                postSent(b.to, line); // a reply may come in a few days; the copy goes in the letter book (post.js)
                 floatText("sealed", p.x, GY - R * 2.3, "#ffd76a");
                 sfx("soft");
             }
@@ -18242,6 +18259,7 @@ function postWelcome() {
     if (S.post.inbox.some(l => l.you))
         return;
     S.post.inbox.push({ from: "the world", text: WELCOME_LETTER, at: Date.now(), read: 0, you: 1 });
+    corrRegister("in", "the world", WELCOME_LETTER, Date.now(), true);
     S.post.worldAt = Date.now();
     saveSoon();
 }
@@ -18255,9 +18273,11 @@ function showYourLetter(l) {
 }
 let postCheckAt = 0;
 /* a letter Mite has just finished (write, behaviours.js) */
-function postSent(to) {
+function postSent(to, text) {
     S.post = S.post || { sent: [], inbox: [] };
-    S.post.sent.push({ to: String(to).slice(0, 80), at: Date.now(), r: 0 });
+    const at = Date.now();
+    S.post.sent.push({ to: String(to).slice(0, 80), at, r: 0 });
+    corrRegister("out", to, text || "", at); // Mite keeps a copy (the letter book)
     if (S.post.sent.length > 30)
         S.post.sent.splice(0, S.post.sent.length - 30);
     saveSoon();
@@ -18276,6 +18296,7 @@ function postTick(now) {
         const text = compose("world_letters");
         if (text) {
             S.post.inbox.push({ from: "the world", text: text.replace(/ \/ /g, "\n\n"), at: t, read: 0, you: 1 });
+            corrRegister("in", "the world", text.replace(/ \/ /g, "\n\n"), t, true);
             if (S.post.inbox.length > 40)
                 S.post.inbox.splice(0, S.post.inbox.length - 40);
             note("A letter came for you, from the world. It's in the rack in the nook.");
@@ -18294,6 +18315,7 @@ function postTick(now) {
             continue;
         const text = compose("replies", { penpal: s.to }) || "Dear Mite, thank you for your letter. All is well here. Write again soon.";
         S.post.inbox.push({ from: s.to, text, at: s.at + wait, read: 0 });
+        corrRegister("in", s.to, text, s.at + wait);
         if (S.post.inbox.length > 40)
             S.post.inbox.splice(0, S.post.inbox.length - 40);
         note(`A letter came from ${s.to}.`);
@@ -18304,10 +18326,10 @@ function postTick(now) {
 /* Mite at the rack: the oldest unread letter, read out (or an old one, now and then) */
 function readLetter() {
     const inbox = (S.post && S.post.inbox) || [];
-    const l = inbox.find(x => !x.read && x.you) || inbox.find(x => !x.read) || (inbox.length ? choice(inbox) : null);
-    if (!l) {
-        speak(S.post && S.post.sent.length ? "No replies yet. Letters take a few days. The post is slow and very thorough." : "Nothing in the rack. I'll have to write to someone first.", { ms: 5000 });
-        return 5;
+    const l = inbox.find(x => !x.read && x.you) || inbox.find(x => !x.read);
+    if (!l) { // nothing new: the correspondence drawer, with this week's letters (older ones are in the paternoster)
+        showCorrDrawer();
+        return 3;
     }
     const fresh = !l.read;
     l.read = 1;
@@ -18317,6 +18339,88 @@ function readLetter() {
     const text = `${fresh ? "A letter from" : "An old one from"} ${l.from}. “${l.text}”`;
     speak(text, { whole: true, ms: clamp(4000 + text.length * 50, 6000, 16000) });
     return clamp(4 + text.length * .05, 6, 16);
+}
+
+/* ---------- the correspondence: registered, kept at the desk, transferred to the archive ----------
+   Done the way a registry office does it. Every letter is registered as it comes in or goes out (KEEP.corr): a
+   number per year and direction (In 2026/7, Out 2026/3), the date, the correspondent, and the letter itself (for one
+   Mite sent: its copy, like a letter book). While the week is running the letters are the current file, in the
+   drawer of the writing desk: tap the letter rack. When the week is done and its shelf goes into the paternoster,
+   they're transferred with it: unfolded, the pins taken out, into an acid-free folder tied with tape, in the order
+   they came (original order), with a transfer list. From then on they're on that week's shelf (paternoster.js). */
+function corrRegister(d, who, text, at, you) {
+    KEEP.corr = KEEP.corr || [];
+    const id = (d === "in" ? "i" : "o") + Math.round(at).toString(36) + String(who).length;
+    if (KEEP.corr.some(r => r.id === id))
+        return;
+    KEEP.corr.push(Object.assign({ id, d: d === "out" ? "out" : "in", who: String(who).slice(0, 80), text: String(text || "").slice(0, 1200), at: Math.round(at) }, you ? { you: 1 } : {}));
+    saveKeep();
+}
+/* its register number: counted per year and direction, in the order they were registered */
+function corrNo(r) {
+    const y = new Date(r.at).getFullYear(), same = (KEEP.corr || []).filter(x => x.d === r.d && new Date(x.at).getFullYear() === y).sort((a, b) => a.at - b.at || (a.id < b.id ? -1 : 1));
+    return `${r.d === "in" ? "In" : "Out"} ${y}/${same.indexOf(r) + 1}`;
+}
+const corrWeek = r => weekKey(r.at);
+/* the current file: this week's letters, still in the desk */
+const corrCurrent = () => (KEEP.corr || []).filter(r => corrWeek(r) >= weekKey(Date.now()));
+/* a week's letters, on its shelf in the paternoster */
+const corrOfWeek = wk => (KEEP.corr || []).filter(r => corrWeek(r) === wk && wk < weekKey(Date.now()));
+/* once: the letters already sent and received before there was a register, registered by their dates */
+function corrMigrate() {
+    if (S.flags.m_corr)
+        return;
+    S.flags.m_corr = 1;
+    for (const l of (S.post && S.post.inbox) || [])
+        corrRegister("in", l.from, l.text, l.at, !!l.you);
+    for (const l of (S.post && S.post.sent) || [])
+        corrRegister("out", l.to, "", l.at);
+}
+/* a new week: last week's letters go to the archive with its shelf; Mite notes the transfer once */
+function corrTransferNote() {
+    const cur = weekKey(Date.now());
+    if (S.flags.corrWk === cur)
+        return;
+    const prev = S.flags.corrWk;
+    S.flags.corrWk = cur;
+    const moved = prev ? (KEEP.corr || []).filter(r => corrWeek(r) === prev) : [];
+    if (moved.length)
+        note(`Transferred last week's correspondence to the paternoster: ${moved.length} letter${moved.length === 1 ? "" : "s"}, unfolded, de-pinned and in a folder, with a transfer list.`);
+    saveSoon();
+}
+function corrRows(list) {
+    return list.map(r => `<li><button type="button" class="linkbtn pnbox" data-corr="${esc(r.id)}"><b>${esc(corrNo(r))}</b> · ${r.d === "in" ? "from" : "to"} ${esc(r.who)}</button><br><span class="sub">${r.d === "in" ? "Received" : "Sent"} ${esc(wdmy(new Date(r.at)))}</span></li>`).join("");
+}
+function wireCorr(el) {
+    el.querySelectorAll("[data-corr]").forEach(b => b.onclick = () => showCorrItem(b.dataset.corr));
+}
+/* the drawer of the writing desk: the current file */
+function showCorrDrawer() {
+    const list = corrCurrent().slice().reverse(), filed = (KEEP.corr || []).length - list.length;
+    openRitual("The correspondence drawer", list.length ? "This week's letters, in and out. When the week's done they go to the archive, onto its shelf in the paternoster." : "Nothing this week yet. Letters go to the archive with their week.",
+        `<ul class="fbooklist pnlist">${corrRows(list)}</ul>${filed ? `<p class="sub">${filed} older letter${filed === 1 ? "" : "s"} transferred to the paternoster, filed by week.</p>` : ""}`, [["Close", "primary", closeRitual]]);
+    wireCorr($("ritBody"));
+    sfx("card");
+}
+/* a week's folder from the paternoster: its transfer list */
+function showCorrFolder(wk) {
+    const list = corrOfWeek(wk), start = new Date(wk + "T12:00");
+    openRitual(`Correspondence, week ${weekNo(wk)}`, `Transferred from the desk at the end of the week. ${list.length} letter${list.length === 1 ? "" : "s"}, in the order they came.`, `<ul class="fbooklist pnlist">${corrRows(list)}</ul>`,
+        [["Back to the paternoster", "", () => showPaternoster(Math.max(0, pnWeeks().findIndex(w => w.k === wk)))], ["Close", "primary", closeRitual]]);
+    wireCorr($("ritBody"));
+    sfx("card");
+}
+/* one letter, from the register */
+function showCorrItem(id) {
+    const r = (KEEP.corr || []).find(x => x.id === id);
+    if (!r)
+        return;
+    const wk = corrWeek(r), filed = wk < weekKey(Date.now());
+    const body = r.text ? `<div class="letter">${esc(homeTxt(r.text)).replace(/\n/g, "<br>")}</div>` : `<p class="sub">No copy was kept of this one: it was sent before ${esc(S.settings.pet)} kept a letter book.</p>`;
+    const meta = `${r.d === "in" ? `From ${esc(r.who)}, received` : `To ${esc(r.who)}, sent`} ${esc(dmy(new Date(r.at)))} · ${filed ? `transferred to the paternoster, week ${weekNo(wk)}` : "in the desk, current file"}`;
+    openRitual(corrNo(r), r.d === "out" ? `${S.settings.pet}'s copy.` : "", `${body}<p class="ritmeta">${meta}</p>`,
+        [[filed ? "The week's folder" : "The drawer", "", () => filed ? showCorrFolder(wk) : showCorrDrawer()], ["Close", "primary", closeRitual]]);
+    sfx("card");
 }
 
 </script>
@@ -24662,7 +24766,7 @@ function eraseAll() {
     ARCH = {};
     rebuildFlat();
     saveArchLocal();
-    KEEP = { refl: [], caps: [], cat: [], del: {}, wipe: Date.now() }; // the keepsakes go too (wipe: so another copy can't bring them back)
+    KEEP = { refl: [], caps: [], cat: [], corr: [], del: {}, wipe: Date.now() }; // the keepsakes go too (wipe: so another copy can't bring them back)
     saveKeep();
     S = defaultState();
     S.g = S.gTotal = RESTART_G; // the starting gift again, so the shop isn't empty-handed on day one
@@ -24989,8 +25093,8 @@ let pnPos = 0, pnAnim = null, pnSel = -1;
 /* the shelves: this week first (the loose shelf), then every week before it, newest first */
 function pnWeeks() {
     const cur = weekKey(Date.now()), list = archWeeks().slice(), have = new Set(list.map(w => w.k));
-    for (const v of typeof catSeasons === "function" ? catSeasons() : []) { // (a week with only a season's folder on its shelf is a stop too)
-        const k = weekKey(seasonDays(v.s).end);
+    const extra = (typeof catSeasons === "function" ? catSeasons() : []).map(v => weekKey(seasonDays(v.s).end)).concat((KEEP.corr || []).map(r => weekKey(r.at)));
+    for (const k of extra) { // (a week with only a season's folder or letters on its shelf is a stop too)
         if (!have.has(k) && k < cur) {
             have.add(k);
             list.push({ k, n: weekNo(k), tasks: [] });
@@ -25057,8 +25161,10 @@ function pnFill(first) {
         el.scrollLeft = on.offsetLeft - el.clientWidth / 2 + on.offsetWidth / 2; // (only the row scrolls, not the card)
     $("pnMonthLine").textContent = monthSummary(cur);
     const folders = pnFolders(w.k).map(v => `<li><button type="button" class="linkbtn pnbox" data-pnf="${esc(v.s)}"><b>Folder: ${esc(seasonName(v.s))}</b></button><br><span class="sub">The season's crafts · ${esc(catCount(v))}</span></li>`).join("");
-    $("pnList").innerHTML = folders + (w.tasks.length ? w.tasks.map((t, i) => `<li><button type="button" class="linkbtn pnbox" data-pni="${i}"><b>${esc(t.t)}</b></button><br><span class="sub">${esc(new Date(t.d).toLocaleDateString("en-GB", { weekday: "short" }))} ${esc(dmy(new Date(t.d)))} · ${t.cap ? "a time capsule" : t.tag}${t.s === 8 ? " · big" : t.s === 3 ? " · medium" : ""}</span></li>`).join("") : (folders ? "" : `<li class="sub">${pnPos === 0 ? "Nothing filed yet this week." : "An empty shelf."}</li>`));
+    const letters = corrOfWeek(w.k), lf = letters.length ? `<li><button type="button" class="linkbtn pnbox" data-pnc="1"><b>Folder: correspondence, week ${w.n}</b></button><br><span class="sub">${letters.length} letter${letters.length === 1 ? "" : "s"}, in and out · tied with tape</span></li>` : "";
+    $("pnList").innerHTML = lf + folders + (w.tasks.length ? w.tasks.map((t, i) => `<li><button type="button" class="linkbtn pnbox" data-pni="${i}"><b>${esc(t.t)}</b></button><br><span class="sub">${esc(new Date(t.d).toLocaleDateString("en-GB", { weekday: "short" }))} ${esc(dmy(new Date(t.d)))} · ${t.cap ? "a time capsule" : t.tag}${t.s === 8 ? " · big" : t.s === 3 ? " · medium" : ""}</span></li>`).join("") : (folders ? "" : `<li class="sub">${pnPos === 0 ? "Nothing filed yet this week." : lf || folders ? "No boxes this week." : "An empty shelf."}</li>`));
     $("pnList").querySelectorAll("[data-pnf]").forEach(b => b.onclick = () => showCatSeason(b.dataset.pnf));
+    $("pnList").querySelectorAll("[data-pnc]").forEach(b => b.onclick = () => showCorrFolder(w.k));
     $("pnList").querySelectorAll("[data-pni]").forEach(b => b.onclick = () => {
         const t = w.tasks[+b.dataset.pni];
         pnSel = +b.dataset.pni;
@@ -25122,6 +25228,12 @@ function pnDraw(now) {
             if (lit)
                 px("#f4ecd8", fx + 1, y - fh + 4, 3, 2); // the little label
         });
+        if (corrOfWeek(w.k).length) { // the week's correspondence: a flat folder lying near the right end, tied with red tape
+            const fx = wx + ww - 32;
+            px(lit ? "#d8c49a" : "#4a3e2a", fx, y - 3, 12, 3);
+            px(lit ? "#efe0b8" : "#5a4a32", fx, y - 3, 12, 1);
+            px(lit ? "#b6343c" : "#3a1414", fx + 5, y - 3, 2, 3); // the tape
+        }
         if (n > 18 && lit)
             px("#f4ecd8", wx + ww - 10, y - 4, 2, 2);
         if (lit) { // a little brass label on the front of the shelf
@@ -27587,6 +27699,8 @@ function boot() {
     archiveCrafts(); // (last season's paintings and knits into the catalogue: catalogue.js)
     migrateCounts();
     raccEyeCleanup(); // (eyes.js)
+    corrMigrate(); // (the letters so far, into the correspondence register: post.js)
+    corrTransferNote();
     if (!S.flags.m_rental) { // the renter's chest used to come by itself: a save that already had it keeps it
         S.flags.m_rental = 1;
         if (!isNew && S.drawers && S.drawers.at && !S.b.rental)
@@ -27718,6 +27832,7 @@ setInterval(() => {
     if (actDay() !== S.lastDay) {
         S.lastDay = actDay();
         paintDayCheck(); // (easel.js: a finished painting goes off, an unfinished one carries on)
+        corrTransferNote(); // (a new week: last week's letters to the paternoster, post.js)
         archiveCrafts(); // (a new season: catalogue.js)
         autoFileOld();
         compact();
