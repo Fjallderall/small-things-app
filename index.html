@@ -24171,6 +24171,7 @@ function importSave(o) {
     compact();
 }
 let resetArm = 0;
+const RESTART_G = 100; // glimmers you get when you start over
 $("resetAll").onclick = () => {
     if (Date.now() - resetArm > 4000) {
         resetArm = Date.now();
@@ -24190,7 +24191,8 @@ $("resetAll").onclick = () => {
     rebuildFlat();
     saveArchLocal();
     S = defaultState();
-    note("We met. Again, technically.");
+    S.g = S.gTotal = RESTART_G; // a start-over gift, so the shop isn't empty-handed on day one
+    note(`We met. Again, technically. ${RESTART_G} glimmers to start with.`);
     save();
     renderContent();
     renderAll();
