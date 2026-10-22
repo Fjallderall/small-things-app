@@ -697,6 +697,7 @@ body.pixel .wxicon{width:18px;height:18px}
 .poolfind{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
 .poolfind input{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 10px;font-size:16px}
 .poolrow select{flex:1 1 240px;min-width:0;max-width:100%}
+.resetinfo ul{margin:2px 0 10px;padding-left:18px}.resetinfo li{margin:2px 0}.resetinfo p{margin:6px 0 2px}
 
 </style>
 <div class="app">
@@ -24274,15 +24275,28 @@ function importSave(o) {
     migrateCounts();
     compact();
 }
-let resetArm = 0;
 const RESTART_G = 100; // glimmers you get when you start over
+/* Start over: first a card that says what goes and what stays, with a way to save a backup first. Nothing is
+   erased until "Erase everything" is pressed; closing the card or "Keep my save" leaves all as it is */
 $("resetAll").onclick = () => {
-    if (Date.now() - resetArm > 4000) {
-        resetArm = Date.now();
-        $("resetAll").textContent = "Tap again to erase everything";
-        setTimeout(() => $("resetAll").textContent = "Start over", 4000);
-        return;
-    }
+    const pet = esc(S.settings.pet), n = openTasks().length, d = doneCount();
+    openRitual("Start over?", `This erases your save and ${pet} starts again from the beginning. It can't be undone.`,
+        `<div class="resetinfo"><p><b>Erased</b></p><ul>
+<li>Your tasks (${n} open) and everything you've finished (${d}), with the journal's weeks in the archive</li>
+<li>${pet}'s level, your glimmers and everything you've bought</li>
+<li>Paintings and knits on the walls, flowers, eyes, notes, and the residents' names</li>
+<li>Your settings and the lines you wrote or changed yourself</li>
+<li>On every device that shares this save, not just this one</li></ul>
+<p><b>Kept</b></p><ul>
+<li>The small journal's lines, time capsules and the craft catalogue (keepsakes)</li>
+<li>Any backup file you've saved</li></ul>
+<p class="sub">You start again with ${RESTART_G} glimmers. To be able to come back to this save later, save a backup first.</p></div>`,
+        [["Keep my save", "primary", closeRitual], ["Save a backup first", "", () => saveBackup()], ["Erase everything", "danger", () => {
+                closeRitual();
+                eraseAll();
+            }]]);
+};
+function eraseAll() {
     if (db && uid)
         Object.keys(ARCH).forEach(k => {
             try {
@@ -24301,8 +24315,7 @@ $("resetAll").onclick = () => {
     renderContent();
     renderAll();
     speak("Hello. I'm new. Or new again.");
-    $("resetAll").textContent = "Start over";
-};
+}
 
 /* ---------- backups as a file: the morning reminder in the task list, and the buttons in Backup ---------- */
 function backupText() {
