@@ -6679,10 +6679,8 @@ const BEH = {
                     const g = loftGeo();
                     b.tx = Math.min(b.tx, g.balR - R * .7);
                     b.up = g.rise;
-                    if ((p.ground || 0) < g.rise - 1) {
-                        Object.assign(b, routeUp(p, b.tx));
-                        b.climb = 1;
-                    }
+                    Object.assign(b, upTo(p, b.tx)); // (along the balcony if already up there)
+                    b.climb = 1;
                 }
             }
             else {
@@ -7353,7 +7351,7 @@ const BEH = {
             b.tx = clamp(sx + R * 1.25, R * 1.05, W - R * 1.05);
             b.face = -1;
             if (own("loft")) {
-                Object.assign(b, routeUp(p, b.tx));
+                Object.assign(b, upTo(p, b.tx)); // (up the stairs, or just along the balcony if Mite's already up)
                 b.ph = "up";
             }
         },
@@ -10099,7 +10097,7 @@ function startObj(kind) {
         };
         return;
     }
-    const stayUp = view === "garden" ? ["gplants", "gpin", "gpossum", "ghang"].includes(kind) : kind === "sill" && own("loft"); // (things up on the platform or balcony)
+    const stayUp = view === "garden" ? ["gplants", "gpin", "gpossum", "ghang"].includes(kind) : ["sill", "scope"].includes(kind) && own("loft"); // (things up on the platform or balcony: Mite stays up there)
     if (pet.ground > 0 && (view === "room" || view === "garden") && !stayUp) {
         pet.start("descend");
         const cur0 = { kind, shown: false, b: pet.b };
