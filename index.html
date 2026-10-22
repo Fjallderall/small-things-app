@@ -388,7 +388,7 @@ p.glimpse{font-family:var(--f-read,var(--f-body));font-size:16px;line-height:1.5
 .wk-h{font-family:var(--f-display);font-weight:700}
 .wk-shelf{flex-basis:100%;display:flex;flex-wrap:wrap;gap:3px;align-items:flex-end;padding:6px 6px 0;border-bottom:4px solid #8a6a4a;min-height:24px}
 .bx{display:inline-block;width:12px;height:9px;border-radius:2px;background:#b98b5a;position:relative}
-.bx.life{background:#8fae7a}.bx.s3{width:14px;height:12px}.bx.s8{width:18px;height:15px}
+.bx.life{background:#8fae7a}.bx.none{background:#c4b48e}.bx.s3{width:14px;height:12px}.bx.s8{width:18px;height:15px}
 .bx::after{content:"";position:absolute;left:25%;right:25%;top:42%;height:24%;background:rgba(255,255,255,.75);border-radius:1px}
 .bx.pk::before{content:"";position:absolute;right:-2px;top:-2px;width:5px;height:5px;border-radius:50%;background:#f2c14e}
 .wk ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:13.5px}
@@ -756,7 +756,7 @@ body.pixel .scopeview .mlabel .ml-credit{font-size:12px}
             <button type="button" data-v="8" aria-pressed="false">Big</button>
           </div>
           <div class="seg" id="tTag" role="group" aria-label="Area">
-            <button type="button" data-v="work" aria-pressed="true">Work</button>
+            <button type="button" data-v="work" aria-pressed="false">Work</button>
             <button type="button" data-v="life" aria-pressed="false">Life</button>
           </div>
           <label class="toggle"><input type="checkbox" id="tWeek"> This week</label>
@@ -3550,7 +3550,7 @@ function sanitizeState(raw) {
     o.hours = Array.isArray(s.hours) && s.hours.length === 24 ? s.hours.map(x => Math.max(0, num(x))) : Array(24).fill(0);
     o.streak = { n: Math.max(0, num(s.streak && s.streak.n)), last: dkey(s.streak && s.streak.last) };
     o.tasks = arr(Array.isArray(s.tasks) ? s.tasks.slice(-3000) : [], 3000).map(t => {
-        const x = { id: sid(t.id) || uidGen(), t: str(t.t, 200) || "(untitled)", s: [1, 3, 8].includes(+t.s) ? +t.s : 1, tag: t.tag === "work" ? "work" : "life", wk: !!t.wk, due: dkey(t.due), c: num(t.c, Date.now()), d: Math.max(0, num(t.d)), f: Math.max(0, num(t.f)) };
+        const x = { id: sid(t.id) || uidGen(), t: str(t.t, 200) || "(untitled)", s: [1, 3, 8].includes(+t.s) ? +t.s : 1, tag: t.tag === "work" || t.tag === "life" ? t.tag : "", wk: !!t.wk, due: dkey(t.due), c: num(t.c, Date.now()), d: Math.max(0, num(t.d)), f: Math.max(0, num(t.f)) };
         if (t.p)
             x.p = sid(t.p);
         if (t.on && dkey(t.on))
@@ -3661,7 +3661,7 @@ function sanitizeState(raw) {
         if (m.off)
             x.off = 1;
         if (Array.isArray(m.tasks))
-            x.tasks = m.tasks.slice(0, 4).filter(q => q && typeof q === "object").map(q => ({ t: str(q.t, 140), s: [1, 3, 8].includes(+q.s) ? +q.s : 1, tag: q.tag === "work" ? "work" : "life", due: dkey(q.due), added: q.added ? 1 : 0 })).filter(q => q.t);
+            x.tasks = m.tasks.slice(0, 4).filter(q => q && typeof q === "object").map(q => ({ t: str(q.t, 140), s: [1, 3, 8].includes(+q.s) ? +q.s : 1, tag: q.tag === "work" || q.tag === "life" ? q.tag : "", due: dkey(q.due), added: q.added ? 1 : 0 })).filter(q => q.t);
         return x;
     });
     o.said = arr(s.said, 40).map(x => ({ t: str(x.t, 600), at: num(x.at) }));
@@ -3986,7 +3986,7 @@ const ARCH_KEY = "mossling.arch";
 let ARCH = {}, ARCH_FLAT = [];
 function archClean(list) {
     return arr(Array.isArray(list) ? list : [], 5000).map(t => {
-        const x = { id: sid(t.id) || uidGen(), t: str(t.t, 200) || "(untitled)", s: [1, 3, 8].includes(+t.s) ? +t.s : 1, tag: t.tag === "work" ? "work" : "life", c: num(t.c), d: num(t.d), f: num(t.f) };
+        const x = { id: sid(t.id) || uidGen(), t: str(t.t, 200) || "(untitled)", s: [1, 3, 8].includes(+t.s) ? +t.s : 1, tag: t.tag === "work" || t.tag === "life" ? t.tag : "", c: num(t.c), d: num(t.d), f: num(t.f) };
         if (t.fx)
             x.fx = 1;
         if (t.cap && sid(t.cap))
@@ -4493,7 +4493,7 @@ function isWorkHours(c) {
     return c.workday && c.h >= 6 && c.h < S.settings.doneBy;
 }
 function areaRank(t, wh) {
-    return wh ? (t.tag === "work" ? 0 : 1) : (t.tag === "work" ? 1 : 0);
+    return !t.tag ? 1 : wh ? (t.tag === "work" ? 0 : 2) : (t.tag === "work" ? 2 : 0); // (no area: in between)
 }
 
 </script>
@@ -9504,7 +9504,7 @@ function isPicked(t) {
 }
 function drawBox(t, x, y, bw, dk) {
     const w = bw * (t.s === 8 ? 1.25 : t.s === 3 ? 1.05 : .85), h = bw * (t.s === 8 ? 1 : t.s === 3 ? .85 : .7);
-    cx.fillStyle = mix(t.cap ? "#7a8a92" : t.tag === "work" ? "#b98b5a" : "#8fae7a", "#2a2018", dk * .6); // (a filed time capsule is a grey tin)
+    cx.fillStyle = mix(t.cap ? "#7a8a92" : t.tag === "work" ? "#b98b5a" : t.tag === "life" ? "#8fae7a" : "#c4b48e", "#2a2018", dk * .6); // (a filed time capsule is a grey tin)
     cx.fillRect(x - w / 2, y - h, w, h);
     cx.fillStyle = "rgba(0,0,0,.16)";
     cx.fillRect(x - w / 2, y - h, w, h * .2);
@@ -22516,7 +22516,7 @@ function catchGold() {
 /*
  * render.js - The side panel: level and today meters, "next up", and the task list.
  */
-let curTab = "tasks", filter = "all", newSize = 1, newTag = "work";
+let curTab = "tasks", filter = "all", newSize = 1, newTag = "";
 function renderMeters() {
     if (nuShow && Date.now() > nuShow.until)
         hideNextUp();
@@ -22682,12 +22682,12 @@ function renderTasks() {
         if (editingId === t.id) {
             li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="eTitle" value="${esc(t.t)}" maxlength="160" aria-label="Task">
         <select id="eSize" aria-label="Size"><option value="1">Small</option><option value="3">Medium</option><option value="8">Big</option></select>
-        <select id="eTag" aria-label="Area"><option value="work">Work</option><option value="life">Life</option></select>
+        <select id="eTag" aria-label="Area"><option value="">No area</option><option value="work">Work</option><option value="life">Life</option></select>
         <input type="date" id="eDue" value="${esc(t.due)}" aria-label="Due date"><label class="toggle">Plan for <input type="date" id="eOn" value="${esc(t.on || "")}"></label><input type="time" id="eAt" value="${esc(t.at || "")}" step="300" aria-label="Time"><label class="toggle"><input type="checkbox" id="eWeek" ${t.wk ? "checked" : ""}> This week</label>
         <button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button>
         <span class="tedit-more">${!child ? `<button class="btn" type="button" data-act="split">Split into steps</button><button class="btn ai" type="button" data-act="splitai" ${aiOn() ? "" : "disabled"}>✦ Split with AI</button>` : ""}<button class="btn danger" type="button" data-act="del">Delete</button></span></form>`;
             li.querySelector("#eSize").value = String(t.s);
-            li.querySelector("#eTag").value = t.tag;
+            li.querySelector("#eTag").value = t.tag || "";
             const f = li.querySelector("form");
             f.onsubmit = e => {
                 e.preventDefault();
@@ -22758,7 +22758,7 @@ function renderTasks() {
         }
         li.innerHTML = `<button class="check" aria-label="Done: ${esc(t.t)}"></button>
       <div style="min-width:0"><button class="tname" data-act="edit" title="Edit">${esc(t.t)}</button><div class="tmeta">
-      ${isPicked(t) ? `<span class="chip sun">today</span>` : ""}${t.s > 1 ? `<span class="chip">${t.s === 3 ? "medium" : "big"}</span>` : ""}<span class="chip">${t.tag}</span>
+      ${isPicked(t) ? `<span class="chip sun">today</span>` : ""}${t.s > 1 ? `<span class="chip">${t.s === 3 ? "medium" : "big"}</span>` : ""}${t.tag ? `<span class="chip">${t.tag}</span>` : ""}
       ${d ? `<span class="chip ${d.cls}">${d.txt}</span>` : ""}${t.on ? `<span class="chip ${planInfo(t).past ? "amber" : "plan"}">${esc(planInfo(t).txt)}</span><a class="mini gcal" href="${esc(gcalUrl(t))}" target="_blank" rel="noopener noreferrer" title="Opens Google Calendar with this filled in">+ Google Calendar</a>` : ""}
       ${age > 7 * 864e5 ? `<span class="chip">waiting ${fmtAge(age)}</span>` : ""}
       <button class="weekbtn" data-act="week" aria-pressed="${t.wk}">${t.wk ? "★ this week" : "☆ this week"}</button></div></div>
@@ -22819,7 +22819,7 @@ function gcalUrl(t) {
     }
     catch (e) {
     }
-    return "https://calendar.google.com/calendar/render?" + new URLSearchParams({ action: "TEMPLATE", text: t.t, dates, details: `Planned in ${S.settings.app || "Small Things"} (${t.tag}).`, ...(tz ? { ctz: tz } : {}) }).toString();
+    return "https://calendar.google.com/calendar/render?" + new URLSearchParams({ action: "TEMPLATE", text: t.t, dates, details: `Planned in ${S.settings.app || "Small Things"}${t.tag ? ` (${t.tag})` : ""}.`, ...(tz ? { ctz: tz } : {}) }).toString();
 }
 function renderAhead() {
     const box = $("aheadBox");
@@ -22839,7 +22839,7 @@ function renderAhead() {
             const d = new Date(day + "T12:00");
             html += `<h4>${esc(d.toLocaleDateString("en-GB", { weekday: "long" }) + " " + dmy(d))}</h4>`;
         }
-        html += `<div class="arow"><span class="atime">${t.at ? esc(t.at) : "day"}</span><span class="atitle">${esc(t.t)}<small>${t.tag}${t.s > 1 ? " · " + (t.s === 3 ? "medium" : "big") : ""}</small></span><span class="aacts"><a class="mini" href="${esc(gcalUrl(t))}" target="_blank" rel="noopener noreferrer" title="Opens Google Calendar with this filled in">+ Google Calendar</a><button class="mini" data-ae="${esc(t.id)}">Edit</button><button class="mini" data-an="${esc(t.id)}" title="Move it to today's list">Now</button></span></div>`;
+        html += `<div class="arow"><span class="atime">${t.at ? esc(t.at) : "day"}</span><span class="atitle">${esc(t.t)}<small>${t.tag || ""}${t.s > 1 ? " · " + (t.s === 3 ? "medium" : "big") : ""}</small></span><span class="aacts"><a class="mini" href="${esc(gcalUrl(t))}" target="_blank" rel="noopener noreferrer" title="Opens Google Calendar with this filled in">+ Google Calendar</a><button class="mini" data-ae="${esc(t.id)}">Edit</button><button class="mini" data-an="${esc(t.id)}" title="Move it to today's list">Now</button></span></div>`;
     }
     $("aheadList").innerHTML = html;
 }
@@ -23656,20 +23656,21 @@ $("subtabs").addEventListener("click", e => {
         showPane(b.dataset.pane);
 });
 /* add form */
-function segInit(id, cb) {
+function segInit(id, cb, optional) { // optional: a second tap on the pressed one lets go of it (nothing chosen)
     $(id).querySelectorAll("button").forEach(b => b.onclick = () => {
-        $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
-        cb(b.dataset.v);
+        const off = optional && b.getAttribute("aria-pressed") === "true";
+        $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", !off && x === b));
+        cb(off ? "" : b.dataset.v);
     });
 }
 segInit("tSize", v => newSize = +v);
-segInit("tTag", v => newTag = v);
+segInit("tTag", v => newTag = v, true);
 function setSeg(id, v) {
     $(id).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === String(v)));
 }
+/* the area of something new: only what you chose (#work, #life, or the buttons); otherwise none */
 function ctxTag() {
-    const c = ctx();
-    return c.workday && c.h >= 6 && c.h < S.settings.doneBy ? "work" : "life";
+    return "";
 }
 function resetAdd() {
     newSize = 1;
@@ -24541,7 +24542,7 @@ function pnDraw(now) {
         const n = w.tasks.length, per = Math.min(n, 18), pitchB = (ww - 16) / Math.max(per, 6);
         w.tasks.slice(0, 18).forEach((t, i) => {
             const bw = t.s === 8 ? 6 : t.s === 3 ? 5 : 4, bh = t.s === 8 ? 6 : t.s === 3 ? 5 : 4, bx = wx + 8 + i * pitchB;
-            const c = t.cap ? "#7a8a92" : t.tag === "work" ? "#b98b5a" : "#8fae7a";
+            const c = t.cap ? "#7a8a92" : t.tag === "work" ? "#b98b5a" : t.tag === "life" ? "#8fae7a" : "#c4b48e";
             px(lit ? c : "#3a3028", bx, y - bh, bw, bh);
             if (lit) {
                 px("#f4ecd8", bx + 1, y - bh + 1, bw - 2, 1);
@@ -24815,7 +24816,7 @@ function taskDigest() {
     const today = dayKey();
     return openTasks().slice(0, 40).map(t => {
         const d = dueInfo(t);
-        return `- ${dq(t.t, 160)} [${t.s === 1 ? "small" : t.s === 3 ? "medium" : "big"}, ${t.tag}${t.wk ? ", this week" : ""}${d ? ", " + d.txt : ""}, open ${fmtAge(Date.now() - t.c)}]`;
+        return `- ${dq(t.t, 160)} [${t.s === 1 ? "small" : t.s === 3 ? "medium" : "big"}, ${t.tag || "no area"}${t.wk ? ", this week" : ""}${d ? ", " + d.txt : ""}, open ${fmtAge(Date.now() - t.c)}]`;
     }).join("\n") || "(no open tasks)";
 }
 
@@ -25913,7 +25914,7 @@ async function sendChat(text, useAI) {
             S.followups.push({ t: fu.text.trim().slice(0, 220), on: fu.on, said: 0 });
             msg.fu = fu.on;
         }
-        msg.tasks = (Array.isArray(r.tasks) ? r.tasks : []).slice(0, 4).filter(x => x && !unsafe(x.title)).map(x => ({ t: String(x && x.title || "").trim().slice(0, 140), s: x && x.size === "big" ? 8 : x && x.size === "medium" ? 3 : 1, tag: x && x.area === "work" ? "work" : "life" })).filter(x => x.t);
+        msg.tasks = (Array.isArray(r.tasks) ? r.tasks : []).slice(0, 4).filter(x => x && !unsafe(x.title)).map(x => ({ t: String(x && x.title || "").trim().slice(0, 140), s: x && x.size === "big" ? 8 : x && x.size === "medium" ? 3 : 1, tag: x && (x.area === "work" || x.area === "life") ? x.area : "" })).filter(x => x.t);
         let nl = 0;
         const pools = CHAT_POOLS.concat(strangeness() > 0 ? ["uncanny"] : []);
         if (r.lines && typeof r.lines === "object" && !Array.isArray(r.lines))
@@ -26456,7 +26457,7 @@ function renderArchive() {
     $("archive").innerHTML = [...weeks.entries()].map(([k, ts], i) => {
         const a = new Date(k + "T12:00"), b = new Date(a);
         b.setDate(b.getDate() + 6);
-        const boxes = ts.slice().sort((x, y) => x.d - y.d).map(t => `<i class="bx ${t.tag === "life" ? "life" : ""} s${t.s}" title="${esc(t.t)}"></i>`).join("");
+        const boxes = ts.slice().sort((x, y) => x.d - y.d).map(t => `<i class="bx ${t.tag === "life" ? "life" : t.tag ? "" : "none"} s${t.s}" title="${esc(t.t)}"></i>`).join("");
         return `<details class="wk"${i === 0 ? " open" : ""}><summary><span class="wk-h">Week ${weekNo(a)}${i === 0 ? " · this week" : ""}</span><span class="sync">${dmy(a)} – ${dmy(b)} · ${ts.length} box${ts.length === 1 ? "" : "es"}</span><span class="wk-shelf" aria-hidden="true">${boxes}</span></summary>
       <ul>${ts.map(t => `<li><span>${esc(t.t)}</span><span class="sync">${new Date(t.d).toLocaleDateString("en-GB", { weekday: "short" })} ${hhmm(new Date(t.d))}</span></li>`).join("")}</ul></details>`;
     }).join("") || `<p class="sub">No boxes yet. Finish something and it'll be the first one on the shelf.</p>`;
