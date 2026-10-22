@@ -693,6 +693,11 @@ body.pixel .wxicon{width:18px;height:18px}
 .bkwarn{margin:8px 0 0;padding:8px 10px;border-left:3px solid #c98a2e;background:rgba(201,138,46,.1);border-radius:0 6px 6px 0;font-size:13.5px;line-height:1.45;color:var(--ink)}
 .bkwarn.small{margin:4px 0 6px;padding:5px 8px;font-size:12.5px}
 
+/* the line pools: a search over the pools' names, what they're for and their lines (collection.js, poolFilter) */
+.poolfind{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.poolfind input{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 10px;font-size:16px}
+.poolrow select{flex:1 1 240px;min-width:0;max-width:100%}
+
 </style>
 <div class="app">
   <section class="world" aria-label="Pet">
@@ -903,7 +908,11 @@ body.pixel .wxicon{width:18px;height:18px}
       <div><h2>AI or not, every time</h2><p class="sub">Wherever AI could help (Ask, Split, Talk, new lines) there are two buttons. The plain one runs on Mite's own lines, on this device. The dashed ✦ one asks Claude, shows roughly what it costs, and files what it writes into the lines below, so the offline library keeps growing and you need AI less over time.</p></div>
 
       <div><h2>Lines</h2><p class="sub">Every pool is one entry per line. Add as many as you like; your pet picks lines that fit the moment and avoids repeating itself.</p></div>
-      <div class="row">
+      <div class="poolfind">
+        <input type="search" id="poolFind" placeholder="Find a pool or a line" aria-label="Find a pool or a line" aria-controls="poolSel" aria-describedby="poolFindN" autocomplete="off" spellcheck="false" enterkeyhint="search">
+        <span class="sync" id="poolFindN" aria-live="polite"></span>
+      </div>
+      <div class="row poolrow">
         <select id="poolSel" aria-label="Pool"></select>
         <span class="sync" id="poolInfo"></span>
       </div>
@@ -23535,6 +23544,8 @@ $("poolGen").onclick = async () => {
     if (!aiOn())
         return;
     const k = $("poolSel").value;
+    if (!k)
+        return toast("Pick a pool first");
     const b = $("poolGen");
     b.disabled = true;
     b.textContent = "Writing…";
@@ -23618,10 +23629,8 @@ function renderContent() {
     };
     days($("setWork"), st.work, "w");
     days($("setOffice"), st.office, "o");
-    const sel = $("poolSel");
-    if (!sel.options.length) {
-        sel.innerHTML = Object.keys(POOL_INFO).map(k => `<option value="${k}">${k} — ${esc(POOL_INFO[k])}</option>`).join("");
-    }
+    if (!$("poolSel").options.length)
+        poolFilter();
     loadPoolEditor();
     $("persona").value = persona();
     renderAiLog();
@@ -23632,6 +23641,65 @@ function loadPoolEditor() {
     const k = $("poolSel").value;
     $("poolText").value = pool(k).join("\n");
     $("poolInfo").textContent = (Array.isArray(S.content.pools[k]) ? "edited · " : "default · ") + pool(k).length + " lines";
+    poolShowHit(false);
+}
+/* Finding a pool among the hundred-odd: every word typed has to appear in the pool's name ("task done" finds
+   task_done), in what it's for, or (for a line) in that line. The list shrinks to the pools that match; one found by
+   its lines says how many. The pool you're editing stays in the list while it has changes you haven't saved, and
+   isn't swapped out from under you. Enter (or picking a pool) goes to the first matching line; Escape clears */
+const poolDirty = () => { const k = $("poolSel").value; return !!k && $("poolText").value !== pool(k).join("\n"); };
+function poolQuery() {
+    return ($("poolFind") ? $("poolFind").value : "").toLowerCase().split(/\s+/).filter(Boolean);
+}
+function poolMatches(q) {
+    const has = t => q.every(w => t.includes(w));
+    return Object.keys(POOL_INFO).map(k => {
+        if (!q.length)
+            return { k, by: "" };
+        if (has((k.replace(/_/g, " ") + " " + k + " " + POOL_INFO[k]).toLowerCase()))
+            return { k, by: "name" };
+        const n = pool(k).filter(l => has(String(l).toLowerCase())).length;
+        return n ? { k, by: "lines", n } : null;
+    }).filter(Boolean);
+}
+function poolFilter() {
+    const sel = $("poolSel"), cur = sel.value, q = poolQuery(), hits = poolMatches(q), dirty = poolDirty();
+    const list = dirty && cur && !hits.some(h => h.k === cur) ? [{ k: cur, by: "kept" }].concat(hits) : hits;
+    sel.innerHTML = list.map(h => `<option value="${h.k}">${h.k}${h.by === "lines" ? ` (${h.n} line${h.n === 1 ? "" : "s"})` : h.by === "kept" ? " (unsaved)" : ""} — ${esc(POOL_INFO[h.k])}</option>`).join("");
+    sel.disabled = !list.length;
+    const out = $("poolFindN");
+    if (out) {
+        const byL = hits.filter(h => h.by === "lines").length;
+        out.textContent = !q.length ? `${hits.length} pools` : !hits.length ? "Nothing matches" : `${hits.length} pool${hits.length === 1 ? "" : "s"}${byL ? `, ${byL} by ${byL === 1 ? "a line" : "their lines"}` : ""}`;
+    }
+    if (list.some(h => h.k === cur))
+        sel.value = cur;
+    if (!list.length) {
+        if (!dirty) {
+            $("poolText").value = "";
+            $("poolInfo").textContent = "";
+        }
+        return;
+    }
+    if (sel.value !== cur && !dirty) // the one you were on is filtered out: show the first that matches
+        loadPoolEditor();
+    else
+        poolShowHit(false);
+}
+/* the first line in the open pool that matches the search: selected and scrolled to (focus: put the cursor there) */
+function poolShowHit(focus) {
+    const q = poolQuery(), ta = $("poolText");
+    if (!q.length || !ta)
+        return false;
+    const lines = ta.value.split("\n"), i = lines.findIndex(l => q.every(w => l.toLowerCase().includes(w)));
+    if (i < 0)
+        return false;
+    const start = lines.slice(0, i).reduce((a, l) => a + l.length + 1, 0);
+    if (focus)
+        ta.focus();
+    ta.setSelectionRange(start, start + lines[i].length);
+    ta.scrollTop = Math.max(0, i * (parseFloat(getComputedStyle(ta).lineHeight) || 19) - ta.clientHeight / 3);
+    return true;
 }
 /* the gallery: today's painting on the easel, then every painting sent off, newest first */
 function renderGallery() {
@@ -24051,6 +24119,20 @@ $("saveSettings").onclick = () => {
     toast("Settings saved");
     afterChange();
 };
+$("poolFind").oninput = () => poolFilter();
+$("poolFind").onkeydown = e => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        if (!poolShowHit(true) && !$("poolSel").disabled)
+            $("poolSel").focus();
+    }
+    else if (e.key === "Escape" && $("poolFind").value) {
+        e.preventDefault();
+        e.stopPropagation(); // (only the search, not the panel)
+        $("poolFind").value = "";
+        poolFilter();
+    }
+};
 $("poolSel").onchange = () => {
     loadPoolEditor();
     if (pendingGen && pendingGen.k !== $("poolSel").value) {
@@ -24060,6 +24142,8 @@ $("poolSel").onchange = () => {
 };
 $("poolSave").onclick = () => {
     const k = $("poolSel").value;
+    if (!k)
+        return toast("Pick a pool first");
     S.contentAt = Date.now();
     S.content.pools[k] = $("poolText").value.split("\n").map(s => s.trim()).filter(Boolean);
     S.flags.edit = 1;
@@ -24069,6 +24153,8 @@ $("poolSave").onclick = () => {
 };
 $("poolTest").onclick = () => {
     const k = $("poolSel").value;
+    if (!k)
+        return;
     const lines = $("poolText").value.split("\n").filter(s => s.trim());
     if (!lines.length)
         return;
@@ -24089,6 +24175,8 @@ $("poolTest").onclick = () => {
 };
 $("poolReset").onclick = () => {
     const k = $("poolSel").value;
+    if (!k)
+        return toast("Pick a pool first");
     S.contentAt = Date.now();
     delete S.content.pools[k];
     loadPoolEditor();
