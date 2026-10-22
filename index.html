@@ -662,6 +662,25 @@ body.pixel .mlabel .ml-credit{font-size:12px;letter-spacing:.04em}
 .scopeview .mlabel .ml-credit,body.pixel .scopeview .mlabel .ml-credit{margin-top:4px;padding-top:4px;border-top:1px solid #d8d0bf;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#6a6252}
 body.pixel .scopeview .mlabel .ml-credit{font-size:12px}
 .mlabel .ml-date{white-space:nowrap}
+/* the craft catalogue (catalogue.js) */
+.catseason{border-top:1px solid var(--line);padding:6px 0}
+.catseason summary{display:flex;justify-content:space-between;gap:8px;cursor:pointer;align-items:baseline}
+.catrows{list-style:none;margin:6px 0 0;padding:0}
+.catrow{display:grid;grid-template-columns:62px 1fr;gap:0 8px;width:100%;text-align:left;background:none;border:0;border-bottom:1px dashed var(--line);padding:7px 2px;color:inherit;font:inherit;cursor:pointer;min-height:44px}
+.catrow:hover .cattitle{text-decoration:underline}
+.catno{grid-row:span 2;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.cattitle{font-size:14px}
+.catmeta{font-size:12px;color:var(--muted)}
+.catitem{display:flex;flex-direction:column;align-items:center;gap:10px}
+.catitem canvas{width:min(240px,62vw);height:auto;image-rendering:pixelated;border:6px solid #b8864a;border-radius:4px;background:#f7f1e3}
+.catitem canvas.catknit{width:min(140px,40vw);border-color:#c9b38a}
+.catitem .mlabel{background:#f6f3ea;border:1px solid #d8d0bf;padding:8px 12px 9px;min-width:min(200px,60vw)}
+/* the dried flower book: a fold per month (flowers.js) */
+.fbookmonths{max-height:56vh;overflow:auto}
+.fmonth{border-bottom:1px solid rgba(58,44,34,.25);padding:6px 0}
+.fmonth summary{cursor:pointer;display:flex;flex-direction:column;gap:1px;min-height:40px;justify-content:center}
+.fmonth summary b{font-style:italic}
+.fmonth .fbooklist{max-height:none;overflow:visible}
 
 </style>
 <div class="app">
@@ -818,11 +837,13 @@ body.pixel .scopeview .mlabel .ml-credit{font-size:12px}
     </div>
 
     <div class="pane" id="tab-gallery" role="tabpanel" hidden>
-      <div><h2>Crafts</h2><p class="sub">Everything <span class="pn">Mite</span> has made.</p></div>
+      <div><h2>Crafts</h2><p class="sub">Everything <span class="pn">Mite</span> has made. <span id="craftSeason"></span></p></div>
       <details class="shopsec colsec" data-sec="craft-paint" open><summary><h3>Paintings</h3><span class="seccount" id="cnt-craft-paint"></span></summary><p class="sub"><span class="pn">Mite</span> finishes one painting a day. The next morning it goes off to a friend; this is where each one went.</p>
         <div class="gallery" id="gallery"></div></details>
       <details class="shopsec colsec" data-sec="craft-knit" open><summary><h3>Knitted things</h3><span class="seccount" id="cnt-craft-knit"></span></summary><p class="sub">One project at a time, a few evenings each.</p>
         <div class="knits" id="knitList"></div></details>
+      <details class="shopsec colsec" data-sec="craft-cat" open><summary><h3>Catalogue</h3><span class="seccount" id="cnt-craft-cat"></span></summary><p class="sub">Every season's crafts, filed when the next season begins. Tap one to see it. The season's folder is in the closet in the archive too.</p>
+        <div id="catList"></div></details>
     </div>
 
     <div class="pane" id="tab-notebook" role="tabpanel" hidden>
@@ -2340,22 +2361,22 @@ const DEF = {
             "Someone pinned this up: {quote}. I think it was you. Good choice.",
         ],
         flowers: [
-            "Lavender | #a77cb8 | herb | Dried from the old herb beam. Still smells of summer.",
+            "Lavender | #a77cb8 | spike | Dried from the old herb beam. Still smells of summer.",
             "Sage | #8c9a6a | herb | Grey-green and soft. Good for clearing a room of bad moods.",
             "Chamomile | #fbf1d9 | daisy | Little suns. They smell like a cup of tea about to happen.",
             "Daisies | #fbf1d9 | daisy | The plainest flower and the most cheerful. No notes.",
             "[spring] Tulips | #df8a3a | tulip | Three tulips leaning in different directions, like they're arguing.",
-            "[summer] Cornflowers | #52709c | daisy | Bluer than the sky, on a good day. On a bad day they help.",
+            "[summer] Cornflowers | #52709c | star | Bluer than the sky, on a good day. On a bad day they help.",
             "[summer] Poppies | #b8592f | poppy | Papery and loud. They'll drop their petals by Thursday, on purpose.",
             "[summer] Sweet peas | #e3a0b2 | bell | They smell like a grandmother's garden. Any grandmother's.",
-            "Forget-me-nots | #7fa2c8 | sprig | Tiny and blue. Hard to forget, which is the point.",
+            "Forget-me-nots | #7fa2c8 | cluster | Tiny and blue. Hard to forget, which is the point.",
             "[spring] Snowdrops | #fbf1d9 | bell | The first ones out. Very brave for such small heads.",
             "[autumn] Heather | #a77cb8 | sprig | From the heath. It brought a bit of wind in with it.",
             "[autumn] Marigolds | #df8a3a | daisy | Orange enough to warm your hands on.",
-            "Cow parsley | #ecd6ad | sprig | Lace from the verge. It sheds a little. It can't help it.",
-            "[winter] Holly and ivy | #8c3a2c | bud | Prickly and green, with a few red berries for courage.",
-            "Foxgloves | #a77cb8 | bell | Lovely to look at. Not for tea. Never for tea.",
-            "Wild roses | #e3a0b2 | bud | From a hedge that's been there longer than the road.",
+            "Cow parsley | #ecd6ad | cluster | Lace from the verge. It sheds a little. It can't help it.",
+            "[winter] Holly and ivy | #c0392b | berry | Prickly and green, with a few red berries for courage.",
+            "Foxgloves | #b86fa8 | spike | Lovely to look at. Not for tea. Never for tea.",
+            "Wild roses | #e3a0b2 | cup | From a hedge that's been there longer than the road.",
         ],
         flowers_odd: [
             "Moonpoppy | #b5d0e6 | poppy glow night | It closes when you look straight at it. Out of the corner of your eye, it's always open.",
@@ -3954,18 +3975,29 @@ function loadArchLocal() {
  * so nothing trims them). saveSoon() is what everything else calls after a change.
  */
 const KEEP_KEY = "mossling.keep";
-let KEEP = { refl: [], caps: [], del: {} }, keepDirty = false;
+let KEEP = { refl: [], caps: [], cat: [], del: {} }, keepDirty = false;
 function cleanKeep(raw) {
-    const s = cleanJSON(raw) || {}, o = { refl: [], caps: [], del: {} };
+    const s = cleanJSON(raw) || {}, o = { refl: [], caps: [], cat: [], del: {} };
     o.refl = arr(s.refl, 20000).map(r => ({ id: sid(r.id) || uidGen(), at: num(r.at, Date.now()), text: str(r.text, 1000), u: num(r.u, num(r.at)) })).filter(r => r.text);
     o.caps = arr(s.caps, 2000).map(c => ({ id: sid(c.id) || uidGen(), made: num(c.made, Date.now()), open: dkey(c.open) || dayKey(), text: str(c.text, 3000), opened: Math.max(0, num(c.opened)),
         snap: { done: Math.max(0, num(c.snap && c.snap.done)), lvl: Math.max(1, num(c.snap && c.snap.lvl, 1)), open: Math.max(0, num(c.snap && c.snap.open)) } })).filter(c => c.text);
+    o.cat = arr(s.cat, 20000).map(cleanCat).filter(Boolean); // the craft catalogue (catalogue.js)
     for (const k of Object.keys(s.del && typeof s.del === "object" ? s.del : {}).slice(0, 3000))
         o.del[str(k, 40)] = num(s.del[k]);
     return o;
 }
+/* one record of the craft catalogue: a painting (rebuilt from its day) or a knit (item, yarns, pattern) */
+function cleanCat(r) {
+    if (!r || typeof r !== "object" || !/^\d{4}-[1-4]$/.test(String(r.s)))
+        return null;
+    if (r.t === "p")
+        return dkey(r.day) ? { s: r.s, t: "p", day: dkey(r.day), to: str(r.to, 80), by: r.by === "post" ? "post" : "snail", at: num(r.at) } : null;
+    if (r.t === "k" && typeof KNIT_ITEMS !== "undefined" && KNIT_ITEMS.some(i => i.id === r.item))
+        return { s: r.s, t: "k", item: r.item, c1: yarnOf(r.c1).id, c2: yarnOf(r.c2).id, pat: KNIT_PATTERNS.includes(r.pat) ? r.pat : "plain", at: num(r.at) };
+    return null;
+}
 function mergeKeep(a, b) {
-    const o = { refl: [], caps: [], del: {} };
+    const o = { refl: [], caps: [], cat: [], del: {} };
     for (const k of new Set([...Object.keys(a.del || {}), ...Object.keys(b.del || {})]))
         o.del[k] = Math.max(num((a.del || {})[k]), num((b.del || {})[k]));
     const m = new Map();
@@ -3981,6 +4013,11 @@ function mergeKeep(a, b) {
         cm.set(c.id, p ? Object.assign({}, c, { opened: Math.max(num(p.opened), num(c.opened)) }) : c);
     }
     o.caps = [...cm.values()].filter(c => !o.del[c.id]).sort((x, y) => x.made - y.made);
+    const ck = r => r.t === "p" ? "p" + r.day : "k" + r.at + r.item, cat = new Map(); // (the catalogue only grows: records are never changed)
+    for (const r of [...(a.cat || []), ...(b.cat || [])])
+        if (!cat.has(ck(r)))
+            cat.set(ck(r), r);
+    o.cat = [...cat.values()];
     return o;
 }
 function loadKeepLocal() {
@@ -17852,7 +17889,7 @@ function drawSnail(dk) {
         drawPainting(cx, x - R * .19, y - R * .59, R * .28, R * .22, S.paint.sent || actDay(), 1);
     }
     // a knitted snail cosy, once Mite has made one
-    const cosy = (S.knits || []).filter(k => k.item === "cosy").slice(-1)[0];
+    const cosy = allKnits().filter(k => k.item === "cosy").slice(-1)[0];
     if (cosy)
         drawKnitPiece(cx, cosy, 1, x - R * .04 * snailDir, y - R * .3, R * .42);
 }
@@ -17877,7 +17914,7 @@ function drawSnailInBed() {
         cx.stroke();
         cx.fillStyle = "#4a3020";
         cx.fillRect(x + R * .27, y - R * .04, R * .07, 1.5); // eye, closed
-        const cosy = (S.knits || []).filter(k => k.item === "cosy").slice(-1)[0];
+        const cosy = allKnits().filter(k => k.item === "cosy").slice(-1)[0];
         if (cosy)
             drawKnitPiece(cx, cosy, 1, x, y - R * .14, R * .4);
     });
@@ -18908,7 +18945,7 @@ document.addEventListener("keydown", e => {
  *   S.flowerBook every flower so far, first time it came
  */
 let flowerCard = null, flowerHit = null, fbookHit = null, flowerCheckAt = 0, fbookOut = false; // fbookOut: Mite has the book in the chair
-const FLOWER_SHAPES = ["daisy", "tulip", "sprig", "bell", "poppy", "bud", "herb"];
+const FLOWER_SHAPES = ["daisy", "tulip", "sprig", "bell", "poppy", "bud", "herb", "star", "spike", "cluster", "cup", "berry"];
 function parseFlower(text, odd) {
     const [n, c = "", look = "", note = ""] = String(text).split("|").map(x => x.trim());
     const toks = look.toLowerCase().split(/\s+/).filter(Boolean);
@@ -18979,19 +19016,33 @@ function drawVase(dk, t) {
     const v = S.vase, { x, y } = vasePos(), q = PX, vw = Math.max(q * 3, Math.round(R * .2 / q) * q), vh = Math.max(q * 4, Math.round(R * .26 / q) * q);
     const vx = Math.round(x / q) * q - vw / 2;
     if (v) { // the stems and the flowers' heads
-        const n = 3, col = mix(v.c, "#1a1418", dk * .6), stem = mix("#4f7d3c", "#16231a", dk * .6), odd = v.odd;
+        const n = 3, stem = mix("#4f7d3c", "#16231a", dk * .6), odd = v.odd, hv = k => hash01(String(v.n) + k);
         for (let i = 0; i < n; i++) {
-            const sx = vx + vw / 2 + (i - 1) * q * 1.5, sy = y - vh - R * (.2 + (i % 2) * .08) - Math.sin(t * .8 + i) * q * .3;
+            const sx = vx + vw / 2 + (i - 1) * q * 1.5, sy = y - vh - R * (.2 + (i % 2) * .08 + hv("h" + i) * .06) - Math.sin(t * .8 + i) * q * .3, X = Math.round(sx / q) * q;
+            const tone = (hv("t" + i) - .5) * .5, col = mix(tone > 0 ? mix(v.c, "#ffffff", tone) : mix(v.c, "#000000", -tone), "#1a1418", dk * .6); // (each head a little different)
             cx.fillStyle = stem;
-            cx.fillRect(Math.round(sx / q) * q, sy, q, y - vh - sy + q);
+            cx.fillRect(X, sy, q, y - vh - sy + q);
             cx.fillStyle = col;
-            if (/sprig|herb/.test(v.s))
-                for (let k = 0; k < 3; k++)
-                    cx.fillRect(Math.round(sx / q) * q + (k % 2 ? q : -q), sy + k * q, q, q);
+            if (/sprig|herb|spike/.test(v.s)) // florets up the stem
+                for (let k = 0; k < 4; k++)
+                    cx.fillRect(X + (k % 2 ? q : -q) * (/spike/.test(v.s) ? .5 : 1), sy + k * q, q, q);
+            else if (/cluster/.test(v.s)) { // a flat lacy head
+                cx.fillRect(X - q * 2, sy, q, q);
+                cx.fillRect(X, sy - q, q, q);
+                cx.fillRect(X + q * 2, sy, q, q);
+                cx.fillRect(X - q, sy - q, q, q);
+                cx.fillRect(X + q, sy - q, q, q);
+            }
+            else if (/berry/.test(v.s)) {
+                cx.fillRect(X - q, sy, q, q);
+                cx.fillRect(X + q, sy - q, q, q);
+                cx.fillStyle = mix("#4f7d3c", "#16231a", dk * .6);
+                cx.fillRect(X - q * 2, sy - q, q * 2, q);
+            }
             else {
-                cx.fillRect(Math.round(sx / q) * q - q, sy - q, q * 3, q * 2);
-                cx.fillStyle = mix(/daisy/.test(v.s) ? "#f2c14e" : v.c, "#1a1418", dk * .5);
-                cx.fillRect(Math.round(sx / q) * q, sy - q, q, q);
+                cx.fillRect(X - q, sy - q, q * 3, q * 2);
+                cx.fillStyle = mix(/daisy|star/.test(v.s) ? "#f2c14e" : mix(v.c, "#ffffff", .3), "#1a1418", dk * .5);
+                cx.fillRect(X, sy - q, q, q);
             }
         }
         if (odd && Math.random() < .02) // strange ones sparkle a little
@@ -19086,13 +19137,25 @@ function flowerFrame(now) {
     px("#b5d0e6", 24, 31, 1, 9);
     px("#52709c", 22, 41, 12, 1);
     // stems and heads
-    const heads = [[18, 12], [28, 8], [37, 13], [23, 16], [33, 18]];
+    const heads = [[18, 12], [28, 8], [37, 13], [23, 16], [33, 18]], shape = fx.find(f => FLOWER_SHAPES.includes(f)) || "daisy", hv = k => hash01(v.n + k);
     heads.forEach(([hx, hy], i) => {
         const sway = Math.round(Math.sin(t * .9 + i) * .6), x = hx + sway, y = hy + lift;
         for (let yy = y + 2; yy < 30; yy++)
             px("#4f7d3c", x + Math.round((28 - x) * (yy - y) / (30 - y) * .5), yy);
-        const c = v.c, dark = mix(c, "#000000", .3), lite = mix(c, "#ffffff", .35);
-        flowerHead(px, x, y, fx.find(f => FLOWER_SHAPES.includes(f)) || "daisy", c, dark, lite);
+        if (i % 2 && hv("leaf" + i) < .7) { // a leaf partway down some of the stems
+            const ly = y + 6 + Math.floor(hv("ly" + i) * 5), lx = x + Math.round((28 - x) * (ly - y) / (30 - y) * .5), side = hv("ls" + i) < .5 ? -1 : 1;
+            px("#5f9448", lx + side, ly, 2 * side > 0 ? 2 : 1, 1);
+            px("#5f9448", lx + side * 2, ly - 1, 1, 1);
+        }
+        // no two heads quite the same: a little lighter or darker, and now and then one still in bud
+        const tone = (hv("t" + i) - .5) * .5, c = tone > 0 ? mix(v.c, "#ffffff", tone) : mix(v.c, "#000000", -tone), dark = mix(c, "#000000", .3), lite = mix(c, "#ffffff", .35);
+        const bud = i >= 3 && hv("b" + i) < .45 && !/sprig|herb|cluster|berry|spike/.test(shape);
+        if (bud) {
+            px(mix(c, "#4f7d3c", .45), x - 1, y - 1, 2, 3);
+            px(lite, x, y - 1, 1, 1);
+        }
+        else
+            flowerHead(px, x, y, shape, c, dark, lite);
         if (fx.includes("eye") && i === 1) { // it's looking at you
             const blink = (t % 3.7) < .15;
             px("#fbf1d9", x - 1, y - 1, 3, blink ? 1 : 2);
@@ -19140,6 +19203,38 @@ function flowerHead(px, x, y, s, c, dark, lite) {
         px(dark, x - 1, y, 3, 1);
         px("#120c0a", x, y, 1, 1);
     }
+    else if (s === "star") { // five pointed petals round a dark eye (borage, cornflowers)
+        px(c, x, y - 2, 1, 2);
+        px(c, x - 2, y - 1, 2, 1);
+        px(c, x + 1, y - 1, 2, 1);
+        px(c, x - 2, y + 1, 1, 2);
+        px(c, x + 2, y + 1, 1, 2);
+        px(lite, x - 1, y, 3, 1);
+        px(dark, x, y, 1, 1);
+    }
+    else if (s === "spike") { // a spire of little florets up the top of the stem (lavender, foxgloves)
+        for (let k = 0; k < 5; k++)
+            px(k % 2 ? c : dark, x - (k % 2), y - 4 + k * 1.4, k % 2 ? 2 : 1, 1);
+        px(lite, x, y - 5, 1, 1);
+    }
+    else if (s === "cluster") { // lace: a flat head of tiny dots (cow parsley, forget-me-nots)
+        for (const [dx, dy] of [[-3, 0], [-2, -1], [-1, -2], [0, -1], [1, -2], [2, -1], [3, 0], [-1, 0], [1, 0], [0, -3]])
+            px((dx + dy) % 2 ? c : lite, x + dx, y + dy, 1, 1);
+    }
+    else if (s === "cup") { // layered petals, a cup open at the top (roses, ranunculus)
+        px(dark, x - 2, y - 1, 5, 3);
+        px(c, x - 2, y - 2, 2, 2);
+        px(c, x + 1, y - 2, 2, 2);
+        px(lite, x - 1, y - 1, 3, 1);
+        px(c, x - 1, y + 1, 3, 1);
+    }
+    else if (s === "berry") { // a few round berries and a pointed leaf (holly, rowan)
+        px("#4f7d3c", x - 3, y - 2, 3, 1);
+        px("#4f7d3c", x - 2, y - 3, 1, 3);
+        for (const [dx, dy] of [[0, 0], [2, -1], [1, 1]])
+            px(c, x + dx, y + dy, 1, 1);
+        px(lite, x, y, 1, 1);
+    }
     else { // bud: round, with a curl of light
         px(dark, x - 1, y - 2, 3, 5);
         px(dark, x - 2, y - 1, 5, 3);
@@ -19157,13 +19252,15 @@ function drawPressed(cv, f) {
     px("#f1e6cc", 0, 0, w, h); // the page
     px("#e2d4b4", 0, 0, 1, h);
     const c0 = /^#[0-9a-f]{6}$/i.test(f.c) ? f.c : "#e8a0b0", c = mix(c0, "#a08060", .25), dark = mix(c0, "#3a2a20", .45), lite = mix(c0, "#fff6e0", .35), stem = "#6a8a4a";
-    const hx = w * .58, hy = h * .32;
-    for (let k = 0; k < 13; k++) // a stem, drawn diagonally across the page
-        px(stem, hx - k * .55, hy + 2 + k);
-    px("#7a9a56", hx - 4, hy + 7, 3, 1); // two leaves
-    px("#7a9a56", hx - 5, hy + 8, 2, 1);
-    px("#7a9a56", hx - 3, hy + 11, 3, 1);
-    px("#7a9a56", hx - 1, hy + 12, 2, 1);
+    const hv = k => hash01(String(f.n) + k), lean = hv("l") < .5 ? -1 : 1, hx = w * (lean < 0 ? .58 : .42) + Math.round((hv("x") - .5) * 3), hy = h * (.26 + hv("y") * .1);
+    const bend = .35 + hv("b") * .4, lv = 1 + Math.floor(hv("n") * 3);
+    for (let k = 0; k < 13; k++) // a stem across the page, leaning one way or the other, a little curved
+        px(stem, hx + lean * (-k * bend - (k * k) * .012), hy + 2 + k);
+    for (let j = 0; j < lv; j++) { // one to three leaves, on alternate sides
+        const ly = hy + 6 + j * 3 + Math.floor(hv("ly" + j) * 2), sx = hx + lean * (-(ly - hy - 2) * bend), side = j % 2 ? 1 : -1;
+        px("#7a9a56", sx + (side < 0 ? -3 : 1), ly, 3, 1);
+        px("#7a9a56", sx + (side < 0 ? -4 : 3), ly + 1, 2, 1);
+    }
     flowerHead(px, Math.round(hx), Math.round(hy), fx.find(s => FLOWER_SHAPES.includes(s)) || "daisy", c, dark, lite);
     if (f.odd) { // strange ones keep a bit of their strangeness
         if (fx.includes("eye")) {
@@ -19175,11 +19272,42 @@ function drawPressed(cv, f) {
     }
     px("rgba(160,120,80,.25)", 2, h - 3, w - 4, 1); // a line of tape across the stem
 }
-/* the dried flower book, open: every flower so far */
+/* a month in the flower book gets a name from its flowers: the colour most of them have, and their usual shape */
+function flowerColourWord(hex) {
+    const n = parseInt(String(hex).slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn;
+    if (d < .12)
+        return l > .7 ? "Pale" : l > .35 ? "Ash" : "Ink";
+    let h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    h = (h * 60 + 360) % 360;
+    if (l > .78)
+        return "Pale";
+    return h < 15 || h >= 345 ? "Ember" : h < 40 ? "Rust" : h < 65 ? "Honey" : h < 100 ? "Lichen" : h < 165 ? "Moss" : h < 200 ? "Pond" : h < 250 ? "Dusk" : h < 290 ? "Violet" : "Blush";
+}
+const FLOWER_PLURAL = { daisy: "Daisies", tulip: "Tulips", sprig: "Sprigs", bell: "Bells", poppy: "Poppies", bud: "Buds", herb: "Herbs", star: "Stars", spike: "Spires", cluster: "Lace", cup: "Cups", berry: "Berries" };
+function flowerMonthName(key, list) {
+    const top = arr => { const m = {}; arr.forEach(x => m[x] = (m[x] || 0) + 1); return Object.keys(m).sort((a, b) => m[b] - m[a])[0]; };
+    const col = top(list.map(f => flowerColourWord(f.c))), shape = FLOWER_PLURAL[top(list.map(f => String(f.s || "").split(" ").find(s => FLOWER_SHAPES.includes(s)) || "daisy"))];
+    const odd = list.some(f => f.odd), pick = Math.floor(hash01(key + "fm") * 4);
+    if (odd && pick < 2)
+        return `The ${col} Month, Slightly Haunted`;
+    return [`The Month of ${col} ${shape}`, `${col}-${shape.replace(/s$|ies$/, m => m === "ies" ? "y" : "")} Month`, `When the ${col} ${shape} Came`, `The ${col} Month`][pick];
+}
+/* the dried flower book, open: every flower so far, a fold per month (the newest open), each month named */
 function showFlowerBook() {
-    const list = (S.flowerBook || []).slice().sort((a, b) => a.at - b.at);
-    const rows = list.map((f, i) => `<li class="fbook${f.odd ? " odd" : ""}"><canvas class="pressed" width="20" height="24" data-fb="${i}" aria-hidden="true"></canvas><span><b>${esc(f.n)}</b>${f.odd ? " ✦" : ""}<br><span class="sub">${f.at > 1e9 ? esc(dmy(new Date(f.at))) : "from the start"}${f.from ? " · " + esc(f.from === "a walk" ? "picked on a walk" : f.from) : ""}</span>${f.note ? `<br>${esc(f.note)}` : ""}</span></li>`).join("");
-    openRitual("The dried flower book", `${list.length} pressed so far. The strange ones are marked ✦.`, `<ul class="fbooklist pressedlist">${rows || "<li>Nothing pressed yet.</li>"}</ul>`, [["Close", "primary", closeRitual]]);
+    const list = (S.flowerBook || []).slice().sort((a, b) => a.at - b.at), months = new Map();
+    list.forEach((f, i) => {
+        const k = f.at > 1e9 ? dayKey(new Date(f.at)).slice(0, 7) : "0000-00";
+        if (!months.has(k))
+            months.set(k, []);
+        months.get(k).push({ f, i });
+    });
+    const row = ({ f, i }) => `<li class="fbook${f.odd ? " odd" : ""}"><canvas class="pressed" width="20" height="24" data-fb="${i}" aria-hidden="true"></canvas><span><b>${esc(f.n)}</b>${f.odd ? " ✦" : ""}<br><span class="sub">${f.at > 1e9 ? esc(dmy(new Date(f.at))) : "from the start"}${f.from ? " · " + esc(f.from === "a walk" ? "picked on a walk" : f.from) : ""}</span>${f.note ? `<br>${esc(f.note)}` : ""}</span></li>`;
+    const keys = [...months.keys()].sort().reverse(), body = keys.map((k, j) => {
+        const fs = months.get(k), when = k === "0000-00" ? "From the start" : new Date(k + "-15T12:00").toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+        return `<details class="fmonth"${j === 0 ? " open" : ""}><summary><b>${esc(k === "0000-00" ? "The First Pages" : flowerMonthName(k, fs.map(x => x.f)))}</b><span class="sub">${esc(when)} · ${fs.length} flower${fs.length === 1 ? "" : "s"}</span></summary><ul class="fbooklist pressedlist">${fs.map(row).join("")}</ul></details>`;
+    }).join("");
+    openRitual("The dried flower book", `${list.length} pressed so far. The strange ones are marked ✦.`, body ? `<div class="fbookmonths">${body}</div>` : `<ul class="fbooklist"><li>Nothing pressed yet.</li></ul>`, [["Close", "primary", closeRitual]]);
     document.querySelectorAll("#ritBody canvas.pressed").forEach(c => drawPressed(c, list[+c.dataset.fb] || {}));
     sfx("card");
     return 2;
@@ -19378,7 +19506,7 @@ function showMonthKey(mk) {
     const tasks = allDone().filter(t => t.d && inM(t.d)).length;
     const letters = ((S.post && S.post.sent) || []).filter(l => inM(l.at)).length;
     const flowers = (S.flowerBook || []).filter(f => f.at > 1e9 && inM(f.at)).map(f => f.n);
-    const paintings = (S.gallery || []).filter(g => g.day && inM(new Date(g.day + "T12:00").getTime())).length;
+    const paintings = allPaintings().filter(g => g.day && inM(new Date(g.day + "T12:00").getTime())).length;
     const visitors = (S.notes || []).filter(n => inM(n.at) && /came by/.test(n.text)).length;
     const origami = (S.origami || []).filter(o => inM(o.at)).length;
     const name = new Date(y, m - 1, 15).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
@@ -23190,6 +23318,7 @@ function renderGallery() {
         drawPainting(g, 0, 0, c.width, c.height, c.dataset.day, +c.dataset.prog);
     });
     renderKnits(); // (the knitting is one of Mite's crafts too)
+    renderCatalogue(); // (earlier seasons: catalogue.js)
     const cp = $("cnt-craft-paint"), ck = $("cnt-craft-knit");
     if (cp)
         cp.textContent = `${(S.gallery || []).length}`;
@@ -24055,7 +24184,15 @@ function journalRename() {
 let pnPos = 0, pnAnim = null, pnSel = -1;
 /* the shelves: this week first (the loose shelf), then every week before it, newest first */
 function pnWeeks() {
-    const cur = weekKey(Date.now()), list = archWeeks().slice();
+    const cur = weekKey(Date.now()), list = archWeeks().slice(), have = new Set(list.map(w => w.k));
+    for (const v of typeof catSeasons === "function" ? catSeasons() : []) { // (a week with only a season's folder on its shelf is a stop too)
+        const k = weekKey(seasonDays(v.s).end);
+        if (!have.has(k) && k < cur) {
+            have.add(k);
+            list.push({ k, n: weekNo(k), tasks: [] });
+        }
+    }
+    list.sort((a, b) => a.k < b.k ? 1 : -1);
     if (!list.length || list[0].k !== cur)
         list.unshift({ k: cur, n: weekNo(Date.now()), tasks: [] });
     return list;
@@ -24096,6 +24233,10 @@ function pnTurn(d, to) {
     sfx("tock");
     pnFill(false);
 }
+/* a season's folder of the craft catalogue stands on the shelf of the season's last week (catalogue.js) */
+function pnFolders(wk) {
+    return typeof catSeasons === "function" ? catSeasons().filter(v => weekKey(seasonDays(v.s).end) === wk) : [];
+}
 /* the label, the month keys, the month in short and the list of boxes, for the shelf in the window */
 function pnFill(first) {
     const ws = pnWeeks(), w = ws[pnPos], start = new Date(w.k + "T12:00"), end = new Date(start);
@@ -24111,7 +24252,9 @@ function pnFill(first) {
     if (on)
         el.scrollLeft = on.offsetLeft - el.clientWidth / 2 + on.offsetWidth / 2; // (only the row scrolls, not the card)
     $("pnMonthLine").textContent = monthSummary(cur);
-    $("pnList").innerHTML = w.tasks.length ? w.tasks.map((t, i) => `<li><button type="button" class="linkbtn pnbox" data-pni="${i}"><b>${esc(t.t)}</b></button><br><span class="sub">${esc(new Date(t.d).toLocaleDateString("en-GB", { weekday: "short" }))} ${esc(dmy(new Date(t.d)))} · ${t.cap ? "a time capsule" : t.tag}${t.s === 8 ? " · big" : t.s === 3 ? " · medium" : ""}</span></li>`).join("") : `<li class="sub">${pnPos === 0 ? "Nothing filed yet this week." : "An empty shelf."}</li>`;
+    const folders = pnFolders(w.k).map(v => `<li><button type="button" class="linkbtn pnbox" data-pnf="${esc(v.s)}"><b>Folder: ${esc(seasonName(v.s))}</b></button><br><span class="sub">The season's crafts · ${esc(catCount(v))}</span></li>`).join("");
+    $("pnList").innerHTML = folders + (w.tasks.length ? w.tasks.map((t, i) => `<li><button type="button" class="linkbtn pnbox" data-pni="${i}"><b>${esc(t.t)}</b></button><br><span class="sub">${esc(new Date(t.d).toLocaleDateString("en-GB", { weekday: "short" }))} ${esc(dmy(new Date(t.d)))} · ${t.cap ? "a time capsule" : t.tag}${t.s === 8 ? " · big" : t.s === 3 ? " · medium" : ""}</span></li>`).join("") : (folders ? "" : `<li class="sub">${pnPos === 0 ? "Nothing filed yet this week." : "An empty shelf."}</li>`));
+    $("pnList").querySelectorAll("[data-pnf]").forEach(b => b.onclick = () => showCatSeason(b.dataset.pnf));
     $("pnList").querySelectorAll("[data-pni]").forEach(b => b.onclick = () => {
         const t = w.tasks[+b.dataset.pni];
         pnSel = +b.dataset.pni;
@@ -24124,7 +24267,7 @@ function pnFill(first) {
 function monthSummary(mk) {
     const [y, m] = mk.split("-").map(Number), inM = ts => { const d = new Date(ts); return d.getFullYear() === y && d.getMonth() === m - 1; };
     const tasks = allDone().filter(t => t.d && inM(t.d)).length, letters = ((S.post && S.post.sent) || []).filter(l => inM(l.at)).length;
-    const flowers = (S.flowerBook || []).filter(f => f.at > 1e9 && inM(f.at)).length, paintings = (S.gallery || []).filter(g => g.day && inM(new Date(g.day + "T12:00").getTime())).length;
+    const flowers = (S.flowerBook || []).filter(f => f.at > 1e9 && inM(f.at)).length, paintings = allPaintings().filter(g => g.day && inM(new Date(g.day + "T12:00").getTime())).length;
     const lines = KEEP.refl.filter(r => inM(r.at)).length;
     const name = new Date(y, m - 1, 15).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
     const bits = [[tasks, "thing finished", "things finished"], [lines, "journal line", "journal lines"], [letters, "letter", "letters"], [flowers, "new flower", "new flowers"], [paintings, "painting", "paintings"]].filter(b => b[0]).map(([n, a, b]) => `${n} ${n === 1 ? a : b}`);
@@ -24167,6 +24310,14 @@ function pnDraw(now) {
                     px("#fff6c8", bx, y - bh - 2, bw, 1);
             }
         });
+        pnFolders(w.k).forEach((v, fi) => { // a season's folder, standing at the right end of the shelf
+            const fx = wx + ww - 14 - fi * 7, fh = 13;
+            px(lit ? "#c9a66a" : "#4a3a26", fx, y - fh, 5, fh);
+            px(lit ? "#e2c48a" : "#5a4630", fx, y - fh, 5, 1);
+            px(lit ? "#a8844a" : "#3a2e1e", fx + 1, y - fh - 2, 3, 2); // its tab
+            if (lit)
+                px("#f4ecd8", fx + 1, y - fh + 4, 3, 2); // the little label
+        });
         if (n > 18 && lit)
             px("#f4ecd8", wx + ww - 10, y - 4, 2, 2);
         if (lit) { // a little brass label on the front of the shelf
@@ -24185,6 +24336,141 @@ function pnDraw(now) {
             px("#3a3a40", cx0 + 1, y + 1, 1, 1);
         }
     px("#c9a24a", W2 / 2 - 10, 2, 20, 6); // the maker's plate
+}
+
+</script>
+<script>/* js/ui/catalogue.js */
+"use strict";
+/*
+ * catalogue.js - The craft catalogue. Paintings and knitted things stay on the walls (Crafts) for one season; when
+ * the next one begins (at the equinoxes and solstices: 20-03, 21-06, 22-09 and 21-12) they go into the catalogue,
+ * by themselves: a list of records per season, kept with the keepsakes (KEEP.cat, storage.js), so nothing is lost
+ * to the limits of the main save. A record can still be opened: the picture is rebuilt from it.
+ *   KEEP.cat     [{ s, t: "p", day, to, by, at }] paintings, [{ s, t: "k", item, c1, c2, pat, at }] knits
+ *   seasonOf(day)   "2026-3" (3: autumn) for a day key; seasonName(s) "Autumn 2026"
+ *   archiveCrafts() moves everything from past seasons into the catalogue (boot, a new day, after syncing)
+ * The season's folder also stands in the closet, on the shelf of the season's last week (paternoster.js).
+ */
+const SEASON_START = [["03-20", 1], ["06-21", 2], ["09-22", 3], ["12-21", 4]]; // spring, summer, autumn, winter
+const SEASON_NAMES = ["", "Spring", "Summer", "Autumn", "Winter"];
+function seasonOf(day) {
+    const y = +day.slice(0, 4), md = day.slice(5);
+    let n = 0;
+    for (const [d, k] of SEASON_START)
+        if (md >= d)
+            n = k;
+    return n ? `${y}-${n}` : `${y - 1}-4`; // (before the spring equinox: last year's winter)
+}
+function seasonName(s) {
+    const [y, n] = s.split("-").map(Number);
+    return n === 4 ? `Winter ${y}–${String(y + 1).slice(2)}` : `${SEASON_NAMES[n]} ${y}`;
+}
+/* the first and the last day of a season (day keys) */
+function seasonDays(s) {
+    const [y, n] = s.split("-").map(Number), start = `${y}-${SEASON_START[n - 1][0]}`, nx = n === 4 ? `${y + 1}-${SEASON_START[0][0]}` : `${y}-${SEASON_START[n][0]}`;
+    const e = new Date(nx + "T12:00");
+    e.setDate(e.getDate() - 1);
+    return { start, end: dayKey(e) };
+}
+const paintRec = g => ({ s: seasonOf(g.at > 1e9 ? actDay(g.at) : g.day), t: "p", day: g.day, to: g.to, by: g.by, at: num(g.at) });
+const knitRec = k => ({ s: seasonOf(actDay(k.at)), t: "k", item: k.item, c1: k.c1, c2: k.c2, pat: k.pat, at: num(k.at) });
+const catKey = r => r.t === "p" ? "p" + r.day : "k" + r.at + r.item;
+/* everything from a season that's over goes into the catalogue */
+function archiveCrafts() {
+    const cur = seasonOf(actDay()), have = new Set((KEEP.cat || []).map(catKey)), add = [];
+    const oldP = (S.gallery || []).filter(g => paintRec(g).s < cur), oldK = (S.knits || []).filter(k => knitRec(k).s < cur);
+    if (!oldP.length && !oldK.length)
+        return 0;
+    for (const r of [...oldP.map(paintRec), ...oldK.map(knitRec)])
+        if (!have.has(catKey(r))) {
+            have.add(catKey(r));
+            add.push(r);
+        }
+    KEEP.cat = (KEEP.cat || []).concat(add);
+    S.gallery = (S.gallery || []).filter(g => !oldP.includes(g));
+    S.knits = (S.knits || []).filter(k => !oldK.includes(k));
+    saveKeep();
+    saveSoon();
+    if (add.length)
+        note(`Filed the crafts of ${seasonName(add[0].s).toLowerCase()} in the catalogue: ${add.length} piece${add.length === 1 ? "" : "s"}.`);
+    return add.length;
+}
+/* every painting and knit there is: the catalogue's and the walls' (for the month summaries, the snail's cosy) */
+function allPaintings() {
+    return (KEEP.cat || []).filter(r => r.t === "p").concat(S.gallery || []);
+}
+function allKnits() {
+    return (KEEP.cat || []).filter(r => r.t === "k").concat(S.knits || []).sort((a, b) => a.at - b.at);
+}
+/* the seasons in the catalogue, newest first: { s, p: [paintings], k: [knits] } */
+function catSeasons() {
+    const by = new Map();
+    for (const r of KEEP.cat || []) {
+        if (!by.has(r.s))
+            by.set(r.s, { s: r.s, p: [], k: [] });
+        by.get(r.s)[r.t === "p" ? "p" : "k"].push(r);
+    }
+    for (const v of by.values()) {
+        v.p.sort((a, b) => a.day < b.day ? -1 : 1);
+        v.k.sort((a, b) => a.at - b.at);
+    }
+    return [...by.values()].sort((a, b) => a.s < b.s ? 1 : -1);
+}
+const catCount = v => [v.p.length && `${v.p.length} painting${v.p.length === 1 ? "" : "s"}`, v.k.length && `${v.k.length} knit${v.k.length === 1 ? "" : "s"}`].filter(Boolean).join(" · ");
+/* one season's list: a line per piece, tappable */
+function catRows(v) {
+    return v.p.map(r => {
+        const P = paintingOf(r.day);
+        return `<li><button type="button" class="catrow" data-cat="${esc(catKey(r))}"><span class="catno">No. ${P.no}</span><span class="cattitle"><i>${esc(P.title)}</i></span><span class="catmeta">${esc(P.medium.label)} · to ${esc(r.to)}</span></button></li>`;
+    }).join("") + v.k.map(r => `<li><button type="button" class="catrow" data-cat="${esc(catKey(r))}"><span class="catno">Knit</span><span class="cattitle">${esc(knitName(r)[0].toUpperCase() + knitName(r).slice(1))}</span><span class="catmeta">${esc(dmy(new Date(r.at)))}</span></button></li>`).join("");
+}
+function wireCatRows(el) {
+    el.querySelectorAll("[data-cat]").forEach(b => b.onclick = () => showCatItem(b.dataset.cat));
+}
+/* the Crafts tab: this season's line, and the catalogue (a fold per season) */
+function renderCatalogue() {
+    const cur = seasonOf(actDay()), d = seasonDays(cur), nextName = SEASON_NAMES[(+cur.split("-")[1]) % 4 + 1].toLowerCase(), line = $("craftSeason");
+    if (line)
+        line.textContent = `On the walls: ${seasonName(cur).toLowerCase()}, since ${dmy(d.start)}. When ${nextName} begins they go into the catalogue.`;
+    const el = $("catList"), seasons = catSeasons();
+    if (!el)
+        return;
+    el.innerHTML = seasons.length ? seasons.map(v => `<details class="catseason"><summary><b>${esc(seasonName(v.s))}</b><span class="sync">${esc(catCount(v))}</span></summary><ol class="catrows">${catRows(v)}</ol></details>`).join("")
+        : `<p class="sub">Nothing yet. Each season's paintings and knits are filed here when the next season begins.</p>`;
+    wireCatRows(el);
+    const c = $("cnt-craft-cat");
+    if (c)
+        c.textContent = `${(KEEP.cat || []).length}`;
+}
+/* a season's folder, as a card (from the closet) */
+function showCatSeason(s) {
+    const v = catSeasons().find(x => x.s === s);
+    if (!v)
+        return;
+    const d = seasonDays(s);
+    openRitual(seasonName(s), `${catCount(v)}. ${dmy(d.start)} – ${dmy(d.end)}.`, `<ol class="catrows">${catRows(v)}</ol>`, [["Close", "primary", closeRitual]]);
+    wireCatRows($("ritBody"));
+    sfx("card");
+}
+/* one piece, opened: the picture rebuilt from its record, with its label */
+function showCatItem(key) {
+    const r = (KEEP.cat || []).find(x => catKey(x) === key);
+    if (!r)
+        return;
+    const back = $("ritual").hidden ? null : r.s;
+    let body;
+    if (r.t === "p")
+        body = `<canvas class="catpic" width="96" height="73" aria-hidden="true"></canvas>${paintLabel(r.day, `${r.by === "post" ? "Posted to" : "The snail took it to"} ${esc(r.to)}`)}`;
+    else
+        body = `<canvas class="catknit" width="64" height="64" aria-hidden="true"></canvas><span class="mlabel"><b class="ml-artist">${esc(S.settings.pet)}</b><span class="ml-title">${esc(knitName(r)[0].toUpperCase() + knitName(r).slice(1))}</span><span class="ml-med">Wool, knitted by hand</span><span class="ml-no">Finished ${esc(dmy(new Date(r.at)))}</span></span>`;
+    openRitual(seasonName(r.s), "From the catalogue.", `<div class="catitem">${body}</div>`, back ? [["Back to the season", "", () => showCatSeason(back)], ["Close", "primary", closeRitual]] : [["Close", "primary", closeRitual]]);
+    const cv = $("ritBody").querySelector("canvas"), g = cv.getContext("2d");
+    g.imageSmoothingEnabled = false;
+    if (r.t === "p")
+        drawPainting(g, 0, 0, cv.width, cv.height, r.day, 1);
+    else
+        drawKnitPiece(g, r, 1, 32, r.item === "hat" ? 44 : r.item === "scarf" ? 4 : 10, r.item === "scarf" ? 40 : 46);
+    sfx("card");
 }
 
 </script>
@@ -26493,6 +26779,7 @@ function boot() {
     loadArchLocal();
     loadKeepLocal();
     capsulesToArchive(); // (opened time capsules go on the shelves too)
+    archiveCrafts(); // (last season's paintings and knits into the catalogue: catalogue.js)
     migrateCounts();
     raccEyeCleanup(); // (eyes.js)
     if (!S.flags.m_rental) { // the renter's chest used to come by itself: a save that already had it keeps it
@@ -26564,6 +26851,7 @@ async function connect(prevSeen) {
             }
             await pullArch();
             await pullKeep();
+            archiveCrafts();
             migrateCounts();
             compact();
             renderAll();
@@ -26620,6 +26908,7 @@ setInterval(() => {
     if (actDay() !== S.lastDay) {
         S.lastDay = actDay();
         paintDayCheck(); // (easel.js: a finished painting goes off, an unfinished one carries on)
+        archiveCrafts(); // (a new season: catalogue.js)
         autoFileOld();
         compact();
         renderAll();
