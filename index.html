@@ -3401,7 +3401,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [] }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3577,6 +3577,10 @@ function sanitizeState(raw) {
     }
     o.shopSeen = { ids: (Array.isArray(s.shopSeen && s.shopSeen.ids) ? s.shopSeen.ids : []).map(x => str(x, 40)).filter(Boolean).slice(-600), at: num(s.shopSeen && s.shopSeen.at) }; // what the shop has shown you (shop.js)
     o.barterOwn = arr(s.barterOwn, 400).map(x => ({ k: ["tea", "bake", "flower", "curio"].includes(x.k) ? x.k : "", n: str(x.n, 80).trim(), at: num(x.at) })).filter(x => x.k && x.n); // what the raccoon brought, for good (barter.js)
+    o.eyesGone = {}; // eyes taken out of the jars on purpose: { kind: when it had been found } (eyes.js)
+    for (const k of Object.keys(s.eyesGone && typeof s.eyesGone === "object" ? s.eyesGone : {}).slice(0, 40))
+        if (!BAD_KEYS.has(k))
+            o.eyesGone[sid(k).slice(0, 12)] = num(s.eyesGone[k]);
     o.eyes = arr(s.eyes, 24).map(e => ({ k: sid(e.k).slice(0, 12), at: num(e.at), from: str(e.from, 20) })).filter(e => e.k); // the eye jars (eyes.js)
     o.glimpses = arr(s.glimpses, 300).map(g => ({ k: str(g && g.k, 80), at: num(g && g.at) })).filter(g => g.k); // what the chalk circle has shown (circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
@@ -3837,14 +3841,17 @@ function mergeStates(a, b) {
         if ((ba.wk || "") !== (bb.wk || ""))
             o.barter = JSON.parse(JSON.stringify((ba.wk || "") > (bb.wk || "") ? ba : bb));
         else
-            o.barter = { wk: ba.wk || "", stock: ((ba.stock || []).length ? ba.stock : bb.stock || []).slice(0, 4), got: [...new Set([...(ba.got || []), ...(bb.got || [])])].slice(0, 4) };
+            o.barter = { wk: ba.wk || "", stock: ((ba.stock || []).length >= (bb.stock || []).length ? ba.stock || [] : bb.stock).slice(0, 4), got: [...new Set([...(ba.got || []), ...(bb.got || [])])].slice(0, 4) };
     }
     { // the eye jars: each eye once, the first time it was found
         const m = new Map();
         for (const e of [...(a.eyes || []), ...(b.eyes || [])])
             if (e && e.k && (!m.has(e.k) || num(e.at) < m.get(e.k).at))
                 m.set(e.k, { k: e.k, at: num(e.at), from: str(e.from, 20) });
-        o.eyes = [...m.values()].sort((x, y) => x.at - y.at).slice(0, 24);
+        o.eyesGone = {};
+        for (const k of new Set([...Object.keys(a.eyesGone || {}), ...Object.keys(b.eyesGone || {})]))
+            o.eyesGone[k] = Math.max(num((a.eyesGone || {})[k]), num((b.eyesGone || {})[k]));
+        o.eyes = [...m.values()].filter(e => !(num(o.eyesGone[e.k]) >= e.at && o.eyesGone[e.k] !== undefined)).sort((x, y) => x.at - y.at).slice(0, 24); // (one taken out stays out; found again later, it stays)
     }
     { // the chalk circle's glimpses: each one once, the first time it was seen
         const m = new Map();
@@ -20079,14 +20086,19 @@ const EYES_PER_JAR = 6, EYE_JARS = 3; // (two on the shelf, one on top: eighteen
 const isRaccEye = id => EYE_FROM[id] === "raccoon";
 const inRaccJar = s => s.from === "raccoon" || isRaccEye(s.k);
 const ownEyes = () => (S.eyes || []).filter(s => !inRaccJar(s));
-/* once, on each device: before the raccoon kept to its own kinds, a visit could leave any eye. Those go again;
-   one traded for in the barter stays (it was paid for) */
+/* once: before the raccoon kept to its own kinds, a visit could leave any eye. Those go again (one traded for in the
+   barter stays: it was paid for). Gone for good: a note in S.eyesGone keeps another device's copy from bringing it
+   back when the saves are merged (state.js); an eye found again later is a new one and stays */
 function raccEyeCleanup() {
-    if (S.flags.m_raccEye)
+    if (S.flags.m_raccEye2)
         return;
-    S.flags.m_raccEye = 1;
+    S.flags.m_raccEye2 = 1;
     const traded = e => (S.barter && S.barter.got || []).includes(e.k) || (S.notes || []).some(n => /^Traded /.test(n.text || "") && n.text.toLowerCase().includes((EYES.find(x => x.id === e.k) || { name: "\u0000" }).name.toLowerCase()));
-    S.eyes = (S.eyes || []).filter(e => !(e.from === "raccoon" && !isRaccEye(e.k) && !traded(e)));
+    const gone = (S.eyes || []).filter(e => e.from === "raccoon" && !isRaccEye(e.k) && !traded(e));
+    S.eyesGone = S.eyesGone || {};
+    for (const e of gone)
+        S.eyesGone[e.k] = Math.max(num(S.eyesGone[e.k]), num(e.at));
+    S.eyes = (S.eyes || []).filter(e => !gone.includes(e));
 }
 /* where each eye comes from (some are only found one way) */
 const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door", glassdoll: "raccoon", heron: "raccoon", lighthouse: "raccoon", bureau: "raccoon" };
@@ -22955,6 +22967,13 @@ function barterStock() {
         while (stock.length < 3 && rest.length)
             stock.push(rest.shift());
         S.barter = { wk, stock: stock.map(s => Object.assign(s, { price: BARTER_PRICE[s.k] })), got: [] };
+        saveSoon();
+    }
+    else if (S.barter.stock.length < 3) { // fewer than three (a week started by an older version): filled up, what's there stays
+        const c = Object.values(barterCandidates()).flat().filter(x => !S.barter.stock.some(s => s.k === x.k && s.id === x.id)).sort(() => Math.random() - .5);
+        while (S.barter.stock.length < 3 && c.length)
+            S.barter.stock.push(Object.assign(c.shift(), { price: 0 }));
+        S.barter.stock.forEach(s => s.price = s.price || BARTER_PRICE[s.k]);
         saveSoon();
     }
     return S.barter;
