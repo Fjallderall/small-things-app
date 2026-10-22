@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 21-10-2026 -->
+<!-- Small Things, shared build of 22-10-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -3451,7 +3451,7 @@ function sanitizeState(raw) {
     for (const k of Object.keys(s.festSaid && typeof s.festSaid === "object" ? s.festSaid : {}).slice(0, 60))
         if (fids.has(k) && dkey(s.festSaid[k]))
             o.festSaid[k] = dkey(s.festSaid[k]);
-    o.gallery = arr(s.gallery, 200).map(g => ({ day: dkey(g.day), to: str(g.to, 80), by: g.by === "post" ? "post" : "snail", prog: Math.min(1, num(g.prog)), at: num(g.at) })).filter(g => g.day);
+    o.gallery = arr(s.gallery, 200).map(g => ({ day: dkey(g.day), to: str(g.to, 80), by: g.by === "post" ? "post" : "snail", prog: 1, at: num(g.at) })).filter(g => g.day); // (prog 1: a painting is finished before it's sent; older saves had studies)
     o.guestAt = num(s.guestAt);
     o.ff = arr(s.ff, 12).map(x => str(x, 30)).filter(Boolean);
     o.snailName = str(s.snailName, 30);
@@ -11810,7 +11810,7 @@ function paintTarget() {
 /* the gallery keeps a record of every painting sent off; the picture is redrawn from its day */
 function addToGallery(day, to, by, prog) {
     S.gallery = (S.gallery || []).filter(g => g.day !== day);
-    S.gallery.unshift({ day, to: String(to).slice(0, 80), by, prog: Math.min(1, prog), at: Date.now() });
+    S.gallery.unshift({ day, to: String(to).slice(0, 80), by, prog: 1, at: Date.now() }); // (every painting sent off is finished)
     S.gallery.sort((x, y) => x.day < y.day ? 1 : -1);
     if (S.gallery.length > 200)
         S.gallery.length = 200;
@@ -11849,9 +11849,9 @@ function paintDayCheck() {
         return;
     const old = S.paint.day, prog = S.paint.prog;
     S.paint = { day: today, prog: 0, sent: S.paint.sent || "" };
-    if (old && prog >= .15 && S.paint.sent !== old) {
+    if (old && prog >= .15 && S.paint.sent !== old) { // a painting that was started gets finished: Mite does the last of it late in the evening, while you're away
         S.paint.sent = old;
-        setTimeout(() => showSendoff(old, prog), 2600);
+        setTimeout(() => showSendoff(old, 1, prog < 1), 2600);
     }
     saveSoon();
 }
@@ -11874,7 +11874,7 @@ function showToday() {
         setTimeout(() => el.hidden = true, 500);
     }, 7000);
 }
-function showSendoff(day, prog) {
+function showSendoff(day, prog = 1, late = false) {
     const P = paintingOf(day), friend = choice(pool("penpals").length ? pool("penpals") : ["a friend"]);
     const cv = $("paintCv");
     cv.width = 96;
@@ -11882,8 +11882,7 @@ function showSendoff(day, prog) {
     const c = cv.getContext("2d");
     c.clearRect(0, 0, cv.width, cv.height);
     drawPainting(c, 0, 0, cv.width, cv.height, day, prog);
-    const done = prog >= 1;
-    cardCap($("paintCap"), `<b>“${esc(P.title)}”${done ? "" : " (a study)"}</b> No. ${P.no}. ${own("snail") ? `The snail is taking it to ${esc(friend)}.` : `I'm posting it to ${esc(friend)}.`}`);
+    cardCap($("paintCap"), `<b>“${esc(P.title)}”</b> No. ${P.no}. ${late ? "I finished it last night. " : ""}${own("snail") ? `The snail is taking it to ${esc(friend)}.` : `I'm posting it to ${esc(friend)}.`}`);
     const el = $("paintView");
     el.classList.remove("out");
     el.hidden = false;
@@ -23034,10 +23033,10 @@ function renderGallery() {
     const card = (day, prog, line, cls) => {
         const P = paintingOf(day);
         return `<figure class="art${cls ? " " + cls : ""}"><canvas width="96" height="73" data-day="${esc(day)}" data-prog="${prog}" aria-hidden="true"></canvas>
-      <figcaption><b>“${esc(P.title)}”${prog < 1 && cls !== "now" ? " <i>(a study)</i>" : ""}</b><span>No. ${P.no} · ${fmtDay(day)}</span><span>${line}</span></figcaption></figure>`;
+      <figcaption><b>“${esc(P.title)}”</b><span>No. ${P.no} · ${fmtDay(day)}</span><span>${line}</span></figcaption></figure>`;
     };
     const cur = S.paint && S.paint.day ? card(S.paint.day, S.paint.prog || 0, `On the easel, ${Math.round((S.paint.prog || 0) * 100)}% done`, "now") : "";
-    const sent = (S.gallery || []).map(g => card(g.day, g.prog, `${g.by === "post" ? "Posted to" : "The snail took it to"} ${esc(g.to)}`)).join("");
+    const sent = (S.gallery || []).map(g => card(g.day, 1, `${g.by === "post" ? "Posted to" : "The snail took it to"} ${esc(g.to)}`)).join("");
     el.innerHTML = cur + (sent || `<p class="sub">Nothing sent yet. The first painting goes out the morning after ${esc(S.settings.pet)} finishes it.</p>`);
     el.querySelectorAll("canvas[data-day]").forEach(c => {
         const g = c.getContext("2d");
