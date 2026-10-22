@@ -697,6 +697,7 @@ body.pixel .wxicon{width:18px;height:18px}
 .poolfind input{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 10px;font-size:16px}
 .poolrow select{flex:1 1 240px;min-width:0;max-width:100%}
 .resetinfo ul{margin:2px 0 10px;padding-left:18px}.resetinfo li{margin:2px 0}.resetinfo p{margin:6px 0 2px}
+.costlist{margin:6px 0 8px;padding-left:18px;font-size:14px;line-height:1.5;color:var(--muted)}.costlist li{margin:3px 0}
 
 </style>
 <div class="app">
@@ -27062,6 +27063,12 @@ const CREDITS_HTML = `<div><h2>Credits and inspiration</h2><p class="sub">Small 
 <div><h3>Inspiration</h3><p class="sub">The SCP Foundation, Control, World of Darkness, Fallen London, The Elder Scrolls V: Skyrim, Persona, Fallout, cosy witch games and virtual pets.</p></div>
 <div><h3>Fonts</h3><p class="sub">Bricolage Grotesque, Atkinson Hyperlegible, IBM Plex Mono, DotGothic16 and VT323, each under the SIL Open Font License 1.1.</p></div>
 <div><h3>Made with</h3><p class="sub">Written, drawn and built with Claude. All the pixel art is drawn in code, and all of it is original.</p></div>
+<div><h3>What it cost to build</h3><p class="sub">Small Things was built with an AI model over a few weeks of heavy use. Running a model takes electricity, so here is an honest estimate of what building it cost. It's an order of magnitude, not a measurement.</p>
+<ul class="costlist"><li><b>Text the model wrote</b>, its thinking included: 10–20 million tokens, about 15–60 kWh</li>
+<li><b>New things it read</b>, like code files and test results: 60–120 million tokens, about 2–6 kWh</li>
+<li><b>The conversation re-read</b> at every step, from a cache: about a billion tokens, about 5 kWh</li></ul>
+<p class="sub">Together that's roughly 10–70 kWh, or 4–25 kg of CO₂, most likely around 10 kg: about as much as driving a petrol car 60 km.</p>
+<p class="sub" style="margin-top:8px">How it was worked out: published measurements of large models use about 1 Wh for every 1,000 word pieces (tokens) they write, and far less for text they only read again from a cache. That energy times a typical data centre's electricity (about 0.35 kg CO₂ per kWh). Not included: training the model, making the hardware, and your own device. Using the app now costs almost nothing: it runs on your device, and its AI help is optional.</p></div>
 <div><h3>Feedback</h3><p class="sub">Feedback is welcome. Reach me where you got this app.</p></div>`;
 const DESK_PAGES = {
     content: { pane: "tab-content", title: "Settings" },
