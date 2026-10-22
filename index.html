@@ -13810,7 +13810,7 @@ function spawnAnom(dark, force) { // (force: this kind, for tests)
     else if (type === "phone")
         anom = Object.assign(base, { x: anomX(.15, .85), y: GY - R * .2 });
     else if (type === "eyes")
-        anom = Object.assign(base, { x: rnd(W * .25, W * .75), y: GY - H * .14, pairs: Array.from({ length: 3 }, () => ({ dx: rnd(-R * 1.4, R * 1.4), dy: rnd(-R * .4, R * .3), ph: rnd(0, 6) })) });
+        anom = Object.assign(base, eyeSpots()); // (in the dark corners, away from Mite)
     else if (type === "tentacle")
         anom = Object.assign(base, { x: anomX(.2, .7), y: GY - R * .3 });
     else if (type === "chair") {
@@ -13880,8 +13880,8 @@ function anomHit(p) {
     const a = anom;
     if (!a || a.resolved || a.t < .8 || SHIFTS.includes(a.type))
         return false;
-    if (a.type === "eyes")
-        return Math.hypot(p.x - a.x, p.y - a.y) < R * 1.7;
+    if (a.type === "eyes") // any of the pairs
+        return a.pairs.some(e => Math.hypot(p.x - (a.x + e.dx), p.y - (a.y + e.dy)) < R * .9);
     if (a.type === "tentacle")
         return Math.abs(p.x - (a.x + R * .3)) < R * .9 && p.y > GY - R * 2.2 && p.y < GY + R * .3;
     if (a.type === "chair")
@@ -14194,6 +14194,48 @@ function drawHandset(a) {
     cx.fill();
     cx.restore();
 }
+/* the eyes themselves: open most of the time, a slow blink now and then; almond-shaped, pale green, a dark slit in
+   each, and a glow. Drawn with the room, and again over the night's darkening so they shine through it (loop.js,
+   glow: how much of that) */
+/* where the eyes look out from: the dark corners of the room, low by the skirting at either end and high up by the
+   ceiling, one pair in each of three, never right where Mite is (or its speech bubble, above it) */
+function eyeSpots() {
+    const spots = [[rnd(.06, .16), GY - R * rnd(.35, 1.1)], [rnd(.84, .94), GY - R * rnd(.35, 1.1)], [rnd(.08, .2), H * rnd(.12, .2)], [rnd(.8, .92), H * rnd(.12, .2)], [rnd(.3, .7), GY - R * rnd(.25, .5)]]
+        .map(([fx, y]) => ({ x: W * fx, y })).filter(s => Math.abs(s.x - pet.x) > R * 1.6);
+    const pick = spots.sort(() => Math.random() - .5).slice(0, 3), x0 = pick[0].x, y0 = pick[0].y;
+    return { x: x0, y: y0, pairs: pick.map(s => ({ dx: s.x - x0, dy: s.y - y0, ph: rnd(0, 6) })) };
+}
+function eyeOpen(a, e) {
+    return clamp(Math.sin(a.t * .9 + e.ph) * 1.8 + .6, 0, 1);
+}
+function drawEyePairs(a, glowK) {
+    for (const e of a.pairs) {
+        const open = eyeOpen(a, e);
+        if (open < .08)
+            continue;
+        const x = a.x + e.dx, y = a.y + e.dy;
+        if (glowK < 1 && view === a.room && Math.abs(x - pet.x) < R * 1.05 && Math.abs(y - (GY - R - (pet.ground || 0))) < R * 1.1)
+            continue; // (behind Mite: no shine through it)
+        for (const s of [-1, 1]) {
+            const ex = x + s * R * .13;
+            const g = cx.createRadialGradient(ex, y, 0, ex, y, R * .26);
+            g.addColorStop(0, `rgba(210,255,150,${.5 * glowK * open})`);
+            g.addColorStop(1, "rgba(210,255,150,0)");
+            cx.fillStyle = g;
+            cx.beginPath();
+            cx.arc(ex, y, R * .26, 0, 7);
+            cx.fill();
+            cx.fillStyle = "#e8ffb8";
+            cx.beginPath();
+            cx.ellipse(ex, y, R * .075, R * .055 * open, 0, 0, 7);
+            cx.fill();
+            if (open > .4) { // the slit
+                cx.fillStyle = "#14140c";
+                cx.fillRect(ex - R * .012, y - R * .045 * open, R * .024, R * .09 * open);
+            }
+        }
+    }
+}
 const ANOM_DRAW = {
     figure(a, tsec) { // tall, thin, dark, no face; flickers; fainter the closer Mite is
         const q = PX, h = R * 2.6, w = R * .5, near = a.room === view ? clamp(Math.abs(pet.x - a.x) / (R * 3), .35, 1) : 1;
@@ -14326,25 +14368,14 @@ const ANOM_DRAW = {
             addP({ type: "text", text: "ring", x: x + rnd(-R * .5, R * .5), y: y - R * .5, vy: -22, max: 1, col: "#ffd3d6", size: 12 });
     },
     eyes(a) {
-        for (const e of a.pairs) {
-            const open = Math.max(0, Math.sin(a.t * .9 + e.ph));
-            if (open < .1)
-                continue;
-            const x = a.x + e.dx, y = a.y + e.dy;
-            for (const s of [-1, 1]) {
-                const g = cx.createRadialGradient(x + s * R * .11, y, 0, x + s * R * .11, y, R * .16);
-                g.addColorStop(0, "rgba(220,255,170,.55)");
-                g.addColorStop(1, "rgba(220,255,170,0)");
-                cx.fillStyle = g;
-                cx.beginPath();
-                cx.arc(x + s * R * .11, y, R * .16, 0, 7);
-                cx.fill();
-                cx.fillStyle = "#efffd0";
-                cx.beginPath();
-                cx.ellipse(x + s * R * .11, y, R * .045, R * .05 * open, 0, 0, 7);
-                cx.fill();
-            }
+        for (const e of a.pairs) { // a patch of deeper dark behind each pair, where something is
+            const x = a.x + e.dx, y = a.y + e.dy, g = cx.createRadialGradient(x, y, 0, x, y, R * .55);
+            g.addColorStop(0, "rgba(4,4,10,.45)");
+            g.addColorStop(1, "rgba(4,4,10,0)");
+            cx.fillStyle = g;
+            cx.fillRect(x - R * .6, y - R * .6, R * 1.2, R * 1.2);
         }
+        drawEyePairs(a, 1);
     },
     // a cup appears; a hole opens beside it; a tentacle rises, curls round the cup and takes it down
     tentacle(a, tsec) {
@@ -21640,6 +21671,8 @@ function frame(now) {
             cx.fillRect(-W, 0, W * 3, H);
             cx.restore();
         });
+        if (anom && anom.type === "eyes" && !anom.resolved && (sky.dark > .15 || S.lightsOut || nl > 0)) // the eyes shine through the dark (anomalies.js)
+            withRoom(anom.room, () => drawEyePairs(anom, .7));
         if (eerie > .01) {
             cx.fillStyle = `rgba(70,0,25,${eerie * .22})`;
             cx.fillRect(0, 0, W, H);
