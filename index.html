@@ -1006,7 +1006,7 @@ body.pixel .wxicon{width:18px;height:18px}
 const POOL_INFO = {
     possum_basket: "The possum, eating out of its basket, on why rubbish never makes it ill (an old pact, a family thing: its own lore)", look_basket: "Tapping the possum's basket on the nook's platform",
     look_sill: "Tapping a window sill (in the wagon, the nook or the archive)",
-    look_jarshelf: "Tapping the shelf the jar stands on, in the archive (what it's for, no spoilers)", look_capplank: "Tapping the plank under it, for the time capsules (what it's for)",
+    look_jarshelf: "Tapping the shelf the jar stands on, in the archive (what it's for, no spoilers; {thejar}: the jar or the jars, {itthem}: it or them)", look_capplank: "Tapping the plank under it, for the time capsules (what it's for)",
     world_letters: "Letters to you from the world, every couple of weeks (use / for a new paragraph; sign it from the world)",
     greet: "When you open the page", return_short: "Back after 20 min – 4 h", return_long: "Back after 4 h+ (uses {away})",
     away: "Things Mite did while you were away (fills {away})", idle: "Random remarks", observation: "Remarks built on your stats",
@@ -1630,8 +1630,8 @@ const DEF = {
         ],
         look_jarshelf: [
             "That's the jar shelf. Room for a jar or two. Things find their way into jars, here.",
-            "The top shelf's for the jar. I dust round it. Carefully.",
-            "A good strong shelf. It holds the jar, and the jar holds what it holds.",
+            "The top shelf's for {thejar}. I dust round {itthem}. Carefully.",
+            "A good strong shelf. It holds {thejar}, and that's all it has to do.",
         ],
         look_capplank: [
             "The plank's for time capsules. Little tins with something in them for later. Twelve fit.",
@@ -19187,7 +19187,8 @@ function lookSpot(id) {
 }
 /* what Mite says when it gets there */
 function lookLine(s) {
-    return compose(s.pool) || "Hm. I'd never really looked at that before.";
+    const many = s.id === "jarshelf" && eyeJarCount() > 1; // (the jar shelf: one jar or more)
+    return compose(s.pool, { thejar: many ? "the jars" : "the jar", itthem: many ? "them" : "it" }) || "Hm. I'd never really looked at that before.";
 }
 
 </script>
@@ -20909,6 +20910,11 @@ function eyeJarSpots(n, xRight, yTop, jw, jh, gap) {
     for (let i = 0; i < top; i++)
         out.push({ x: tx0 + i * (jw + gap), y: yTop - jh * 2 - PX });
     return out;
+}
+/* how many jars stand on the shelf: one for every six eyes (one to start with), and the raccoon's own */
+function eyeJarCount() {
+    const own = Math.max(1, Math.min(EYE_JARS, Math.ceil(ownEyes().length / EYES_PER_JAR) || 1));
+    return own + ((S.eyes || []).some(inRaccJar) ? 1 : 0);
 }
 function drawEyeJars(dk, t, xRight, yTop) {
     const q = PX, eye = s => EYES.find(e => e.id === s.k), have = ownEyes().map(eye).filter(Boolean), racc = (S.eyes || []).filter(inRaccJar).map(eye).filter(Boolean);
