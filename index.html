@@ -18398,22 +18398,27 @@ function wireCorr(el) {
 }
 /* the drawer of the writing desk: the current file */
 function showCorrDrawer() {
+    const fresh = $("ritual").hidden; // (a chime only when the card first opens, not when moving between them)
     const list = corrCurrent().slice().reverse(), filed = (KEEP.corr || []).length - list.length;
     openRitual("The correspondence drawer", list.length ? "This week's letters, in and out. When the week's done they go to the archive, onto its shelf in the paternoster." : "Nothing this week yet. Letters go to the archive with their week.",
         `<ul class="fbooklist pnlist">${corrRows(list)}</ul>${filed ? `<p class="sub">${filed} older letter${filed === 1 ? "" : "s"} transferred to the paternoster, filed by week.</p>` : ""}`, [["Close", "primary", closeRitual]]);
     wireCorr($("ritBody"));
-    sfx("card");
+    if (fresh)
+        sfx("card");
 }
 /* a week's folder from the paternoster: its transfer list */
 function showCorrFolder(wk) {
+    const fresh = $("ritual").hidden; // (a chime only when the card first opens, not when moving between them)
     const list = corrOfWeek(wk), start = new Date(wk + "T12:00");
     openRitual(`Correspondence, week ${weekNo(wk)}`, `Transferred from the desk at the end of the week. ${list.length} letter${list.length === 1 ? "" : "s"}, in the order they came.`, `<ul class="fbooklist pnlist">${corrRows(list)}</ul>`,
         [["Back to the paternoster", "", () => showPaternoster(Math.max(0, pnWeeks().findIndex(w => w.k === wk)))], ["Close", "primary", closeRitual]]);
     wireCorr($("ritBody"));
-    sfx("card");
+    if (fresh)
+        sfx("card");
 }
 /* one letter, from the register */
 function showCorrItem(id) {
+    const fresh = $("ritual").hidden; // (a chime only when the card first opens, not when moving between them)
     const r = (KEEP.corr || []).find(x => x.id === id);
     if (!r)
         return;
@@ -18422,7 +18427,8 @@ function showCorrItem(id) {
     const meta = `${r.d === "in" ? `From ${esc(r.who)}, received` : `To ${esc(r.who)}, sent`} ${esc(dmy(new Date(r.at)))} · ${filed ? `transferred to the paternoster, week ${weekNo(wk)}` : "in the desk, current file"}`;
     openRitual(corrNo(r), r.d === "out" ? `${S.settings.pet}'s copy.` : "", `${body}<p class="ritmeta">${meta}</p>`,
         [[filed ? "The week's folder" : "The drawer", "", () => filed ? showCorrFolder(wk) : showCorrDrawer()], ["Close", "primary", closeRitual]]);
-    sfx("card");
+    if (fresh)
+        sfx("card");
 }
 
 </script>
@@ -25362,16 +25368,19 @@ function renderCatalogue() {
 }
 /* a season's folder, as a card (from the closet) */
 function showCatSeason(s) {
+    const fresh = $("ritual").hidden;
     const v = catSeasons().find(x => x.s === s);
     if (!v)
         return;
     const d = seasonDays(s);
     openRitual(seasonName(s), `${catCount(v)}. ${dmy(d.start)} – ${dmy(d.end)}.`, `<ol class="catrows">${catRows(v)}</ol>`, [["Close", "primary", closeRitual]]);
     wireCatRows($("ritBody"));
-    sfx("card");
+    if (fresh)
+        sfx("card");
 }
 /* one piece, opened: the picture rebuilt from its record, with its label */
 function showCatItem(key) {
+    const fresh = $("ritual").hidden;
     const r = (KEEP.cat || []).find(x => catKey(x) === key);
     if (!r)
         return;
@@ -25388,7 +25397,8 @@ function showCatItem(key) {
         drawPainting(g, 0, 0, cv.width, cv.height, r.day, 1);
     else
         drawKnitPiece(g, r, 1, 32, r.item === "hat" ? 44 : r.item === "scarf" ? 4 : 10, r.item === "scarf" ? 40 : 46);
-    sfx("card");
+    if (fresh)
+        sfx("card");
 }
 
 </script>
