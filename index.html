@@ -817,9 +817,9 @@ body.pixel .wxicon{width:18px;height:18px}
         <div class="shop" id="kettleShop"></div></details>
       <details class="shopsec" data-sec="wall" open><summary><h3>On the wall</h3><span class="seccount" id="cnt-wall"></span><span class="secnew" id="new-wall" hidden>new</span></summary><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p>
         <div class="shop" id="wallShop"></div></details>
-      <details class="shopsec" data-sec="splurge" open><summary><h3>Something special</h3><span class="seccount" id="cnt-splurge"></span><span class="secnew" id="new-splurge" hidden>new</span></summary><p class="sub">A treat for the wagon, for one day. Then it's gone, and you can pick another.</p>
+      <details class="shopsec" data-sec="splurge" open hidden><summary><h3>Something special</h3><span class="seccount" id="cnt-splurge"></span><span class="secnew" id="new-splurge" hidden>new</span></summary><p class="sub">A treat for the wagon, for one day. Then it's gone, and you can pick another.</p>
         <div class="shop" id="splurgeShop"></div></details>
-      <details class="shopsec" data-sec="barter" open><summary><h3>The raccoon's barter</h3><span class="seccount" id="cnt-barter"></span><span class="secnew" id="new-barter" hidden>new</span></summary>
+      <details class="shopsec" data-sec="barter" open hidden><summary><h3>The raccoon's barter</h3><span class="seccount" id="cnt-barter"></span><span class="secnew" id="new-barter" hidden>new</span></summary>
         <div class="shop" id="barterShop"></div></details>
       <details class="shopsec" data-sec="lessons" open><summary><h3>Lessons</h3><span class="seccount" id="cnt-lessons"></span></summary><p class="sub">Only finished tasks unlock these. Each one teaches <span class="pn">Mite</span> something new to do.</p>
         <ul class="lessons" id="lessons"></ul></details>
@@ -23005,6 +23005,18 @@ const SHOP_SECS = {
     kettles: { ids: () => KETTLE_STYLES.map(k => k.sid), has: id => kettlesOwned().some(k => k.sid === id) },
     wall: { ids: () => WALL.map(b => b.id), has: id => (S.b[id] || 0) > 0 }
 };
+/* everything in the shop bought (furniture, plants, crystals, kettles, the wall): then Something special and the
+   raccoon's barter open up, and stay open */
+function shopComplete() {
+    if (num(S.flags.shopAll))
+        return true;
+    if (!Object.values(SHOP_SECS).every(c => c.ids().every(c.has)))
+        return false;
+    S.flags.shopAll = 1;
+    saveSoon();
+    setTimeout(() => speak(`That's everything in the shop. ${S.raccoonAt ? raccoonName() : "The raccoon"} says it has things the shop doesn't, and there's something special on the last page now.`, { ms: 6500 }), 1200);
+    return true;
+}
 let shopFurnShown = new Set(), shopSeenTimer = 0, shopSecSetting = false;
 const shopOpenPref = (() => { try { return JSON.parse(localStorage.getItem("st-shopsec") || "{}") || {}; } catch (e) { return {}; } })(); // (which ones you opened or closed: this browser only)
 function shopIsNew(id) {
@@ -23021,6 +23033,13 @@ function shopSections() {
     document.querySelectorAll("details.shopsec").forEach(d => {
         const k = d.dataset.sec, c = SHOP_SECS[k], cnt = $("cnt-" + k), nw = $("new-" + k);
         let done = false;
+        if (k === "splurge" || k === "barter") { // (only once everything else is bought)
+            const show = shopComplete();
+            if (d.hidden === show)
+                d.hidden = !show;
+            if (!show)
+                return;
+        }
         if (c) {
             const ids = c.ids(), n = ids.filter(c.has).length, news = ids.filter(id => shopIsNew(id) && (k !== "furn" || shopFurnShown.has(id)));
             cnt.textContent = `${n}/${ids.length}`;
@@ -23073,18 +23092,10 @@ function renderShop() {
     const shop = $("shop");
     shop.innerHTML = "";
     shopFurnShown = new Set();
-    let prevOwned = true;
-    byPrice(BUILDINGS).forEach((b, i) => {
+    byPrice(BUILDINGS).forEach((b, i) => { // all of it on show from the start: you can see what there is to save up for
         const own = S.b[b.id] || 0;
-        const visible = own > 0 || prevOwned || S.gTotal >= b.price * .6;
-        prevOwned = own > 0;
         const el = document.createElement("div");
-        el.className = "bld" + (visible ? "" : " locked");
-        if (!visible) {
-            el.innerHTML = `<div><b>???</b><p>Keep going to discover this.</p></div>`;
-            shop.appendChild(el);
-            return;
-        }
+        el.className = "bld";
         shopFurnShown.add(b.id);
         const shown = Math.min(own, b.max);
         el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
