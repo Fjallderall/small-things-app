@@ -689,6 +689,9 @@ body.pixel .scopeview .mlabel .ml-credit{font-size:12px}
 .hud .wx{display:inline-flex;align-items:center;gap:6px}
 .wxicon{width:14px;height:14px;image-rendering:pixelated;flex:0 0 auto}
 body.pixel .wxicon{width:18px;height:18px}
+/* the note with the backup: the file holds everything you've written, and isn't locked */
+.bkwarn{margin:8px 0 0;padding:8px 10px;border-left:3px solid #c98a2e;background:rgba(201,138,46,.1);border-radius:0 6px 6px 0;font-size:13.5px;line-height:1.45;color:var(--ink)}
+.bkwarn.small{margin:4px 0 6px;padding:5px 8px;font-size:12.5px}
 
 </style>
 <div class="app">
@@ -739,6 +742,7 @@ body.pixel .wxicon{width:18px;height:18px}
       <div class="tk-head"><h2>Today</h2><span class="sync" id="syncTxt"></span></div>
       <div class="evecard bkcard" id="bkCard" hidden>
         <p><strong>Back up today?</strong> Everything in one small file. Send it to yourself (a messenger, email) or keep it in your files.</p>
+        <p class="bkwarn small">It holds all the text you've written here and isn't locked, so keep it somewhere private.</p>
         <div class="row"><button class="btn primary" type="button" id="bkSend">Send to…</button><button class="btn" type="button" id="bkSave">Download</button><button class="btn ghost" type="button" id="bkLater">Not today</button></div>
       </div>
       <div class="evecard" id="eveCard" hidden>
@@ -933,7 +937,8 @@ body.pixel .wxicon{width:18px;height:18px}
       <div><h2>AI usage</h2><p class="sub">Every AI call is logged here. Counts are estimates from text length (about 3.6 characters per token); the real number is somewhat higher because the platform adds its own framing to each call.</p></div>
       <div class="usage" id="usage"></div>
 
-      <div><h2>Backup</h2><p class="sub">Keep a copy somewhere safe, or use it to move to another device: send the file to yourself (mail, a chat, a cloud drive), save it, or copy it.</p><p class="sub" id="bkStatus"></p></div>
+      <div><h2>Backup</h2><p class="sub">Keep a copy somewhere safe, or use it to move to another device: send the file to yourself (mail, a chat, a cloud drive), save it, or copy it.</p><p class="sub" id="bkStatus"></p>
+        <p class="bkwarn" role="note"><strong>Be mindful with the file.</strong> A backup holds everything you've written here: your tasks and jotted notes, the journal, time capsules, what you told <span class="pn">Mite</span> and what it remembers, the lines you added, your name and your weather location. It isn't locked or encrypted, so anyone who opens it can read it. Keep it somewhere private, like your own files or a cloud folder only you use, and think twice before sending it through a shared chat or someone else's device.</p></div>
       <div class="row">
         <button class="btn primary" id="bkSend2">Send backup to…</button>
         <button class="btn" id="bkSave2">Download backup</button>
