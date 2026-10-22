@@ -458,8 +458,6 @@ body.pixel.game .stage{border:0}
 .art{margin:0;background:var(--sunk);border:2px solid var(--line);padding:8px;display:flex;flex-direction:column;gap:6px}
 .art canvas{width:100%;height:auto;aspect-ratio:96/73;image-rendering:pixelated;background:#f7f1e3;border:3px solid #9a6c45;box-sizing:border-box}
 .art figcaption{display:flex;flex-direction:column;gap:2px;font-size:13px;line-height:1.35}
-.art figcaption b{font-size:14px}
-.art figcaption span{color:var(--muted)}
 .art.now{border-style:dashed}
 
 /* the task sheet: list first, the add field at the bottom */
@@ -647,6 +645,23 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 @keyframes sndpoint{50%{background:#f2c14e;color:#2a1d10}}
 @keyframes sndring{from{opacity:1;transform:scale(.9)}to{opacity:0;transform:scale(1.35)}}
 @media (prefers-reduced-motion:reduce){#sndG.snd-point,#sndG.snd-point::after{animation:none}#sndG.snd-point{background:#f2c14e;color:#2a1d10}}
+/* the painting's label, like the little card beside a painting in a museum (easel.js: paintLabel) */
+.mlabel{display:flex;flex-direction:column;gap:1px;text-align:left;font-family:var(--f-body);font-size:12.5px;line-height:1.35;color:#2a2620}
+.mlabel .ml-artist{font-size:13.5px;font-weight:700;letter-spacing:.01em}
+.mlabel .ml-title i{font-style:italic;font-weight:600}
+.mlabel .ml-med,.mlabel .ml-no{color:#5a544a}
+.mlabel .ml-credit{margin-top:4px;padding-top:4px;border-top:1px solid #d8d0bf;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#6a6252}
+#paintCap{background:#f6f3ea;border-radius:2px;border:1px solid #d8d0bf;padding:8px 12px 9px;min-width:min(200px,60vw);box-shadow:0 2px 8px rgba(0,0,0,.25)}
+body.pixel #paintCap{border:2px solid #b9ae98;font-size:inherit;line-height:inherit}
+body.pixel .mlabel{font-family:var(--f-read);font-size:14px;line-height:19px}
+body.pixel .mlabel .ml-artist{font-size:15px}
+body.pixel .mlabel .ml-credit{font-size:12px;letter-spacing:.04em}
+.art .mlabel{background:#f6f3ea;border:1px solid #d8d0bf;padding:6px 8px 7px;color:#2a2620}
+.art.now .mlabel{border-style:dashed}
+.scopeview .mlabel,body.pixel .scopeview .mlabel,.scopeview .mlabel span,body.pixel .scopeview .mlabel span{background:none;border:0;border-radius:0;padding:0;box-shadow:none;max-width:none;font:inherit;line-height:inherit}
+.scopeview .mlabel .ml-credit,body.pixel .scopeview .mlabel .ml-credit{margin-top:4px;padding-top:4px;border-top:1px solid #d8d0bf;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#6a6252}
+body.pixel .scopeview .mlabel .ml-credit{font-size:12px}
+.mlabel .ml-date{white-space:nowrap}
 
 </style>
 <div class="app">
@@ -948,6 +963,9 @@ const POOL_INFO = {
     buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
+    paint_medium: "While painting, about what it's painting with: medium | text (oils, acrylic, watercolour, gouache, pastel, chalk, pencil, marker, charcoal, ink, crayon, tempera)",
+    paint_smell: "Now and then through the day: what the wagon smells like from the paint (medium | text, as paint_medium)",
+    paint_carry: "A painting that wasn't finished goes on the next day ({item}: its title)",
     trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for the Cabinet: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
 };
 const DEF = {
@@ -2957,6 +2975,59 @@ const DEF = {
             "[autumn] Leaves, and Where to Put Them | A whole chapter on not raking. I agree with it.",
             "[winter] Hibernation for the Ambitious | Step one: a warm corner. Step two: see step one."
         ],
+        paint_medium: [
+            "oils | Oils take forever to dry. Good. I'm not in a hurry either.",
+            "oils | I mixed a green that doesn't exist. I'll never get it again. That's oils.",
+            "oils | You can paint over anything in oils. Mistakes just become the bottom layer.",
+            "acrylic | Acrylics dry while you're still deciding. Very decisive paint.",
+            "acrylic | I washed the brush straight away this time. Acrylic doesn't forgive a dry brush.",
+            "watercolour | Watercolour does what it wants. I just make suggestions.",
+            "watercolour | Two jars of water: one for clean, one for everything else. The second one's more interesting.",
+            "watercolour | The paper buckled. It'll flatten. It always flattens.",
+            "gouache | Gouache goes on flat and velvety. Like painting with moss.",
+            "gouache | It dries lighter than it looks wet. I forget that every single time.",
+            "pastel | Pastels are just colour, no waiting. My paws are three colours now.",
+            "pastel | I blended the sky with my thumb. Moss thumbs are very good blenders.",
+            "chalk | Chalk on grey paper. The grey does half the work.",
+            "chalk | It needs a spray of fixative after, or it smudges off. Even art needs a coat.",
+            "pencil | Coloured pencil is slow. Layers and layers. Very calming. My paw disagrees.",
+            "pencil | I sharpened the blue one down to a stub. The sky needed it.",
+            "marker | Markers. No going back. Every line is a decision.",
+            "marker | The yellow marker's drying out. Everything has a faded summer look now. On purpose, now.",
+            "charcoal | Charcoal. It's all smudges, and then suddenly it's a picture.",
+            "charcoal | My paws are black up to the elbow. I don't have elbows. Up to where they'd be.",
+            "ink | Ink and a bit of water. One drop too many and it's a cloud. I wanted a cloud anyway.",
+            "ink | The nib scratches. I like the sound. It sounds like thinking.",
+            "crayon | Wax crayons. Not just for children. For anyone who wants to press hard.",
+            "crayon | I scratched through the black to the colours underneath. Very old trick. Very good trick.",
+            "tempera | Egg tempera. One egg for the paint, nearly one for breakfast. Don't mix those up.",
+            "tempera | Tempera dries in seconds. Tiny strokes, hundreds of them. Very patient paint."
+        ],
+        paint_smell: [
+            "oils | The whole wagon smells of linseed oil. Warm and nutty, a bit like an old church.",
+            "oils | That's the turpentine you can smell. Open a window if it gets to you. I'm used to it.",
+            "acrylic | Acrylic hardly smells. A bit like a new plastic bucket, if you get close. I got close.",
+            "acrylic | It smells of wet paper towels and good intentions in here. That's acrylic.",
+            "watercolour | Watercolour smells of damp paper. Like a library after rain.",
+            "watercolour | The water jar smells faintly of honey. It's the gum arabic. I licked the brush once. Don't.",
+            "gouache | The gouache smells a bit chalky and a bit sweet. Like a school cupboard.",
+            "pastel | There's pastel dust on everything. It smells of nothing, and of blackboards.",
+            "chalk | Chalk dust. The wagon smells like a classroom on the last day of term.",
+            "chalk | I sneezed. The sky in the painting has a new cloud now.",
+            "pencil | It smells of pencil shavings in here. Cedar. The best smell.",
+            "pencil | There's a little heap of shavings by the easel. They smell like a forest that got organised.",
+            "marker | The markers smell sharp and fruity. I put the caps back on. Mostly.",
+            "marker | Smells like a new pencil case in here. That's the markers.",
+            "charcoal | Charcoal smells like a campfire from last week. Cosy, and a little bit sad.",
+            "ink | The ink smells metallic and old, like a letter from someone's great-aunt.",
+            "crayon | It smells of crayons in here. Instantly six years old. Is that a thing for you too?",
+            "tempera | It smells faintly of egg in here. That's the paint. I promise it's the paint."
+        ],
+        paint_carry: [
+            "“{item}” isn't finished yet. I'll go on with it today. Paintings take as long as they take.",
+            "Still on “{item}”. Another day at the easel. It's coming along.",
+            "“{item}”, day two. Or three. I've stopped counting. It's better than it was."
+        ],
         trinkets: [
             "Brass doorknob | Belongs to a door that isn't here any more.",
             "Tiny teaspoon | Exactly the right size for nothing.",
@@ -3499,7 +3570,7 @@ function sanitizeState(raw) {
     o.raccoonAt = num(s.raccoonAt);
     {
         const pt = s.paint && typeof s.paint === "object" ? s.paint : {};
-        o.paint = { day: dkey(pt.day) || "", prog: clamp(num(pt.prog), 0, 1), sent: dkey(pt.sent) || "" };
+        o.paint = { day: dkey(pt.day) || "", prog: clamp(num(pt.prog), 0, 1), sent: dkey(pt.sent) || "", on: dkey(pt.on) || "", p0: clamp(num(pt.p0), 0, 1) }; // (on: the day it was last worked on; p0: how far it was that morning)
     }
     o.inc = arr(s.inc, 100).map(n => ({ at: num(n.at), text: str(n.text, 400) }));
     o.words = arr(s.words, 80).map(w => ({ w: str(w.w, 30), m: str(w.m, 200), at: num(w.at) }));
@@ -3781,7 +3852,8 @@ function mergeStates(a, b) {
     {
         const pa = a.paint || {}, pb = b.paint || {};
         const day = (pa.day || "") > (pb.day || "") ? pa.day : pb.day || "";
-        o.paint = { day, prog: Math.max(pa.day === day ? num(pa.prog) : 0, pb.day === day ? num(pb.prog) : 0), sent: (pa.sent || "") > (pb.sent || "") ? pa.sent : pb.sent || "" };
+        const on = [pa, pb].filter(x => x.day === day).map(x => x.on || "").sort().pop() || "", src = [pa, pb].find(x => x.day === day && (x.on || "") === on) || {};
+        o.paint = { day, prog: Math.max(pa.day === day ? num(pa.prog) : 0, pb.day === day ? num(pb.prog) : 0), sent: (pa.sent || "") > (pb.sent || "") ? pa.sent : pb.sent || "", on, p0: num(src.p0) };
     }
     o.inc = uniq([...(nw.inc || []), ...(od.inc || [])], n => n.at + "|" + n.text).sort((x, y) => y.at - x.at).slice(0, 100);
     o.memories = uniq([...(nw.memories || []), ...(od.memories || [])], m => m.t.toLowerCase()).filter(m => !o.del["m:" + m.t.toLowerCase()]).slice(0, 150);
@@ -5441,7 +5513,7 @@ function completeTask(id, src) {
     S.doneTotal = doneCount() + 1;
     const now = new Date();
     const h = now.getHours();
-    if (S.paint && S.paint.day === actDay())
+    if (S.paint && (S.paint.on || S.paint.day) === actDay())
         S.paint.prog = Math.max(S.paint.prog, Math.min(paintTarget(), S.paint.prog + .05 * t.s / 3 + .03));
     const g = addG((PAY.task[t.s] || 1) + (isPicked(t) ? PAY.pick : 0) + (t.fx ? PAY.fixDone : 0));
     const wasPick = isPicked(t);
@@ -6871,6 +6943,11 @@ const BEH = {
             if (ta < 0)
                 return;
             const k = Math.sin(ta * 5);
+            if (!b.talked && ta > b.act * .4) { // now and then, a word about the paint (easel.js: paint_medium)
+                b.talked = 1;
+                if (Math.random() < .5)
+                    paintTalk("paint_medium");
+            }
             po.arms = [-.3, -1.5 + k * .35];
             po.lookOverride = { x: 1, y: -.1 };
             po.mouth = ta % 6 < 1 ? "o" : "smile";
@@ -6880,7 +6957,7 @@ const BEH = {
                 S.paint.prog = Math.max(before, Math.min(paintTarget(), before + dt * .011));
                 if (before < 1 && S.paint.prog >= 1) {
                     floatText("done", p.x, GY - R * 2.2, "#fff");
-                    note(`Finished today's painting: “${paintingOf(S.paint.day).title}”.`);
+                    note(`Finished the painting: “${paintingOf(S.paint.day).title}”.`);
                     saveSoon();
                 }
             }
@@ -9778,7 +9855,8 @@ const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () 
             const pr = Math.round((S.paint.prog || 0) * 100), P = paintingOf(S.paint.day || actDay());
             if (pr >= 100)
                 showToday();
-            const t = pr >= 100 ? `Today's painting is finished: “${P.title}”. It goes out with the post tomorrow.` : pr < 5 ? "A blank canvas. I'm thinking. Thinking is part of painting." : `Today's painting is about ${pr}% done. No peeking at the bare bits.`;
+            const cont = S.paint.day && S.paint.day !== actDay(), med = P.medium.label.toLowerCase(); // (cont: one from an earlier day, still going)
+            const t = pr >= 100 ? `The painting is finished: “${P.title}”. It goes out with the post tomorrow.` : pr < 5 ? `A blank canvas. ${P.medium.label} this time. I'm thinking. Thinking is part of painting.` : cont ? `Still working on “${P.title}”, about ${pr}% done. ${med[0].toUpperCase() + med.slice(1)}. It's taking its time.` : `Today's painting is about ${pr}% done. ${med[0].toUpperCase() + med.slice(1)}. No peeking at the bare bits.`;
             speak(t, { ms: 6000 });
             return 6;
         } },
@@ -11405,6 +11483,14 @@ function easelX() {
     return clamp((right + W) / 2 + R * .15, R * 2.6, W - R * 1.1);
 }
 const PAINT_KINDS = ["moon", "flowers", "sea", "portrait", "teapot", "forest", "abstract", "fireflies", "window", "mountain"];
+/* what each painting is made with: the museum label says it, and Mite talks about it (and its smell) while it's on
+   the easel (lines: paint_medium, paint_smell, "medium | text") */
+const MEDIA = [
+    { id: "oils", label: "Oil on canvas" }, { id: "acrylic", label: "Acrylic on board" }, { id: "watercolour", label: "Watercolour on paper" },
+    { id: "gouache", label: "Gouache on card" }, { id: "pastel", label: "Soft pastel on paper" }, { id: "chalk", label: "Chalk on grey paper" },
+    { id: "pencil", label: "Coloured pencil on paper" }, { id: "marker", label: "Marker on sketchbook paper" }, { id: "charcoal", label: "Charcoal and white chalk" },
+    { id: "ink", label: "Ink and wash" }, { id: "crayon", label: "Wax crayon on paper" }, { id: "tempera", label: "Egg tempera on panel" }
+];
 function paintingOf(day) {
     const h = k => hash01(day + k);
     const kind = PAINT_KINDS[Math.floor(h("k") * PAINT_KINDS.length)];
@@ -11412,7 +11498,7 @@ function paintingOf(day) {
     const pal = pals[Math.floor(h("p") * pals.length)];
     const nouns = { moon: "Moon over Moss", flowers: "Flowers for Nobody in Particular", sea: "The Sea, from Memory", portrait: "Self-portrait, Flattering", teapot: "Still Life with Teapot", forest: "A Small Forest", abstract: "Feelings, Mostly Orange", fireflies: "Fireflies, After Dark", window: "The View, Probably", mountain: "A Mountain I Made Up" };
     const n = Math.floor((new Date(day + "T12:00") - new Date("2026-01-01T12:00")) / 864e5) + 1;
-    return { kind, pal, title: nouns[kind], no: n, seed: h("s") };
+    return { kind, pal, title: nouns[kind], no: n, seed: h("s"), medium: MEDIA[Math.floor(h("m") * MEDIA.length)] };
 }
 function drawPainting(c, x, y, w, h, day, prog) {
     const P = paintingOf(day), [a, b2, g2, bg] = P.pal, rr = k => hash01(day + "r" + k);
@@ -11803,9 +11889,32 @@ function drawPlant(id, s, dk, t, i) {
 }
 /* yesterday's painting goes off with the snail */
 /* how far today's painting may be by now: Mite starts around 9:00 and finishes around 23:00 */
+/* how far the painting may be by now: a day's share, from 0900 to 2300, on top of where it was this morning (a
+   painting that wasn't finished goes on the next day: S.paint.p0) */
 function paintTarget() {
-    const n = new Date(), h = n.getHours() + n.getMinutes() / 60;
-    return clamp((h - 9) / 14, 0, 1);
+    const n = new Date(), h = n.getHours() + n.getMinutes() / 60, p0 = S.paint && S.paint.on === actDay() ? num(S.paint.p0) : 0;
+    return clamp(p0 + clamp((h - 9) / 14, 0, 1), 0, 1);
+}
+/* Mite says something about what it's painting with (paint_medium) or how the wagon smells of it (paint_smell) */
+function paintTalk(k) {
+    if (!S.paint || !S.paint.day || !own("easel"))
+        return null;
+    const m = paintingOf(S.paint.day).medium.id, c = ctx();
+    const opts = pool(k).map(parseLine).filter(l => l.conds.every(x => condOk(x, c) !== false)).map(l => {
+        const i = l.text.indexOf("|");
+        return i > 0 && l.text.slice(0, i).trim().toLowerCase() === m ? l.text.slice(i + 1).trim() : "";
+    }).filter(Boolean);
+    if (!opts.length)
+        return null;
+    const t = fillText(choice(opts), c);
+    speak(t);
+    return t;
+}
+/* the little card next to a painting, like a museum label: the artist, the title and year, what it's made with, its
+   number, and a last line (where it went, or how far it is) */
+function paintLabel(day, credit) {
+    const P = paintingOf(day);
+    return `<span class="mlabel"><b class="ml-artist">${esc(S.settings.pet)}</b><span class="ml-title"><i>${esc(P.title)}</i>, ${esc(day.slice(0, 4))}</span><span class="ml-med">${esc(P.medium.label)}</span><span class="ml-no">No. ${P.no} · <span class="ml-date">begun ${esc(dmy(day))}</span></span>${credit ? `<span class="ml-credit">${credit}</span>` : ""}</span>`;
 }
 /* the gallery keeps a record of every painting sent off; the picture is redrawn from its day */
 function addToGallery(day, to, by, prog) {
@@ -11845,14 +11954,20 @@ function paintDayCheck() {
     galleryBackfill();
     S.paint = S.paint || { day: "", prog: 0, sent: "" };
     const today = actDay();
-    if (S.paint.day === today)
+    if ((S.paint.on || S.paint.day) === today && S.paint.day)
         return;
-    const old = S.paint.day, prog = S.paint.prog;
-    S.paint = { day: today, prog: 0, sent: S.paint.sent || "" };
-    if (old && prog >= .15 && S.paint.sent !== old) { // a painting that was started gets finished: Mite does the last of it late in the evening, while you're away
-        S.paint.sent = old;
-        setTimeout(() => showSendoff(old, 1, prog < 1), 2600);
+    const old = S.paint.day, prog = num(S.paint.prog), sent = S.paint.sent || "";
+    if (old && prog >= 1) { // finished: it goes off this morning, and there's a new canvas
+        S.paint = { day: today, prog: 0, sent: old, on: today, p0: 0 };
+        if (sent !== old)
+            setTimeout(() => showSendoff(old), 2600);
     }
+    else if (old && prog > 0) { // not finished yet: Mite goes on with it today, until it is
+        S.paint = { day: old, prog, sent, on: today, p0: prog };
+        setTimeout(() => say("paint_carry", { item: paintingOf(old).title }), 7000);
+    }
+    else
+        S.paint = { day: today, prog: 0, sent, on: today, p0: 0 };
     saveSoon();
 }
 /* tapping the easel once today's painting is finished: Mite shows it on a card */
@@ -11863,7 +11978,7 @@ function showToday() {
     const c = cv.getContext("2d");
     c.clearRect(0, 0, cv.width, cv.height);
     drawPainting(c, 0, 0, cv.width, cv.height, day, 1);
-    cardCap($("paintCap"), `<b>“${esc(P.title)}”</b> No. ${P.no}. Finished. It goes out with the post tomorrow.`);
+    cardCap($("paintCap"), paintLabel(day, "Finished. It goes out with the post tomorrow."));
     const el = $("paintView");
     el.classList.remove("out");
     el.hidden = false;
@@ -11874,7 +11989,7 @@ function showToday() {
         setTimeout(() => el.hidden = true, 500);
     }, 7000);
 }
-function showSendoff(day, prog = 1, late = false) {
+function showSendoff(day, prog = 1) {
     const P = paintingOf(day), friend = choice(pool("penpals").length ? pool("penpals") : ["a friend"]);
     const cv = $("paintCv");
     cv.width = 96;
@@ -11882,7 +11997,7 @@ function showSendoff(day, prog = 1, late = false) {
     const c = cv.getContext("2d");
     c.clearRect(0, 0, cv.width, cv.height);
     drawPainting(c, 0, 0, cv.width, cv.height, day, prog);
-    cardCap($("paintCap"), `<b>“${esc(P.title)}”</b> No. ${P.no}. ${late ? "I finished it last night. " : ""}${own("snail") ? `The snail is taking it to ${esc(friend)}.` : `I'm posting it to ${esc(friend)}.`}`);
+    cardCap($("paintCap"), paintLabel(day, own("snail") ? `The snail is taking it to ${esc(friend)}.` : `Posted to ${esc(friend)}.`));
     const el = $("paintView");
     el.classList.remove("out");
     el.hidden = false;
@@ -21668,6 +21783,8 @@ function ambientTalk() {
     }
     if (Math.random() < .08 && quoteSay()) // a note from the pinboard (pinboard.js)
         return;
+    if (r < .2 && Math.random() < .25 && S.paint && S.paint.prog > 0 && paintTalk("paint_smell")) // what the paint smells like (easel.js)
+        return;
     if (hasLesson("story") && r < .25) {
         say("story");
         return;
@@ -23029,13 +23146,9 @@ function renderGallery() {
     const el = $("gallery");
     if (!el)
         return;
-    const fmtDay = d => wdmy(new Date(d + "T12:00"));
-    const card = (day, prog, line, cls) => {
-        const P = paintingOf(day);
-        return `<figure class="art${cls ? " " + cls : ""}"><canvas width="96" height="73" data-day="${esc(day)}" data-prog="${prog}" aria-hidden="true"></canvas>
-      <figcaption><b>“${esc(P.title)}”</b><span>No. ${P.no} · ${fmtDay(day)}</span><span>${line}</span></figcaption></figure>`;
-    };
-    const cur = S.paint && S.paint.day ? card(S.paint.day, S.paint.prog || 0, `On the easel, ${Math.round((S.paint.prog || 0) * 100)}% done`, "now") : "";
+    const card = (day, prog, line, cls) => `<figure class="art${cls ? " " + cls : ""}"><canvas width="96" height="73" data-day="${esc(day)}" data-prog="${prog}" aria-hidden="true"></canvas>
+      <figcaption>${paintLabel(day, line)}</figcaption></figure>`; // (the museum label: easel.js)
+    const cur = S.paint && S.paint.day ? card(S.paint.day, S.paint.prog || 0, `On the easel, ${Math.round((S.paint.prog || 0) * 100)}% done${S.paint.day !== actDay() ? ", still going" : ""}`, "now") : "";
     const sent = (S.gallery || []).map(g => card(g.day, 1, `${g.by === "post" ? "Posted to" : "The snail took it to"} ${esc(g.to)}`)).join("");
     el.innerHTML = cur + (sent || `<p class="sub">Nothing sent yet. The first painting goes out the morning after ${esc(S.settings.pet)} finishes it.</p>`);
     el.querySelectorAll("canvas[data-day]").forEach(c => {
@@ -24745,7 +24858,13 @@ function wash() {
     setTimeout(() => speak(choice(["Squeaky clean. Moss-clean.", "Bath done. I smell like rain.", "Clean. Don't look at the floor."])), 5600);
     afterChange();
 }
+/* on time for bed: lights out from two hours before bedtime until a quarter of an hour after it (Settings: bedtime) */
+function bedOnTime(now = new Date()) {
+    const m = (now.getHours() * 60 + now.getMinutes() - (S.settings.bed ?? 23) * 60 + 1440) % 1440;
+    return m <= 15 || m >= 1440 - 120;
+}
 function toggleLights() {
+    const offAt = num(S.lightsAt);
     S.lightsOut = !S.lightsOut;
     S.lightsAt = Date.now();
     if (S.lightsOut) {
@@ -24753,12 +24872,21 @@ function toggleLights() {
         say("goodnight");
         if (own("snail"))
             setTimeout(() => snailSay(choice(["Coming. Save me a spot.", "Bedtime? I'm on my way. Give me a minute. Or ten.", "Night night. Scooch over.", "I'll be there by the time you're dreaming."]), 4000), 2200);
-        const h = new Date().getHours(), diff = (h - S.settings.bed + 24) % 24;
-        if (diff <= 1 || diff >= 22) { // on time: the bonus comes when the next day starts
+        S.goodnight = "";
+        if (bedOnTime()) { // on time: the bonus comes when the next day starts, if the lights stay out till then
             const t = new Date(actDay() + "T12:00");
             t.setDate(t.getDate() + 1);
             S.goodnight = dayKey(t);
         }
+    }
+    else if (S.goodnight) { // lights on with a bonus waiting: after a night's sleep it's paid, otherwise (up again in the night) it's off
+        S.lightsAt = offAt;
+        if (checkRested())
+            return;
+        S.lightsAt = Date.now();
+        S.goodnight = "";
+        pet.start("yawn");
+        speak(choice(["Up again? The lamp's on. I'll pretend I was awake.", "Lights. Oh. Is it morning? It isn't, is it.", "Can't sleep? Me neither. Now."]));
     }
     else {
         pet.start("yawn");
@@ -24768,15 +24896,17 @@ function toggleLights() {
 }
 function checkRested() {
     if (!S.goodnight || actDay() < S.goodnight || Date.now() - num(S.lightsAt) < 4 * 3600e3) // the next day has started, and a night's sleep in between
-        return;
+        return false;
     S.goodnight = "";
     S.lightsOut = false;
+    S.lightsAt = Date.now();
     const g = addG(PAY.rested);
     S.flags.rested = 1;
     say("rested");
     toast(`Well rested: +${g} glimmers`);
     note(`${youN()} went to bed on time. Morning bonus paid.`);
     afterChange();
+    return true;
 }
 function selfCare(id) {
     const it = SELF.find(x => x.id === id);
@@ -26456,6 +26586,7 @@ setInterval(() => {
     capsuleReminder(); // the first of the month: a capsule? (keepsake-shelf.js)
     if (actDay() !== S.lastDay) {
         S.lastDay = actDay();
+        paintDayCheck(); // (easel.js: a finished painting goes off, an unfinished one carries on)
         autoFileOld();
         compact();
         renderAll();
