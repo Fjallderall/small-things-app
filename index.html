@@ -944,9 +944,10 @@ body.pixel .wxicon{width:18px;height:18px}
     </div>
 
     <div class="pane" id="tab-data" role="tabpanel" hidden>
-      <div><h2>AI usage</h2><p class="sub">Every AI call is logged here. Counts are estimates from text length (about 3.6 characters per token); the real number is somewhat higher because the platform adds its own framing to each call.</p></div>
-      <div class="usage" id="usage"></div>
+      <div id="usageSec"><div><h2>AI usage</h2><p class="sub">Every AI call is logged here. Counts are estimates from text length (about 3.6 characters per token); the real number is somewhat higher because the platform adds its own framing to each call.</p></div>
+      <div class="usage" id="usage"></div></div>
 
+      <div id="dataSec">
       <div><h2>Backup</h2><p class="sub">Keep a copy somewhere safe, or use it to move to another device: send the file to yourself (mail, a chat, a cloud drive), save it, or copy it.</p><p class="sub" id="bkStatus"></p>
         <p class="bkwarn" role="note"><strong>Be mindful with the file.</strong> A backup holds everything you've written here: your tasks and jotted notes, the journal, time capsules, what you told <span class="pn">Mite</span> and what it remembers, the lines you added, your name and your weather location. It isn't locked or encrypted, so anyone who opens it can read it. Keep it somewhere private, like your own files or a cloud folder only you use, and think twice before sending it through a shared chat or someone else's device.</p></div>
       <div class="row">
@@ -964,6 +965,7 @@ body.pixel .wxicon{width:18px;height:18px}
       <div class="row">
         <button class="btn" id="importBtn">Import</button>
         <button class="btn danger" id="resetAll">Start over</button>
+      </div>
       </div>
     </div>
   </section>
@@ -27186,8 +27188,8 @@ const DESK_PAGES = {
     content: { pane: "tab-content", title: "Settings" },
     lines: { pane: "tab-lines", title: "Lines" },
     review: { pane: "tab-lines", title: "Lines", anchor: "aiLogHead" },
-    usage: { pane: "tab-data", title: "AI usage and backup", anchor: "usage" },
-    data: { pane: "tab-data", title: "AI usage and backup", anchor: "exportBtn" },
+    usage: { pane: "tab-data", title: "AI usage", only: "usageSec" },
+    data: { pane: "tab-data", title: "Backup and import", only: "dataSec" },
     credits: { pane: "deskCredits", title: "Credits and inspiration" }
 };
 const DESK_GROUPS = () => [
@@ -27243,6 +27245,9 @@ function openDesk(page) {
     }
     const pg = DESK_PAGES[deskPage];
     $("deskTitle").textContent = pg.title;
+    for (const id of ["usageSec", "dataSec"]) // (AI usage and the backup share a pane: each page shows only its own part)
+        if ($(id))
+            $(id).hidden = !!pg.only && pg.only !== id;
     curTab = pg.pane === "tab-content" ? "content" : pg.pane === "tab-lines" ? "lines" : pg.pane === "tab-data" ? "data" : curTab;
     renderContent();
     $("desk").scrollTop = 0;
