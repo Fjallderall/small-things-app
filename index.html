@@ -11558,7 +11558,7 @@ function pointLights(t) {
         withRoomLight("garden", () => {
             nightLights(t, "garden");
             const g = gardenGeo(), fl = 1 + Math.sin(t * 9) * .04 + Math.sin(t * 23) * .03;
-            for (const c of [gardenCandle(g), { x: g.dx0 + R * .62, y: g.dTop - R * .2 }]) {
+            for (const c of [hasChair() ? gardenCandle(g) : null, { x: g.dx0 + R * .62, y: g.dTop - R * .2 }].filter(Boolean)) { // (the side table's candle only with the chair)
                 if (!behindMite("garden", c.x, c.y))
                     glow(c.x, c.y - PX * 1.5, PX * 1.2, "rgba(255,210,120,.8)");
                 softGlow(c.x, c.y - PX, R * 1.4 * fl, "rgba(255,190,110,.32)");
@@ -13928,7 +13928,7 @@ const ANOM_LIFE = { figure: 20, double: 18, hand: 16, drips: 22,  tentacle: 12.5
 /* where the window (for the ghost) and the light (for the moth) are in a room */
 function anomGeo(rmName) {
     if (rmName === "garden") {
-        const g = gardenGeo(), c = gardenCandle(g);
+        const g = gardenGeo(), c = hasChair() ? gardenCandle(g) : { x: g.dx0 + R * .62, y: g.dTop - R * .1 }; // (no chair yet: the stub of candle on the desk)
         return { wx: g.wcx, wy: g.wy1 - g.wr * .5, wr: g.wr * .55, lx: c.x, ly: c.y - R * .5 };
     }
     if (rmName === "archive") {
@@ -17669,7 +17669,7 @@ function drawGarden(now, dt) {
         if (hasChair())
             drawChesterfield(g, dk, t, wood, woodD); // the chesterfield and the side table (drawn again over Mite on the stairs)
     });
-    { // the candle's flame and glow: a little always, more in the evening
+    if (hasChair()) { // the candle's flame and glow (on the side table, which comes with the chair): a little always, more in the evening
         const c = gardenCandle(g), fl = 1 + Math.sin(t * 9) * .04 + Math.sin(t * 23) * .03, up = Math.sin(t * 9) + Math.sin(t * 23) * .6 > .9 ? PX : 0;
         const fx = Math.floor(c.x / PX) * PX - PX / 2, fy = Math.floor(c.y / PX) * PX;
         cx.fillStyle = "#ffb84a";
