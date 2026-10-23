@@ -1007,6 +1007,17 @@ body.editing #addForm{display:none}
  * Lines you add in the app live in your save (S.content.pools), not here.
  */
 const POOL_INFO = {
+    catball: "Mite, when Midnightcat joins in with the ball",
+    cathunt: "Mite, after Midnightcat pounces on a spore, a seed or a loose page",
+    cathunt_firefly: "Mite, after Midnightcat pounces on a loose firefly (it always gets away)",
+    catdoor: "Mite, when Midnightcat comes back through a strange door (the door that wasn't there, or the night door)",
+    possumball: "Mite, when the possum takes the ball home to its basket",
+    snail_picnic: "The snail, arriving at the edge of Mite's picnic blanket",
+    snail_post: "The snail, sitting on the writing desk by the letter rack, checking the post (nothing new)",
+    snail_post_new: "The snail, checking the post when there's an unread letter in the rack",
+    glimpses_mouse: "What the chalk circle shows of a visiting mouse's family, which it found rather than was born into ({mouse} is its name; one per mouse)",
+    mousekin: "A visiting mouse, the first time it comes by after the chalk circle showed Mite its found family ({visitor} is its name)",
+    drift_firefly: "Tapping a loose firefly drifting low over the floor",
     look_hearthcandle: "Tapping the candle on the mantel", look_shelves: "Tapping the archive shelves ({bare}: only while nothing is filed yet, {filled}: once there is)",
     possum_basket: "The possum, eating out of its basket, on why rubbish never makes it ill (an old pact, a family thing: its own lore)", look_basket: "Tapping the possum's basket on the nook's platform",
     look_sill: "Tapping a window sill (in the wagon, the nook or the archive)",
@@ -1553,6 +1564,94 @@ const DEF = {
             "The archive must be quiet. Midnightcat came to visit.",
             "[night] Midnightcat. Of course. It's that time.",
             "[strange] Midnightcat walked in from the archive. Her shadow came in a second later.",
+        ],
+        catball: [
+            "She's on my side. Or the ball's side. Hard to say.",
+            "Midnightcat plays ball like it owes her money.",
+            "Two of us now. The ball didn't agree to this.",
+            "She doesn't fetch. She judges, and occasionally swats.",
+            "Pass. Pass! She kept it. That's allowed, apparently.",
+            "She plays by older rules. I'm still learning them."
+        ],
+        cathunt: [
+            "Got it. She's very proud. I'm going to be proud too, to be supportive.",
+            "That was a page from the shelf. It's hers now. That's how cats file things.",
+            "One pounce. Clean. I'd have taken three and a run-up.",
+            "She caught it and now she's pretending she meant to sit there anyway.",
+            "A spore, gone in a little green puff. She looks pleased with the puff.",
+            "The hunt is over. The hunter is washing her paw as if nothing happened."
+        ],
+        cathunt_firefly: [
+            "The firefly got away. They always do. I think it's a game they both like.",
+            "She missed. The firefly blinked twice. That's firefly for 'nice try'.",
+            "Never caught one, never will. She keeps trying anyway. I respect that.",
+            "Up it went, just out of reach. She's sulking very elegantly.",
+            "The firefly's fine. Midnightcat's pride took the hit.",
+            "I think the fireflies let her chase them. It's the polite thing."
+        ],
+        catdoor: [
+            "She's back. She smells of somewhere with a different moon.",
+            "Midnightcat went through the door and came back with a look. Just a look.",
+            "Wherever that door goes, she's been before. She didn't even wipe her paws.",
+            "Back already. Or back much later, on her side. Hard to tell with doors.",
+            "She went through. She came back. She won't say. That's fair.",
+            "There's a bit of somewhere else stuck in her fur. A seed I don't recognise."
+        ],
+        possumball: [
+            "Oh. The possum's taken the ball. To its basket. It thinks it's rubbish.",
+            "The ball's been filed under 'possum'. I'll get it back later.",
+            "Off it goes with the ball in its mouth. Very determined. Very small.",
+            "The possum thinks the ball is a sort of round snack. It isn't. It'll find out.",
+            "There goes the ball. To the basket, with the crumbs and the old sticky notes.",
+            "Fine. The possum's ball now. I'll borrow it back."
+        ],
+        snail_picnic: [
+            "A picnic. I brought nothing, but I brought it slowly.",
+            "Is there room on the blanket for a small one with a house?",
+            "I'll just sit here, at the edge. Edges are my favourite part.",
+            "Lovely day for it. I could feel it through my foot.",
+            "Don't mind me. I'm the picnic's quiet end.",
+            "If anything falls off the blanket, I'm already here."
+        ],
+        snail_post: [
+            "Checking the post. Nothing yet. Post is like me: it gets there.",
+            "Nothing new in the rack. I'll sit here a while in case.",
+            "No letters. The rack and I are having a quiet afternoon.",
+            "I like to keep an eye on the post. Two eyes, actually. On stalks.",
+            "All read, all answered. A tidy desk is a good desk.",
+            "Nothing today. Somewhere a letter is on its way, very slowly. I approve."
+        ],
+        snail_post_new: [
+            "There's a letter in the rack. Unopened. I didn't look. I looked a little.",
+            "Post! Something new in the rack. Someone wrote back.",
+            "A letter's come. I've been sitting with it so it isn't lonely.",
+            "New post in the rack. The envelope smells of somewhere far.",
+            "Someone's written. I can't open it. No thumbs. You'll have to.",
+            "A letter for Mite, I think. I'm keeping it company till it's read."
+        ],
+        glimpses_mouse: [
+            "{mouse} | A cold spring, long ago: a mouse found alone in a seed packet, taken in by a family of dormice who taught her to sleep through anything. {mouse}'s great-great-grandmother, still a light sleeper.",
+            "{mouse} | A nest in a teapot, and a mouse who wasn't born there being shown which spoon is hers. Nobody ever said she wasn't family. Nobody ever thought to.",
+            "{mouse} | A field after the harvest. A mouse with no burrow follows a row of others home in the dusk, and they let him. Ever since, that family leaves the door ajar at harvest time.",
+            "{mouse} | A library cellar, generations back. Three mice from three different holes, sharing one candle stub through a long winter. They called themselves cousins after that, and so did all their grandchildren.",
+            "{mouse} | A mouse raised by a family of wrens, under the eaves. She never learned to fly. She learned to sing, a little, which nobody else in {mouse}'s family can explain.",
+            "{mouse} | An old boot by a stable door. An orphaned mouse moves in with a widowed one, and neither of them is lonely again. {mouse} still has the bootlace, somewhere."
+        ],
+        mousekin: [
+            "The circle told you, didn't it. About my family. The ones who chose us. I could tell by your face.",
+            "You've seen them. In the chalk. My grandmothers. I'm glad someone looked.",
+            "Something in here knows my family. Not by blood. By choosing. It's all right. I like that it knows.",
+            "The chalk showed you, then. We're not related, any of us. We just stayed. That's the best kind.",
+            "I heard the circle looked back at us. Did it show the teapot? There's always a teapot.",
+            "Family's who leaves the door ajar for you. The circle knows. Now you do too."
+        ],
+        drift_firefly: [
+            "A loose firefly. Not one of the jar ones. A free agent.",
+            "It's blinking at me. I'm blinking back. We're having a conversation.",
+            "A firefly, low over the floor. It's checking we're all right.",
+            "This one's on its own errand. I won't keep it.",
+            "Little lamp with wings. Midnightcat's going to want this one.",
+            "It came in to see the lights. Ours are nice. It agrees."
         ],
         catyarn: [
             "Midnightcat. That's the scarf. That was the scarf.",
@@ -3554,7 +3653,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3739,6 +3838,7 @@ function sanitizeState(raw) {
             o.eyesGone[sid(k).slice(0, 12)] = num(s.eyesGone[k]);
     o.eyes = arr(s.eyes, 24).map(e => ({ k: sid(e.k).slice(0, 12), at: num(e.at), from: str(e.from, 20) })).filter(e => e.k); // the eye jars (eyes.js)
     o.glimpses = arr(s.glimpses, 300).map(g => ({ k: str(g && g.k, 80), at: num(g && g.at) })).filter(g => g.k); // what the chalk circle has shown (circle.js)
+    o.mice = arr(s.mice, 20).map(m => ({ n: str(m && m.n, 30).trim(), at: num(m && m.at), kin: m && m.kin ? 1 : 0, told: m && m.told ? 1 : 0 })).filter(m => m.n); // mice who've visited; kin: the circle has shown its found family, told: it knows Mite saw (visitors.js, circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
     // the chest of drawers for rent in the nook: when it arrived, and who Mite last knew was living in it (sig)
     o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240) };
@@ -4028,6 +4128,15 @@ function mergeStates(a, b) {
             if (g && g.k && (!m.has(g.k) || num(g.at) < m.get(g.k).at))
                 m.set(g.k, { k: g.k, at: num(g.at) });
         o.glimpses = [...m.values()].sort((x, y) => x.at - y.at).slice(-300);
+    }
+    { // the mice who've visited: everyone either side met, with what the circle showed and what was said
+        const m = new Map();
+        for (const x of [...(a.mice || []), ...(b.mice || [])])
+            if (x && x.n) {
+                const o2 = m.get(x.n) || { n: x.n, at: num(x.at), kin: 0, told: 0 };
+                m.set(x.n, { n: x.n, at: Math.min(o2.at || num(x.at), num(x.at) || o2.at), kin: Math.max(o2.kin, x.kin ? 1 : 0), told: Math.max(o2.told, x.told ? 1 : 0) });
+            }
+        o.mice = [...m.values()].sort((x, y) => x.at - y.at).slice(-20);
     }
     { // the drawers: the earliest arrival counts (so both sides agree who lives there); the newer side's news
         const da = a.drawers || {}, db = b.drawers || {}, ats = [num(da.at), num(db.at)].filter(x => x > 0);
@@ -13611,7 +13720,7 @@ function lookAtSpeaker(w) {
         lookAt(whoRoom(Array.isArray(w) ? w[0] : w));
 }
 function snailPos() {
-    return { x: snailX * W - R * .2, y: GY - 1 + snailZ };
+    return { x: snailX * W - R * .2, y: GY - 1 + snailZ - snailUp }; // (snailUp: on the writing desk)
 }
 function snailName() {
     if (!S.snailName) {
@@ -13735,6 +13844,27 @@ function spawnGuest() {
     S.guestAt = Date.now();
     saveSoon();
 }
+/* a mouse has come in: noted as met (S.mice). If the chalk circle has shown its family and it hasn't said so yet,
+   it greets Mite with that instead (lines mousekin) */
+function mouseMet(g) {
+    if (g.kind !== "mouse" || !g.name)
+        return "";
+    S.mice = (S.mice || []).filter(m => m && m.n);
+    let m = S.mice.find(x => x.n === g.name);
+    if (!m) {
+        m = { n: g.name, at: Date.now(), kin: 0, told: 0 };
+        S.mice = S.mice.concat([m]).slice(-20);
+    }
+    saveSoon();
+    if (!m.kin || m.told)
+        return "";
+    const line = compose("mousekin");
+    if (!line)
+        return "";
+    m.told = 1;
+    note(`${g.name} came by. It knew the chalk circle had shown me its family.`);
+    return line;
+}
 /* bad weather out there (rain, snow, or a cold wind): visitors come in to wait it out */
 function foulOut() {
     const w = weather();
@@ -13774,7 +13904,11 @@ function guestTick(dt, now) {
         if (Math.abs(d) < 2 && Math.abs((g.tz || 0) - g.z) < 2) {
             g.ph = "wait";
             g.t = 0;
-            snailSay(g.shelter ? choice(["It's horrible out there. Mind if I wait it out? I'm small. I drip quietly.", "Brr. {visitor}, reporting in from the weather. Is there a dry corner?", "Just till it eases off. I brought my own crumbs. Well, one crumb."]) : choice(["Knock knock. It's {visitor}.", "Hello hello. Only me.", "Don't mind me. Just {visitor}.", "Is the {treat} on?"]), 3800, "guest");
+            const kin = mouseMet(g);
+            if (kin) // the chalk circle showed Mite its family: it knows (circle.js)
+                snailSay(kin, clamp(3500 + kin.length * 45, 4500, 9000), "guest");
+            else
+                snailSay(g.shelter ? choice(["It's horrible out there. Mind if I wait it out? I'm small. I drip quietly.", "Brr. {visitor}, reporting in from the weather. Is there a dry corner?", "Just till it eases off. I brought my own crumbs. Well, one crumb."]) : choice(["Knock knock. It's {visitor}.", "Hello hello. Only me.", "Don't mind me. Just {visitor}.", "Is the {treat} on?"]), 3800, "guest");
             setTimeout(() => {
                 if (guest === g && g.ph === "wait")
                     requestObj("guest", g.x, GY - g.s * 1.4);
@@ -15962,6 +16096,8 @@ function renderKnits() {
  *   page    a loose page fluttering down from the bookshelf (needs books)
  *   steam   a steam curl from the kettle that's briefly a shape (needs the kettle)
  *   snow    a few indoor snowflakes that never reach the floor (winter)
+ *   firefly a loose firefly, low over the floor (evenings, not in winter; not the archive). Midnightcat hunts
+ *           it and never catches it (cat.js)
  * They come in whichever room you're looking at (d.room): the nook has its window and moss too, the archive
  * has dust and loose pages from the shelves; the kettle's steam only happens in the wagon.
  * Never more than three at once, and only now and then. Tapping one gets a reaction and a line
@@ -15984,6 +16120,8 @@ function driftKinds(rmName = "room") {
         out.push(["page", rmName === "archive" ? 1.6 : .8]);
     if (own("kettle") && rmName === "room")
         out.push(["steam", 1.2]);
+    if (dk > .35 && sea !== "winter" && rmName !== "archive")
+        out.push(["firefly", 1.4]);
     if (rmName === "archive" && !out.some(o => o[0] === "motes")) // dust under the bulb, any time of day
         out.push(["motes", 1.5]);
     if (rmName === "archive") // no window in the archive: no seeds blowing in
@@ -16017,6 +16155,8 @@ function spawnDrifter(k, rmName = "room") {
         const ag = rmName === "archive" ? archGeo() : null; // in the archive: off a high shelf
         Object.assign(b, { x: ag ? rnd(ag.x0 + R, ag.x1 - R) : W * .03 + R * rnd(.3, 1), y: ag ? ag.rail + R * .4 : GY - R * 2.7, vx: rnd(14, 24) * (ag && Math.random() < .5 ? -1 : 1), vy: rnd(6, 12), life: ag ? 12 : 9, rot: 0 });
     }
+    else if (k === "firefly")
+        Object.assign(b, { x: rnd(W * .2, W * .8), y: GY - R * rnd(.7, 1.8), vx: rnd(6, 12) * (Math.random() < .5 ? -1 : 1), vy: 0, life: rnd(16, 24) });
     else if (k === "steam")
         Object.assign(b, { x: stoveX() + R * .1, y: kettleY() - R * .7, vx: rnd(-3, 3), vy: -rnd(9, 13), life: 7, shape: choice(["fish", "key", "heart", "bird", "spiral"]) });
     else
@@ -16067,6 +16207,14 @@ function driftTick(dt, now) {
             if (d.y >= GY - 3)
                 d.vx *= Math.pow(.05, dt);
         }
+        else if (d.k === "firefly") { // lazy loops low over the floor; lifts off when pounced on (vy)
+            d.x += (d.vx + Math.sin(d.t * .9 + d.seed) * 14) * dt;
+            d.y += (d.vy + Math.cos(d.t * 1.3 + d.seed) * 10) * dt;
+            d.vy *= Math.pow(.4, dt);
+            if (d.x < W * .08 || d.x > W * .92)
+                d.vx = Math.abs(d.vx) * (d.x < W / 2 ? 1 : -1);
+            d.y = Math.max(d.y, R * .5);
+        }
         else if (d.k === "snow")
             d.flakes.forEach(f => f.y += f.s * dt * .5);
     }
@@ -16104,6 +16252,12 @@ function drawDrifters(tsec, dk) {
         else if (d.k === "spore") {
             glow(d.x, d.y, 3, "rgba(190,240,140,.95)");
             softGlow(d.x, d.y, R * .4, "rgba(150,220,110,.18)");
+        }
+        else if (d.k === "firefly") {
+            const on = Math.sin(d.t * 2.6 + d.seed) > -.35;
+            glow(d.x, d.y, on ? 2.5 : 1.2, on ? "rgba(236,255,150,.95)" : "rgba(160,170,90,.6)");
+            if (on)
+                softGlow(d.x, d.y, R * .35, "rgba(220,250,120,.2)");
         }
         else if (d.k === "wisp") {
             const fl = .8 + .2 * Math.sin(tsec * 9 + d.seed);
@@ -16631,7 +16785,11 @@ document.addEventListener("keydown", e => {
  *   cat.z        how far out on the floor, in front of the skirting (0: against the back wall); out there
  *                she's drawn in front of Mite
  *   cat.ph       "sit", "walk" (to cat.tx), "jump" (up or down to cat.tg), "nap", "leave" (walking out
- *                to the other room)
+ *                to the other room), "stretch", "ball" (Mite's ball, in the wagon), "stalk" and "pounce" (a firefly,
+ *                spore, seed or page drifting low), "wary" (batting at a strange door's shadows), "through" (gone
+ *                through a strange door for a while)
+ * She likes it up high too (catHigh): the wagon's balcony and its balustrade, the nook's platform, the top of the
+ * archive's closet. From the nook's platform she sometimes goes through the night door after dark.
  * Nothing about it is saved: after a reload it's back in the archive.
  */
 const CAT_NAME = "Midnightcat", CAT_POOL = "midnightcat";
@@ -16648,6 +16806,26 @@ function catDeskFree() {
     return true; // (the capsules moved to their plank on the wall; the desk is hers again, the journal beside her)
 }
 function catSpots(room) {
+    const s = catSpotsLow(room);
+    return catNight() ? s : s.concat(catHigh(room));
+}
+/* up high, by day: the wagon's balcony (behind its railing) and the balustrade on top, the nook's platform, the
+   top of the archive's closet (not much room under the shelf there: she lies down) */
+function catHigh(room) {
+    const out = [];
+    if (room === "room" && own("loft")) {
+        const lg = loftGeo("room"), w = lg.balR - lg.balL;
+        out.push({ x: lg.balL + w * .68, g: GY - lg.balY, high: 1 }, { x: lg.balL + w * .3, g: GY - lg.balY + R * .6 + Math.max(3, R * .07), high: 1, rail: 1 });
+    }
+    if (room === "garden") {
+        const lg = nookLoftGeo();
+        out.push({ x: clamp(W * .62, basketGeo().right + R * .9, lg.balR - R * .9), g: GY - lg.balY, high: 1, plat: 1 });
+    }
+    if (room === "archive" && own("closet"))
+        out.push({ x: closetX(), g: Math.round(R * 1.72 / PX) * PX, high: 1, low: 1 });
+    return out;
+}
+function catSpotsLow(room) {
     if (room === "garden") { // the armchair, mostly; the floor of the nook now and then
         const g = gardenGeo(), top = { x: g.drX + g.drW * .18, g: g.drH + R * .02 }, floor = { x: W * .5, g: 0 };
         const seat = miteInChair() ? catHeadrest() : { x: g.chX - R * .3, g: g.chH }; // (Mite's in the chair: up on its back instead)
@@ -16766,8 +16944,21 @@ function catTick(dt, now) {
         cat.tz = 0; // the wool is by the wall; up on things there's no floor to be out on
     if (cat.g === 0 && cat.z !== cat.tz) // out across the floor or back to the wall, while she walks
         cat.z += Math.sign(cat.tz - cat.z) * Math.min(Math.abs(cat.tz - cat.z), spd * .7);
-    if (catYarnTick(dt, now))
+    if (catYarnTick(dt, now) || catDoorTick(dt, now) || catBallTick(dt, now) || catHuntTick(dt, now))
         return;
+    if (cat.ph === "stretch") { // front paws out, rump up; then on with her day
+        if (now > cat.until) {
+            if (cat.stretchThen === "next")
+                catNext(now);
+            else
+                Object.assign(cat, { ph: "sit", until: cat.sitUntil || now + rnd(15e3, 40e3) });
+        }
+        return;
+    }
+    if (cat.ph === "nap" && now > cat.until && cat.g === 0 && Math.random() < .6) { // waking up: a good stretch first
+        Object.assign(cat, { ph: "stretch", stretchThen: "next", until: now + 1800 });
+        return;
+    }
     if (cat.ph === "sit" || cat.ph === "nap") {
         if (now > cat.until || (cat.room === "room" && !catClear(cat)) || (cat.room === "archive" && cat.g > 0 && !catDeskFree())) // a visitor came to stand here, or a capsule's on the desk: move along
             catNext(now);
@@ -16784,7 +16975,7 @@ function catTick(dt, now) {
         return;
     }
     // walking: down off the desk first, then along the floor, then up if the spot is high
-    if (cat.g > 0 && Math.abs(cat.tx - cat.x) > 2) {
+    if (cat.g > 0 && Math.abs(cat.tx - cat.x) > 2 && !(cat.walkHigh && Math.abs(cat.tg - cat.g) < 2)) {
         cat.ph === "leave" ? (cat.leaving = true) : 0;
         Object.assign(cat, { ph: "jump", t0: now, g0: cat.g, jumpTo: cat.tg, tg: 0 });
         cat.after = { tx: cat.tx, tg: cat.jumpTo, leave: !!cat.leaving };
@@ -16828,6 +17019,22 @@ function catSettle(now) {
         Object.assign(cat, { ph: a.leave ? "leave" : "walk", tx: a.tx, tg: a.tg });
         return;
     }
+    cat.walkHigh = false;
+    const thru = cat.thru;
+    cat.thru = null;
+    if (thru && (thru.night || catStrangeDoor())) { // at a strange door: through it, for a while
+        Object.assign(cat, { ph: "through", thruX: cat.x, thruNight: !!thru.night, until: now + rnd(8e3, 20e3) });
+        catSparks(0);
+        return;
+    }
+    if (cat.wary && catStrangeDoor()) { // close enough: crouched, batting at the shadows in its light
+        Object.assign(cat, { ph: "wary", until: now + rnd(3500, 6000), pawAt: now + 500, dir: Math.sign(catStrangeDoor().x - cat.x) || cat.dir });
+        cat.wary = null;
+        if (roomVisible(cat.room))
+            addP({ type: "text", text: choice(["!", "hss", "…"]), x: cat.x, y: catBox().y0 - 6, vy: -14, max: 1.6, col: "#e6e0f0", size: 12, room: cat.room });
+        return;
+    }
+    cat.wary = null;
     cat.ph = catNight() && cat.room === "garden" ? "nap" : Math.random() < (catNight() ? .75 : .3) ? "nap" : "sit";
     if (cat.g > 0 && cat.room === "room" && catHeadroom() < CAT_SPRITES.sit.length * catU())
         cat.ph = "nap"; // no room to sit up under the balcony: she curls up instead
@@ -16841,6 +17048,15 @@ function catSettle(now) {
         Object.assign(cat, { ph: "sit", until: now + rnd(1500, 4000) });
     if (cat.obs) // she came over to look at something (observe.js): sitting up, a good while
         Object.assign(cat, { ph: "sit", until: now + 45e3 });
+    const spot = cat.g > 0 && catHigh(cat.room).find(p => Math.abs(p.x - cat.x) < 3 && Math.abs(p.g - cat.g) < 3);
+    if (spot && spot.low) // on top of the closet: no room to sit up under the shelf
+        cat.ph = "nap";
+    else if (spot && spot.plat && own("ndoor") && sceneDark() > .4 && !catNight() && Math.random() < .35) { // the night door, along the platform
+        Object.assign(cat, { ph: "walk", tx: ndoorX(), tg: cat.g, walkHigh: true, thru: { night: 1 } });
+        return;
+    }
+    if (cat.ph === "sit" && !cat.obs && cat.g === 0 && cat.room === cat.goal && !catInCircle() && Math.random() < .2) // a stretch before sitting down
+        Object.assign(cat, { ph: "stretch", stretchThen: "sit", sitUntil: cat.until, until: now + 1700 });
 }
 function catPos() {
     return { x: cat.x, y: catBox().y0 - 4 }; // in her room's coordinates (the loop adds where that room is on screen)
@@ -17015,6 +17231,17 @@ const CAT_SPRITES = {
         "..kkkkkkkkkkkkkkkk",
         "..kkkkkkkkkkkk..kk",
         ".kkkk......kk....."],
+    stretch: [ // front paws out along the floor, rump and tail up
+        "k.................",
+        ".k................",
+        ".k................",
+        "..kgggggg.........",
+        "..kkkkkkkkgg.k..k.",
+        "..kkkkkkkkkkkkk.kk",
+        "..kk..kkkkkkkkkkkk",
+        "..kk...kkkkkkkkykk",
+        "..kk.....kkkkkkkkp",
+        "..kk.......kkkkkkk"],
     nap: [
         ".........k...k",
         ".........kk.kk",
@@ -17046,7 +17273,7 @@ function catSitSprite(now) {
 }
 /* how far through a jump she is, 0..1: crouching until .2, in the air until .82, then landing */
 function catJumpK(now) {
-    return clamp((now - cat.t0) / 750, 0, 1);
+    return clamp((now - cat.t0) / (750 + clamp(Math.abs(cat.tg - cat.g0) / R - 1.4, 0, 3) * 220), 0, 1); // (a big leap up to the balcony takes longer)
 }
 function catSprite() {
     const walking = cat.ph === "walk" || cat.ph === "leave";
@@ -17054,7 +17281,17 @@ function catSprite() {
         const k = catJumpK(performance.now());
         return k < .2 || k > .82 ? CAT_SPRITES.crouch : CAT_SPRITES.leap;
     }
-    if (cat.ph === "play") {
+    if (cat.ph === "stretch")
+        return CAT_SPRITES.stretch;
+    if (cat.ph === "pounce") {
+        const k = (performance.now() - cat.t0) / 650;
+        return k < .15 || k > .85 ? CAT_SPRITES.crouch : CAT_SPRITES.leap;
+    }
+    if (cat.ph === "stalk")
+        return CAT_SPRITES.crouch;
+    if (cat.ph === "wary")
+        return performance.now() - (cat.paw || 0) < 320 ? CAT_SPRITES.bat : CAT_SPRITES.crouch;
+    if (cat.ph === "play" || cat.ph === "ball") {
         if (cat.walkPlay)
             return Math.floor(performance.now() / 140) % 2 ? CAT_SPRITES.walk2 : CAT_SPRITES.walk1;
         return performance.now() - (cat.paw || 0) < 320 ? CAT_SPRITES.bat : CAT_SPRITES.crouch;
@@ -17072,9 +17309,14 @@ function catBox() {
 }
 function drawCat(dk, now) {
     const s = catSize();
-    if (cat.room !== drawingRoom || Math.abs(cat.x + roomOff(cat.room) - W / 2) > W / 2 + s * .6) // not on screen
+    if (cat.ph === "through" && cat.room === drawingRoom) // on the other side of a door
+        catHit = null;
+    if (cat.ph === "through" || cat.room !== drawingRoom || Math.abs(cat.x + roomOff(cat.room) - W / 2) > W / 2 + s * .6) // not on screen
         return;
-    const { sp, u, w, h, x0, y0 } = catBox(), flip = cat.dir < 0, cols = sp[0].length;
+    if (cat.ph === "wary")
+        drawDoorShadows(now);
+    const box = catBox(), { sp, u, w, h, y0 } = box, flip = cat.dir < 0, cols = sp[0].length;
+    const x0 = box.x0 + (cat.ph === "stalk" && cat.wig && now < cat.wig ? (Math.floor(now / 90) % 2 ? u : 0) : 0); // the wiggle before the pounce
     catHit = { x: x0 - 4, y: y0 - 4, w: w + 8, h: h + 6, cx: cat.x, room: cat.room };
     const blink = (now / 1000 % 5.3) < .15;
     // colours straight from the scene palette (PAL in canvas.js), so the pixels don't get dithered
@@ -17139,6 +17381,182 @@ function catTap() {
         S.flags.tap_cat = 1;
         saveSoon();
     }
+}
+/* ---------- strange doors: the door that wasn't there (anomalies.js), and the night door ----------
+   When a door turns up in her room she goes over, crouches and bats at the shadows moving in its light; half the
+   time she then goes through it for a while and comes back as if nothing happened. The night door, up on the
+   nook's platform, she takes on her own now and then after dark (catSettle). */
+function catStrangeDoor() {
+    return typeof anom !== "undefined" && anom && anom.type === "door" && anom.room === cat.room && anom.t > 1.5 ? anom : null;
+}
+function catSparks(back) {
+    if (!roomVisible(cat.room))
+        return;
+    for (let i = 0; i < 8; i++)
+        addP({ type: "spark", x: cat.x + rnd(-R * .3, R * .3), y: GY - cat.g - rnd(0, R * .6), vx: rnd(-30, 30), vy: -rnd(10, 40), g: 20, max: .8, col: choice(["#b89ae8", "#ffd0a0"]), size: 2, room: cat.room });
+    if (back)
+        addP({ type: "text", text: choice(["mrrp", "…", "prrt"]), x: cat.x, y: catBox().y0 - 6, vy: -14, max: 1.6, col: "#e6e0f0", size: 12, room: cat.room });
+}
+function catDoorTick(dt, now) {
+    if (cat.ph === "through") { // on the other side: back when she's had enough, or when the door goes
+        if (now < cat.until && (cat.thruNight || catStrangeDoor()))
+            return true;
+        Object.assign(cat, { ph: "sit", x: cat.thruX ?? cat.x, until: now + rnd(6e3, 14e3), dir: Math.random() < .5 ? -1 : 1, thruNight: false });
+        catSparks(1);
+        if (cat.room === view && Math.random() < .5)
+            setTimeout(() => {
+                if (cat.ph === "sit" && $("bubble").hidden)
+                    say("catdoor");
+            }, 1500);
+        return true;
+    }
+    const d = catStrangeDoor();
+    if (cat.ph === "wary") {
+        if (!d) {
+            Object.assign(cat, { ph: "sit", until: now + rnd(5e3, 10e3) });
+            return true;
+        }
+        cat.dir = Math.sign(d.x - cat.x) || cat.dir;
+        if (now > cat.pawAt) { // a swipe at a shadow
+            cat.paw = now;
+            cat.pawAt = now + rnd(700, 1600);
+        }
+        if (now > cat.until)
+            Object.assign(cat, Math.random() < .5 ? { ph: "walk", tx: d.x, tg: 0, tz: 0, thru: { x: d.x } } : { ph: "sit", until: now + rnd(8e3, 16e3) });
+        return true;
+    }
+    if (d && cat.doorSeen !== d && cat.ready && !cat.dest && ["sit", "walk", "nap"].includes(cat.ph) && !catInCircle()) { // a door: over she goes (down first, if she's up on something)
+        cat.doorSeen = d;
+        const side = cat.x < d.x ? -1 : 1;
+        Object.assign(cat, { ph: "walk", tx: clamp(d.x + side * R * 1.3, R * .6, W - R * .6), tg: 0, tz: 0, wary: d });
+    }
+    return false;
+}
+/* the shadows in the door's light, sliding over the floor towards her (while she bats at them) */
+function drawDoorShadows(now) {
+    const d = catStrangeDoor();
+    if (!d)
+        return;
+    cx.fillStyle = "rgba(14,8,24,.42)";
+    for (let i = 0; i < 3; i++) {
+        const k = (now / 1000 * .6 + i / 3) % 1, x = d.x + (cat.x - d.x) * k * .9 + Math.sin(now / 300 + i * 2) * R * .12, w = R * (.28 - k * .12);
+        cx.fillRect(Math.round((x - w / 2) / PX) * PX, Math.round((GY + cat.z - PX * 2) / PX) * PX, Math.round(w / PX) * PX, PX * 2);
+    }
+}
+/* ---------- the ball: when Mite gets the ball out (care.js) and she's on the wagon floor, she joins in, mostly ---------- */
+function catBallTick(dt, now) {
+    if (cat.ph === "ball") {
+        if (typeof ball === "undefined" || !ball || cat.room !== "room" || now > cat.ballUntil) { // enough: she sits and washes
+            cat.walkPlay = false;
+            Object.assign(cat, { ph: "sit", until: now + rnd(10e3, 20e3) });
+            return true;
+        }
+        ball.life = Math.max(ball.life, 1.5); // (it stays out while she's at it)
+        const d = ball.x - cat.x;
+        cat.walkPlay = Math.abs(d) > catBox().w * .7;
+        cat.dir = Math.sign(d) || cat.dir;
+        if (cat.walkPlay)
+            cat.x += Math.sign(d) * Math.min(Math.abs(d), R * 1.9 * dt);
+        if (!cat.walkPlay && ball.y > GY + R * .3 - ball.r - 4 && now > cat.pawAt) { // on the floor and in reach: a swipe
+            cat.paw = now;
+            cat.pawAt = now + rnd(900, 2200);
+            ball.vx = (Math.random() < .7 ? cat.dir : -cat.dir) * rnd(R * 1.6, R * 3.2);
+            ball.vy = -rnd(R * .8, R * 2.2);
+            if (Math.random() < .2)
+                addP({ type: "text", text: choice(["pat", "!", "mrrp"]), x: cat.x, y: GY - catSize() * 1.4, vy: -14, max: 1.4, col: "#e6e0f0", size: 12, room: "room" });
+        }
+        return true;
+    }
+    if (typeof ball === "undefined" || !ball || cat.ballSeen === ball || cat.room !== "room" || cat.g > 0 || !cat.ready || cat.dest || !["sit", "walk", "nap"].includes(cat.ph))
+        return false;
+    cat.ballSeen = ball;
+    if (Math.random() < .35) // (not in the mood)
+        return false;
+    Object.assign(cat, { ph: "ball", tz: R * .2, ballUntil: now + rnd(10e3, 22e3), pawAt: now + 600, walkPlay: true });
+    if (view === "room" && Math.random() < .5)
+        setTimeout(() => {
+            if (cat.ph === "ball" && $("bubble").hidden)
+                say("catball");
+        }, 1500);
+    return true;
+}
+/* ---------- the hunt: a firefly, a moss spore, a seed or a page drifting low in her room (drifters.js) ----------
+   She creeps up low, wiggles, and pounces. Spores and seeds burst, a page gets pinned; fireflies always get away. */
+const CAT_PREY = ["firefly", "spore", "seed", "page"];
+let catHuntNext = 0;
+function catHuntTick(dt, now) {
+    if (cat.ph === "stalk") {
+        const d = cat.prey;
+        if (!d || !drifters.includes(d) || driftAlpha(d) < .3) { // gone: never mind
+            cat.prey = null;
+            Object.assign(cat, { ph: "sit", until: now + rnd(6e3, 12e3) });
+            return true;
+        }
+        const dx = d.x - cat.x;
+        cat.dir = Math.sign(dx) || cat.dir;
+        if (Math.abs(dx) > R) { // creeping up, low
+            cat.x += Math.sign(dx) * Math.min(Math.abs(dx) - R, R * .5 * dt);
+            cat.wig = 0;
+            return true;
+        }
+        if (!cat.wig)
+            cat.wig = now + rnd(700, 1300);
+        else if (now > cat.wig)
+            Object.assign(cat, { ph: "pounce", t0: now, px0: cat.x, px1: clamp(d.x, R * .4, W - R * .4), hop: clamp(GY - d.y - catBox().h * .4, R * .2, R * 1.7), caught: null });
+        return true;
+    }
+    if (cat.ph === "pounce") {
+        const k = clamp((now - cat.t0) / 650, 0, 1);
+        cat.x = cat.px0 + (cat.px1 - cat.px0) * k;
+        cat.g = Math.sin(k * Math.PI) * cat.hop;
+        if (k > .5 && cat.caught === null)
+            cat.caught = catCatch(cat.prey);
+        if (k >= 1) {
+            const kind = cat.prey && cat.prey.k;
+            Object.assign(cat, { g: 0, prey: null, wig: 0, ph: "sit", until: now + rnd(8e3, 16e3) });
+            catHuntNext = now + rnd(60e3, 150e3);
+            if (cat.room === view && Math.random() < .6)
+                setTimeout(() => {
+                    if ($("bubble").hidden)
+                        say(kind === "firefly" ? "cathunt_firefly" : "cathunt");
+                }, 900);
+        }
+        return true;
+    }
+    if (!cat.ready || now < catHuntNext || cat.g > 0 || cat.dest || cat.obs || catNight() || !["sit", "walk"].includes(cat.ph) || catInCircle())
+        return false;
+    const d = drifters.find(q => q.room === cat.room && CAT_PREY.includes(q.k) && driftAlpha(q) > .6 && q.y > GY - R * 2.4 && q.x > R * .5 && q.x < W - R * .5);
+    if (!d)
+        return false;
+    catHuntNext = now + rnd(20e3, 40e3);
+    if (Math.random() < .35)
+        return false;
+    Object.assign(cat, { ph: "stalk", prey: d, tz: 0, wig: 0 });
+    return true;
+}
+/* the pounce lands: did she get it? */
+function catCatch(d) {
+    if (!d || !drifters.includes(d))
+        return false;
+    const burst = col => {
+        for (let i = 0; i < 8; i++)
+            addP({ type: "spark", x: d.x, y: d.y, vx: rnd(-50, 50), vy: rnd(-50, 20), g: 40, max: .6, col, size: 2, room: d.room });
+    };
+    if (d.k === "firefly") { // never: it lifts off, just out of reach
+        d.vy = -R * 1.6;
+        d.vx = rnd(8, 14) * (Math.random() < .5 ? -1 : 1);
+        return false;
+    }
+    if (d.k === "page" && Math.random() < .75) { // pinned under her paws
+        Object.assign(d, { x: cat.px1, y: GY - 3, vx: 0, vy: 0, life: d.t + 5 });
+        return true;
+    }
+    if ((d.k === "spore" || d.k === "seed") && Math.random() < .55) {
+        burst(d.k === "spore" ? "#bff08c" : "#f6f1e2");
+        d.t = Math.max(d.t, d.life - .4);
+        return true;
+    }
+    return false;
 }
 
 </script>
@@ -18131,11 +18549,20 @@ function routeTo(target) {
  * drawn after Mite by drawSnailInBed); when Mite wakes, so does it. Carrying a painting (easel.js) it hurries
  * off to the right.
  * Now and then it wanders out across the floor for a while (snailZ), and back to the wall.
+ * When Mite has a picnic it comes and sits at the edge of the blanket (snailPicnic). Visiting the nook, now and
+ * then it climbs the writing desk and sits by the letter rack, checking the post (snailPost: to, up, sit, down;
+ * snailUp is how high it is).
  * The rest of the snail (talking, its name, the cosy) is in conversations.js and behaviours.js.
  */
 let snailTalkUntil = 0, snailRoom = "room", snailDir = 1, snailAsleep = false, snailGoal = "room", snailGoalUntil = 0;
 let snailCircleAt = performance.now() + 45e3; // the next remark about the chalk circle
 let snailZ = 0, snailTZ = 0, snailZAt = 0; // how far out on the floor it is, in front of the skirting (0: against the wall)
+let snailPost = null, snailPostAt = performance.now() + rnd(60e3, 180e3), snailUp = 0, snailPicnicB = null;
+/* where it sits on the writing desk: just left of the letter rack (garden.js), and where that is in snailX */
+function snailDeskX() {
+    const g = gardenGeo();
+    return (g.dx1 - R * .1 - R * .56 - R * .28 + R * .2) / W;
+}
 function snailNext(room, dir) { // the room next door that way, or null at the end of the wagon
     return ROOMS[ROOMS.indexOf(room) + dir] || null;
 }
@@ -18150,7 +18577,11 @@ function snailTick(dt) {
         return;
     }
     const now = performance.now();
-    if (bed || snailCarry || snailRoom !== snailGoal) // to bed, off with a painting, or off to another room: along the wall
+    // a picnic: it comes and sits at the edge of the blanket (behaviours.js, picnic)
+    const pic = !bed && !snailCarry && pet.beh === "picnic" && pet.b && pet.b.sp >= 1 ? { room: view, x: (clamp(pet.x + R * 1.3, R * .5, W - R * .3) + R * .2) / W } : null;
+    if (snailPost && snailPostTick(dt, now, !!(bed || pic || snailCarry)))
+        return;
+    if (bed || pic || snailCarry || snailRoom !== snailGoal) // to bed, a picnic, off with a painting, or off to another room: along the wall
         snailTZ = 0;
     else if (now > snailZAt) { // pottering where it wanted to be: out onto the floor for a while, or back to the wall
         snailZAt = now + rnd(40e3, 120e3);
@@ -18166,6 +18597,10 @@ function snailTick(dt) {
     if (bed) {
         goal = bed.room;
         speed = Math.max(.05, R * 1.2 / W);
+    }
+    else if (pic) {
+        goal = pic.room;
+        speed = Math.max(.03, R * .8 / W);
     }
     if (snailCarry) { // off with the painting, to the right and out
         snailDir = 1;
@@ -18190,6 +18625,26 @@ function snailTick(dt) {
         snailX += Math.sign(d) * Math.min(Math.abs(d), speed * dt);
         if (Math.abs(d) < .004 && snailZ < 1)
             snailAsleep = true;
+        return;
+    }
+    if (pic) { // over to the blanket, and stays; says something once it's there
+        const d = pic.x - snailX;
+        snailDir = Math.abs(d) < .004 ? -1 : Math.sign(d); // (sat facing Mite)
+        snailX += Math.sign(d) * Math.min(Math.abs(d), speed * dt);
+        if (Math.abs(d) < .004 && snailPicnicB !== pet.b && snailZ < 1) {
+            snailPicnicB = pet.b;
+            const line = compose("snail_picnic");
+            if (line && roomVisible(snailRoom) && $("dlg").hidden) {
+                snailSay(line, clamp(3500 + line.length * 45, 4500, 9000), "snail");
+                snailTalkUntil = now + 3000;
+            }
+        }
+        return;
+    }
+    // visiting the nook: now and then up the writing desk to check the post
+    if (snailRoom === "garden" && now > snailPostAt && pet.beh !== "write") {
+        snailPostAt = now + rnd(6, 14) * 60e3;
+        snailPost = { ph: "to", until: 0 };
         return;
     }
     // where it wanted to be: up and down the skirting (in the archive it stops to study the chalk circle)
@@ -18221,16 +18676,20 @@ function snailCross(dir) {
 function drawSnail(dk) {
     if (!own("snail") || snailAsleep || drawingRoom !== snailRoom)
         return;
-    const x = snailX * W - R * .2, y = GY - 1 + snailZ, sx = x + roomOff(snailRoom);
+    const x = snailX * W - R * .2, y = GY - 1 + snailZ - snailUp, sx = x + roomOff(snailRoom), climbing = snailPost && (snailPost.ph === "up" || snailPost.ph === "down");
     if (sx < -R || sx > W + R)
         return;
-    cx.fillStyle = "rgba(20,12,8,.35)"; // its shadow on the floor
-    cx.beginPath();
-    cx.ellipse(x - R * .02, y + PX * .5, R * .34, PX * 1.5, 0, 0, 7);
-    cx.fill();
+    if (!climbing) {
+        cx.fillStyle = "rgba(20,12,8,.35)"; // its shadow on the floor (or the desk)
+        cx.beginPath();
+        cx.ellipse(x - R * .02, y + PX * .5, R * .34, PX * 1.5, 0, 0, 7);
+        cx.fill();
+    }
     cx.save();
     cx.translate(x, y);
-    if (snailDir < 0)
+    if (climbing) // up the desk's front: head up (or down, on the way back)
+        cx.rotate(snailPost.ph === "up" ? -Math.PI / 2 : Math.PI / 2);
+    if (snailDir < 0 && !climbing)
         cx.scale(-1, 1);
     cx.fillStyle = "#c8b292";
     cx.beginPath();
@@ -18294,6 +18753,51 @@ function snailHit(p, room) {
         return false;
     const sp = snailPos();
     return hitIn(p, { x: sp.x - R * .4, y: sp.y - R * .5, w: R * .8, h: R * .5 });
+}
+/* checking the post: along to the desk, up its front, a while by the letter rack, and down again. True while busy.
+   stop: something more important (bedtime, a picnic, a painting): it comes straight down */
+function snailPostTick(dt, now, stop) {
+    const sp = snailPost, top = GY - gardenGeo().dTop, climb = R * .35 * dt;
+    if (stop && sp.ph !== "down")
+        sp.ph = "down";
+    if (sp.ph === "to") {
+        snailTZ = 0;
+        snailZ -= Math.sign(snailZ) * Math.min(Math.abs(snailZ), R * .15 * dt); // (back to the wall first)
+        if (snailRoom !== "garden") { // (it wandered off meanwhile)
+            snailPost = null;
+            return false;
+        }
+        const d = snailDeskX() - snailX;
+        snailDir = Math.sign(d) || snailDir;
+        snailX += Math.sign(d) * Math.min(Math.abs(d), .012 * dt);
+        if (Math.abs(d) < .002 && snailZ < 1)
+            sp.ph = "up";
+        return true;
+    }
+    if (sp.ph === "up") {
+        snailUp = Math.min(top, snailUp + climb);
+        if (snailUp >= top) {
+            sp.ph = "sit";
+            sp.until = now + rnd(12e3, 25e3);
+            snailDir = 1; // (facing the rack)
+            const inbox = ((S.post && S.post.inbox) || []).filter(l => !l.read);
+            const line = compose(inbox.length ? "snail_post_new" : "snail_post");
+            if (line && roomVisible("garden") && $("dlg").hidden) {
+                snailSay(line, clamp(3500 + line.length * 45, 4500, 9000), "snail");
+                snailTalkUntil = now + 3000;
+            }
+        }
+        return true;
+    }
+    if (sp.ph === "sit") {
+        if (now > sp.until)
+            sp.ph = "down";
+        return true;
+    }
+    snailUp = Math.max(0, snailUp - climb * 1.4); // down
+    if (snailUp <= 0)
+        snailPost = null;
+    return true;
 }
 
 </script>
@@ -18497,6 +19001,7 @@ function showCorrItem(id) {
  * the beam. When there's mess on the wagon floor it comes down: it lets itself down onto the platform on its tail
  * and takes the stairs (walkVia), or spins its tail like a helicopter and flies down. Then it trundles through to the wagon and eats
  * it, piece by piece, then goes home and hangs up again. In the evening it potters about, visiting rooms. Tap it and it says something; now and then it plays dead instead.
+ * A ball left lying on the wagon floor it now and then takes home to its basket (p.ballGot, basketBall in basket.js).
  * Nothing about it is saved: it just lives here.
  */
 const POSSUM_POOL = "possum";
@@ -18912,6 +19417,44 @@ function possumTick(dt, now) {
         return;
     }
     p.meal = null;
+    // Mite's ball, left lying on the wagon floor: half the time it takes it home to its basket (basket.js)
+    if (p.room === "room" && ball && !p.ballGot && !p.carry && pet.beh !== "play" && cat.ph !== "ball" && Math.abs(ball.vx) < R * .3 && ball.y > GY + R * .3 - ball.r - 4) {
+        if (p.ballSeen !== ball) {
+            p.ballSeen = ball;
+            p.ballWant = Math.random() < .5;
+        }
+        if (p.ballWant) {
+            if (Math.abs(p.x - ball.x) > 3 || Math.abs(p.fy - GY - R * .1) > 2) {
+                Object.assign(p, { ph: "walk", tx: ball.x, ty: GY + R * .1 });
+                return;
+            }
+            ball = null;
+            Object.assign(p, { ballGot: true, ballWant: false, ph: "sit", until: now + 700 });
+            sfx("soft");
+            if (roomVisible("room")) {
+                addP({ type: "text", text: "!", x: p.x, y: p.fy - R * 1.1, vy: -16, max: 1.4, col: "#ffd76a", size: 12, room: "room" });
+                if (Math.random() < .6)
+                    setTimeout(() => {
+                        if ($("bubble").hidden)
+                            say("possumball");
+                    }, 1200);
+            }
+            return;
+        }
+    }
+    if (p.ballGot && p.room === "garden") { // home with the ball: into the basket
+        const b = basketGeo(), lg = nookLoftGeo(), tx = b.right + u * 5;
+        if (Math.abs(p.x - tx) > 3 || Math.abs(p.fy - lg.balY) > 2) {
+            Object.assign(p, { ph: "walk", tx, ty: lg.balY });
+            return;
+        }
+        p.ballGot = false;
+        basketBall = Date.now();
+        Object.assign(p, { ph: "sit", dir: -1, until: now + rnd(1500, 3000) });
+        for (let j = 0; j < 5; j++)
+            addP({ type: "spark", x: b.cx, y: b.y - b.h, vx: rnd(-30, 30), vy: rnd(-50, -10), g: 160, max: .5, col: "#c25b4a", size: 2, room: "garden" });
+        return;
+    }
     // awake, and something in its basket up on the nook's platform: supper (basket.js)
     if (possumAwake() && basketN() && p.ate < 14 && !p.carry && !possumCookies() && p.room === "garden") {
         const b = basketGeo(), lg = nookLoftGeo(), tx = b.right + u * 5;
@@ -18930,7 +19473,7 @@ function possumTick(dt, now) {
         p.goalUntil = now + rnd(120e3, 240e3);
     }
     const cs = !p.carry && !possumAwake() ? possumCurlSpot() : null; // (curled up somewhere today, not on the beam)
-    const goal = p.carry ? "garden" : possumCookies() ? "room" : possumHungry() ? messRoom((S.mess || []).find(m => messRoom(m) === p.room) || S.mess[0]) : cs ? cs.room : !possumAwake() || basketN() ? "garden" : p.goal; // (its basket's in the nook) // (mess: in this room first, else wherever it is)
+    const goal = p.carry || p.ballGot ? "garden" : possumCookies() ? "room" : possumHungry() ? messRoom((S.mess || []).find(m => messRoom(m) === p.room) || S.mess[0]) : cs ? cs.room : !possumAwake() || basketN() ? "garden" : p.goal; // (its basket's in the nook) // (mess: in this room first, else wherever it is)
     if (p.room !== goal) {
         const dir = Math.sign(ROOM_X[goal] - ROOM_X[p.room]);
         if (dir < 0 ? p.x < -u * 10 : p.x > W + u * 10) { // through into the next room
@@ -19039,6 +19582,16 @@ function drawPossum(dk, now) {
                 }
             }
     });
+    if (p.ballGot) // the ball, carried in its mouth
+        drawLayered(() => {
+            const hx = px(13) + (flip ? -u : u), hy = y0 + u * 3;
+            cx.fillStyle = "#7a2e24";
+            cx.fillRect(hx - u * 1.5 - 1, hy - u - 1, u * 3 + 2, u * 2 + 2);
+            cx.fillRect(hx - u - 1, hy - u * 1.5 - 1, u * 2 + 2, u * 3 + 2);
+            cx.fillStyle = "#c25b4a";
+            cx.fillRect(hx - u * 1.5, hy - u, u * 3, u * 2);
+            cx.fillRect(hx - u, hy - u * 1.5, u * 2, u * 3);
+        });
     if (p.ph === "fly" || p.ph === "flyup") { // its tail: from its rump, curling up over its back, the tip spinning like a propeller
         const path = [[3, 0], [2, 0], [1, 1], [0, 2], [-1, 3], [-2, 4], [-3, 5]], [tr, tc] = path[path.length - 1];
         const hx = px(tc) + u / 2, hy = y0 + (tr - 1) * u, ang = now / 70; // the hub, just over the tip
@@ -19142,6 +19695,7 @@ function possumTap() {
 const BASKET_MAX = 20, BASKET_KINDS = ["dust", "paper", "crumb", "leaf", "postit"];
 const BASKET_COL = { dust: "#bdb6a4", paper: "#efe8d6", crumb: "#c98a4a", leaf: "#c9783a", postit: "#f2d06b" };
 let basketFly = [];
+let basketBall = 0; // when the possum put Mite's ball in it (possum.js); it stays until Mite gets the ball out again (care.js). Not saved
 /* where it stands: on the platform's floor, right at its left end */
 function basketGeo() {
     const lg = nookLoftGeo(), q = PX, w = Math.round(R * .74 / q) * q, h = Math.round(R * .46 / q) * q, x = Math.round((lg.balL + R * .1) / q) * q;
@@ -19209,6 +19763,15 @@ function drawBasket(dk) {
             cx.fillRect(xx, yy, q, q);
     cx.fillStyle = wickL; // the rim
     cx.fillRect(x, y, w, q);
+    if (basketBall) { // Mite's ball, on top of the heap
+        const bx = x + Math.round(w * .55 / q) * q, by = y - q * 2;
+        cx.fillStyle = mix("#c25b4a", "#2a1210", dk * .6);
+        cx.fillRect(bx - q, by - q * 2, q * 3, q * 3);
+        cx.fillRect(bx, by - q * 3, q, q * 5);
+        cx.fillRect(bx - q * 2, by - q, q * 5, q);
+        cx.fillStyle = mix("#f2d3a6", "#3a3020", dk * .6);
+        cx.fillRect(bx, by - q * 2, q, q);
+    }
 }
 
 </script>
@@ -20434,6 +20997,8 @@ function archWallTap(p) {
  *   drawCircle(...)   on the rug (drawArchiveRoom)
  *   circleTap(p)      a tap in the archive: true if it was on the circle
  *   catInCircle()     is Midnightcat sitting in the middle, doing her rituals?
+ *   mouseGlimpses()   a glimpse for each mouse that's visited (S.mice): its found family. Seen once, the mouse
+ *                     knows the circle told, and says so on its next visit (visitors.js)
  */
 const GLIMPSE_DAY = 3;
 function circleGeo() {
@@ -20527,7 +21092,21 @@ function glimpseList() {
     return pool("glimpses").map(l => {
         const [w, ...r] = String(l).split("|");
         return { who: (w || "").trim(), text: r.join("|").trim(), key: glimpseKey(l) };
-    }).filter(g => g.who && g.text);
+    }).filter(g => g.who && g.text).concat(mouseGlimpses());
+}
+/* the mice who've visited have family too, mostly found rather than born into (lines glimpses_mouse, {mouse}):
+   one glimpse per mouse, always the same one for the same name. Once it's been seen, that mouse knows (visitors.js) */
+function mouseGlimpses() {
+    const L = pool("glimpses_mouse").map(String).filter(Boolean);
+    if (!L.length)
+        return [];
+    return (S.mice || []).map(m => {
+        let h = 0;
+        for (const ch of m.n)
+            h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+        const text = L[h % L.length].replace(/\{mouse\}/g, m.n);
+        return { who: m.n, text, key: glimpseKey("mouse:" + m.n + " | " + text), mouse: m.n };
+    });
 }
 function glimpseKey(l) {
     return String(l).replace(/\s+/g, " ").trim().slice(0, 60);
@@ -20543,6 +21122,9 @@ function glimpsesToday() {
 function pickGlimpse() {
     const all = glimpseList(), seen = new Set((S.glimpses || []).map(g => g.k)), last = (S.glimpses || []).slice(-1)[0];
     const lastWho = last && (all.find(g => g.key === last.k) || {}).who;
+    const kin = all.filter(g => g.mouse && !seen.has(g.key) && g.who !== lastWho);
+    if (kin.length && Math.random() < .5) // a mouse who's visited, not looked into yet: the circle's keen on those
+        return choice(kin);
     let c = all.filter(g => !seen.has(g.key) && g.who !== lastWho);
     if (!c.length)
         c = all.filter(g => !seen.has(g.key));
@@ -20560,6 +21142,9 @@ function showGlimpse() {
     if (!g)
         return 3;
     S.glimpses = (S.glimpses || []).concat([{ k: g.key, at: Date.now() }]).slice(-300);
+    const mk = g.mouse && (S.mice || []).find(m => m.n === g.mouse);
+    if (mk)
+        mk.kin = 1; // next time it visits, it'll know (visitors.js)
     saveSoon();
     sfx("low");
     const who = glimpseFill(g.who), left = GLIMPSE_DAY - glimpsesToday();
@@ -26311,7 +26896,9 @@ function playBall() {
     ball = { x: pet.x > W / 2 ? W * .15 : W * .85, y: GY - H * .45, vx: 0, vy: 0, r: Math.max(6, R * .18), life: 14 };
     pet.start("play");
     S.care.played++;
-    speak(choice(["Ball.", "Oh. Oh. Ball.", "I'm very good at this."]));
+    const fetched = basketBall > 0; // the possum had it in its basket (possum.js)
+    basketBall = 0;
+    speak(fetched ? choice(["Got the ball back out of the possum's basket. It smells of crumbs now. Still a ball.", "The possum had filed the ball under 'mine'. I've unfiled it.", "Ball, retrieved from the basket. The possum won't mind. It'll take it again."]) : choice(["Ball.", "Oh. Oh. Ball.", "I'm very good at this."]));
     afterChange();
 }
 function wash() {
