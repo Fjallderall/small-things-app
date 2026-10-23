@@ -170,6 +170,8 @@ details summary{cursor:pointer;color:var(--muted);font-size:13.5px}
 .lessons small{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
 /* Cabinet */
 .drawers{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:6px}
+ul.drawers{list-style:none;padding:0;margin:6px 0}
+.drawer.season{border-color:var(--accent,#c9a36a)}
 .drawer{border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px;min-height:62px;background:var(--panel)}
 .drawer b{display:block;font-size:13px}
 .drawer.unk{color:var(--muted);background:var(--sunk);border-style:dashed;display:grid;place-items:center;font-family:var(--f-mono)}
@@ -200,6 +202,11 @@ body.pixel .heard p{font-family:var(--f-read);font-size:15px;line-height:22px}
 .field input{color:var(--ink)}
 .days{display:flex;gap:4px;flex-wrap:wrap}
 .days label{font-family:var(--f-mono);font-size:12px;display:inline-flex;gap:3px;align-items:center;padding:3px 6px;border:1px solid var(--line);border-radius:6px;color:var(--ink)}
+.schedlist{list-style:none;margin:4px 0;padding:0;display:grid;gap:3px;font-size:13px}
+.schedlist li{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.terms{margin:4px 0;display:grid;grid-template-columns:1fr;gap:2px 0;font-size:13.5px}
+.terms dt{font-weight:700;margin-top:6px}
+.terms dd{margin:0 0 0 10px;color:var(--ink)}
 textarea{width:100%;min-height:220px;border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:9px;font-family:var(--f-mono);font-size:12.5px;line-height:1.5;resize:vertical}
 .help{font-size:12.5px;color:var(--muted);background:var(--sunk);border-radius:9px;padding:9px 11px}
 .help code{font-family:var(--f-mono);font-size:11.5px;color:var(--ink)}
@@ -228,6 +235,8 @@ textarea{width:100%;min-height:220px;border:1px solid var(--line);border-radius:
 .drawer.alt{border-color:var(--warn)}
 .drawer.racc{border-style:dashed}
 .drawer.racc .cls{color:var(--muted);margin:4px 0 0}
+.drawer.given{background:var(--sunk);color:var(--muted)}
+.drawer.given b{text-decoration:line-through;text-decoration-thickness:1px}
 .drawer .cls{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--warn);display:block;margin-bottom:2px}
 .scopeview{position:absolute;left:50%;top:8%;transform:translateX(-50%);z-index:7;display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:transparent;padding:0;cursor:pointer;animation:scopeIn .35s ease-out}
 .scopeview canvas{width:min(170px,42vw);height:min(170px,42vw);filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
@@ -836,6 +845,8 @@ body.editing #addForm{display:none}
       <div class="files" id="archive"></div>
       <details class="shopsec colsec" data-sec="arch-journal" open><summary><h3>The journal</h3></summary><p class="sub">One line a day, kept in the journal on the archive desk. Every line so far, newest first.</p>
         <div id="reflList" class="agenda"></div></details>
+      <details class="shopsec colsec" data-sec="arch-tcat" open><summary><h3>Small things, by season</h3><span class="seccount" id="cnt-arch-tcat"></span></summary><p class="sub">Each season's own small things from the Cabinet, filed when the season ended.</p>
+        <div id="tcatList"></div></details>
       <details class="shopsec colsec" data-sec="arch-caps" open><summary><h3>Time capsules</h3></summary><p class="sub">Sealed until their day. The tin on the plank glows when one is ready.</p>
         <div id="capList" class="agenda"></div></details>
     </div>
@@ -844,6 +855,8 @@ body.editing #addForm{display:none}
       <div><h2>Cabinet of small things</h2></div>
       <details class="shopsec colsec" data-sec="cab-small" open><summary><h3>Small things</h3><span class="seccount" id="cnt-cab-small"></span></summary><p class="sub">Your pet finds these after tasks, inside golden fireflies, and sometimes just on the floor.</p>
         <div class="drawers" id="drawers"></div></details>
+      <details class="shopsec colsec" data-sec="cab-season" open><summary><h3>This season: <span id="seasonHead"></span></h3><span class="seccount" id="cnt-cab-season"></span></summary><p class="sub" id="seasonSub"></p>
+        <div class="drawers" id="seasonDrawers"></div></details>
       <details class="shopsec colsec" data-sec="cab-altered" open><summary><h3>Altered items</h3><span class="seccount" id="cnt-cab-altered"></span></summary><p class="sub">Recovered from anomalies. Contained, mostly.</p>
         <div class="drawers" id="altered"></div></details>
       <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
@@ -876,6 +889,8 @@ body.editing #addForm{display:none}
         <div class="heard" id="heard"></div></details>
       <details class="shopsec colsec" data-sec="nb-words" open><summary><h3>Words <span class="pn">Mite</span> invented</h3></summary>
         <div class="words" id="words"></div></details>
+      <details class="shopsec colsec" data-sec="nb-terms" open><summary><h3>Archival terms</h3><span class="seccount" id="cnt-nb-terms"></span></summary><p class="sub">Explained by <span class="pn">Mite</span> while it works in the archive, one now and then.</p>
+        <dl class="terms" id="termList"></dl></details>
       <ul class="notes" id="notes"></ul>
     </div>
 
@@ -904,6 +919,7 @@ body.editing #addForm{display:none}
       </div>
       <div class="field">Workdays<div class="days" id="setWork"></div></div>
       <div class="field">Office days<div class="days" id="setOffice"></div></div>
+      <div class="field"><span>Days you told <span class="pn">Mite</span></span><ul class="schedlist" id="schedList"></ul><small class="sub">Tell <span class="pn">Mite</span> in Talk: "friday off", "holiday 28-10-2026 to 01-11-2026", "working saturday". Only those days change.</small></div>
       <p class="sub" id="setSaved" aria-live="polite">Changes save by themselves.</p>
 
     </div>
@@ -1040,7 +1056,7 @@ const POOL_INFO = {
     paint_medium: "While painting, about what it's painting with: medium | text (oils, acrylic, watercolour, gouache, pastel, chalk, pencil, marker, charcoal, ink, crayon, tempera)",
     paint_smell: "Now and then through the day: what the wagon smells like from the paint (medium | text, as paint_medium)",
     paint_carry: "A painting that wasn't finished goes on the next day ({item}: its title)",
-    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for the Cabinet: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})"
+    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for the Cabinet: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the ARCHIVE name plate", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})", serials: "Stories pen pals tell over several letters: Who | the letter (Who: a word from their name; the bits in order)", phone_key: "The phone: someone asking after a small brass key", key_thanks: "A letter from whoever had the brass key, after you gave it back (use / for a new paragraph)", kindreports: "The kind report anomaly: Who filed it | what it says | the Bureau memo explaining it ({pet})", look_puddle: "Mite, after mopping up the flowers' puddle", puddle_odd: "Mite, after mopping up a strange puddle (ink, honey, something glowing)", puddle_still: "Mite, mopping while the flowers still drip", archterms: "Archival terms Mite explains: Term | what it means", archive_digitise: "Archival work: digitising, scanning", archive_retention: "Archival work: the retention schedule", archive_deaccession: "Archival work: deaccessioning, weeding", archive_disaster: "Archival work: the disaster plan", archive_authority: "Archival work: authority records, names", archive_migrate: "Archival work: format migration, emulation", trinkets_spring: "Small things only found in spring: Name | note", trinkets_summer: "Small things only found in summer: Name | note", trinkets_autumn: "Small things only found in autumn: Name | note", trinkets_winter: "Small things only found in winter: Name | note"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -1416,7 +1432,6 @@ const DEF = {
             "[fullmoon] Full moon. The moss is restless. So am I, a bit.",
             "[newmoon] New moon. The quiet kind of dark.",
             "The drawer on the left is new. I'm choosing not to open it.",
-            "Someone filed a report about us. It was very kind.",
             "[rare] I can hear the walls thinking. They think you're doing fine.",
             "There's a door in the wagon wall sometimes. Nobody built it. It knocks before it appears.",
             "[evening] The shadows are stretching. Normal. Probably.",
@@ -1433,6 +1448,8 @@ const DEF = {
             "[lvl3] {incidents} incidents so far. All handled. Mostly by me."
         ],
         omen: [
+            "[report] There's a piece of paper coming down from the ceiling. Our ceiling doesn't usually do that.",
+            "[report] Something official is drifting down. It has a gold seal. Shall I catch it?",
             "[figure] Don't look at the corner. Actually, do. Tell me what you see.",
             "[figure] Someone's standing very still over there. Very, very still.",
             "[hand] Something's tapping. From under the floor. Politely.",
@@ -1747,6 +1764,14 @@ const DEF = {
             "[strange] {label} is gone, but the drawer still sighs now and then. Habit.",
         ],
         replies: [
+            "Dear Mite, your letter came on the one dry day this week, which I am taking as a sign. Everything here is the same, which is a kind of news. — {penpal}",
+            "Dear Mite, I read your letter twice, once for the news and once for the handwriting. Both very good. — {penpal}",
+            "Mite, a short one, I'm in the middle of a jam (the fruit kind). Thank you for writing. More soon. — {penpal}",
+            "Dear Mite, I have put your letter on the mantelpiece where it can see the room. It seems to like it there. Yours, {penpal}",
+            "Dear Mite, nothing much has happened, and I wanted you to know that too. Some weeks are like a long, quiet breath. — {penpal}",
+            "Dear Mite, the post here is carried by a heron with opinions, so if this arrives damp, that's why. All well. — {penpal}",
+            "Dear Mite, you asked how I am. I thought about it properly, which nobody had asked me to do for a while. The answer is: better, for being asked. — {penpal}",
+            "Dear Mite, I found a four-leaf clover and pressed it for you, but it got out of the envelope on the way. If one turns up in the wagon, it's yours. — {penpal}",
             "Dear Mite, your leaf arrived in one piece. I have pressed it in my best book. All well by the water. Yours, {penpal}.",
             "Mite! Your letter smelled of moss and something baking. Envious. Write again when the oven's on. — {penpal}",
             "Dear Mite, it has rained here for four days and I have counted every drop. Lovely, thank you for asking. — {penpal}",
@@ -2629,6 +2654,8 @@ const DEF = {
             "Someone pinned this up: {quote}. I think it was you. Good choice.",
         ],
         flowers: [
+            "Water mint | #6aa84f | herb drip | Straight from the ditch and still dripping. It smells like a cold walk.",
+            "[rainy] Rain-soaked roses | #c2607a | cup drip | Picked in the rain. They'll drip on the floor a while. I'll mop.",
             "Lavender | #a77cb8 | spike | Dried from the old herb beam. Still smells of summer.",
             "Sage | #8c9a6a | herb | Grey-green and soft. Good for clearing a room of bad moods.",
             "Chamomile | #fbf1d9 | daisy | Little suns. They smell like a cup of tea about to happen.",
@@ -2647,6 +2674,9 @@ const DEF = {
             "Wild roses | #e3a0b2 | cup | From a hedge that's been there longer than the road.",
         ],
         flowers_odd: [
+            "Weeping bell | #9fd3e6 | bell drip | It cries a little, contentedly. The puddle smells of rain from somewhere else.",
+            "Honey lantern | #e8a33c | tulip glow drip | It drips honey. Slowly. The possum has noticed.",
+            "Moonmilk lily | #e8eef8 | bell night drip | It drips something pale that glows on the floor until morning.",
             "Moonpoppy | #b5d0e6 | poppy glow night | It closes when you look straight at it. Out of the corner of your eye, it's always open.",
             "Clockweed | #f2c14e | daisy | It ticks. One petal falls every hour, exactly, and grows back.",
             "Whisper lily | #fbf1d9 | bell | It repeats the last thing said in the room, very quietly, a day later.",
@@ -2657,8 +2687,200 @@ const DEF = {
             "Dreamcap | #6b4a84 | bell night sparkle | It only flowers while someone nearby is asleep.",
             "Hourglass orchid | #d4b083 | tulip float | It floats a little above the water. The vase is mostly for form.",
             "Starfall daisy | #fff0b8 | daisy sparkle night | Tiny lights drift off it at night and go out before they reach the floor.",
-            "Ink bell | #33456e | bell | It drips ink. The drops write very small words. Mostly 'hello'.",
+            "Ink bell | #33456e | bell drip | It drips ink. The drops write very small words. Mostly 'hello'.",
             "Stairflower | #b8592f | bud float | It grows towards a door that isn't there. Every day, a little more.",
+        ],
+        serials: [
+            "Bramble | Dear Mite, a small thing. My reflection in the canal has started arriving late. I bend to fish and it bends a moment after, as if it was thinking of something else. I'm not worried. I'm keeping an eye on it. Bramble",
+            "Bramble | Dear Mite, the reflection is later now. Nearly a second. This morning it was still standing when I'd already sat down, and it looked at me as if I'd been rude. I've started waiting for it. It seems to appreciate that. Bramble",
+            "Bramble | Dear Mite, I think I've worked it out. It isn't late. It looks at something under the water first, every time. Today I looked too. There's a bicycle down there, very old, with a basket full of something that glints. Bramble",
+            "Bramble | Dear Mite, the lock-keeper fished the bicycle out. In the basket: forty years of keys, rings, a pocket watch and a small tin of somebody's letters. Every lost thing that ever slipped off this bit of the canal. The reflection was keeping them. Bramble",
+            "Bramble | Dear Mite, the letters went back to the family of the woman who wrote them, the watch to the museum, and the keys into a jar in the lock-keeper's hut, for anyone missing one. My reflection is on time again. It looks very pleased with itself. So do I. Bramble",
+            "mole | Dear Mite, I was making the pantry bigger and my paw went through into somewhere. A room. Dry, quite tidy, and there's a lamp on. Nobody in. I've put the earth back loosely, like a curtain, until I know whose it is. The mole, two burrows over",
+            "mole | Dear Mite, I went back with a biscuit, just in case. The lamp's still on. There's a chair, a desk, and a calendar on the right month, but of a year that hasn't happened yet. I left the biscuit on the desk. The mole",
+            "mole | Dear Mite, the biscuit's gone and there's a note where it was: 'thank you, it's been a long shift.' Very small, very neat handwriting. I've written back to ask how long. I'll tell you what it says. The mole",
+            "mole | Dear Mite, they answered. They're a night-watcher, minding the roots of the big oak so it doesn't wander off, and their relief is late. About forty years late. I've offered to sit with the oak on Thursdays so they can sleep. The mole",
+            "mole | Dear Mite, it's working. On Thursdays I sit in the little room and listen to the roots. They creak like a ship. The watcher sleeps in my spare burrow and snores like someone who's earned it. We share a biscuit at the change of shift. The mole",
+            "Lichen | Dear Mite, I have decided to move. The north side of the wall has got far too fashionable: all moss and no manners. I'm heading for the old gatepost. At my pace I should arrive in good time. Do write. Great-aunt Lichen",
+            "Lichen | Dear Mite, progress! I've reached the third brick. A snail stopped to ask the way and we talked for a season. Lovely fellow. He's going the other way, which I told him was a mistake, but the young must find these things out. Great-aunt Lichen",
+            "Lichen | Dear Mite, a setback. Someone has painted the fourth brick. I'm going round. It adds a year, and frankly the paint looks as if it regrets everything. Don't worry about me. I've waited out worse than paint. Great-aunt Lichen",
+            "Lichen | Dear Mite, I can see the gatepost from here. Grey, rough, facing south, and nobody on it yet, which is the best kind of place. I'll be there long before the gate rots. Great-aunt Lichen",
+            "Lichen | Dear Mite, I have arrived. Well, the front of me has. The rest is following on. The view is excellent: the whole lane and three bus stops. Come and visit. Bring something slow to read. Great-aunt Lichen",
+            "lighthouse | Dear Mite, every night at three the lamp blinks a pattern that isn't ours. Short, long, short. The keeper sleeps through it. I don't. Out at sea something blinks back. There are no ships out there. I've checked. Twice. The lighthouse keeper's cat",
+            "lighthouse | Dear Mite, I've learned the pattern. It's a question, I think, the way a meow is a question. Last night I sat in the lamp room and flicked my tail through the beam to answer. Out at sea it went very quiet, as if it was writing it down. The cat",
+            "lighthouse | Dear Mite, it came closer. A ship, lit up like a birthday, but you can see the stars through its sails. It stopped at the edge of the bay. A sailor on deck waved a lantern. I waved my tail. That seemed to be enough. The lighthouse keeper's cat",
+            "lighthouse | Dear Mite, it's a ship that lost its way a long time ago and has been looking for this light ever since. They only wanted to know the way in. I showed them by turning round three times in the beam, which is how cats give directions. The cat",
+            "lighthouse | Dear Mite, they came in at three, quietly, and moored somewhere the harbour can't quite see. This morning there was a fish on the step, wrapped in a very old newspaper. The keeper thinks it was the gulls. I let him. The lighthouse keeper's cat",
+            "landlord | Dear Mite, a note to say the night door will be redecorated this month. Nothing alarming: a new knocker, a fresh coat of darkness on the frame, and the hinges oiled so it stops sighing. Please excuse any brief changes in where it leads. The Landlord",
+            "landlord | Dear Mite, the decorators have started. You may hear whistling behind the night door after midnight; that's them. If they knock, don't let them through. They're paid by the hour and your side is very cosy. With apologies, the Landlord",
+            "landlord | Dear Mite, a small complication. The decorators have found another door behind the night door. Nobody knew it was there. It's locked, and the keyhole is the shape of a question mark. We're asking around. Regards, the Landlord",
+            "landlord | Dear Mite, solved. The question-mark lock opens if you ask it something you truly want to know. One of the decorators asked whether her daughter would be happy. It opened. Behind it was a very small garden, and the answer, which she's keeping to herself. The Landlord",
+            "landlord | Dear Mite, the work is done. A new knocker, quiet hinges, and the little garden is shared now: tenants on both sides may use it on Sundays. If the night door looks smug, it's had a lot of compliments. Kind regards, the Landlord"
+        ],
+        phone_key: [
+            "A soft voice: 'Sorry to ring. Have you seen a small brass key? It opens something of mine I can't get into any more.'",
+            "Someone asks if we've seen a small brass key. About as long as a paw. They lost it a long way from here, but things roll.",
+            "A polite voice asks after a small brass key. 'It would be in a drawer,' it says. 'Lost things always end up in drawers.'",
+            "[night] A very quiet voice: 'I'm looking for a small brass key. I think you might have it. I'm not cross. I'd just like to open my door again.'"
+        ],
+        key_thanks: [
+            "Dear Mite, / Thank you for the key. It opens a small door in my house that I'd stopped believing in. Behind it was a room I'd forgotten, my grandmother's teapot, and a window onto a garden that isn't on any map. / I've left the door open now. If you ever need a room, you know who to ring. / Gratefully, / the one with the brass key",
+            "Dear Mite, / The key fitted first time, which keys never do. Behind the door was my old writing desk, with a letter in it I'd started years ago and never finished. I've finished it. It was to a friend, and she wrote back the same day. / Thank you for keeping it safe in your drawer. / Warmly, / the one with the brass key"
+        ],
+        kindreports: [
+            "the paper ghost at the window | Lights on in the evening. Always someone in. They wave back. | MEMO. Re: the kind report about your wagon. Filed by the small ghost who visits your window. Ghosts may report places where they feel safe. This is its first. It took eleven drafts. The Bureau has framed one.",
+            "the possum | The bins are left open just right. Nobody shouts. There is a basket that is basically mine. | MEMO. Filed by the possum, in crayon, on a crisp packet. The Bureau accepts all formats. Its suggestion that the wagon be given a medal has been forwarded to ████.",
+            "the hand under the floor | Biscuits. Every time. Never once stepped on. | MEMO. This report was filed from below. The Bureau does not know what is below. It is, however, satisfied that it is grateful. Biscuit stocks are now a matter of quiet importance.",
+            "the tall figure in the corner | They never stare. They let me stand. | MEMO. Filed by the figure who stands in corners. Most places look at it too hard. The Bureau has agreed not to look at this memo too hard either.",
+            "the snail | Slow is allowed here. | MEMO. Filed by the snail. It took four days to arrive and is the shortest report the Bureau has ever received. It now hangs on the department's wall.",
+            "Midnightcat | (illegible: possibly a paw) | MEMO. The report bears one paw print, in what appears to be soot. Asked about it, the archive cat denied filing it, then sat on it. The Bureau considers this a signature.",
+            "the moth who lives in the lamp | The lamp is never turned off on me. | MEMO. Filed by a moth with a wingspan of ████. It asks that the lamp stay exactly as it is. The Bureau has no authority over lamps but has written 'yes' on the file anyway.",
+            "the world outside the window | Someone in there does one small thing at a time, and it shows. | MEMO. Filed by the world, the bit just outside your window. It rarely files reports. The Bureau has changed the wagon's file from 'small' to 'small, and well looked after'.",
+            "the night door | Never slammed. Not once. | MEMO. Filed by the night door, on its own behalf. Doors are seldom asked. This one wanted it on record. The Bureau has sent someone to oil its hinges, as thanks.",
+            "[REDACTED] | We just like it there. | MEMO. Filer withheld at their request. The Bureau can say only that they are very old, very large, and pass this way every hundred years or so. They were glad to see the wagon still there.",
+            "the other {pet} | They were kind to the one I nearly am. | MEMO. Filed by the second {pet}, from the other side of the wall. It asked that the first {pet} not be told. This memo has unfortunately been delivered to the wrong desk. Please forget the last sentence."
+        ],
+        look_puddle: [
+            "Mopped. The floor's a floor again.",
+            "A puddle from the flowers. Gone now. The mop and I make a good team.",
+            "Water from the vase. I mopped it before anyone slipped. Mostly me.",
+            "[rainy] It's raining outside and in. I only mop the inside."
+        ],
+        puddle_odd: [
+            "Ink, all over. I mopped it. It had written 'hello' in very small letters first.",
+            "Honey. Very sticky. The mop and I are one being now.",
+            "It glowed while I mopped it. The mop glows a bit now too. I'll keep it out of the bedroom.",
+            "Mopped. It didn't want to go. I asked nicely and it went."
+        ],
+        puddle_still: [
+            "Mopped. It'll be back: the flowers are still at it.",
+            "Clean, for now. The vase is still dripping. We'll meet again, puddle."
+        ],
+        archterms: [
+            "Accession | formally taking something into the archive. It gets a number, a date and a line in the register, and from then on it's ours to look after.",
+            "Provenance | where something came from and whose hands it passed through. Without it a letter is just paper; with it, it's evidence.",
+            "Respect des fonds | keep the records of one creator together, never mixed with anyone else's. The possum's papers stay the possum's.",
+            "Original order | leave things in the order their creator kept them. That order is information too.",
+            "Fonds | everything one person or organisation made and kept, as a whole. The biggest level in an archive.",
+            "Series | records within a fonds made or kept together for the same purpose: all the shopping lists, or all the letters out.",
+            "Finding aid | the guide to what's in a collection and where. A map, but for boxes.",
+            "Appraisal | deciding what's worth keeping for good, and why. The hardest part, and the most important.",
+            "Retention schedule | a list of how long each kind of record is kept before it's reviewed or destroyed. Seven years for receipts, for ever for the good stuff.",
+            "Deaccession | formally taking something out of the collection, written down, with reasons. Not losing it: letting it go on purpose.",
+            "Fixity | proof that a digital file hasn't changed since it came in. You check it again and again, quietly.",
+            "Checksum | a short code worked out from a file. If even one bit of the file changes, the checksum changes too.",
+            "Bit rot | digital files slowly going wrong on old disks, one bit at a time. Fixity checks are how you catch it.",
+            "Rehousing | moving records into better boxes and folders: acid-free, the right size, no rusty paperclips.",
+            "Acid-free | paper and card that won't yellow or crumble, and won't harm what's kept in it.",
+            "Ingest | taking digital records into the archive's system: checked, described, and stored in more than one place.",
+            "Metadata | information about information: who made it, when, what it is. A box without a label is a mystery; the label is metadata.",
+            "Authority record | one agreed form of a name, so that 'the possum', 'Possum' and 'P.' all lead to the same papers.",
+            "Extent | how much there is: in boxes, files or metres of shelf. 'One box' is an extent. So is 'a worrying amount'.",
+            "Linear metre | how archives measure paper: the length of shelf it takes up.",
+            "Closure period | some records stay closed for a set time, to protect the people in them. Then they open.",
+            "Reading room | where you come to read the records. Pencils only, clean hands, and someone kind keeping an eye on things.",
+            "Chain of custody | an unbroken record of who has held something, so you know it wasn't swapped or changed on the way.",
+            "Vital records | the ones you'd save first in a disaster. Every archive keeps a list and hopes never to need it.",
+            "Disaster plan | what to do in a flood or a fire: who to call, what to save first, and that wet paper goes in the freezer.",
+            "Digitisation | making a digital copy of paper or photos. The scan helps people read it; the original is still kept.",
+            "Born-digital | records that were digital from the start: emails, phone photos, a list in an app. Like this one.",
+            "Format migration | moving a file to a newer format before the old one can't be opened any more.",
+            "Emulation | keeping old files readable by pretending to be the old computer they need. Very convincing pretending.",
+            "Weeding | taking out duplicates and things of no lasting value. Gentler than it sounds. Mostly paperclips.",
+            "Archival bond | the relationship between records made in the same activity. A letter and its reply mean more together.",
+            "Records continuum | the idea that records are never just 'current' or 'archived': they keep being used, by different people, for different reasons, all their lives."
+        ],
+        archive_digitise: [
+            "The scanner hums. Every page gets a good look and a filename that means something. 'scan_final_2' is not a filename.",
+            "Scanning. One page at a time, with a little colour card beside it so the colours stay honest.",
+            "Two copies of every scan: a big careful one to keep, and a lighter one for reading. The paper goes back in its box. It still matters most.",
+            "[strange] I scanned a page and the scan came out with one more line on it than the page has. Filed with a note."
+        ],
+        archive_retention: [
+            "Some records are kept because the law says so, some because they're loved. The schedule knows which is which.",
+            "Checking the retention schedule. Receipts: seven years. Recipes: for ever. Shopping lists: one month, unless they're funny.",
+            "Some things are kept for a while and then let go, on purpose, on a date. It's written down. That's what makes it kind and not careless.",
+            "This box can be reviewed in 2033. I've put a note in the calendar. The calendar was surprised."
+        ],
+        archive_deaccession: [
+            "Every box that leaves gets a line in the register: where it went, when, and why. Gone is never the same as lost here.",
+            "Taking a box out of the collection. It isn't ours to keep: it belongs in the snail's archive. Written down, signed, sent on.",
+            "Deaccessioning sounds sad. It isn't. Things go where they're more useful, and the paperwork says why.",
+            "Duplicates out, the good copy stays. Weeding, archivists call it. The possum calls it 'lunch'. It is not lunch."
+        ],
+        archive_disaster: [
+            "I checked the dehumidifier, the smoke alarm, and the shelf above the floor. Then I checked them again. That's the job.",
+            "Updating the disaster plan. Wet paper goes in the freezer, not the oven. Underlined twice.",
+            "Checking the list of what to save first if the river comes in. The journal's at the top. So are you, in a way.",
+            "A practice drill. Boxes up off the floor, the vital ones to the high shelf. Nothing happened. That's the best kind of drill."
+        ],
+        archive_authority: [
+            "Two files said 'Midnightcat' and one said 'the cat (black)'. Same cat. They're joined up now. She didn't help.",
+            "Writing an authority record: one form of a name, so everything about the snail can be found in one place.",
+            "'Possum, the' is the official form. It also accepts 'Possum', 'P.' and 'oi'. They all point here now.",
+            "Dates of existence for the Bureau: unknown to present. I've left a gap for when someone finds out."
+        ],
+        archive_migrate: [
+            "An old file, in a format nobody's made a reader for in years. I coaxed it into a new one. It seemed relieved.",
+            "Moving old files to a newer format, before the old one stops opening. Like moving house before the roof goes.",
+            "This file needs a computer that doesn't exist any more. So I'm pretending to be one. It's called emulation, and I'm very convincing.",
+            "Migrated, checked, and the old one kept too, just in case. Archivists like a just in case."
+        ],
+        trinkets_spring: [
+            "Robin's eggshell | Blue, cracked open from the inside. Someone out there is flying now.",
+            "Pussy willow catkin | Soft as a mouse's ear. It doesn't mind being stroked.",
+            "Seed for a moon | The packet says 'plant at night'. I'm waiting for the right one.",
+            "Snowdrop in wax paper | The first one. It came up through the frost to have a look.",
+            "Frogspawn marble | Clear, with a dark dot. It hasn't hatched. I'm almost sure.",
+            "Kite string | It still pulls a little towards the sky.",
+            "Bud that won't open | It's thinking about it. Spring is mostly thinking about it.",
+            "Paper daffodil | Someone folded it for a windowsill and forgot to take it home.",
+            "Rain-gauge thimble | It measures April. The answer is always 'more than you thought'.",
+            "Feather, still warm | Dropped by someone building a nest nearby. Busy times.",
+            "Moss-green ribbon | Found on a branch, tied there as if on purpose.",
+            "Ticket for the first warm day | No date on it. You'll know."
+        ],
+        trinkets_summer: [
+            "Blue sea glass | Smoothed by summers. This is its hundredth.",
+            "Ice lolly stick | It says WINNER in small letters. Winner of what, it won't say.",
+            "Empty firefly lantern | The firefly's out for the evening. It'll be back.",
+            "Strawberry pip | One, from the best strawberry. Kept for luck.",
+            "Sandcastle flag | Paper, on a toothpick. The castle's gone; the flag stayed loyal.",
+            "Sun-faded postcard | The writing's gone pale. Only 'wish you were' is left.",
+            "Swimming badge, 10 metres | Somebody earned this. Somebody was proud.",
+            "Dandelion clock | Never blown. It's still deciding what to wish for.",
+            "Cricket's matchbox | Empty. It left a very small thank-you note.",
+            "Humming shell | Not the sea. Something humming along to the sea.",
+            "Pressed poppy | Red as the middle of July.",
+            "Snail-sized sunglasses | Very small. Very cool. Nobody's claimed them."
+        ],
+        trinkets_autumn: [
+            "Conker on a string | Undefeated. It retired at the top of its game.",
+            "Perfect maple leaf | Not one bite out of it. Rare, at this time of year.",
+            "Acorn with a face | Someone drew it. It looks surprised to be an acorn.",
+            "Chestnut husk | Prickly outside, empty inside. Like some mornings.",
+            "Pumpkin candle stub | Burnt down to the last evening of October.",
+            "Small lost mitten | Too early for mittens. Someone was optimistic.",
+            "Fairy-ring pebble | Found in the middle of a ring of mushrooms. It feels a bit important.",
+            "Tangled kite string | It came off the wind. The kite went on without it.",
+            "Rattling seed head | It has a song in it, a very dry one.",
+            "Rainy bus ticket | Smudged. Single journey, somewhere warm.",
+            "Rosehip | Red and round. Don't eat it raw. It told me.",
+            "Jar of fog | Collected one October morning. The label says 'do not open in a hurry'."
+        ],
+        trinkets_winter: [
+            "Escaped snowflake | It got out of a snow globe. It doesn't want to go back in.",
+            "Holly berry | Shiny. The birds left this one for us.",
+            "Mitten on a string | Its other half is somewhere warm, missing it.",
+            "Pine needle bundle | Smells of every December at once.",
+            "Frost fern | Lifted off the window whole. It melts very slowly in the drawer.",
+            "Tangerine peel in one piece | A rare skill. I'm still proud.",
+            "Tin star | From the top of somebody's tree. It's had a long career.",
+            "Stubborn icicle | Cold to the touch even in the drawer. It refuses to melt.",
+            "Bobble from a hat | The hat's out there somewhere, unbobbled.",
+            "Paper snowflake | Six sides, two of them wonky. Handmade, clearly.",
+            "Candle drip | A little wax mountain. Someone read late.",
+            "Cracked sleigh bell | It rings flat. It still rings, though."
         ],
         flowerbring: [
             "{visitor} brought flowers. {flower}. They're in the vase on the drawers.",
@@ -2856,7 +3078,6 @@ const DEF = {
             "The operator asks which century I'd like. I say this one. 'Good choice,' she says.",
             "[night] A lighthouse keeper asks if we can see her light from here. I check. We can. She's relieved.",
             "[rainy] Rain on the line. Louder than the rain here. Then a door closes somewhere and it's dry.",
-            "Someone asks if we've seen a small brass key. We have. It's in the cabinet. I don't tell them.",
             "A voice says the snail's name, very fondly, and then: 'never mind, tell them later.'",
             "Morse code. I don't know Morse code. It felt kind, though.",
             "[strange] My own voice, older, says 'it works out.' Then static.",
@@ -3705,7 +3926,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3874,6 +4095,14 @@ function sanitizeState(raw) {
     o.postits = arr(s.postits, 12).map(n => ({ room: ["room", "garden", "archive"].includes(n.room) ? n.room : "room", fx: clamp(num(n.fx), 0, 1), fy: clamp(num(n.fy), 0, 1), at: num(n.at), rot: clamp(num(n.rot), -1, 1), curl: !!n.curl, tape: !!n.tape, sz: clamp(num(n.sz, 1), .5, 1.5), col: /^#[0-9a-f]{6}$/i.test(n.col) ? n.col : "#f2d06b", text: str(n.text, 60) })); // Mite's sticky notes on the walls (pastimes.js)
     o.basket = { t: (Array.isArray(s.basket && s.basket.t) ? s.basket.t.slice(-20) : []).filter(k => ["dust", "paper", "crumb", "leaf", "postit"].includes(k)), at: num(s.basket && s.basket.at) }; // the possum's basket (basket.js)
     o.tiffany = { k: ["classic", "dragonfly", "blossom", "autumn", "sea", "nebula"].includes(s.tiffany && s.tiffany.k) ? s.tiffany.k : "classic", at: num(s.tiffany && s.tiffany.at) }; // the lamp's shade (archive-room.js)
+    o.puddle = { n: clamp(num(s.puddle && s.puddle.n), 0, 1), c: /^#[0-9a-f]{6}$/i.test(s.puddle && s.puddle.c) ? s.puddle.c : "", odd: s.puddle && s.puddle.odd ? 1 : 0, at: num(s.puddle && s.puddle.at) }; // what the dripping flowers left on the floor (flowers.js)
+    o.terms = arr(s.terms, 200).map(x => ({ k: str(x && x.k, 60).trim(), at: num(x && x.at) })).filter(x => x.k); // archival terms Mite has explained (archive-room.js)
+    o.sched = {}; // days you told Mite about in Talk: { day: { k: "off" | "work" | "" (taken back), at } } (speech.js, offline.js)
+    for (const d of Object.keys(s.sched && typeof s.sched === "object" ? s.sched : {}).filter(d => dkey(d)).sort().slice(-400)) {
+        const e = s.sched[d] || {};
+        o.sched[d] = { k: ["off", "work"].includes(e.k) ? e.k : "", at: num(e.at) };
+    }
+    o.seasonal = { s: /^\d{4}-[1-4]$/.test(s.seasonal && s.seasonal.s) ? s.seasonal.s : "", got: numMap(s.seasonal && s.seasonal.got) }; // this season's own small things (catalogue.js)
     if (o.kettleStyle.at && o.kettleStyle.k !== "copper" && !o.b["kt_" + o.kettleStyle.k]) // (picked for free before the kettles were sold: it's yours)
         o.b["kt_" + o.kettleStyle.k] = 1;
     o.journal = { name: str(s.journal && s.journal.name, 40).replace(/\s+/g, " ").trim() || "Small journal", at: num(s.journal && s.journal.at) }; // the journal's name (journal.js)
@@ -3899,7 +4128,7 @@ function sanitizeState(raw) {
         const ps = s.post && typeof s.post === "object" ? s.post : {};
         o.post = { sent: arr(ps.sent, 30).map(x => ({ to: str(x.to, 80), at: num(x.at), r: x.r ? 1 : 0 })).filter(x => x.to && x.at),
             inbox: arr(ps.inbox, 40).map(x => Object.assign({ from: str(x.from, 80), text: str(x.text, 1200), at: num(x.at), read: x.read ? 1 : 0 }, x.you ? { you: 1 } : {})).filter(x => x.from && x.text), // (you: a letter for you, from the world: post.js)
-            worldAt: num(ps.worldAt) };
+            worldAt: num(ps.worldAt), ser: numMap(ps.ser), serAt: num(ps.serAt) }; // (ser: how far each pen pal's story has got, serAt: its last chapter: post.js)
     }
     o.raccoonAt = num(s.raccoonAt);
     o.wiped = Math.max(0, num(s.wiped)); // when this save was started over (mergeStates: anything saved before it is gone)
@@ -4152,6 +4381,25 @@ function mergeStates(a, b) {
     o.postits = ((nw.postits || [])).slice(); // (the newer save's notes on the walls)
     o.basket = num((a.basket || {}).at) >= num((b.basket || {}).at) ? { t: ((a.basket || {}).t || []).slice(), at: num((a.basket || {}).at) } : { t: ((b.basket || {}).t || []).slice(), at: num((b.basket || {}).at) };
     o.tiffany = num((a.tiffany || {}).at) >= num((b.tiffany || {}).at) ? Object.assign({ k: "classic", at: 0 }, a.tiffany) : Object.assign({ k: "classic", at: 0 }, b.tiffany);
+    o.puddle = num((a.puddle || {}).at) >= num((b.puddle || {}).at) ? Object.assign({ n: 0, c: "", odd: 0, at: 0 }, a.puddle) : Object.assign({ n: 0, c: "", odd: 0, at: 0 }, b.puddle);
+    { // the archival terms: each once, the first time it was explained
+        const m = new Map();
+        for (const x of [...(a.terms || []), ...(b.terms || [])])
+            if (!m.has(x.k.toLowerCase()) || m.get(x.k.toLowerCase()).at > x.at)
+                m.set(x.k.toLowerCase(), x);
+        o.terms = [...m.values()].sort((x, y) => x.at - y.at).slice(-200);
+    }
+    { // the days you told Mite about: per day, whatever was said last (taking one back is said too)
+        o.sched = {};
+        for (const src of [a.sched || {}, b.sched || {}])
+            for (const d in src)
+                if (!o.sched[d] || num(src[d].at) > num(o.sched[d].at))
+                    o.sched[d] = Object.assign({}, src[d]);
+    }
+    { // this season's small things: the same season from both sides, or the later one
+        const sa = a.seasonal || { s: "", got: {} }, sb = b.seasonal || { s: "", got: {} };
+        o.seasonal = sa.s === sb.s ? { s: sa.s, got: mmax(sa.got, sb.got) } : sa.s > sb.s ? JSON.parse(JSON.stringify(sa)) : JSON.parse(JSON.stringify(sb));
+    }
     o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
     o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small journal", at: 0 }) : Object.assign({}, b.journal); // the newest name
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
@@ -4204,7 +4452,7 @@ function mergeStates(a, b) {
             const k = x.at + "|" + x.from, c = inbox.get(k);
             inbox.set(k, c ? Object.assign({}, x, { read: Math.max(c.read || 0, x.read || 0) }) : x);
         }
-        o.post = { sent: [...sent.values()].sort((x, y) => x.at - y.at).slice(-30), inbox: [...inbox.values()].sort((x, y) => x.at - y.at).slice(-40), worldAt: Math.max(num(pa.worldAt), num(pb.worldAt)) };
+        o.post = { sent: [...sent.values()].sort((x, y) => x.at - y.at).slice(-30), inbox: [...inbox.values()].sort((x, y) => x.at - y.at).slice(-40), worldAt: Math.max(num(pa.worldAt), num(pb.worldAt)), ser: mmax(pa.ser, pb.ser), serAt: Math.max(num(pa.serAt), num(pb.serAt)) };
     }
     o.raccoonAt = Math.max(num(od.raccoonAt), num(nw.raccoonAt));
     {
@@ -4312,9 +4560,10 @@ function loadArchLocal() {
  * so nothing trims them). saveSoon() is what everything else calls after a change.
  */
 const KEEP_KEY = "mossling.keep";
-let KEEP = { refl: [], caps: [], cat: [], corr: [], del: {}, wipe: 0 }, keepDirty = false; // wipe: when you last started over (mergeKeep)
+let KEEP = { refl: [], caps: [], cat: [], tcat: [], corr: [], del: {}, wipe: 0 }, keepDirty = false; // wipe: when you last started over (mergeKeep)
 function cleanKeep(raw) {
-    const s = cleanJSON(raw) || {}, o = { refl: [], caps: [], cat: [], corr: [], del: {}, wipe: Math.max(0, num(s.wipe)) };
+    const s = cleanJSON(raw) || {}, o = { refl: [], caps: [], cat: [], tcat: [], corr: [], del: {}, wipe: Math.max(0, num(s.wipe)) };
+    o.tcat = arr(s.tcat, 5000).map(r => ({ s: /^\d{4}-[1-4]$/.test(r && r.s) ? r.s : "", n: str(r && r.n, 60), note: str(r && r.note, 200), x: Math.max(1, num(r && r.x, 1)) })).filter(r => r.s && r.n); // the seasons' small things, filed (catalogue.js)
     o.corr = arr(s.corr, 20000).map(cleanCorr).filter(Boolean); // the correspondence register (post.js)
     o.refl = arr(s.refl, 20000).map(r => ({ id: sid(r.id) || uidGen(), at: num(r.at, Date.now()), text: str(r.text, 1000), u: num(r.u, num(r.at)) })).filter(r => r.text);
     o.caps = arr(s.caps, 2000).map(c => ({ id: sid(c.id) || uidGen(), made: num(c.made, Date.now()), open: dkey(c.open) || dayKey(), text: str(c.text, 3000), opened: Math.max(0, num(c.opened)),
@@ -4349,8 +4598,15 @@ function cleanCat(r) {
 function mergeKeep(a, b) {
     const wa = num(a.wipe), wb = num(b.wipe);
     if (wa !== wb)
-        return JSON.parse(JSON.stringify(Object.assign({ refl: [], caps: [], cat: [], corr: [], del: {} }, wa > wb ? a : b)));
-    const o = { refl: [], caps: [], cat: [], corr: [], del: {}, wipe: wa };
+        return JSON.parse(JSON.stringify(Object.assign({ refl: [], caps: [], cat: [], tcat: [], corr: [], del: {} }, wa > wb ? a : b)));
+    const o = { refl: [], caps: [], cat: [], tcat: [], corr: [], del: {}, wipe: wa };
+    { // the seasons' small things: each once per season (filed records never change)
+        const m = new Map();
+        for (const r of [...(a.tcat || []), ...(b.tcat || [])])
+            if (!m.has(r.s + "|" + r.n))
+                m.set(r.s + "|" + r.n, r);
+        o.tcat = [...m.values()];
+    }
     { // the correspondence register: every letter once (a registered letter is never changed)
         const m = new Map();
         for (const r of [...(a.corr || []), ...(b.corr || [])])
@@ -4859,6 +5115,17 @@ function isLate(h) {
     const b = S.settings.bed;
     return b < 6 ? (h >= b && h < 6) : (h >= b || h < 5);
 }
+/* Days you told Mite about in Talk ("friday off", "holiday 28-10-2026 to 01-11-2026", "working saturday"): they change
+   the schedule for that day only. S.sched: { day: { k: "off" | "work" | "" (taken back), at } } */
+function schedOf(day) {
+    const e = S.sched && S.sched[day];
+    return e && e.k ? e.k : "";
+}
+/* is that date a workday: what you told Mite for it, otherwise the workdays in Settings */
+function isWorkDay(d) {
+    const k = schedOf(dayKey(d));
+    return k ? k === "work" : S.settings.work.includes(d.getDay());
+}
 function ctx() {
     const now = new Date(), h = now.getHours(), dow = now.getDay(), st = S.settings;
     const open = openTasks();
@@ -4871,7 +5138,7 @@ function ctx() {
         fav = S.hours.indexOf(Math.max(...S.hours));
     }
     const mp = moonPhase(now);
-    return { now, h, dow, month: now.getMonth(), workday: st.work.includes(dow), office: st.office.includes(dow),
+    return { now, h, dow, month: now.getMonth(), workday: isWorkDay(now), office: schedOf(dayKey(now)) !== "off" && st.office.includes(dow), dayNote: schedOf(dayKey(now)),
         you: st.you || null, pet: st.pet, open: open.length, oldest: oldest ? oldest.t : null, oldestAge: oldest ? fmtAge(Date.now() - oldest.c) : null,
         smallest: smallest ? smallest.t : null, doneToday: doneOn(actDay()), week: allDone().filter(t => t.d > weekAgo).length, total: doneCount(),
         streak: S.streak.n, level: level(), favHour: fav, daysTogether: Math.max(1, Math.round((Date.now() - S.created) / 864e5)),
@@ -4918,7 +5185,8 @@ function condOk(k, c) {
         case "figure":
         case "hand":
         case "drips":
-        case "double": return c.anom === k;
+        case "double":
+        case "report": return c.anom === k;
         case "sunny": {
             const w = c.wx || weather();
             return w.cloud < .45 && !w.rain && c.h >= 7 && c.h < 20;
@@ -5977,7 +6245,7 @@ function completeTask(id, src) {
             const d = new Date(S.streak.last + "T12:00");
             d.setDate(d.getDate() + 1);
             while (dayKey(d) < today) {
-                if (S.settings.work.includes(d.getDay())) {
+                if (isWorkDay(d)) { // (a day off you told Mite about doesn't break it)
                     broken = true;
                     break;
                 }
@@ -6124,8 +6392,13 @@ function findTrinket(quiet) {
     const list = trinketList();
     if (!list.length)
         return null;
-    const unseen = list.filter(x => !S.trinkets[x.name]);
-    const it = (unseen.length && Math.random() < .8) ? choice(unseen) : choice(list);
+    if (Math.random() < .35) { // this season's own small things first, while there are some to find (catalogue.js)
+        const sn = seasonFind();
+        if (sn)
+            return sn;
+    }
+    const unseen = list.filter(x => !S.trinkets[x.name] && !(x.name === KEY_NAME && S.flags.keyGiven)); // (the brass key, once given, is gone)
+    const it = (unseen.length && Math.random() < .8) ? choice(unseen) : choice(list.filter(x => !(x.name === KEY_NAME && S.flags.keyGiven)));
     S.trinkets[it.name] = (S.trinkets[it.name] || 0) + 1;
     if (S.trinkets[it.name] === 1)
         note(`Found: ${it.name}. ${it.note}`);
@@ -8685,7 +8958,7 @@ Object.assign(BEH, {
             const g = archGeo(), kinds = ARCHIVE_TASKS.filter(k => k !== archiveTaskLast);
             b.k = choice(kinds);
             archiveTaskLast = b.k;
-            const desk = ["ingest", "provenance", "describe", "fixity", "access"].includes(b.k);
+            const desk = ["ingest", "provenance", "describe", "fixity", "access", "digitise", "retention", "authority", "migrate"].includes(b.k);
             b.desk = desk;
             b.tx = desk ? clamp((g.deskX0 + g.deskX1) / 2 + R * .2, R * 1.05, W - R * 1.05) : clamp(rnd(g.x0 + R, g.x1 - R), R * 1.05, W - R * 1.05);
             b.face = desk ? -1 : (Math.random() < .5 ? -1 : 1);
@@ -8697,7 +8970,7 @@ Object.assign(BEH, {
             if (ta < 0)
                 return;
             if (b.desk) {
-                po.prop = b.k === "fixity" ? "ledger" : b.k === "access" ? "box" : "ledger";
+                po.prop = b.k === "access" ? "box" : "ledger";
                 po.lookOverride = { x: .1 * b.face, y: .6 };
             }
             else if (b.k === "arrange") {
@@ -8722,7 +8995,8 @@ Object.assign(BEH, {
             }
             if (ta > b.act - 2 && !b.said) {
                 b.said = 1;
-                say("archive_" + b.k);
+                if (Math.random() > .35 || !explainTerm()) // (now and then a term explained instead: archive-room.js)
+                    say("archive_" + b.k);
             }
         } },
 });
@@ -10463,6 +10737,11 @@ function startObj(kind) {
                 if (sp.id === "closet") { // the closet is the paternoster: every filed week (paternoster.js)
                     showPaternoster(0);
                     return 1.5;
+                }
+                if (sp.id === "puddle") { // the flowers' puddle: mopped (flowers.js)
+                    const t = mopPuddle();
+                    speak(t, { ms: clamp(3500 + t.length * 45, 5000, 8000) });
+                    return 5;
                 }
                 if (sp.id === "desklamp") { // the Tiffany lamp: Mite swaps the shade for another (archive-room.js)
                     const st = tiffanyNext();
@@ -13470,7 +13749,7 @@ function boxLine(t, week) {
 const CLOSET_GAP = 8 * 60e3, CLOSET_KINDS = ["echo", "reach", "breeze", "knock", "lantern", "store"];
 let closetAt = -1e9, closetLast = "";
 /* archival work (archivework): the tasks, and the little labels that float up while Mite does them */
-const ARCHIVE_TASKS = ["ingest", "provenance", "arrange", "describe", "rehouse", "appraise", "fixity", "access"];
+const ARCHIVE_TASKS = ["ingest", "provenance", "arrange", "describe", "rehouse", "appraise", "fixity", "access", "digitise", "retention", "deaccession", "disaster", "authority", "migrate"];
 const ARCHIVE_TAGS = {
     ingest: ["received: 1 box", "accession no. 0" + (100 + (Date.now() / 864e5 | 0) % 900), "checked", "logged"],
     provenance: ["source: the possum", "custody: noted", "from: the snail", "where from?"],
@@ -13479,8 +13758,36 @@ const ARCHIVE_TAGS = {
     rehouse: ["acid-free", "no paperclips", "new box", "labelled"],
     appraise: ["keep", "keep", "not this", "enduring value?"],
     fixity: ["checksum", "match", "no bit rot", "✓"],
-    access: ["request", "reading room", "pencils only", "returned"]
+    access: ["request", "reading room", "pencils only", "returned"],
+    digitise: ["scan 1 of 40", "400 dpi", "master + access copy", "colour target"],
+    retention: ["keep 7 years", "review: 2033", "permanent", "destroy? no"],
+    deaccession: ["out of scope", "transferred", "documented", "not lost, moved"],
+    disaster: ["salvage list", "freeze wet paper", "priority 1", "plan: updated"],
+    authority: ["name: one form", "see also", "dates of existence", "possum, the"],
+    migrate: [".doc → .pdf/a", "old format", "checked", "emulate?"]
 };
+/* Archival terms: now and then, while it works, Mite explains one (lines: archterms, "Term | what it means"). Each
+   one it has explained is kept in the Notebook (S.terms). Mostly ones it hasn't explained yet */
+function archTerms() {
+    return pool("archterms").map(l => {
+        const t = parseLine(l).text, i = t.indexOf("|");
+        return i > 0 ? { k: t.slice(0, i).trim().slice(0, 60), m: t.slice(i + 1).trim() } : null;
+    }).filter(Boolean);
+}
+function explainTerm() {
+    const all = archTerms(), had = new Set((S.terms || []).map(x => x.k.toLowerCase())), fresh = all.filter(x => !had.has(x.k.toLowerCase()));
+    const t = fresh.length ? choice(fresh) : all.length && Math.random() < .3 ? choice(all) : null;
+    if (!t)
+        return false;
+    if (!had.has(t.k.toLowerCase())) {
+        (S.terms = S.terms || []).push({ k: t.k, at: Date.now() });
+        note(`${S.settings.pet} explained an archival term: ${t.k}. It's in the notebook now.`);
+        saveSoon();
+    }
+    const line = `${t.k}: ${t.m}`;
+    speak(line, { ms: clamp(4000 + line.length * 50, 6000, 13000) });
+    return true;
+}
 let archiveTaskLast = "";
 function chooseArchiveBeh() {
     if (performance.now() - archiveSince > rnd(70e3, 120e3)) {
@@ -14380,6 +14687,8 @@ function pickVisitorLine() {
  *   letter     a Bureau memo slides under the archive door, mostly redacted
  *   cloud      a raincloud forms indoors and rains only on Mite
  *   moth       a moth the size of a hat circles the lamp
+ *   report     a kind report about the wagon drifts down out of nowhere, with a glitch; tapped, Mite reads it, and a
+ *              Bureau memo follows to explain who filed it (lines: kindreports, "Filer | the report | the memo")
  */
 const ORIGAMI = [
     { id: "crane", name: "paper crane", col: "#f2c3c8" }, { id: "frog", name: "paper frog", col: "#9fcf8a" },
@@ -14390,8 +14699,8 @@ const ORIGAMI = [
     { id: "lily", name: "paper lily", col: "#f6e7ef" }, { id: "moon", name: "paper moon", col: "#e8d58a" }
 ];
 /* how the room tints while each one is here (the red vignette is for the eerie ones) */
-const ANOM_EERIE = { figure: 1.3, double: 1.2, hand: 1.1, drips: 1, space: .3, deep: .35, door: 1, phone: 1, eyes: 1, tentacle: .75, letter: .5, moth: .45, chair: .25, ghost: .15, cloud: .15 };
-const ANOM_LIFE = { figure: 20, double: 18, hand: 16, drips: 22,  tentacle: 12.5, chair: 14, ghost: 16, cloud: 20, moth: 22, letter: 24 };
+const ANOM_EERIE = { figure: 1.3, double: 1.2, hand: 1.1, drips: 1, space: .3, deep: .35, door: 1, phone: 1, eyes: 1, tentacle: .75, letter: .5, moth: .45, chair: .25, ghost: .15, cloud: .15, report: .7 };
+const ANOM_LIFE = { figure: 20, double: 18, hand: 16, drips: 22,  tentacle: 12.5, chair: 14, ghost: 16, cloud: 20, moth: 22, letter: 24, report: 22 };
 /* where the window (for the ghost) and the light (for the moth) are in a room */
 function anomGeo(rmName) {
     if (rmName === "garden") {
@@ -14427,7 +14736,7 @@ function spawnAnom(dark, force) { // (force: this kind, for tests)
     const w = [["door", 1], ["phone", 1], ["tentacle", 1], ["chair", 1], ["ghost", 1 + (dark > .45 ? 1.5 : 0)], ["letter", .8], ["cloud", raining() ? 1.6 : .8]];
     if (dark > .45)
         w.push(["eyes", 2], ["figure", 1.3], ["double", .8]); // the creepier ones come after dark
-    w.push(["hand", .9], ["drips", .8]);
+    w.push(["hand", .9], ["drips", .8], ["report", .45]);
     if (shiftOk()) // planeshifts: rare, and one a day at most (planeshift.js)
         w.push(["space", .15], ["deep", .15]);
     if (dark > .3)
@@ -14467,6 +14776,8 @@ function spawnAnom(dark, force) { // (force: this kind, for tests)
         anom = Object.assign(base, { x: anomX(.2, .8), y: GY + (H - GY) * rnd(.25, .5) });
     else if (type === "drips")
         anom = Object.assign(base, { x: anomX(.25, .75), y: GY, drops: Array.from({ length: 7 }, (_, i) => ({ dx: (i - 3) * R * .22 + rnd(-R * .05, R * .05), sp: rnd(.6, 1.1), ph: Math.random() })) });
+    else if (type === "report") // a form, drifting down from the ceiling (where it came in is unclear)
+        anom = Object.assign(base, { x: anomX(.25, .75), y: GY - R * 1.5, sway: Math.random() * 6 });
     else if (type === "double") // another Mite. Nearly
         anom = Object.assign(base, { x: pet.x < W / 2 ? W * .78 : W * .22, y: GY });
     else if (SHIFTS.includes(type)) { // nothing in the room: every window shows somewhere else for a while (planeshift.js)
@@ -14488,7 +14799,7 @@ function answerPhone(a, side) {
     a.held = side;
     sfx("tock");
     const c = a.call || anomStamp();
-    const t = anomLine("phone") || "";
+    const t = (c.key ? compose("phone_key") || "Hello? Sorry to bother you. Have you seen a small brass key? About so big. It opens something of mine." : anomLine("phone")) || "";
     if (t)
         speak(t);
     incNote(`Incident ${c.no}, ${c.tm}: the phone rang. ${S.settings.pet} answered. Transcript: ${t || "[blank]"}${c.it ? " Something was left by the phone: " + c.it + "." : ""}`);
@@ -14505,6 +14816,52 @@ function hangUp(a) {
     a.exit = a.t;
     a.life = a.t + 2;
     eerie = .45 * (ANOM_EERIE.phone ?? 1);
+    if (a.call && a.call.key)
+        setTimeout(keyOffer, 900);
+}
+/* ---------- the small brass key. The tiny key in the Cabinet is brass, and now and then the phone is someone asking
+   after it. After the call a card asks: give it, or keep it. Given, Mite leaves it by the phone and it's collected;
+   a few days later a letter comes from whoever had lost it (S.flags.keyGiven: when, keyThanks: the letter came).
+   Kept, they may ask again another day (at most three times, keyAsk) ---------- */
+const KEY_NAME = "Tiny key";
+function keyAsks() {
+    return !!S.trinkets[KEY_NAME] && !S.flags.keyGiven && num(S.flags.keyAsk) < 3 && Date.now() - num(S.flags.keyAskAt) > 3 * 864e5 && Math.random() < .4;
+}
+function keyOffer() {
+    S.flags.keyAsk = num(S.flags.keyAsk) + 1;
+    S.flags.keyAskAt = Date.now();
+    saveSoon();
+    const pn = S.settings.pet;
+    openRitual("A small brass key", `The caller asked if anyone had seen a small brass key.`, `<p>The tiny key in the Cabinet is brass. ${esc(pn)} found it a while ago and it never opened anything here. Give it to them?</p>`,
+        [["Keep it", "", () => {
+            closeRitual();
+            speak(S.flags.keyAsk >= 3 ? "I said we'd keep it. They said that was all right, and that they wouldn't ask again. They sounded fine about it. Mostly." : "I said we'd keep it for now. They said that's all right. They might ring again some time.", { ms: 6000 });
+            note(`Kept the small brass key. ${S.flags.keyAsk >= 3 ? "The caller won't ask again." : "The caller may ask again."}`);
+            afterChange();
+        }], ["Give it to them", "primary", () => {
+            closeRitual();
+            S.flags.keyGiven = Date.now();
+            speak("I left it by the phone. When I turned round it was gone. There was a little warm patch where it had been.", { ms: 6500 });
+            const { no, tm } = anomStamp();
+            incNote(`Incident ${no}, ${tm}: the small brass key was left by the phone for the caller who asked about it. Collected. No one was seen.`);
+            afterChange();
+        }]]);
+    sfx("card");
+}
+/* a few days after the key was given: a letter from whoever had lost it (postTick, post.js) */
+function keyThanksTick(t) {
+    if (!S.flags.keyGiven || S.flags.keyThanks || t - num(S.flags.keyGiven) < 2.5 * 864e5 || num(S.flags.letterInDay) === dayNum())
+        return false;
+    S.flags.keyThanks = 1;
+    S.flags.letterInDay = dayNum();
+    const text = compose("key_thanks") || "Dear Mite,\n\nThank you for the key. It opens a small door in my house that I'd stopped believing in. Behind it was a room I'd forgotten, and my grandmother's teapot, and a window onto a garden that isn't on any map. I've left the door open.\n\nIf you ever need a room, you know who to ring.\n\nGratefully,\nthe one with the brass key";
+    const from = "the one with the brass key";
+    S.post.inbox.push({ from, text: text.replace(/ \/ /g, "\n\n"), at: t, read: 0 });
+    corrRegister("in", from, text.replace(/ \/ /g, "\n\n"), t);
+    note("A letter came from the one with the brass key. It's in the rack in the nook.");
+    speak("A letter came. From whoever had the brass key. It's in the rack in the nook.", { ms: 5000 });
+    saveSoon();
+    return true;
 }
 function anomPoof(x, y) {
     for (let i = 0; i < 14; i++)
@@ -14534,13 +14891,15 @@ function anomHit(p) {
         return Math.hypot(p.x - a.x, p.y - (GY - R)) < R * 1.05;
     if (a.type === "moth")
         return Math.hypot(p.x - a.x, p.y - a.y) < R * 1.1;
+    if (a.type === "report") // (it sways as it comes down: a tall strip round it)
+        return Math.abs(p.x - a.x) < R * .8 && p.y > GY - R * 3.2 && p.y < GY - R * .8;
     return Math.hypot(p.x - a.x, p.y - a.y) < R * .9;
 }
 /* ---------- the encounter log: per kind of anomaly, how often, the first and the latest time, and how much of
    what it can say or do has been heard (the rest: [SEEKING] in the log). S.anomLog: { kind: { n, first, last, h } },
    h the short hashes of the lines heard. ANOM_TALK: the pool each kind's remarks come from ---------- */
-const ANOM_TALK = { door: "anom_door", phone: "phone", eyes: "anom_eyes", figure: "anom_figure", hand: "anom_hand", drips: "anom_drips", double: "anom_double", tentacle: "anom_tentacle", chair: "anom_chair", ghost: "ghosthi", letter: "bureaumemo", cloud: "anom_cloud", moth: "anom_moth", space: "anom_space", deep: "anom_deep" };
-const ANOM_NAMES = { door: "The door that wasn't there", phone: "Red telephone event", eyes: "Eyes in the dark", figure: "The tall figure in the corner", hand: "The hand through the floor", drips: "Upward drips", double: "The other one", tentacle: "The tea-taking tentacle", chair: "The chair that wasn't there", ghost: "The paper ghost at the window", letter: "Memo from the Bureau", cloud: "Indoor raincloud", moth: "The courteous moth", space: "Planeshift: space", deep: "Planeshift: the deep" };
+const ANOM_TALK = { door: "anom_door", phone: "phone", eyes: "anom_eyes", figure: "anom_figure", hand: "anom_hand", drips: "anom_drips", double: "anom_double", tentacle: "anom_tentacle", chair: "anom_chair", ghost: "ghosthi", letter: "bureaumemo", cloud: "anom_cloud", moth: "anom_moth", space: "anom_space", deep: "anom_deep", report: "kindreports" };
+const ANOM_NAMES = { door: "The door that wasn't there", phone: "Red telephone event", eyes: "Eyes in the dark", figure: "The tall figure in the corner", hand: "The hand through the floor", drips: "Upward drips", double: "The other one", tentacle: "The tea-taking tentacle", chair: "The chair that wasn't there", ghost: "The paper ghost at the window", letter: "Memo from the Bureau", cloud: "Indoor raincloud", moth: "The courteous moth", space: "Planeshift: space", deep: "Planeshift: the deep", report: "The kind report" };
 function lineHash(t) {
     let h = 5381;
     for (const ch of String(t))
@@ -14643,7 +15002,8 @@ function resolveAnom() {
     if (a.type === "phone") { // Mite goes over and picks it up (answerPhone); it keeps ringing until then
         anomPay(a);
         S.flags.phone = 1;
-        a.call = { no, tm, it: Math.random() < .35 ? findAltered() : null };
+        const key = keyAsks(); // (now and then it's someone asking about the small brass key: keyOffer)
+        a.call = { no, tm, key, it: !key && Math.random() < .35 ? findAltered() : null };
         a.life = a.t + 60; // time enough to get there from the far end of the wagon
         requestObj("anomphone", a.x, a.y - R);
         return afterChange();
@@ -14740,6 +15100,25 @@ function resolveAnom() {
         incNote(`Incident ${no}, ${tm}: a memo slid under the archive door. It read: "${memo}" Sender: [REDACTED].`);
         return end();
     }
+    if (a.type === "report") { // Mite reads it out; the Bureau's memo about who filed it comes right behind
+        anomPay(a);
+        pet.start("curious", { tx: clamp(a.x - R * 1.1, W * .1, W * .9) });
+        const parts = (anomLine("report") || "the possum | They keep the bins very tidy for us. | The report was filed by the possum, in crayon.").split("|").map(x => x.trim());
+        const [who, rep, memo] = parts.length >= 3 ? parts : ["[REDACTED]", parts[0], parts[1] || "Filer unknown. The report has been filed under 'nice'."];
+        setTimeout(() => speak(`Someone filed a report about us. It says: "${rep}" It's very kind.`, { ms: clamp(4500 + rep.length * 50, 6000, 12000) }), 1500);
+        incNote(`Incident ${no}, ${tm}: a kind report was filed about the wagon. It read: "${rep}" Filed by: unknown (see memo).`);
+        setTimeout(() => { // the memo, a little later, like an envelope after a parcel
+            incNote(`Incident ${no}, ${tm} (cont.): a memo came after the kind report. It read: "${memo}" Filed by, according to the Bureau: ${who}.`);
+            if ($("ritual").hidden && !reduced)
+                sfx("card");
+            openRitual("Memo from the Bureau", "Re: the kind report about your wagon.", `<div class="letter">${esc(homeTxt(memo))}</div><p class="ritmeta">Filed by: ${esc(homeTxt(who))}. Copied to the incident log.</p>`, [["File it", "primary", closeRitual]]);
+            afterChange();
+        }, 9000);
+        a.exit = a.t + .8;
+        a.life = a.exit + 1.5;
+        eerie = Math.max(eerie, .9); // (one last glitch as it goes)
+        return afterChange();
+    }
     if (a.type === "cloud") {
         anomPay(a);
         a.rainbow = a.t;
@@ -14791,7 +15170,7 @@ function anomTick(a, dt, now) {
     }
 }
 /* the ones that hang in the air in front of Mite: drawn after it (drawAnomFront, loop.js), not with the room */
-const ANOM_FRONT = new Set(["cloud"]);
+const ANOM_FRONT = new Set(["cloud", "report"]);
 function drawAnom(a, tsec, front) {
     if (ANOM_FRONT.has(a.type) !== !!front)
         return;
@@ -15152,6 +15531,33 @@ const ANOM_DRAW = {
             cx.arc(x, y - R * .09, R * .06, 0, 7);
             cx.fill();
         });
+    },
+    // a form drifting down, glitching now and then: a pale page with lines, a box ticked, a gold seal
+    report(a, tsec) {
+        const k = clamp(a.t / 3, 0, 1), fall = (1 - Math.pow(1 - k, 2)) * R * 1.2, q = PX;
+        const out = a.exit !== undefined ? clamp((a.t - a.exit) / 1.2, 0, 1) : 0;
+        let x = a.x + Math.sin(a.t * 1.3 + a.sway) * R * .25 * (1 - k * .6), y = GY - R * 2.7 + fall - out * R * .5;
+        const glitch = !reduced && Math.sin(a.t * 7.3 + a.sway) > .93;
+        if (glitch)
+            x += (Math.random() < .5 ? -1 : 1) * q * 3;
+        const w = Math.round(R * .62 / q) * q, h = Math.round(R * .8 / q) * q, X = Math.round((x - w / 2) / q) * q, Y = Math.round((y - h / 2) / q) * q;
+        cx.globalAlpha *= 1 - out;
+        cx.fillStyle = "rgba(255,240,200,.18)"; // a faint shimmer round it
+        cx.fillRect(X - q, Y - q, w + q * 2, h + q * 2);
+        cx.fillStyle = glitch ? "#cfe8ff" : "#f4ecd8";
+        cx.fillRect(X, Y, w, h);
+        cx.fillStyle = "#b9ab8c";
+        cx.fillRect(X, Y, w, q); // the header strip
+        for (let i = 0; i < 4; i++)
+            cx.fillRect(X + q * 2, Y + q * (3 + i * 2), w - q * (i === 3 ? 7 : 4), q);
+        cx.fillStyle = "#5b7a4a"; // the box ticked: kind
+        cx.fillRect(X + q, Y + h - q * 3, q, q);
+        cx.fillStyle = "#e8b13c"; // the seal
+        cx.fillRect(X + w - q * 3, Y + h - q * 3, q * 2, q * 2);
+        if (glitch) { // a sliver of it somewhere else
+            cx.fillStyle = "rgba(160,220,255,.6)";
+            cx.fillRect(X - q * 4, Y + q * 3, w, q);
+        }
     },
     // a small grey cloud over Mite; tapped, it rains itself out into a rainbow
     cloud(a, tsec) {
@@ -18988,6 +19394,9 @@ function postTick(now) {
         }
         saveSoon();
     }
+    if (keyThanksTick(t)) // (the brass key's owner writes: anomalies.js)
+        return;
+    serialTick(t);
     for (const s of S.post.sent) {
         if (s.r)
             continue;
@@ -18999,7 +19408,8 @@ function postTick(now) {
         s.r = 1;
         if (hash01("reply" + s.at) > .8 || /never writes back/i.test(s.to)) // not everyone writes back
             continue;
-        const text = compose("replies", { penpal: s.to }) || "Dear Mite, thank you for your letter. All is well here. Write again soon.";
+        const ser = serialNext(s.to), useSer = ser && hash01("ser" + s.at) < .75; // (a pen pal with a story on the go tells the next bit)
+        const text = useSer ? serialTake(ser, t) : compose("replies", { penpal: s.to }) || "Dear Mite, thank you for your letter. All is well here. Write again soon.";
         S.flags.letterInDay = dayNum();
         S.post.inbox.push({ from: s.to, text, at: s.at + wait, read: 0 });
         corrRegister("in", s.to, text, s.at + wait);
@@ -19009,6 +19419,64 @@ function postTick(now) {
         say("letterarrived", { penpal: s.to });
         saveSoon();
     }
+}
+/* ---------- stories by post. Some pen pals have something going on, told a bit per letter, in order (lines:
+   serials, "Who | the letter", the chapters in the order they come; Who is a word from the pen pal's name). The next
+   bit comes as their reply to Mite's letter, or, if Mite hasn't written for a while, by itself: every five days or so
+   while a story's on the go, and now and then a new one starts unasked. S.post.ser: { who: chapters told } ---------- */
+const SERIAL_GAP = 5 * 864e5, SERIAL_START = 9 * 864e5;
+function serials() {
+    const by = {};
+    for (const raw of pool("serials")) {
+        const l = parseLine(raw).text, i = l.indexOf("|");
+        if (i < 1)
+            continue;
+        const k = l.slice(0, i).trim().toLowerCase();
+        (by[k] = by[k] || []).push(l.slice(i + 1).trim());
+    }
+    return by;
+}
+/* the next chapter for whoever this is (to: a pen pal's name), or null */
+function serialNext(to, all) {
+    all = all || serials();
+    const low = String(to).toLowerCase(), k = Object.keys(all).find(k => low.includes(k));
+    if (!k)
+        return null;
+    const n = num((S.post.ser || {})[k]);
+    return n < all[k].length ? { k, n, text: all[k][n], last: n === all[k].length - 1 } : null;
+}
+function serialTake(ser, t) {
+    S.post.ser = S.post.ser || {};
+    S.post.ser[ser.k] = ser.n + 1;
+    S.post.serAt = t;
+    return fillText(ser.text.replace(/ \/ /g, " "), ctx());
+}
+/* a story letter that comes by itself */
+function serialTick(t) {
+    if (!num(S.post.serAt)) { // (the clock starts now: the first story in a couple of days)
+        S.post.serAt = t - SERIAL_START + 2 * 864e5;
+        return;
+    }
+    if (t - num(S.post.serAt) < SERIAL_GAP || num(S.flags.letterInDay) === dayNum())
+        return;
+    const all = serials(), keys = Object.keys(all), going = keys.filter(k => num((S.post.ser || {})[k]) > 0 && num(S.post.ser[k]) < all[k].length);
+    let k = going[0];
+    if (!k && t - num(S.post.serAt) > SERIAL_START) // nothing on the go: someone starts telling something
+        k = choice(keys.filter(k => !num((S.post.ser || {})[k])));
+    if (!k)
+        return;
+    const from = pool("penpals").find(p => p.toLowerCase().includes(k)) || k, ser = serialNext(from, all);
+    if (!ser)
+        return;
+    const text = serialTake(ser, t);
+    S.flags.letterInDay = dayNum();
+    S.post.inbox.push({ from, text, at: t, read: 0 });
+    corrRegister("in", from, text, t);
+    if (S.post.inbox.length > 40)
+        S.post.inbox.splice(0, S.post.inbox.length - 40);
+    note(`A letter came from ${from}${ser.n ? ", the next bit of their news" : ", without being written to first"}.`);
+    say("letterarrived", { penpal: from });
+    saveSoon();
 }
 /* Mite at the rack: the oldest unread letter, read out (or an old one, now and then) */
 function readLetter() {
@@ -19925,6 +20393,8 @@ function lookSpots(rm) {
     }
     else if (rm === "garden") {
         const g = gardenGeo();
+        if (S.puddle && S.puddle.n >= .02 && puddleHit) // the dripping flowers' puddle: Mite mops it (flowers.js)
+            add("puddle", "look_puddle", puddleHit, true);
         { const b = basketGeo(); add("basket", "look_basket", { x: b.x - R * .1, y: b.y - b.h - R * .3, w: b.w + R * .2, h: b.h + R * .35 }); }
         add("nooksill", "look_sill", { x: g.wx0, y: g.wy1 - R * .2, w: g.wx1 - g.wx0, h: R * .36 });
         add("nookwindow", "look_nookwindow", { x: g.wx0, y: g.wy0, w: g.wx1 - g.wx0, h: g.wy1 - g.wy0 });
@@ -20505,7 +20975,7 @@ document.addEventListener("keydown", e => {
  *   S.vase       what's in the vase now: { n, c, s (shape and fx), note, odd, from, at }
  *   S.flowerBook every flower so far, first time it came
  */
-let flowerCard = null, flowerHit = null, fbookHit = null, flowerCheckAt = 0, fbookOut = false; // fbookOut: Mite has the book in the chair
+let puddleHit = null, flowerCard = null, flowerHit = null, fbookHit = null, flowerCheckAt = 0, fbookOut = false; // fbookOut: Mite has the book in the chair
 const FLOWER_SHAPES = ["daisy", "tulip", "sprig", "bell", "poppy", "bud", "herb", "star", "spike", "cluster", "cup", "berry"];
 function parseFlower(text, odd) {
     const [n, c = "", look = "", note = ""] = String(text).split("|").map(x => x.trim());
@@ -20558,6 +21028,7 @@ function flowerTick() {
     if (now < flowerCheckAt || !S || !hasVase())
         return;
     flowerCheckAt = now + 60e3;
+    puddleTick();
     const d = new Date(), dark = skyAt(d.getHours() + d.getMinutes() / 60).dark;
     if (own("ndoor") && dark > .6 && S.ndoorFlowers !== actDay() && Math.random() < .03) {
         S.ndoorFlowers = actDay();
@@ -20570,6 +21041,68 @@ function flowerTick() {
         if (f && roomVisible(view))
             say("flowerwalk", { flower: f.n });
     }
+}
+/* Some flowers drip (fx "drip"): water from the ditch or the rain, or, the strange ones, ink, honey, something else.
+   The drops run off the chest of drawers and make a puddle on the floor beside it (S.puddle: n how big 0–1, c its
+   colour, odd, at). A water puddle dries by itself once nothing drips into it; a strange one stays until Mite mops
+   it up (tap it: the "puddle" look, looks.js / interactions.js) */
+const dripping = () => !!(S.vase && hasVase() && /\bdrip\b/.test(S.vase.s));
+const dripCol = v => v.odd ? v.c : "#8fb4d8";
+function puddleTick() {
+    const p = S.puddle = S.puddle || { n: 0, c: "", odd: 0, at: 0 };
+    if (dripping()) {
+        if (p.n < .05 || p.c !== dripCol(S.vase))
+            Object.assign(p, { c: dripCol(S.vase), odd: Math.max(p.n < .05 ? 0 : p.odd, S.vase.odd ? 1 : 0) });
+        if (p.n < 1) {
+            p.n = Math.min(1, p.n + .04); // (full in about twenty minutes)
+            p.at = Date.now();
+            saveSoon();
+        }
+    }
+    else if (p.n > 0 && !p.odd) { // water dries (in about an hour and a half)
+        p.n = Math.max(0, p.n - .012);
+        p.at = Date.now();
+        if (!p.n)
+            p.c = "";
+        saveSoon();
+    }
+}
+/* where the puddle is: on the floor, just left of the chest of drawers */
+function puddleGeo() {
+    const g = gardenGeo(), x0 = g.drX - g.drW / 2 - R * .05;
+    return { x: x0 - R * .12, y: GY + R * .1, edge: x0 + PX, top: GY - g.drH };
+}
+function drawPuddle(dk) {
+    const pg = puddleGeo(), p = S.puddle, q = PX;
+    if (dripping() && !reduced && Math.random() < .03) // a drop off the edge of the chest
+        addP({ type: "spark", x: pg.edge, y: pg.top + q, vx: 0, vy: 12, g: 320, max: .95, col: dripCol(S.vase), size: 2, room: "garden" });
+    if (!p || p.n < .02 || !p.c) {
+        puddleHit = null;
+        return;
+    }
+    const w = Math.max(q * 3, Math.round(R * (.22 + .7 * p.n) / q) * q), rows = Math.max(1, Math.round((1 + p.n * 2))), x = Math.round(pg.x / q) * q, y = Math.round(pg.y / q) * q;
+    cx.save();
+    cx.globalAlpha = .78;
+    cx.fillStyle = mix(p.c, "#14121c", dk * .55);
+    for (let i = -rows; i <= rows; i++) { // a flat oval in pixels
+        const k = Math.sqrt(1 - Math.pow(i / (rows + 1), 2)), rw = Math.round(w * k / q) * q;
+        cx.fillRect(x - rw / 2, y + i * q, rw, q);
+    }
+    cx.globalAlpha = .9;
+    cx.fillStyle = mix(mix(p.c, "#ffffff", .55), "#14121c", dk * .5); // a glint
+    cx.fillRect(x - w * .2, y - q * Math.min(1, rows), q * 2, q);
+    cx.restore();
+    puddleHit = { x: x - w / 2 - R * .1, y: y - q * rows - R * .2, w: w + R * .2, h: q * rows * 2 + R * .4, cx: x };
+}
+/* Mite mops it up (the look spot's tap) */
+function mopPuddle() {
+    const p = S.puddle || {}, odd = p.odd, still = dripping();
+    S.puddle = { n: 0, c: "", odd: 0, at: Date.now() };
+    for (let i = 0; i < 8; i++)
+        addP({ type: "steam", x: puddleGeo().x + rnd(-R * .3, R * .3), y: GY + rnd(0, R * .15), vy: rnd(-24, -8), vx: rnd(-12, 12), max: rnd(.5, .9), size: R * rnd(.08, .14), room: "garden" });
+    sfx("soft");
+    afterChange();
+    return compose(still ? "puddle_still" : odd ? "puddle_odd" : "look_puddle") || "Mopped. The floor's a floor again.";
 }
 /* where the vase stands: on the chest of drawers, to the left */
 function vasePos() {
@@ -20620,6 +21153,7 @@ function drawVase(dk, t) {
     cx.fillStyle = mix("#52709c", "#10142a", dk * .6);
     cx.fillRect(vx - q, y - vh, vw + q * 2, q);
     flowerHit = { x: vx - R * .25, y: y - vh - R * .6, w: vw + R * .5, h: vh + R * .6, cx: vx + vw / 2 };
+    drawPuddle(dk);
 }
 /* the dried flower book, lying on the left of the writing desk */
 function drawFlowerBook(dk) {
@@ -20734,6 +21268,12 @@ function flowerFrame(now) {
             if (a < 1)
                 px("#fff6c8", 12 + (i * 9) % 32, 4 + (i * 7) % 20);
         }
+    if (fx.includes("drip")) { // a drop running down the glass, and a little puddle on the table
+        const dc = v.odd ? v.c : "#8fb4d8";
+        px(dc, 21, 30 + Math.floor((t * 7) % 13));
+        px(dc, 13, 43, 8, 1);
+        px(dc, 15, 44, 4, 1);
+    }
     if (fx.includes("petals")) // petals falling upwards
         for (let i = 0; i < 4; i++)
             px(v.c, 16 + i * 7, 26 - ((t * 6 + i * 9) % 26));
@@ -24757,11 +25297,12 @@ function barterTrade(i) {
  */
 function renderCabinet() {
     const list = trinketList();
-    $("drawers").innerHTML = list.map(t => S.trinkets[t.name] ? `<div class="drawer"><b>${esc(t.name)}${S.trinkets[t.name] > 1 ? ` <span class="sync">×${esc(S.trinkets[t.name])}</span>` : ""}</b>${esc(t.note)}</div>` : `<div class="drawer unk">?</div>`).join("") +
+    $("drawers").innerHTML = list.map(t => t.name === KEY_NAME && S.flags.keyGiven && S.trinkets[t.name] ? `<div class="drawer given"><b>${esc(t.name)}</b>Given to the caller who asked after it, ${esc(dmy(new Date(S.flags.keyGiven)))}. The drawer still smells of brass.</div>` : S.trinkets[t.name] ? `<div class="drawer"><b>${esc(t.name)}${S.trinkets[t.name] > 1 ? ` <span class="sync">×${esc(S.trinkets[t.name])}</span>` : ""}</b>${esc(t.note)}</div>` : `<div class="drawer unk">?</div>`).join("") +
         pool("barter_curio").filter(l => barterOwned("curio", barterName(l))).map(l => { // the raccoon's curios: only the ones you have (no empty drawers: they're a surprise)
             const [n, ...r] = parseLine(l).text.split("|");
             return `<div class="drawer racc"><b>${esc(n.trim())}</b>${esc(r.join("|").trim())}<span class="cls">from ${esc(raccoonName())}</span></div>`;
         }).join("");
+    renderSeasonDrawers(); // (this season's own: catalogue.js)
     $("altered").innerHTML = alteredList().map(t => S.altered[t.name] ? `<div class="drawer alt"><span class="cls">${esc(t.cls)}</span><b>${esc(t.name)}</b>${esc(t.note)}</div>` : `<div class="drawer unk">▮▮▮</div>`).join("");
     {
         const n = {};
@@ -24862,6 +25403,13 @@ function renderNotebook() {
         const d = new Date(n.at);
         return `<li><time>${dmy(d)} ${hhmm(d)}</time><span>${esc(n.text)}</span></li>`;
     }).join("") || `<li><time></time><span>A fresh page. Nothing yet today.</span></li>`;
+    { // the archival terms Mite has explained (archive-room.js), in alphabetical order
+        const all = archTerms(), got = (S.terms || []).map(x => all.find(t => t.k.toLowerCase() === x.k.toLowerCase())).filter(Boolean).sort((a, b) => a.k.localeCompare(b.k));
+        $("termList").innerHTML = got.map(t => `<dt>${esc(t.k)}</dt><dd>${esc(t.m)}</dd>`).join("") || `<dd class="sub">None yet. ${esc(S.settings.pet)} explains one now and then while it works in the archive.</dd>`;
+        const c = $("cnt-nb-terms");
+        if (c)
+            c.textContent = `${got.length}/${all.length}`;
+    }
     $("words").innerHTML = S.words.map(w => `<span class="word"><i>${esc(w.w)}</i> ${esc(w.m)}</span>`).join("") || `<span class="sub">None yet. Mite invents them now and then.</span>`;
 }
 function renderFiles() {
@@ -25027,6 +25575,7 @@ function renderContent() {
     };
     days($("setWork"), st.work, "w");
     days($("setOffice"), st.office, "o");
+    renderSched();
     if (!$("poolSel").options.length)
         poolFilter();
     loadPoolEditor();
@@ -25132,6 +25681,35 @@ document.addEventListener("click", e => {
         closeRitual();
     showFestival(b.dataset.fest);
 });
+/* Settings: the days you told Mite about, still to come, a stretch per line (the same kind on days in a row) */
+function schedStretches() {
+    const today = dayKey(), out = [];
+    for (const d of Object.keys(S.sched || {}).filter(d => d >= today && schedOf(d)).sort()) {
+        const k = schedOf(d), last = out[out.length - 1], prev = last && new Date(last.to + "T12:00");
+        if (prev)
+            prev.setDate(prev.getDate() + 1);
+        if (last && last.k === k && dayKey(prev) === d)
+            last.to = d;
+        else
+            out.push({ k, from: d, to: d });
+    }
+    return out;
+}
+function renderSched() {
+    const el = $("schedList");
+    if (!el)
+        return;
+    const list = schedStretches();
+    el.innerHTML = list.map((r, i) => `<li><span>${r.k === "off" ? "Off" : "Working"}: ${esc(r.from === r.to ? schedName(r.from) : schedName(r.from) + " to " + schedName(r.to))}</span> <button type="button" class="linkbtn" data-sched="${i}" aria-label="Take back: ${esc(r.k === "off" ? "off" : "working")} ${esc(dmy(new Date(r.from + "T12:00")))}">take back</button></li>`).join("") || `<li class="sub">Nothing yet.</li>`;
+    el.querySelectorAll("[data-sched]").forEach(b => b.onclick = () => {
+        const r = list[+b.dataset.sched], at = Date.now();
+        for (const d = new Date(r.from + "T12:00"); dayKey(d) <= r.to; d.setDate(d.getDate() + 1))
+            S.sched[dayKey(d)] = { k: "", at };
+        note(`Took back: ${r.k === "off" ? "off" : "working"}, ${r.from === r.to ? schedName(r.from) : schedName(r.from) + " to " + schedName(r.to)}.`);
+        afterChange();
+        renderSched();
+    });
+}
 
 </script>
 <script>/* js/ui/tabs.js */
@@ -25763,7 +26341,7 @@ function eraseAll() {
     ARCH = {};
     rebuildFlat();
     saveArchLocal();
-    KEEP = { refl: [], caps: [], cat: [], corr: [], del: {}, wipe: Date.now() }; // the keepsakes go too (wipe: so another copy can't bring them back)
+    KEEP = { refl: [], caps: [], cat: [], tcat: [], corr: [], del: {}, wipe: Date.now() }; // the keepsakes go too (wipe: so another copy can't bring them back)
     saveKeep();
     S = defaultState();
     S.g = S.gTotal = RESTART_G; // the starting gift again, so the shop isn't empty-handed on day one
@@ -26288,8 +26866,83 @@ function seasonDays(s) {
 const paintRec = g => ({ s: seasonOf(g.at > 1e9 ? actDay(g.at) : g.day), t: "p", day: g.day, to: g.to, by: g.by, at: num(g.at) });
 const knitRec = k => ({ s: seasonOf(actDay(k.at)), t: "k", item: k.item, c1: k.c1, c2: k.c2, pat: k.pat, at: num(k.at) });
 const catKey = r => r.t === "p" ? "p" + r.day : "k" + r.at + r.item;
+/* ---------- this season's own small things. Each season has a dozen or so that only turn up then (lines:
+   trinkets_spring … trinkets_winter), found the way the others are (findTrinket). They sit in their own drawers in the
+   Cabinet; when the season ends, the ones found are filed in the archive (KEEP.tcat: { s, n, note, x }, a fold per
+   season in the Archive tab) and the drawers are empty for the next season's. S.seasonal: { s: the season, got } */
+const SEASON_POOL = ["", "trinkets_spring", "trinkets_summer", "trinkets_autumn", "trinkets_winter"];
+function seasonThings(s) {
+    s = s || seasonOf(actDay());
+    return pool(SEASON_POOL[+s.split("-")[1]] || "").map(l => {
+        const [n, ...r] = parseLine(l).text.split("|");
+        return { name: n.trim().slice(0, 60), note: r.join("|").trim() };
+    }).filter((t, i, all) => t.name && all.findIndex(x => x.name.toLowerCase() === t.name.toLowerCase()) === i);
+}
+/* one of this season's, not found yet (or null when they're all in) */
+function seasonFind() {
+    fileSeasonal();
+    const got = S.seasonal.got, unseen = seasonThings().filter(x => !got[x.name]);
+    if (!unseen.length)
+        return null;
+    const it = choice(unseen);
+    got[it.name] = 1;
+    note(`Found: ${it.name}. ${it.note} (Only this ${SEASON_NAMES[+S.seasonal.s.split("-")[1]].toLowerCase()}.)`);
+    return it.name;
+}
+/* a new season: last season's finds into the archive, the drawers emptied */
+function fileSeasonal() {
+    const cur = seasonOf(actDay()), sz = S.seasonal = S.seasonal || { s: "", got: {} };
+    if (sz.s === cur)
+        return 0;
+    if (!sz.s || sz.s > cur) { // (first time, or a clock that went back: just start here)
+        S.seasonal = { s: cur, got: sz.s > cur ? sz.got : {} };
+        return 0;
+    }
+    const list = seasonThings(sz.s), have = new Set((KEEP.tcat || []).map(r => r.s + "|" + r.n));
+    const add = Object.keys(sz.got || {}).filter(n => num(sz.got[n]) > 0 && !have.has(sz.s + "|" + n)).map(n => ({ s: sz.s, n, note: (list.find(x => x.name === n) || {}).note || "", x: num(sz.got[n]) }));
+    if (add.length) {
+        KEEP.tcat = (KEEP.tcat || []).concat(add);
+        saveKeep();
+        note(`Filed the small things of ${seasonName(sz.s).toLowerCase()} in the archive: ${add.length}. The season's drawers in the Cabinet are empty again, for ${SEASON_NAMES[+cur.split("-")[1]].toLowerCase()}'s.`);
+    }
+    S.seasonal = { s: cur, got: {} };
+    saveSoon();
+    return add.length;
+}
+/* the Cabinet's fold for this season */
+function renderSeasonDrawers() {
+    const el = $("seasonDrawers");
+    if (!el)
+        return;
+    fileSeasonal();
+    const cur = S.seasonal.s, list = seasonThings(cur), got = S.seasonal.got, d = seasonDays(cur), nx = SEASON_NAMES[(+cur.split("-")[1]) % 4 + 1].toLowerCase();
+    const h = $("seasonHead"), sub = $("seasonSub"), c = $("cnt-cab-season");
+    if (h)
+        h.textContent = seasonName(cur);
+    if (sub)
+        sub.textContent = `They only turn up this season, until ${dmy(d.end)}. When ${nx} begins, the ones found are filed in the archive and the drawers empty for the next.`;
+    if (c)
+        c.textContent = `${list.filter(t => got[t.name]).length}/${list.length}`;
+    el.innerHTML = list.map(t => got[t.name] ? `<div class="drawer season"><b>${esc(t.name)}</b>${esc(t.note)}</div>` : `<div class="drawer unk">?</div>`).join("");
+}
+/* the Archive tab: every season's small things, a fold per season, newest first */
+function renderSeasonFiled() {
+    const el = $("tcatList");
+    if (!el)
+        return;
+    const by = {};
+    for (const r of KEEP.tcat || [])
+        (by[r.s] = by[r.s] || []).push(r);
+    const ss = Object.keys(by).sort().reverse();
+    el.innerHTML = ss.map(s => `<details class="catseason"><summary><b>${esc(seasonName(s))}</b><span class="sync">${by[s].length}</span></summary><ul class="drawers">${by[s].map(r => `<li class="drawer season"><b>${esc(r.n)}</b>${esc(r.note)}</li>`).join("")}</ul></details>`).join("")
+        || `<p class="sub">Nothing filed yet. Each season's own small things come here when the season ends.</p>`;
+    const c = $("cnt-arch-tcat");
+    if (c)
+        c.textContent = String((KEEP.tcat || []).length);
+}
 /* everything from a season that's over goes into the catalogue */
 function archiveCrafts() {
+    fileSeasonal(); // (and the season's small things into the archive)
     const cur = seasonOf(actDay()), have = new Set((KEEP.cat || []).map(catKey)), add = [];
     const oldP = (S.gallery || []).filter(g => paintRec(g).s < cur), oldK = (S.knits || []).filter(k => knitRec(k).s < cur);
     if (!oldP.length && !oldK.length)
@@ -26511,6 +27164,13 @@ const SPECIAL_FMT = {
     brews: "Each entry: Name | Mite's one-sentence remark (max 25 words) | look. Look is a hex colour like #c48a3a followed by any of: cup=mug|teacup|glass|flask|bowl|thimble, float=leaf|star|moon|eye|lemon|marshmallow|petal, glow, sparkle, bubbles, foam, smoke, layers, empty. Warm drinks that are strange, cosy or uncanny: requests to a machine that can brew anything (abstract things like a feeling or a weekday), drinks from video games (only ones you are sure exist), and cosy oddities. Optional [conditions] at the start. No variables.",
     bookshelf: "Each entry: Title | Mite's one-sentence remark about it (max 25 words). Titles may be real books from video games (only ones you are sure exist, e.g. The Lusty Argonian Maid) or invented cosy, archival or gently uncanny ones. Optional [conditions] at the start. No variables.",
     trinkets: "Each entry: Name | one-sentence note. No conditions, no variables except {pet} and {you}.",
+    trinkets_spring: "Each entry: Name | one-sentence note, something small that only turns up in spring. No conditions, no variables.",
+    trinkets_summer: "Each entry: Name | one-sentence note, something small that only turns up in summer. No conditions, no variables.",
+    trinkets_autumn: "Each entry: Name | one-sentence note, something small that only turns up in autumn. No conditions, no variables.",
+    trinkets_winter: "Each entry: Name | one-sentence note, something small that only turns up in winter. No conditions, no variables.",
+    archterms: "Each entry: Term | a plain one- or two-sentence explanation of a real archival term (max 35 words), gently in character. No conditions, no variables.",
+    kindreports: "Each entry: Who filed it (a resident or anomaly of the wagon) | the kind report itself, max 20 words | a Bureau memo explaining who filed it and why, max 50 words, may use ████. May use {pet}.",
+    serials: "Each entry: Who | one letter in a short story told over four or five letters, max 60 words, signed. Who is one word from a pen pal's name; give the letters of one story in order. No conditions.",
     visitors: "Each entry: Name | mouse or rat. No conditions, no variables.",
     altered: "Each entry: Name | Class | one-sentence note. Class is Benign, Restless or Peculiar. Uncanny but gentle, original, not from any existing franchise.",
     files: "Each entry: L<0-6> | Title | a short bureau document (max 60 words) with one or two [[redacted phrases]] in double square brackets. Original lore: the wagon is a thin place watched by the Bureau of Small Things; finished tasks anchor it; the deepest secret is that the user is the Bureau's only employee. Higher L means deeper secrets. May use {pet} and {you}.",
@@ -26520,7 +27180,7 @@ const SPECIAL_FMT = {
     grammar: "Each entry: name: option | option | option (6 to 12 short options). Names are lowercase. Options may use other names as {#name}.",
     away: "Each entry: a short lowercase past-tense fragment of something the pet did while the user was away, no full stop, e.g. 'counted the floorboards (there are {n})'. May use {n}."
 };
-const CONDS = "mon tue wed thu fri sat sun workday offday office home morning afternoon evening night hA-B busy open0 done0 doneSome streakN lvlN autumn winter spring summer sunny rainy cloudy snowy travelling parked wagon burrow fullmoon newmoon waxing waning halloween strange rare door phone eyes tentacle chair ghost letter cloud moth";
+const CONDS = "mon tue wed thu fri sat sun workday offday office home morning afternoon evening night hA-B busy open0 done0 doneSome streakN lvlN autumn winter spring summer sunny rainy cloudy snowy travelling parked wagon burrow fullmoon newmoon waxing waning halloween strange rare door phone eyes tentacle chair ghost letter cloud moth report";
 function allowedVars(k) {
     return k in SPECIAL_FMT ? ["n", "pet", "you"] : BASE_VARS.concat(POOL_VARS[k] || []);
 }
@@ -26555,7 +27215,7 @@ function validLine(k, line, existing) {
         return null;
     if (k === "grammar" && !/^[\w-]+\s*:.+\|/.test(l))
         return null;
-    if (k === "omen" && !/^\[[^\]]*\b(door|phone|eyes|tentacle|chair|ghost|letter|cloud|moth)\b/.test(l))
+    if (k === "omen" && !/^\[[^\]]*\b(door|phone|eyes|tentacle|chair|ghost|letter|cloud|moth|report)\b/.test(l))
         return null;
     return l;
 }
@@ -27566,7 +28226,7 @@ async function sendChat(text, useAI) {
     text = String(text || "").trim().slice(0, 600);
     if (!text)
         return;
-    if (!useAI || !aiOn())
+    if (!useAI || !aiOn() || schedParse(text)) // (days off and holidays are read here, never sent off)
         return offlineChat(text);
     if (chatBusy) {
         toast(`${S.settings.pet} is still thinking`);
@@ -27947,12 +28607,119 @@ function findDay(low) {
 function toSecond(x) {
     return x.replace(/\bI am\b/gi, "you are").replace(/\bI'm\b/gi, "you're").replace(/\bI've\b/gi, "you've").replace(/\bI'll\b/gi, "you'll").replace(/\bmyself\b/gi, "yourself").replace(/\bmine\b/gi, "yours").replace(/\bmy\b/gi, "your").replace(/\bme\b/gi, "you").replace(/\bI\b/g, "you").replace(/[.!?\s]+$/, "").trim();
 }
+/* ---------- days you tell Mite about: "friday off", "holiday 28-10-2026 to 01-11-2026", "working saturday",
+   "friday isn't a day off after all". Read offline (never sent to AI), kept in S.sched, and they change the schedule
+   for those days only (isWorkDay, speech.js). Every week's pattern stays in Settings ---------- */
+const SCHED_DAY = "(today|tomorrow|vandaag|morgen|(?:next |this |volgende |deze )?(?:(?:mon|tues|wednes|thurs|fri|satur|sun)day|(?:maan|dins|woens|donder|vrij|zater|zon)dag)|\\d{1,2}[-/.]\\d{1,2}(?:[-/.]\\d{2,4})?)";
+/* one day word or date, from today on: a Date at noon, or null */
+function schedDay(w) {
+    const d = new Date(), low = String(w).toLowerCase().trim();
+    d.setHours(12, 0, 0, 0);
+    let m;
+    if (/^(today|vandaag)$/.test(low))
+        return d;
+    if (/^(tomorrow|morgen)$/.test(low)) {
+        d.setDate(d.getDate() + 1);
+        return d;
+    }
+    if (m = low.match(/^(?:(next|volgende)\s+|(?:this|deze)\s+)?([a-z]+)$/)) {
+        const wd = DAYW[m[2]];
+        if (wd === undefined)
+            return null;
+        d.setDate(d.getDate() + ((wd - d.getDay() + 7) % 7 || (m[1] ? 7 : 0)));
+        return d;
+    }
+    if (m = low.match(/^(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{2,4}))?$/)) {
+        const dd = +m[1], mm = +m[2], yy = m[3] ? (+m[3] < 100 ? 2000 + +m[3] : +m[3]) : d.getFullYear();
+        const x = new Date(yy, mm - 1, dd, 12);
+        if (x.getMonth() !== mm - 1 || x.getDate() !== dd)
+            return null;
+        if (!m[3] && x < d - 864e5) // (no year and it's been: next year's)
+            x.setFullYear(yy + 1);
+        return x;
+    }
+    return null;
+}
+/* what the message says about the schedule: { k: "off" | "work" | "", days: [day keys], hol } or { every: 1 }, or null */
+function schedParse(text) {
+    const low = " " + String(text).toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ").trim() + " ";
+    const D = SCHED_DAY, re = x => new RegExp(x, "i");
+    const hol = /\b(holiday|holidays|vacation|vakantie|on leave|verlof|time off)\b(?!\s+(?:party|parties|card|cards|shopping|plans|gifts?|presents?|season|songs?|movie|film|lights|dinner|feest|kaart))/.test(low);
+    const off = hol || re(`\\b${D}\\s+(?:is\\s+|isn't\\s+|is not\\s+|won't be\\s+)?(?:a\\s+)?(?:(?:day|dag)\\s+)?(?:off|free|vrij)\\b`).test(low) || re(`\\b(?:(?:a\\s+)?day\\s+off|off|vrij|free)\\s+(?:on\\s+|op\\s+)?${D}`).test(low) || re(`\\bvrije dag\\b`).test(low) && re(D).test(low);
+    const work = !off && (re(`\\b(?:i'm |i am |i |ik )?(?:working|work|werk)\\s+(?:on\\s+|op\\s+)?${D}(?=[\\s.,!?])`).test(low) || re(`\\b${D}\\s+(?:is\\s+|isn't\\s+|is not\\s+)?(?:a\\s+)?(?:working day|workday|werkdag)\\b`).test(low) || re(`\\b(?:working day|workday|werkdag)\\s+(?:on\\s+|op\\s+)?${D}`).test(low));
+    if (/\b(every|each|elke|iedere)\s+(?:(?:mon|tues|wednes|thurs|fri|satur|sun)day|(?:maan|dins|woens|donder|vrij|zater|zon)dag|week)\b|\b(mon|tues|wednes|thurs|fri|satur|sun)days\s+(?:off|free)\b|\b(?:off|free|work|working)\s+(?:on\s+)?(mon|tues|wednes|thurs|fri|satur|sun)days\b/.test(low))
+        return { every: 1 };
+    if (!off && !work)
+        return null;
+    const undo = /\b(cancel|cancelled|canceled|after all|toch niet|niet meer|no longer)\b/.test(low) || /\b(not|isn't|isnt|niet|geen)\s+(?:a\s+|on\s+|op\s+)?(?:day\s+off|off|free|vrij|vrije dag|working|work|werk|holiday|on holiday)\b/.test(low);
+    const words = [...low.matchAll(new RegExp(`(?<![\\w-])${D}(?![\\w-])`, "gi"))].map(m => m[1]);
+    const dates = words.map(schedDay).filter(Boolean);
+    if (!dates.length)
+        return { k: off ? "off" : "work", days: [], hol };
+    let days = [dates[0]];
+    if (dates.length >= 2 && /\b(to|until|till|through|thru|tot|t\/m|tm)\b|\s[-–]\s|\d\s?[–]\s?\d/.test(low)) { // a stretch: from the first to the last (at most two months)
+        const a = dates[0] <= dates[1] ? dates[0] : dates[1], b = dates[0] <= dates[1] ? dates[1] : dates[0];
+        days = [];
+        for (const d = new Date(a); d <= b && days.length < 62; d.setDate(d.getDate() + 1))
+            days.push(new Date(d));
+    }
+    else if (dates.length > 1)
+        days = dates;
+    return { k: undo ? "" : off ? "off" : "work", was: off ? "off" : "work", days: days.map(d => dayKey(d)), hol };
+}
+/* how a day is put in a reply: Friday 30-10-2026 */
+const schedName = k => { const d = new Date(k + "T12:00"); return d.toLocaleDateString("en-GB", { weekday: "long" }) + " " + dmy(d); };
+/* the message, acted on: the reply, or null when it isn't about the schedule */
+function schedTalk(text) {
+    const P = schedParse(text);
+    if (!P)
+        return null;
+    if (P.every)
+        return "Every week is a Settings thing: Preferences, Workdays. I keep single days and stretches, like \"friday off\" or \"holiday 28-10-2026 to 01-11-2026\".";
+    if (!P.days.length)
+        return P.k === "work" ? "A working day when? Tell me the day, like \"working saturday\" or \"working 31-10-2026\"." : "Which days? Tell me like \"friday off\", or \"holiday 28-10-2026 to 01-11-2026\".";
+    const today = dayKey(), days = P.days.filter(d => d >= today);
+    if (!days.length)
+        return "That's already been. I can only change days that are still coming.";
+    S.sched = S.sched || {};
+    const at = Date.now();
+    for (const d of Object.keys(S.sched)) // (old ones go after a month)
+        if (d < dayKey(new Date(at - 31 * 864e5)))
+            delete S.sched[d];
+    for (const d of days)
+        S.sched[d] = { k: P.k, at };
+    const one = days.length === 1, span = one ? schedName(days[0]) : `${schedName(days[0])} to ${schedName(days[days.length - 1])}`;
+    const usual = d => S.settings.work.includes(new Date(d + "T12:00").getDay());
+    let reply;
+    if (!P.k) {
+        reply = `${one ? span + " is" : "From " + span + ", they're"} back to normal, then: ${one ? (usual(days[0]) ? "a workday" : "a day off") + ", like your week says" : "like your week says"}.`;
+        note(`Told ${S.settings.pet}: ${span} back to the usual week.`);
+    }
+    else if (P.k === "off") {
+        const n = days.filter(usual).length;
+        reply = P.hol && !one ? `On holiday from ${span}: ${days.length} days${n ? `, ${n} of them workdays` : ""}. Noted. No work talk from me those days, and the streak waits for you.`
+            : one ? `${span}: a day off. Noted.${usual(days[0]) ? " I'll keep the work talk out of it." : " It was one already by your week, but now it's written down."}`
+            : `Days off from ${span}. Noted. I'll keep the work talk out of them.`;
+        note(`Told ${S.settings.pet}: ${P.hol ? "holiday" : "day off"}, ${span}.`);
+    }
+    else {
+        reply = one ? `${span} is a working day, then. I'll treat it like one.${usual(days[0]) ? " It was already, by your week." : ""}` : `Working days from ${span}. I'll treat them like workdays.`;
+        note(`Told ${S.settings.pet}: working, ${span}.`);
+    }
+    saveSoon();
+    return reply;
+}
 const HEAVY = /\b(kill myself|end it all|suicid\w*|self[- ]?harm|want to die|can'?t go on|hopeless|no reason to live)\b/;
 function offlineReply(text) {
     const t = text.trim(), low = t.toLowerCase(), c = ctx();
     let m;
     if (HEAVY.test(low))
         return { reply: "That sounds really heavy, and I'm glad you said it. I'm a small moss creature and I can't help the way a person can. Please reach out to someone you trust, or a local crisis line, today. I'll be right here.", action: "sit" };
+    { // a day off, a holiday, a working day: the schedule changes for those days
+        const sr = schedTalk(t);
+        if (sr)
+            return { reply: sr, action: "tidy" };
+    }
     if (m = t.match(/^(?:please\s+)?(?:remember|onthoud)\s*(?:that|dat)?[:\s]+(.+)/i)) {
         const mem = toSecond(m[1]);
         if (mem && !S.memories.some(x => x.t.toLowerCase() === mem.toLowerCase())) {
@@ -28131,6 +28898,7 @@ function renderKeepsakes() {
 }
 function renderArchive() {
     renderKeepsakes();
+    renderSeasonFiled(); // (the seasons' small things: catalogue.js)
     const done = allDone().sort((a, b) => b.d - a.d);
     const weeks = new Map();
     done.forEach(t => {
@@ -28309,7 +29077,7 @@ $("deskBtn").onclick = () => openDesk();
  */
 let ritOpener = null, ritClose = null;
 /* which kind of anomaly an old report was about (for reports written before the encounter log) */
-const INC_KINDS = [["phone", /the phone rang/], ["chair", /a chair appeared/], ["tentacle", /cup of tea was taken/], ["door", /a door in the /], ["ghost", /a ghost at the window/], ["hand", /a hand came up/], ["letter", /a memo slid/], ["moth", /a moth with a wingspan/], ["cloud", /a raincloud formed/], ["double", /a second .+ stood in/], ["figure", /a tall figure/], ["drips", /drips ran up the wall/], ["eyes", /eyes in the dark/], ["deep", /bottom of the sea/], ["space", /was space for/]];
+const INC_KINDS = [["phone", /the phone rang/], ["chair", /a chair appeared/], ["tentacle", /cup of tea was taken/], ["door", /a door in the /], ["ghost", /a ghost at the window/], ["hand", /a hand came up/], ["letter", /a memo slid/], ["moth", /a moth with a wingspan/], ["cloud", /a raincloud formed/], ["double", /a second .+ stood in/], ["figure", /a tall figure/], ["drips", /drips ran up the wall/], ["eyes", /eyes in the dark/], ["deep", /bottom of the sea/], ["space", /was space for/], ["report", /kind report was filed|came after the kind report/]];
 function incKind(text) {
     const m = INC_KINDS.find(([, re]) => re.test(text));
     return m ? m[0] : "";
