@@ -1008,6 +1008,7 @@ body.editing #addForm{display:none}
  * Lines you add in the app live in your save (S.content.pools), not here.
  */
 const POOL_INFO = {
+    look_hearthcandle: "Tapping the candle on the mantel", look_shelves: "Tapping the archive shelves ({bare}: only while nothing is filed yet, {filled}: once there is)",
     possum_basket: "The possum, eating out of its basket, on why rubbish never makes it ill (an old pact, a family thing: its own lore)", look_basket: "Tapping the possum's basket on the nook's platform",
     look_sill: "Tapping a window sill (in the wagon, the nook or the archive)",
     look_jarshelf: "Tapping the shelf the jar stands on, in the archive (what it's for, no spoilers; {thejar}: the jar or the jars, {itthem}: it or them)", look_capplank: "Tapping the plank under it, for the time capsules (what it's for)",
@@ -1618,7 +1619,22 @@ const DEF = {
             "[night] The Rubbish Moon's up. I can feel it. Everything in this basket tastes a little bit blessed.",
             "[strange] The sticky notes taste of what was written on them. This one's a bit anxious. Lovely though.",
         ],
+        look_hearthcandle: [
+            "The candle on the mantel. It's been the same height for weeks. I don't think it's burning down. I think it's just burning.",
+            "A good candle. It doesn't flicker when the door's open. It flickers when someone's thinking about it.",
+            "The mantel candle. Midnightcat sits just to the left of it, never the right. There's a reason. She won't say.",
+            "[night] The candle's company, at night. Not much light. Enough.",
+        ],
+        look_shelves: [
+            "{bare}Empty shelves, all the way up. Every box we file goes here. One day you won't be able to see the wood.",
+            "{bare}Nothing on them yet. Finish something and file the day, and the first box comes in.",
+            "{bare}An archive with nothing in it is still an archive. It's just very patient.",
+            "{filled}The shelves. Plenty of room still. The archive's bigger than it looks; most of them are.",
+            "{filled}Every box is a day something got done. I dust them in order.",
+        ],
         look_basket: [
+            "{full}{Bits} in the possum's basket. Supper's waiting, for when it wakes.",
+            "{emptyb}The possum's basket. Empty. It's been cleaned out, very thoroughly, by a possum.",
             "The possum's basket. Whatever I sweep up goes in here, and it has it for supper when it wakes.",
             "That's the possum's. Swept things, scraps, old sticky notes. It's a sort of larder. A possum larder.",
             "The basket. Don't worry, it's all on purpose. The possum's very particular about its menu, in that it has no menu.",
@@ -2822,7 +2838,7 @@ const DEF = {
             "M: Morning, {snail}. / S: …Morning. / M: That took a while. / S: I was savouring it.",
             "M: Any post today? / S: One letter. / M: For me? / S: For the moth. I'll get there by Thursday. / M: Which Thursday? / S: A Thursday.",
             "M: Do you ever want to go faster? / S: …No. / M: Not even a little? / S: Faster is just arriving with less to say.",
-            "S: Your painting arrived. / M: Did they like it? / S: They put it on the fridge. / M: They have a fridge? / S: The heron has everything.",
+            "[rare] S: Your painting arrived. / M: Did they like it? / S: They put it on the fridge. / M: They have a fridge? / S: The heron has everything.",
             "M: What's in the shell today? / S: Home. / M: Same as yesterday? / S: Home is always the same as yesterday. That's the point of it.",
             "S: I saw a cloud shaped like you. / M: What was I doing? / S: Being a cloud. Very well, I thought.",
             "M: How far have you travelled, all in all? / S: From that wall to that wall. / M: That's not very far. / S: It is if you pay attention.",
@@ -3118,7 +3134,7 @@ const DEF = {
             "possum | A: {Thing} is very nice to hang next to. Upside down it looks like a different thing. / B: What does it look like? / A: Also nice.",
             "possum | B: What do you see? / A: {Thing}. And a crumb. Mostly the crumb, now.",
             "possum | A: I'd like to sleep on {thing}. / B: It's not for sleeping on. / A: Everything's for sleeping on, if you believe in yourself.",
-            "snail | A: I've been looking at {thing} since this morning. / B: And? / A: I'm about a third of the way along it. It's very good so far.",
+            "[rare] snail | A: I've been looking at {thing} since this morning. / B: And? / A: I'm about a third of the way along it. It's very good so far.",
             "snail | A: I'd like to climb {thing} one day. / B: It's quite far. / A: I've got time. I'm mostly made of time.",
             "snail | A: From down here, {thing} is enormous. / B: It's not that big. / A: Everything is big if you're the right size."
         ],
@@ -4823,8 +4839,12 @@ function compose(key, extra = {}) {
     recent.push(pick.raw);
     if (recent.length > 40)
         recent.shift();
-    return /possum/.test(key) ? oneName(fillText(pick.text, c)) : fillText(pick.text, c); // (only in the possum's lines: some of its possible names are ordinary words)
+    const out = /possum/.test(key) ? oneName(fillText(pick.text, c)) : fillText(pick.text, c); // (only in the possum's lines: some of its possible names are ordinary words)
+    return out.split(MARK).join("");
 }
+/* a marker: a {word} in a line that's only there to say when the line fits (it's given as MARK when it does, and left
+   out when it doesn't), and disappears from what's said. when(true) gives it, when(false) leaves the line out */
+const MARK = "\u200b", when = c => c ? MARK : null;
 /* the possum has one name. A line that calls it by another possum name (one written before it was named, or
    by the AI from the list of names) gets its real one */
 function oneName(t) {
@@ -18344,10 +18364,13 @@ function postTick(now) {
         const h = hash01("post" + s.at), wait = (POST_DAYS[0] + h * (POST_DAYS[1] - POST_DAYS[0])) * 864e5;
         if (t - s.at < wait)
             continue;
+        if (num(S.flags.letterInDay) === dayNum()) // (one letter a day: the rest wait in the post)
+            break;
         s.r = 1;
         if (hash01("reply" + s.at) > .8 || /never writes back/i.test(s.to)) // not everyone writes back
             continue;
         const text = compose("replies", { penpal: s.to }) || "Dear Mite, thank you for your letter. All is well here. Write again soon.";
+        S.flags.letterInDay = dayNum();
         S.post.inbox.push({ from: s.to, text, at: s.at + wait, read: 0 });
         corrRegister("in", s.to, text, s.at + wait);
         if (S.post.inbox.length > 40)
@@ -19207,6 +19230,8 @@ function lookSpots(rm) {
         add("lamp", "look_lamp", { x: r.lx - R * .4, y: ly - R * .35, w: R * .8, h: R * .5 });
         if (own("lantern"))
             add("lanterns", "look_lanterns", { x: 0, y: H * .03, w: W, h: H * .05 + R * .3 });
+        if (own("hearth")) // the candle on the mantel
+            add("hearthcandle", "look_hearthcandle", { x: hearthX() + R * .02, y: GY - R * 1.8, w: R * .5, h: R * .5 });
         add("rug", "look_rug", rug, true);
     }
     else if (rm === "garden") {
@@ -19219,6 +19244,7 @@ function lookSpots(rm) {
         add("beam", "look_beam", { x: 0, y: g.glassY - R * .3, w: W, h: R * .45 });
         if (own("ndoor"))
             add("ndoor", "look_ndoor", { x: ndoorX() - R * .3, y: nookLoftGeo().balY - R * 1.45, w: R * .6, h: R * 1.45 });
+        { const lg = nookLoftGeo(); add("nooklanterns", "look_lanterns", { x: 0, y: lg.balY + R * .15, w: W, h: R * .45 }); } // (the lanterns under the platform)
         add("greenrug", "look_greenrug", rug, true);
     }
     else if (rm === "archive") {
@@ -19237,6 +19263,7 @@ function lookSpots(rm) {
         add("desklamp", "look_desklamp", { x: g.deskX1 - R * .9, y: GY - R * 1.95, w: R * .7, h: R * 1 });
         if (own("closet"))
             add("closet", "look_closet", { x: closetX() - R * .46, y: GY - R * 1.95, w: R * .92, h: R * 1.95 });
+        add("shelves", "look_shelves", { x: g.x0, y: g.rail, w: g.x1 - g.x0, h: GY - g.rail - R * .1 }); // (between the boxes, or all of it while it's empty)
         add("bluerug", "look_bluerug", rug, true);
     }
     for (const m of mossSpots())
@@ -19266,8 +19293,8 @@ function lookSpot(id) {
 }
 /* what Mite says when it gets there */
 function lookLine(s) {
-    const many = s.id === "jarshelf" && eyeJarCount() > 1; // (the jar shelf: one jar or more)
-    return compose(s.pool, { thejar: many ? "the jars" : "the jar", itthem: many ? "them" : "it" }) || "Hm. I'd never really looked at that before.";
+    const many = s.id === "jarshelf" && eyeJarCount() > 1, n = typeof basketN === "function" ? basketN() : 0, empty = ARCH_FLAT.length === 0; // (the jar shelf: one jar or more; the basket: how much is in it; the shelves: anything filed yet)
+    return compose(s.pool, { thejar: many ? "the jars" : "the jar", itthem: many ? "them" : "it", bits: n === 1 ? "one bit" : `${n} bits`, full: when(n > 0), emptyb: when(!n), bare: when(empty), filled: when(!empty) }) || "Hm. I'd never really looked at that before.";
 }
 
 </script>
@@ -19284,7 +19311,7 @@ function lookLine(s) {
  * ("who | text"); who is cat, possum, snail or any. {thing} is what they're looking at ({Thing} at the start).
  */
 let obs = null, obsAt = performance.now() + rnd(50e3, 100e3);
-const OBS_NAMES = { window: "the window", lamp: "the lamp", lanterns: "the lanterns", nookwindow: "the plant window", sidetable: "the side table", beam: "the beam", ndoor: "the night door", archwindow: "the little window", nameplate: "the name plate", bulb: "the bulb", ladder: "the ladder", desklamp: "the Tiffany lamp", closet: "the closet", basket: "the possum's basket", jarshelf: "the jar shelf", wsill: "the window sill", nooksill: "the window sill", archsill: "the window sill", capplank: "the capsule plank" };
+const OBS_NAMES = { window: "the window", lamp: "the lamp", lanterns: "the lanterns", nookwindow: "the plant window", sidetable: "the side table", beam: "the beam", ndoor: "the night door", archwindow: "the little window", nameplate: "the name plate", bulb: "the bulb", ladder: "the ladder", desklamp: "the Tiffany lamp", closet: "the closet", basket: "the possum's basket", hearthcandle: "the candle on the mantel", nooklanterns: "the lanterns", shelves: "the shelves", jarshelf: "the jar shelf", wsill: "the window sill", nooksill: "the window sill", archsill: "the window sill", capplank: "the capsule plank" };
 /* what there is to look at in a room, from what was drawn there last (the hit areas the scene keeps) */
 function obsThings(rm) {
     const out = [], add = (id, name, h) => h && out.push({ id, name, cx: h.cx !== undefined ? h.cx : h.x + h.w / 2, y: h.y });
@@ -19803,9 +19830,13 @@ function pickFlower(odd) {
     return all.length ? choice(all) : null;
 }
 /* new flowers in the vase (from: who brought them) */
-function newFlowers(f, from) {
+function newFlowers(f, from, bought) {
     if (!f || !hasVase()) // (no vase yet: it's in the shop)
         return null;
+    const fk = f.odd ? "oddFlowerDay" : "flowerDay"; // (at most one new bunch a day, and one strange one; traded ones always)
+    if (!bought && num(S.flags[fk]) === dayNum())
+        return null;
+    S.flags[fk] = dayNum();
     S.vase = Object.assign({}, f, { from: String(from || "").slice(0, 40), at: Date.now() });
     S.flowerBook = S.flowerBook || [];
     if (!S.flowerBook.some(x => x.n.toLowerCase() === f.n.toLowerCase())) {
@@ -20980,6 +21011,8 @@ function raccEyeCleanup() {
 /* where each eye comes from (some are only found one way) */
 const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door", glassdoll: "raccoon", heron: "raccoon", lighthouse: "raccoon", bureau: "raccoon" };
 function findEye(from) {
+    if (from !== "raccoon" && num(S.flags.eyeDay) === dayNum()) // (one eye a day at most)
+        return null;
     const have = new Set((S.eyes || []).map(e => e.k));
     const can = EYES.filter(e => !have.has(e.id) && (!EYE_FROM[e.id] || EYE_FROM[e.id] === from));
     const pref = can.filter(e => EYE_FROM[e.id] === from); // its own kind first
@@ -20989,6 +21022,8 @@ function findEye(from) {
     if (!e || (from !== "raccoon" && ownEyes().length >= EYES_PER_JAR * EYE_JARS))
         return null;
     S.eyes = (S.eyes || []).concat([{ k: e.id, at: Date.now(), from: String(from || "").slice(0, 20) }]);
+    if (from !== "raccoon")
+        S.flags.eyeDay = dayNum();
     note(`Found an eye for the jar: ${e.name.toLowerCase()}. ${e.note}`);
     saveSoon();
     return e;
@@ -21579,7 +21614,7 @@ function drawFireworks(x0, y0, w, h, t, dark) {
 function splurgeTap(p, room = "room") {
     if (!splurgeHit || (splurgeHit.room || "room") !== room || !hitIn(p, splurgeHit, 10))
         return false;
-    const k = splurgeOn(), eaten = 1 - splurgeLeft(), when = c => c ? "" : null; // (the cake: lines marked {whole}, {sliced}, {cherry}, {nocherry} only fit when that's true)
+    const k = splurgeOn(), eaten = 1 - splurgeLeft(); // (the cake: lines marked {whole}, {sliced}, {cherry}, {nocherry} only fit when that's true: when(), speech.js)
     const st = { whole: when(eaten < .05), sliced: when(eaten >= .05), cherry: when(eaten < .33), nocherry: when(eaten >= .33) };
     speak(compose("splurge_" + k + "_tap", st) || compose("splurge_" + k) || "Ours, for today.", { ms: 5000 });
     return true;
@@ -23928,7 +23963,7 @@ function barterTrade(i) {
         if (s.k === "flower") { // straight into the vase
             const line = pool("barter_flower").find(l => barterName(l) === s.id);
             if (line && typeof newFlowers === "function")
-                newFlowers(parseFlower(parseLine(line).text, false), raccoonName());
+                newFlowers(parseFlower(parseLine(line).text, false), raccoonName(), true);
         }
     }
     sfx("coin");
@@ -26404,7 +26439,7 @@ function addMess(n) {
         setTimeout(() => hint("mess", "There's mess on the floor. Tap it, or drag across it, to sweep."), 9000);
     }
 }
-let messHintQueued = false;
+let messHintQueued = false, sweepSaidAt = 0;
 function sweepAt(x, y, room = "room") {
     if (!S.mess || !S.mess.length)
         return false;
@@ -26427,7 +26462,11 @@ function sweepAt(x, y, room = "room") {
     }
     if (any) {
         sfx("sweep");
-        if (!S.mess.length)
+        if (performance.now() - sweepSaidAt > 90e3 && Math.random() < .5) { // where it goes
+            sweepSaidAt = performance.now();
+            speak(choice(["Into the possum's basket. That's its supper sorted.", "Up it goes, into the basket. The possum will be pleased.", "One wagon's dust is a possum's dinner.", "For the possum. It's not rubbish, it's a menu."]), { ms: 3500 });
+        }
+        else if (!S.mess.length)
             speak(choice(["Spotless.", "Clean floor. I'm going to lie on it.", "Swept. The wagon approves."]));
         if (curTab === "care")
             renderCare();
