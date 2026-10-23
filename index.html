@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 22-10-2026 -->
+<!-- Small Things, shared build of 23-10-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -7833,10 +7833,10 @@ const BEH = {
             b.act = rnd(5, 7);
         },
         step(b, p, t, po, dt) {
-            const ta = goTo(b, p, po, dt, clamp(b.tx || p.x, R * 1.05, W - R * 1.05), 0, b.act);
+            const ta = goTo(b, p, po, dt, clamp(b.tx || p.x, R * 1.05, W - R * 1.05), b.face || 0, b.act);
             if (ta < 0)
                 return;
-            po.lookOverride = { x: b.down ? p.dir * .4 : 0, y: b.down ? .8 : -1 }; // (down: something on the floor)
+            po.lookOverride = b.face ? { x: b.face * .8, y: -.5 } : { x: b.down ? p.dir * .4 : 0, y: b.down ? .8 : -1 }; // (down: something on the floor; face: it stands beside the thing, turned to it)
             po.mouth = "o";
             po.eyes = ta > 1 && ta < 1.4 ? "happy" : "open";
         } },
@@ -10214,7 +10214,12 @@ function startObj(kind) {
         const sp = lookSpot(kind.slice(5));
         if (!sp)
             return;
-        a = { beh: "admire", revealAt: .5, room: sp.room, extra: { tx: sp.cx, down: sp.low }, show: () => {
+        let extra = { tx: sp.cx, down: sp.low };
+        if (sp.id === "desklamp") { // the Tiffany lamp: Mite stands beside it, so you can see the shade change
+            const lx = archGeo().deskX1 - R * .55, right = lx + R * 1.45 <= W - R * 1.05;
+            extra = { tx: right ? lx + R * 1.45 : lx - R * 1.45, face: right ? -1 : 1 };
+        }
+        a = { beh: "admire", revealAt: .5, room: sp.room, extra, show: () => {
                 if (sp.id === "closet") { // the closet is the paternoster: every filed week (paternoster.js)
                     showPaternoster(0);
                     return 1.5;
