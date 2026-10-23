@@ -12687,7 +12687,8 @@ function ovenTick(now) {
 "use strict";
 /*
  * loft.js - The stairs and balcony up to the windowsill in the wagon (if you have them), and the high platform
- * in the nook (always there: up to the pinboard, the possum's beam and the hanging plants).
+ * in the nook (always there: up to the pinboard, the possum's beam and the hanging plants; its stairs, drawNookStairs,
+ * stand in front of the chesterfield).
  * loftGeo(room) gives their shape (the room Mite is in, unless you say); routeUp and
  * routeDown are walking routes ({x, g} points, g = height above the floor) that followRoute
  * walks along. The railing and telescope are drawn after Mite (drawLoftFront) so Mite
@@ -12764,17 +12765,6 @@ function drawScope(dk) {
 function drawNookLoft(dk) {
     nookDk = dk;
     const g = nookLoftGeo(), { wood, dark, lite, u } = loftCols(dk), t = Math.max(4, R * .12, 3 * u);
-    const n = Math.max(6, Math.round(g.rise / (R * .32))), sw = (g.stX1 - g.stX0) / n, sh = g.rise / n;
-    cx.strokeStyle = dark; // the stairs, up along the wall
-    cx.lineWidth = Math.max(3, R * .08);
-    cx.beginPath();
-    cx.moveTo(g.stX0, GY);
-    cx.lineTo(g.stX1, g.balY + t);
-    cx.stroke();
-    for (let i = 0; i < n; i++) {
-        cx.fillStyle = i % 2 ? wood : lite;
-        cx.fillRect(g.stX0 + i * sw, GY - (i + 1) * sh, sw + 1, Math.max(3, sh * .35, 2 * u));
-    }
     cx.fillStyle = dark; // a post at each end, like the wagon's balcony (the left one stands clear of the window)
     cx.fillRect(g.balR - t * .8, g.balY, t * .8, g.rise);
     cx.fillRect(g.balL, g.balY, t * .8, g.rise);
@@ -12786,6 +12776,25 @@ function drawNookLoft(dk) {
     cx.fillRect(g.balL - t * .3, g.balY, g.balR - g.balL + t * .6, Math.max(1, u));
     cx.fillStyle = dark;
     cx.fillRect(g.balL - t * .3, g.balY + t, g.balR - g.balL + t * .6, Math.max(2, 2 * u));
+}
+/* the stairs up to it: drawn after the chesterfield (drawGarden), so they stand in front of it and Mite is never
+   half inside the chair on the way up */
+function drawNookStairs(dk) {
+    const g = nookLoftGeo(), { wood, dark, lite, u } = loftCols(dk), t = Math.max(4, R * .12, 3 * u);
+    const n = Math.max(6, Math.round(g.rise / (R * .32))), sw = (g.stX1 - g.stX0) / n, sh = g.rise / n;
+    cx.strokeStyle = dark;
+    cx.lineWidth = Math.max(3, R * .08);
+    cx.beginPath();
+    cx.moveTo(g.stX0, GY);
+    cx.lineTo(g.stX1, g.balY + t);
+    cx.stroke();
+    for (let i = 0; i < n; i++) {
+        const x = g.stX0 + i * sw, y = GY - (i + 1) * sh, th = Math.max(3, sh * .35, 2 * u);
+        cx.fillStyle = dark; // a dark edge round each tread, so it reads against the leather
+        cx.fillRect(x - u, y - u, sw + 1 + 2 * u, th + 2 * u);
+        cx.fillStyle = i % 2 ? wood : lite;
+        cx.fillRect(x, y, sw + 1, th);
+    }
 }
 let nookDk = 0;
 /* the railing is drawn after Mite, so Mite walks behind the grate (where: "room" for the wagon's balcony,
@@ -16656,9 +16665,13 @@ function catSpots(room) {
     }
     // in the wagon her place is on top of the fireplace; the floor only now and then (or without a fireplace),
     // and never right where a visitor is
-    if (own("hearth")) {
+    if (own("hearth") && catHeadroom() >= CAT_SPRITES.nap.length * catU()) {
         const m = catMantel(), floor = [{ x: W * .58, g: 0 }].filter(catClear);
         return [m, m, m, ...floor];
+    }
+    if (own("hearth")) { // the balcony's too low over the mantel (on a wide screen): she lies by the fire instead
+        const s = [{ x: hearthX() + R * 1.1, g: 0 }, { x: hearthX() + R * 1.1, g: 0 }, { x: W * .58, g: 0 }].filter(catClear);
+        return s.length ? s : [{ x: W * .5, g: 0 }];
     }
     const s = [{ x: W * .45, g: 0 }, { x: W * .58, g: 0 }];
     if (own("easel"))
@@ -17897,8 +17910,9 @@ function drawGarden(now, dt) {
         else
             flowerHit = null;
         if (hasChair())
-            drawChesterfield(g, dk, t, wood, woodD); // the chesterfield and the side table (drawn again over Mite on the stairs)
+            drawChesterfield(g, dk, t, wood, woodD); // the chesterfield and the side table
     });
+    drawNookStairs(dk); // the stairs up to the platform, in front of the chair (loft.js)
     if (hasChair()) { // the candle's flame and glow (on the side table, which comes with the chair): a little always, more in the evening
         const c = gardenCandle(g), fl = 1 + Math.sin(t * 9) * .04 + Math.sin(t * 23) * .03, up = Math.sin(t * 9) + Math.sin(t * 23) * .6 > .9 ? PX : 0;
         const fx = Math.floor(c.x / PX) * PX - PX / 2, fy = Math.floor(c.y / PX) * PX;
@@ -18005,16 +18019,6 @@ function drawChesterfield(g, dk, t, wood, woodD) {
     }
     cx.globalAlpha = 1;
     gardenHits.table = { x: tx - R * .4, y: ty - R * .7, w: R * .8, h: th + R * .7, cx: tx };
-}
-/* Mite is on the nook's stairs, which go up behind the chesterfield: the chair and table go over it again */
-function chesterfieldOverMite(now) {
-    const lg = nookLoftGeo(), gr = pet.ground || 0;
-    if (view !== "garden" || gr <= 0 || gr >= lg.rise - 1 || !hasChair())
-        return;
-    const dk = sceneDark();
-    withRoom("garden", () => drawLayered(() => drawChesterfield(gardenGeo(), dk, reduced ? 0 : now / 1000, mix("#8a6040", "#241810", dk), mix("#5e3e28", "#160f0a", dk))));
-    if (cat.room === "garden" && cat.g > 0) // Midnightcat on the chair (or the drawers) stays in front of it, and of Mite
-        withRoomLight("garden", () => drawCat(sceneDark(), now));
 }
 /* where the night door is: up on the nook's platform, just left of the pinboard */
 function ndoorX() {
@@ -22687,8 +22691,7 @@ function frame(now) {
         withRoomLight("archive", () => drawCatEye(now / 1000)); // Midnightcat batting an eye from the jar about (eyes.js) // sticky notes, paper birds, the tiny things Mite's sorting (pastimes.js)
         if (anom && anom.held && anom.room === view) // the red phone's handset, at Mite's ear (anomalies.js)
             withRoomLight(view, () => drawLayered(() => drawHandset(anom)));
-        chesterfieldOverMite(now);
-        deskChairOverMite(); // in the archive, the desk chair's back in front of Mite while it writes (archive-room.js) // on the nook's stairs, Mite walks behind the chair (garden.js)
+        deskChairOverMite(); // in the archive, the desk chair's back in front of Mite while it writes (archive-room.js)
         withRoom(snailRoom, drawSnailInBed); // the snail tucked in next to Mite (snail.js)
         drawAnimals(now); // the snail and the possum, in front of Mite (camera.js)
         withRoom("room", () => {
