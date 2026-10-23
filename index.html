@@ -1007,6 +1007,10 @@ body.editing #addForm{display:none}
  * Lines you add in the app live in your save (S.content.pools), not here.
  */
 const POOL_INFO = {
+    crochet: "Mite, now and then while knitting: on crochet (it can't; it isn't a moss skill)",
+    nameplates: "What the archive's name plate says, one per day (short, at most 20 characters; shown in capitals; letters, commas and full stops only: the plate's font has no & or brackets)",
+    shade_hand: "Mite, when you tap the shadow hand from the night door and it waves back",
+    shade_tendrils: "Mite, when you tap the shadow tendrils from the night door and they slip back in, shy",
     catball: "Mite, when Midnightcat joins in with the ball",
     cathunt: "Mite, after Midnightcat pounces on a spore, a seed or a loose page",
     cathunt_firefly: "Mite, after Midnightcat pounces on a loose firefly (it always gets away)",
@@ -1264,6 +1268,7 @@ const DEF = {
             "sort, file, folder, documents, papers, sorteren | Make three piles; Deal with the smallest pile; File the second; Bin or archive the rest"
         ],
         talk: [
+            "crochet, crocheting, haken, häkeln | No crochet, I'm afraid. Not a moss skill. Moss knits. Ask me about knitting instead, I'll never stop.",
             "hi, hello, hey, hoi, hallo, morning, goedemorgen | Hello, {you}. I was just thinking about you. In a filing way.",
             "thanks, thank you, dank, bedankt | Any time. I'm right here.",
             "tired, exhausted, sleepy, moe, uitgeput | Tired is information, not failure. One small thing, or a proper rest. Both count.",
@@ -1653,7 +1658,54 @@ const DEF = {
             "Little lamp with wings. Midnightcat's going to want this one.",
             "It came in to see the lights. Ours are nice. It agrees."
         ],
+        crochet: [
+            "People ask if I crochet. I don't. It's not a moss skill. Moss knits, or it doesn't.",
+            "I tried a crochet hook once. It hooked me. We parted ways.",
+            "Crochet is one hook and a lot of confidence. I have two needles and some.",
+            "Knitting's loops held up by other loops. Crochet's knots pretending. Moss can tell.",
+            "No crochet. My paws are the wrong shape for it, and also the wrong philosophy.",
+            "Someone sent me a crochet pattern. I filed it under 'beautiful, impossible'."
+        ],
+        nameplates: [
+            "ARCHIVE",
+            "ARCHIVES, ARCHIVED",
+            "THE ARCHIVE ARCHIVE",
+            "ARCHIVE, PROBABLY",
+            "RECORDS AND SUCH",
+            "MOSTLY ARCHIVE",
+            "ARCHIVE, OPEN",
+            "ARCHIVE, QUIET",
+            "FILED. THANK YOU",
+            "STILL ARCHIVE",
+            "AN ARCHIVE",
+            "ARCHIVE OF SORTS",
+            "KEPT THINGS",
+            "THE STACKS",
+            "ARCHIVE, AGAIN",
+            "DO NOT REFILE",
+            "PRESERVED",
+            "BACK SOON"
+        ],
+        shade_hand: [
+            "It waved back. I'm going to count that as a friend.",
+            "The hand waved. Very politely. Shadows have good manners, mostly.",
+            "Hello, hand. It wiggled its fingers at me. I wiggled mine. Even.",
+            "It waved, then pointed at the tea. I'll leave a cup by the door tonight.",
+            "A wave from the other side of the night door. Nice to be noticed.",
+            "It waved, slowly, like it learned how from a book. I'm proud of it."
+        ],
+        shade_tendrils: [
+            "Oh, they're shy. In they went. Sorry, tendrils.",
+            "They curled up and slipped back in. I didn't mean to startle them.",
+            "The tendrils don't like being noticed. Fair. Neither do I, some days.",
+            "Back through the gap. They'll come out again when they feel braver.",
+            "Shy shadows. I'll pretend not to look next time.",
+            "They pulled back like a cat's tail when you reach for it."
+        ],
         catyarn: [
+            "That's not even the right wool. She took a ball from the basket. A different colour entirely.",
+            "Midnightcat's playing with the wrong ball. It's not in this project. It's not in any project.",
+            "She's chosen her own colour. She always does. Never the one I'm using.",
             "Midnightcat. That's the scarf. That was the scarf.",
             "She's helping. In her own way.",
             "Every stitch I make, she unmakes a bit. It's a partnership.",
@@ -3775,7 +3827,7 @@ function sanitizeState(raw) {
     o.notes = arr(s.notes, 250).map(n => ({ at: num(n.at), text: str(n.text, 400) }));
     o.heard = arr(s.heard, 50).map(h => ({ at: num(h.at), c: num(h.c), w: str(h.w, 40), t: str(h.t, 400) })).filter(h => h.t);
     // the gallery: one entry per painting sent off (the picture itself is redrawn from its day)
-    o.origami = arr(s.origami, 24).map(x => ({ k: sid(x.k).slice(0, 12), at: num(x.at) })).filter(x => x.k);
+    o.origami = arr(s.origami, 120).map(x => ({ k: sid(x.k).slice(0, 12), at: num(x.at) })).filter(x => x.k);
     o.dreams = arr(s.dreams, 80).map(x => ({ at: num(x.at), d: clamp(Math.round(num(x.d)), 0, 3), k: ["dream", "escape", "yours", "misfiled", "empty"].includes(x.k) ? x.k : "dream", s: str(x.s, 30), t: str(x.t, 400) })).filter(x => x.t);
     o.dreamDay = dkey(s.dreamDay) || "";
     // knitting: the project on the needles, and what's finished
@@ -4020,7 +4072,7 @@ function mergeStates(a, b) {
     };
     o.notes = uniq([...(nw.notes || []), ...(od.notes || [])], n => n.at + "|" + n.text).sort((x, y) => y.at - x.at).slice(0, 250);
     o.heard = uniq([...(nw.heard || []), ...(od.heard || [])], h => h.at + "|" + h.t).sort((x, y) => x.at - y.at).slice(-50);
-    o.origami = uniq([...(od.origami || []), ...(nw.origami || [])], x => x.k + "|" + x.at).sort((x, y) => x.at - y.at).slice(-24);
+    o.origami = uniq([...(od.origami || []), ...(nw.origami || [])], x => x.k + "|" + x.at).sort((x, y) => x.at - y.at).slice(-120);
     o.dreams = uniq([...(od.dreams || []), ...(nw.dreams || [])], x => x.at + "|" + x.t).sort((x, y) => x.at - y.at).slice(-80);
     o.dreamDay = [od.dreamDay || "", nw.dreamDay || ""].sort().pop();
     o.knits = uniq([...(od.knits || []), ...(nw.knits || [])], x => x.at + "|" + x.item).sort((x, y) => x.at - y.at).slice(-300);
@@ -6925,6 +6977,7 @@ const BEH = {
         } },
     tea: { d: [60, 60], w: c => lessonOk("tea") ? (c.h >= 14 && c.h < 18 ? 2 : .8) : 0, init(b) {
             b.act = rnd(10, 14);
+            b.mug = pickMug(); // whichever mug's clean (draw-pet.js)
             if (own("kettle")) {
                 const st = standBy(OBJX.kettle() + R * .55, R * 1.05, 1);
                 b.tx = st.x;
@@ -6939,6 +6992,7 @@ const BEH = {
                 if (ta < 3) {
                     // hold the cup under the spout; the kettle tips and pours
                     po.prop = b.face < 0 ? "cupL" : "cupR";
+                    po.mug = b.mug;
                     po.arms = b.face < 0 ? [-1.5, .3] : [.3, -1.5];
                     po.lookOverride = { x: b.face * .8, y: .2 };
                     po.mouth = "o";
@@ -6958,6 +7012,7 @@ const BEH = {
             else if (p.bt > b.act)
                 p.dur = p.bt;
             po.prop = "cup";
+            po.mug = b.mug;
             po.arms = [.3, -1];
             po.feet = false;
             po.sy = -.1;
@@ -7904,6 +7959,11 @@ const BEH = {
         } },
     knit: { d: [10, 18], w: c => ((c.dark > .4 ? .9 : .3) + (c.month >= 9 || c.month <= 2 ? .5 : 0)) * (knitDoneToday() || S.knitRest === actDay() ? .15 : 1), init(b) {
             knitStart(b); // knitting.js: the project on the needles
+            if (Math.random() < .12) // now and then: on crochet (it can't; not a moss skill)
+                setTimeout(() => {
+                    if (pet.beh === "knit" && $("bubble").hidden)
+                        say("crochet");
+                }, 5000);
         }, step(b, p, t, po) {
             po.prop = "knit";
             po.knit = knitStep(b, t);
@@ -9152,11 +9212,13 @@ function drawPet(po) {
         cx.lineCap = "butt";
     }
     if (po.prop === "cup") {
-        cx.fillStyle = "#e9e3d2";
+        const mg = MUGS[po.mug] || MUGS[0];
+        cx.fillStyle = mg.c;
         cx.beginPath();
         cx.roundRect ? cx.roundRect(r * .3, by + r * .05, r * .36, r * .32, r * .06) : cx.rect(r * .3, by + r * .05, r * .36, r * .32);
         cx.fill();
-        cx.strokeStyle = "#e9e3d2";
+        drawMugMark(mg, r * .3, by + r * .05, r * .36, r * .32);
+        cx.strokeStyle = mg.c;
         cx.lineWidth = r * .06;
         cx.beginPath();
         cx.arc(r * .7, by + r * .2, r * .09, -1.4, 1.4);
@@ -9465,9 +9527,10 @@ function drawPet(po) {
         cx.fillRect(-r * .12, by - r * sy - r * .38, r * .05, r * .32);
     }
     if (po.prop === "cupL" || po.prop === "cupR") {
-        const sd = po.prop === "cupL" ? -1 : 1, cx0 = sd * r * 1.12;
-        cx.fillStyle = "#e9e3d2";
+        const sd = po.prop === "cupL" ? -1 : 1, cx0 = sd * r * 1.12, mg = MUGS[po.mug] || MUGS[0];
+        cx.fillStyle = mg.c;
         cx.fillRect(cx0 - r * .17, by + r * .12, r * .34, r * .3);
+        drawMugMark(mg, cx0 - r * .17, by + r * .12, r * .34, r * .3);
         cx.fillStyle = "#b8783a";
         cx.fillRect(cx0 - r * .13, by + r * .15, r * .26, r * .06);
         cx.fillStyle = body;
@@ -9778,6 +9841,38 @@ function waterDrop() {
     if (!canSpout || performance.now() - canSpout.t > 300)
         return;
     addP({ type: "spark", x: canSpout.x + rnd(-1, 1), y: canSpout.y, vx: rnd(-18, -4), vy: rnd(10, 40), g: 380, max: .55, col: "#9fd3e6", size: 2 });
+}
+/* Mite's mugs: it takes whichever one's clean. Colour, and what's on it */
+const MUGS = [
+    { c: "#e9e3d2", m: "" }, // the plain cream one
+    { c: "#6f9a4a", m: "band", m2: "#cfe8a8" }, // moss green, a pale band
+    { c: "#7fb0d8", m: "dots", m2: "#f4f0e6" }, // sky blue with spots
+    { c: "#c8463a", m: "stripe", m2: "#f0e6cf" }, // rust, a cream stripe
+    { c: "#2e2a3a", m: "moon", m2: "#f2e6a8" }, // night blue with a moon
+    { c: "#e39aa8", m: "chip", m2: "#f6ecd8" }, // pink, chipped at the rim
+    { c: "#d9a23c", m: "eye", m2: "#2a2018" }, // mustard, with a small eye (it was a present)
+    { c: "#b9a6d8", m: "star", m2: "#fff6d8" } // lilac, a star
+];
+function pickMug() {
+    return ri(0, MUGS.length - 1);
+}
+function drawMugMark(mg, x, y, w, h) {
+    const u = Math.max(1, w / 7);
+    cx.fillStyle = mg.m2 || "#fff";
+    if (mg.m === "band")
+        cx.fillRect(x, y + h * .4, w, u * 1.2);
+    else if (mg.m === "stripe")
+        cx.fillRect(x, y + h * .2, w, u), cx.fillRect(x, y + h * .6, w, u);
+    else if (mg.m === "dots")
+        [[.25, .3], [.6, .25], [.4, .65], [.75, .6]].forEach(([a, b]) => cx.fillRect(x + w * a, y + h * b, u, u));
+    else if (mg.m === "moon")
+        cx.fillRect(x + w * .35, y + h * .3, u * 2, u * 2), cx.fillStyle = mg.c, cx.fillRect(x + w * .35 + u, y + h * .3, u * 1.3, u * 1.4);
+    else if (mg.m === "chip")
+        cx.fillStyle = mg.m2, cx.fillRect(x + w * .6, y, u * 1.4, u);
+    else if (mg.m === "eye")
+        cx.fillRect(x + w * .3, y + h * .4, u * 3, u), cx.fillRect(x + w * .3 + u, y + h * .4 - u * .5, u, u * 2);
+    else if (mg.m === "star")
+        cx.fillRect(x + w * .4, y + h * .3, u, u * 3), cx.fillRect(x + w * .4 - u, y + h * .3 + u, u * 3, u);
 }
 
 </script>
@@ -13032,6 +13127,16 @@ function archGeo() {
     const x0 = Math.max(W * .24, R * 3), x1 = W - R * .3, bw = clamp(R * .3, 9, 22);
     return { top, rh, nr, x0, x1, bw, pitch: bw * 1.35, tag: Math.max(bw * 1.7, 26), rail: GY - nr * rh - R * .12, deskX0: R * .75, deskX1: Math.max(R * 2.4, W * .2) };
 }
+/* the name plate says something a little different each day (lines nameplates; the same all day) */
+function archPlate() {
+    const L = pool("nameplates").map(x => String(x).trim().toUpperCase()).filter(x => x && x.length <= 20);
+    if (!L.length)
+        return "ARCHIVE";
+    let h = 0;
+    for (const ch of actDay())
+        h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    return L[h % L.length];
+}
 /* filed tasks grouped by week, newest week first (today's pile isn't filed yet, so it isn't here) */
 let archWeeksCache = { at: 0, list: [] };
 function archWeeks() {
@@ -13127,7 +13232,8 @@ function drawArchiveRoom(now, dt) {
         cx.fillRect(px, py - g.rh * .8, pw, g.rh * .62);
         cx.fillStyle = mix("#8a6a3a", "#2a2010", dk * .8);
         cx.fillRect(px + 2, py - g.rh * .8 + 2, pw - 4, 1);
-        ctext(L.hidden ? `ARCHIVE +${L.hidden}` : "ARCHIVE", px + pw / 2, py - g.rh * .32, { col: "#f7ecd2", size: 10, behind: true });
+        const plate = archPlate();
+        ctext(L.hidden ? `${plate} +${L.hidden}` : plate, px + pw / 2, py - g.rh * .32, { col: "#f7ecd2", size: 10, behind: true });
     }
     if (!L.slots.length)
         ctext("empty, for now", (rowX0(g, 0) + g.x1) / 2, GY - g.rh * 1.5, { col: "#f0e6cd", behind: true }); // (right of the closet)
@@ -14498,7 +14604,7 @@ function leaveOrigami(a) {
     }
     const o = ORIGAMI.find(x => x.id === a.gift) || ORIGAMI[0];
     origFresh = Date.now();
-    S.origami = (S.origami || []).concat([{ k: o.id, at: origFresh }]).slice(-24); // (one you already have goes up too: they hang side by side)
+    S.origami = (S.origami || []).concat([{ k: o.id, at: origFresh }]).slice(-120); // (one you already have goes up too: they hang side by side)
     addP({ type: "text", text: o.name, room: a.room, x: a.x, y: a.y + anomGeo(a.room).wr * .8, vy: -10, max: 2.6, col: "#fff6e0", size: 13 });
     note(`The ghost at the window left a ${o.name}.`);
     saveSoon();
@@ -15111,12 +15217,25 @@ const ANOM_DRAW = {
         });
     }
 };
+/* the origami garland across the top of the window: what the ghost has left this week. When the week ends Mite takes
+   it down and files it (it stays in the Cabinet, and in the month's book on the archive wall); a note says so */
+function origamiFileWeek() {
+    const wk = new Date(weekKey(Date.now()) + "T12:00").getTime(), was = num(S.flags.origWk);
+    if (was >= wk)
+        return;
+    S.flags.origWk = wk;
+    const n = (S.origami || []).filter(o => o.at < wk && (!was || o.at >= was)).length;
+    if (was && n)
+        note(`Took down last week's origami from the window (${n === 1 ? "one" : n}) and filed ${n === 1 ? "it" : "them"} away. Clean string for the ghost.`);
+    saveSoon();
+}
 /* the origami garland across the top of the window: everything the ghost has left */
 /* the adorbigami hang on strings from the ceiling at the right of the room, one under the other, two strings
    side by side, swaying a little. Tap one and it twirls; Mite says something about it. */
 let origHits = [], origSpin = {}, origFresh = 0; // origFresh: the one the ghost just left (it twirls and sparkles the first time you see it)
 function origamiStrands() {
-    const all = S.origami || [], from = Math.max(0, all.length - 16), list = all.slice(from), top = Math.max(R * .7, H * .06), bottom = GY - R * 4.15; // the newest sixteen, four to a string
+    origamiFileWeek();
+    const wk = weekKey(Date.now()), list = (S.origami || []).filter(o => weekKey(o.at) === wk).slice(-16), top = Math.max(R * .7, H * .06), bottom = GY - R * 4.15; // the newest sixteen, four to a string
     // four strings: two in the right corner, two in the left corner (clear of the lamp), so none of them gets too long
     const rm = room(), xs = [W - R * .55, R * .55, W - R * 1.2, R * 1.2];
     const low = Math.min(bottom, lampY(rm) - R * .55); // (and they all stop above the hanging lamp)
@@ -17125,6 +17244,8 @@ function catYarnTick(dt, now) {
     yarnBall.x = pet.x + yarnBall.side * R * 1.05;
     yarnBall.vx = yarnBall.side * R * 1.2;
     yarnBall.on = true;
+    const kn = S.knit || {}, other = YARNS.filter(y => y.id !== kn.c1 && y.id !== kn.c2); // she's got the wrong ball: a colour that isn't in the project
+    yarnBall.col = (other.length ? choice(other) : YARNS[0]).c;
     Object.assign(cat, { ph: "play", until: now + 1500, paw: 0 });
     if (Math.random() < .6)
         setTimeout(() => {
@@ -17137,7 +17258,7 @@ function catYarnTick(dt, now) {
 function drawYarnBall(dk) {
     if (!yarnBall.on || drawingRoom !== "room")
         return;
-    const k = S.knit && S.knit.item ? S.knit : null, col = k ? yarnOf(k.c1).c : "#c25b4a", r = R * .17;
+    const col = yarnBall.col || "#c25b4a", r = R * .17; // (not the project's colour: she took a ball from the basket)
     const bx = Math.round(yarnBall.x / PX) * PX, by = GY + R * .12 - r, roll = yarnBall.x / r;
     cx.strokeStyle = col;
     cx.lineWidth = Math.max(PX * .6, R * .03);
@@ -18448,6 +18569,8 @@ function gardenCandle(g) {
 }
 /* ---------- taps in the greenhouse (p in its coordinates) ---------- */
 function gardenTap(p) {
+    if (shadeTap(p)) // the shadow reaching out of the night door (draw-world.js)
+        return;
     if (splurgeTap(p, "garden")) // the ice flower up on the platform (splurge.js)
         return;
     if (drifterTap(p, "garden"))
@@ -21177,11 +21300,14 @@ function renderGlimpses() {
  *   postit     writes a sticky note (held low, behind it), wears it on its head for a bit, then puts it on the wall
  *              (they stay up for a while, a few per room)
  *   sketch     draws something small in a little sketchbook, then says what it was
- *   origami    folds a paper bird, which flaps off and out of the room's window
+ *   origami    folds a paper bird with its paws, crease by crease (a while: square, triangle, kite, bird),
+ *              which then flaps off and out of the room's window
  *   fftag      plays tag with a firefly from the jar: chases it, then gets chased
  *   ffhide     hide and seek with a firefly: counts with its eyes shut, then goes looking
  * The behaviours set the pose; drawPastimes() (after Mite, loop.js) draws the little things that go with them.
  */
+/* origami takes a while: four stages of folding (seconds), then the bird flies */
+const ORIGAMI_FOLD = 14;
 const POSTIT_MAX = 4, POSTIT_LIFE = 40 * 60e3;
 let postits = [], paperBirds = [];
 /* the sticky notes on the walls are kept in the save (S.postits: where, as a share of the room, and when, by the
@@ -21311,11 +21437,19 @@ Object.assign(BEH, {
                 speak(choice([`Drew ${b.what}.`, `It's ${b.what}. You can tell. Mostly.`, `A sketch of ${b.what}. Not bad, for a moss.`]), { ms: 3800 });
             }
         } },
-    origami: { d: [7, 7], w: c => pastimeOk(c) ? .3 : 0, step(b, p, t, po) {
-            if (t < 4) { // folding
-                po.lookOverride = { x: 0, y: .7 };
-                po.arms = [-.9 + Math.sin(t * 6) * .2, -.9 - Math.sin(t * 6) * .2];
-                po.mouth = "o";
+    origami: { d: [ORIGAMI_FOLD + 3, ORIGAMI_FOLD + 3], w: c => pastimeOk(c) ? .3 : 0, step(b, p, t, po) {
+            if (t < ORIGAMI_FOLD) { // folding: one fold at a time, pressing each crease flat with a paw, a pause to look
+                const st = Math.floor(t / (ORIGAMI_FOLD / 4)), ft = t % (ORIGAMI_FOLD / 4), press = ft > 1 && ft < 2.4;
+                po.lookOverride = { x: 0, y: .8 };
+                po.noArms = true; // (its paws are on the paper: drawFolding draws them)
+                b.press = press ? (st % 2 ? 1 : -1) : 0;
+                po.mouth = ft > 2.6 ? "smile" : "o";
+                po.eyes = ft > 2.6 ? "half" : "open";
+                if (st !== b.st) {
+                    b.st = st;
+                    if (st)
+                        floatText(choice(["fold", "crease", "and… fold", "hm", "careful"]), p.x, GY - R * 2.2, "#fff");
+                }
                 return;
             }
             if (!b.flew) { // it's alive: off it goes, out of this room's window
@@ -21527,16 +21661,42 @@ function drawPastimes(dt) {
                 cx.fillRect(Math.round((px + R * .02) / q) * q, Math.round((py - R * .26) / q) * q, q, q);
             }
         }
-        if (p.beh === "origami" && p.bt < 4) { // the paper, being folded smaller
-            const k = p.bt / 4, s = R * (.36 - .18 * k);
-            cx.fillStyle = mix("#f4ecd8", "#5a564c", dk * .5);
-            cx.save();
-            cx.translate(p.x, gy - R * .75);
-            cx.rotate(k * 2.4);
-            cx.fillRect(-s / 2, -s / 2, s, s);
-            cx.restore();
-        }
+        if (p.beh === "origami" && p.bt < ORIGAMI_FOLD) // the paper, held in its paws, one fold further each stage
+            drawFolding(Math.floor(p.bt / (ORIGAMI_FOLD / 4)), p.x, gy - R * .55, dk, p.b && p.b.press, p.bt);
     });
+}
+/* the paper at each stage: a square, folded to a triangle, then a kite, then a little bird; in pixels */
+function drawFolding(st, x, y, dk, press = 0, t = 0) {
+    const q = PX, u = Math.max(q, Math.round(R * .11 / q) * q), dim = dk > .5; // (palette colours only, so nothing gets dithered: PAL in canvas.js)
+    const paper = dim ? "#c9c4b4" : "#fbf1d9", fold = dim ? "#8c8a80" : "#c9c4b4", edge = dim ? "#120c0a" : "#55392a";
+    const SH = [
+        ["######", "######", "######", "######", "######"], // the square
+        ["######", ".####.", "..##..", "......", "......"], // in half, corner to corner
+        ["..##..", ".####.", "######", ".####.", "..##.."], // a kite
+        ["#....#", "##..##", ".####.", "..##..", "..#..."]]; // the bird, wings up
+    const g = SH[Math.min(3, st)], x0 = Math.round((x - 3 * u) / q) * q, y0 = Math.round((y - 2.5 * u) / q) * q;
+    cx.fillStyle = edge; // a dark edge first, so the paper shows against Mite's belly
+    for (let r = 0; r < g.length; r++)
+        for (let c = 0; c < 6; c++)
+            if (g[r][c] === "#")
+                cx.fillRect(x0 + c * u - 1, y0 + r * u - 1, u + 2, u + 2);
+    for (let r = 0; r < g.length; r++)
+        for (let c = 0; c < 6; c++)
+            if (g[r][c] === "#") {
+                cx.fillStyle = (st === 1 && r === 0) || (st === 2 && c === 3) ? fold : paper; // the crease shows
+                cx.fillRect(x0 + c * u, y0 + r * u, u, u);
+            }
+    // its paws, holding the sides; the pressing one goes over the crease and smooths it
+    const paw = (px, py) => {
+        cx.fillStyle = dim ? "#16231a" : "#365a2c";
+        cx.fillRect(px - u - 1, py - u - 1, u * 2 + 2, u * 2 + 2);
+        cx.fillStyle = dim ? "#4f7d3c" : "#73a24f";
+        cx.fillRect(px - u, py - u, u * 2, u * 2);
+    };
+    for (const sd of [-1, 1]) {
+        const on = press === sd, px = on ? x + sd * u * .5 + Math.sin(t * 9) * u * .6 : x + sd * u * 3.4, py = on ? y - u * .2 : y + u * .8;
+        paw(Math.round(px / q) * q, Math.round(py / q) * q);
+    }
 }
 
 </script>
@@ -22706,6 +22866,7 @@ function drawDoorShade(x, y, w, h, sky) {
         return;
     }
     const sm = k => k * k * (3 - 2 * k), grow = sm(clamp(e / 1400, 0, 1)) * sm(clamp((a.dur - e) / 1400, 0, 1)), t = e / 1000;
+    const waving = a.wave && now - a.wave < 2600; // (tapped: the hand waves back)
     const ink = "rgba(10,6,16,.95)", halo = `rgba(130,100,220,${.3 + .25 * sky.dark})`;
     const line = (pts, w0, w1, thin) => { // a tapering stroke, a faint violet halo underneath so it reads against the dark wall
         for (const [col, extra] of [[halo, thin ? Math.max(1, R * .02) : Math.max(2, R * .05)], [ink, 0]])
@@ -22742,7 +22903,7 @@ function drawDoorShade(x, y, w, h, sky) {
         }
         line(arm, R * .15, R * .12);
         if (grow > .2) {
-            const pr = R * .17 * grow, curl = .3 + .3 * Math.sin(t * 2.4 + a.seed); // the palm, then the fingers: spread, then curling in
+            const pr = R * .17 * grow, curl = waving ? .05 + .12 * Math.sin(t * 14) : .3 + .3 * Math.sin(t * 2.4 + a.seed); // the palm, then the fingers: spread, then curling in
             cx.fillStyle = halo;
             cx.beginPath();
             cx.ellipse(hx, hy, pr * 1.1 + R * .025, pr * 1.1 + R * .025, 0, 0, 7);
@@ -22767,6 +22928,34 @@ function drawDoorShade(x, y, w, h, sky) {
         }
     }
     cx.restore();
+}
+/* a tap on the shadow while it's out: the hand waves back (and now and then leaves something on the platform for
+   the vase), the tendrils are shy and slip back in. Mite says something (lines shade_hand, shade_tendrils) */
+function shadeTap(p) {
+    const a = ndShade;
+    if (!a || !own("ndoor"))
+        return false;
+    const now = performance.now(), e = now - a.t0, x = ndoorX(), y = nookLoftGeo().balY;
+    if (e < 1000 || e > a.dur - 1000 || Math.abs(p.x - x) > R * 1.9 || p.y > y + R * .2 || p.y < y - R * 2.2)
+        return false;
+    if (a.k === "hand") {
+        if (a.wave && now - a.wave < 2600)
+            return true;
+        a.wave = now;
+        a.dur = Math.max(a.dur, e + 4000); // (it stays to wave)
+        if (!a.gave && Math.random() < .3) {
+            a.gave = true;
+            oddFlowers("the hand from the night door");
+        }
+    }
+    else
+        a.dur = Math.min(a.dur, e + 1400); // shy: back in they go
+    sfx("soft");
+    setTimeout(() => {
+        if ($("bubble").hidden)
+            say(a.k === "hand" ? "shade_hand" : "shade_tendrils");
+    }, 600);
+    return true;
 }
 /* the roof: one gentle arch over the whole long wagon, highest over the middle room */
 function roofY(x, room) {
