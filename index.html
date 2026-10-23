@@ -698,6 +698,9 @@ body.pixel .wxicon{width:18px;height:18px}
 .poolrow select{flex:1 1 240px;min-width:0;max-width:100%}
 .resetinfo ul{margin:2px 0 10px;padding-left:18px}.resetinfo li{margin:2px 0}.resetinfo p{margin:6px 0 2px}
 .costlist{margin:6px 0 8px;padding-left:18px;font-size:14px;line-height:1.5;color:var(--muted)}.costlist li{margin:3px 0}
+body.editing #addForm{display:none}
+.tedit-when{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;flex:1 1 100%}
+.tedit-acts{display:flex;gap:8px;flex:1 1 100%}
 
 </style>
 <div class="app">
@@ -761,7 +764,7 @@ body.pixel .wxicon{width:18px;height:18px}
       <details id="doneBox"><summary id="doneSum">Done today</summary><ul class="donelist" id="doneList"></ul></details>
       <form class="addform bottom" id="addForm" autocomplete="off">
         <div class="row">
-          <input type="text" id="tTitle" placeholder="Add a task… e.g. 16-10-2026 0900 #work" aria-label="New task" aria-describedby="addChips" maxlength="160" required>
+          <input type="text" id="tTitle" placeholder="Add a task…" aria-label="New task" aria-describedby="addChips" maxlength="160" required>
           <button class="btn primary" type="submit">Add</button>
           <button class="btn jotbtn" type="button" id="jotBtn" title="Just write it down: no date, no reminders, off the list">Jot</button>
         </div>
@@ -779,7 +782,7 @@ body.pixel .wxicon{width:18px;height:18px}
         </div>
         <div class="addchips" id="addChips" aria-live="polite"></div>
         <button class="linkbtn" type="button" id="optBtn" aria-expanded="false" aria-controls="addOpts">More options</button>
-        <div class="addopts" id="addOpts" hidden><div class="row">
+        <div class="addopts" id="addOpts" hidden><p class="sub">Tip: you can type these too, e.g. <code>Call the bank 24-10-2026 0900 #work</code>.</p><div class="row">
           <label class="toggle"><input type="checkbox" id="tWeek"> This week</label>
           <label class="toggle">Due <input type="date" id="tDue"></label>
           <label class="toggle">Plan for <input type="date" id="tOn"></label>
@@ -818,7 +821,7 @@ body.pixel .wxicon{width:18px;height:18px}
         <div class="shop" id="kettleShop"></div></details>
       <details class="shopsec" data-sec="wall" open><summary><h3>On the wall</h3><span class="seccount" id="cnt-wall"></span><span class="secnew" id="new-wall" hidden>new</span></summary><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p>
         <div class="shop" id="wallShop"></div></details>
-      <details class="shopsec" data-sec="splurge" open hidden><summary><h3>Something special</h3><span class="seccount" id="cnt-splurge"></span><span class="secnew" id="new-splurge" hidden>new</span></summary><p class="sub">A treat for the wagon, for one day. Then it's gone, and you can pick another.</p>
+      <details class="shopsec" data-sec="splurge" open hidden><summary><h3>Something special</h3><span class="seccount" id="cnt-splurge"></span><span class="secnew" id="new-splurge" hidden>new</span></summary><p class="sub">A treat for the wagon, for the rest of the day. When the new day starts it's gone, and you can pick another.</p>
         <div class="shop" id="splurgeShop"></div></details>
       <details class="shopsec" data-sec="barter" open hidden><summary><h3>The raccoon's barter</h3><span class="seccount" id="cnt-barter"></span><span class="secnew" id="new-barter" hidden>new</span></summary>
         <div class="shop" id="barterShop"></div></details>
@@ -889,9 +892,9 @@ body.pixel .wxicon{width:18px;height:18px}
         <label class="field">Pet name<input id="setPet" maxlength="20"></label>
         <label class="field">The possum's name<input id="setPossum" maxlength="30"></label>
         <label class="field">App name<input id="setApp" maxlength="30"></label>
-        <label class="field">Work ends at (hour)<input id="setDoneBy" type="number" min="12" max="23"></label>
-        <label class="field">Bedtime (hour)<input id="setBed" type="number" min="0" max="23"></label>
-        <label class="field">A new day starts at (hour)<input id="setDayStart" type="number" min="0" max="23" aria-describedby="dayStartHint"><small class="sub" id="dayStartHint">Until then it still counts as the day before: what you finish, the journal, filing the day, the notebook page. Due dates and times keep the clock. 5 is 0500; for night shifts, pick when your day really begins.</small></label>
+        <label class="field">Work ends at<select id="setDoneBy" data-hours="12-23"></select></label>
+        <label class="field">Bedtime<select id="setBed" data-hours="0-23"></select></label>
+        <label class="field">A new day starts at<select id="setDayStart" data-hours="0-23" aria-describedby="dayStartHint"></select><small class="sub" id="dayStartHint">Until then it still counts as the day before: what you finish, the journal, filing the day, the notebook page. Due dates and times keep the clock. For night shifts, pick when your day really begins.</small></label>
         <label class="field">Night light at<select id="setNight" aria-describedby="nightHint"><option value="-1">Off</option></select><small class="sub" id="nightHint">From then until the new day starts, the room's main light goes down. Lanterns, candles and the reading lamp stay on; Mite stays up.</small></label>
         <label class="field">Strangeness<select id="setStrange"><option value="0">Off: just cosy</option><option value="1">Some: the odd door</option><option value="2">A lot: thin place</option></select></label>
         <label class="field">Weather location (lat, lon)<input id="setLoc" maxlength="30" placeholder="e.g. 48.86, 2.35" inputmode="decimal"></label>
@@ -901,7 +904,7 @@ body.pixel .wxicon{width:18px;height:18px}
       </div>
       <div class="field">Workdays<div class="days" id="setWork"></div></div>
       <div class="field">Office days<div class="days" id="setOffice"></div></div>
-      <div><button class="btn primary" id="saveSettings">Save settings</button></div>
+      <p class="sub" id="setSaved" aria-live="polite">Changes save by themselves.</p>
 
     </div>
 
@@ -966,6 +969,7 @@ body.pixel .wxicon{width:18px;height:18px}
         <button class="btn" id="importBtn">Import</button>
         <button class="btn danger" id="resetAll">Start over</button>
       </div>
+      <div class="row"><button class="btn" id="bkAside" hidden></button></div>
       </div>
     </div>
   </section>
@@ -2284,9 +2288,11 @@ const DEF = {
             "That's the biggest cake I've ever seen indoors. Outdoors too, actually."
         ],
         splurge_cake_tap: [
-            "Someone's had a slice. There are crumbs leading to the nook. And a small upside-down shape on the beam, chewing.",
-            "It's getting shorter. Like a candle, but delicious.",
-            "The cherry's gone. I'm not saying who. It was me."
+            "{sliced}Someone's had a slice. There are crumbs leading to the nook. And a small upside-down shape on the beam, chewing.",
+            "{sliced}It's getting shorter. Like a candle, but delicious.",
+            "{nocherry}The cherry's gone. I'm not saying who. It was me.",
+            "{whole}Not a slice gone yet. I'm being very strong about it.",
+            "{cherry}The cherry's still on top. It's looking at me. I'm looking back.",
         ],
         splurge_fireworks: [
             "Fireworks! For tonight. I'll keep the curtains open. Well, we don't have curtains. I'll keep my eyes open.",
@@ -3533,7 +3539,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, basket: { t: [], at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -3699,6 +3705,7 @@ function sanitizeState(raw) {
     }
     o.postcards = arr(s.postcards, 60).map(p => ({ id: str(p.id, 30), y: clamp(Math.round(num(p.y)), 2000, 3000), at: num(p.at) })).filter(p => /^[a-z0-9_-]+$/i.test(p.id)); // postcards kept on the board (festivals.js)
     o.kettleStyle = { k: ["copper", "blue", "green", "pink", "bluefl"].includes(s.kettleStyle && s.kettleStyle.k) ? s.kettleStyle.k : "copper", at: num(s.kettleStyle && s.kettleStyle.at) }; // the kettle's looks (draw-world.js)
+    o.postits = arr(s.postits, 12).map(n => ({ room: ["room", "garden", "archive"].includes(n.room) ? n.room : "room", fx: clamp(num(n.fx), 0, 1), fy: clamp(num(n.fy), 0, 1), at: num(n.at), rot: clamp(num(n.rot), -1, 1), curl: !!n.curl, tape: !!n.tape, sz: clamp(num(n.sz, 1), .5, 1.5), col: /^#[0-9a-f]{6}$/i.test(n.col) ? n.col : "#f2d06b", text: str(n.text, 60) })); // Mite's sticky notes on the walls (pastimes.js)
     o.basket = { t: (Array.isArray(s.basket && s.basket.t) ? s.basket.t.slice(-20) : []).filter(k => ["dust", "paper", "crumb", "leaf", "postit"].includes(k)), at: num(s.basket && s.basket.at) }; // the possum's basket (basket.js)
     o.tiffany = { k: ["classic", "dragonfly", "blossom", "autumn", "sea", "nebula"].includes(s.tiffany && s.tiffany.k) ? s.tiffany.k : "classic", at: num(s.tiffany && s.tiffany.at) }; // the lamp's shade (archive-room.js)
     if (o.kettleStyle.at && o.kettleStyle.k !== "copper" && !o.b["kt_" + o.kettleStyle.k]) // (picked for free before the kettles were sold: it's yours)
@@ -3975,6 +3982,7 @@ function mergeStates(a, b) {
         }
         o.postcards = [...m.values()].sort((x, y) => num(y.at) - num(x.at)).slice(0, 60);
     }
+    o.postits = ((nw.postits || [])).slice(); // (the newer save's notes on the walls)
     o.basket = num((a.basket || {}).at) >= num((b.basket || {}).at) ? { t: ((a.basket || {}).t || []).slice(), at: num((a.basket || {}).at) } : { t: ((b.basket || {}).t || []).slice(), at: num((b.basket || {}).at) };
     o.tiffany = num((a.tiffany || {}).at) >= num((b.tiffany || {}).at) ? Object.assign({ k: "classic", at: 0 }, a.tiffany) : Object.assign({ k: "classic", at: 0 }, b.tiffany);
     o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
@@ -6752,6 +6760,7 @@ const BEH = {
                     if (ta > .75) {
                         OA.bookOut = b.bi;
                         po.prop = "bookUp";
+                        po.bookCol = BOOK_SPINES[b.bi % BOOK_SPINES.length];
                     }
                     return;
                 }
@@ -6760,15 +6769,17 @@ const BEH = {
                     reach(1);
                     if (ta > b.act - .55)
                         OA.bookOut = -1;
-                    else
+                    else {
                         po.prop = "bookUp";
+                        po.bookCol = BOOK_SPINES[b.bi % BOOK_SPINES.length];
+                    }
                     return;
                 }
             }
             else if (p.bt > b.act)
                 p.dur = p.bt;
             po.prop = "book";
-            b.bookCol = b.bookCol || choice(["#b6543c", "#3f6fa8", "#5b8a4a", "#8a4fa0", "#c99a3a", "#2e4a5a"]);
+            b.bookCol = b.bookCol || (b.bi >= 0 ? BOOK_SPINES[b.bi % BOOK_SPINES.length] : choice(BOOK_SPINES)); // (the one it took off the shelf)
             po.bookCol = b.bookCol;
             po.lookOverride = { x: 0, y: .6 };
             po.sy = -.1;
@@ -8114,7 +8125,7 @@ Object.assign(BEH, {
             const st = standBy(sp.x, R * 1.25, p.x > sp.x ? 1 : -1);
             b.tx = st.x;
             b.face = st.face;
-            b.sp = { x: sp.x, y: sp.y };
+            b.sp = { x: sp.x, y: sp.y, k: sp.k };
             b.act = rnd(5, 7);
             b.high = sp.k.startsWith("hang"); // the hanging pots: from up on the platform (loft.js)
             if (b.high) {
@@ -9320,7 +9331,7 @@ function drawPet(po) {
         cx.globalAlpha = 1;
     }
     if (po.prop === "bookUp") {
-        cx.fillStyle = "#b6543c";
+        cx.fillStyle = po.bookCol || "#b6543c";
         cx.fillRect(-r * .16, by - r * sy - r * .42, r * .32, r * .4);
         cx.fillStyle = "#f4ecd7";
         cx.fillRect(-r * .12, by - r * sy - r * .38, r * .05, r * .32);
@@ -10108,6 +10119,12 @@ const SCOPE_CAP = {
  * from OBJ_ACT, and its show() runs at the moment of arrival (revealAt). objTick ends it.
  */
 const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () => showGlimpse() }, gdrawers: { beh: "opendrawer", revealAt: .8, show: () => openDrawer() }, gchair: { beh: "armread", revealAt: 1.2, show: () => showBook() || 8 }, gletters: { beh: "readletter", revealAt: .6, show: () => readLetter() }, cat: { beh: "catvisit", revealAt: 0, show: () => 8 }, possum: { beh: "possumchat", revealAt: 0, show: () => 8 }, possumcookie: { beh: "givecookie", revealAt: 0, room: "room", show: () => 5 }, gdesk: { beh: "write", revealAt: .3, show: () => 6 }, gplants: { beh: "gwater", revealAt: .6, show: () => {
+            const pl = pet.b && pet.b.sp && pet.b.sp.k === "sill" ? sillPlants("garden") : []; // (the window sill's pots: Mite says which one)
+            if (pl.length) {
+                const p = choice(pl);
+                speak(Math.random() < .25 ? p.line : compose("plant_" + p.id) || p.line, { ms: 6500 });
+                return 6.5;
+            }
             say("greenhouse");
             return 5;
         } }, gvase: { beh: "gsmell", revealAt: 1, show: () => showFlower() }, gfbook: { beh: "gfread", revealAt: .6, show: () => showFlowerBook() }, ghang: { beh: "ghang", revealAt: 0, show: () => 9 }, gpin: { beh: "gpin", revealAt: .4, show: () => { // a snapshot on the pinboard, from up on the platform
@@ -13798,7 +13815,7 @@ function guestTick(dt, now) {
     }
     else if (g.ph === "out") {
         g.x += g.dir * sp * 1.2 * dt;
-        if (g.x < -R * 1.5 || g.x > W + R * 1.5) {
+        if (g.x < -W * .6 || g.x > W * 1.6) { // (well into the next room, out of sight)
             guest = null;
             return;
         }
@@ -13807,8 +13824,8 @@ function guestTick(dt, now) {
         drawLayered(() => drawGuest(g, now));
 }
 /* is the visitor out on the floor in front of where Mite stands? Then it's drawn after Mite (drawAnimals) */
-function guestOut() {
-    return !!guest && (guest.z || 0) > R * .15;
+function guestOut() { // (also on its way out: drawn unclipped, so it walks on into the next room instead of vanishing at the edge)
+    return !!guest && ((guest.z || 0) > R * .15 || guest.ph === "out");
 }
 /* drawLayered(fn, key): with a key, the finished (outlined) result is kept and simply copied the next time, as long
    as the key, the scene's size and the room's position on screen are the same. For still things only: the key must
@@ -16214,7 +16231,7 @@ let cabHit = null;
 /* where the plank hangs: across its two wall spots, a little below their middle */
 function plankGeo() {
     const [a, b] = plankSlots(), x0 = a.x - R * .5, x1 = (b || a).x + R * .5;
-    return { x0, x1, y: a.y + R * .18, cx: (x0 + x1) / 2 };
+    return { x0, x1, y: a.y + R * .06, cx: (x0 + x1) / 2 }; // (a little higher than the middle: owner's note)
 }
 function cabinetCrystals() {
     return CRYSTALS.filter(c => own(c.id)).slice(0, CABINET_SLOTS);
@@ -16256,11 +16273,17 @@ function drawCrystalShelf(dk, tsec) {
                 }
                 return;
             }
-            if (c.shape === "bottle") {
+            if (c.shape === "bottle") { // bottled starlight: it glows, and a star or two twinkles in it
+                glow(sx, y - ch * .3, R * .11 * (1 + .15 * Math.sin(t * 2.3)), c.glow + "aa");
+                cx.fillStyle = col;
                 cx.fillRect(sx - cw, y - ch * .6, cw * 2, ch * .6);
                 cx.fillRect(sx - cw * .4, y - ch * .85, cw * .8, ch * .25);
                 cx.fillStyle = mix("#9a6a3a", "#2a1a10", dk);
                 cx.fillRect(sx - cw * .4, y - ch, cw * .8, ch * .15);
+                if (Math.sin(t * 3.1 + i) > .3) {
+                    cx.fillStyle = "#fff6d0";
+                    cx.fillRect(Math.round(sx - cw * .3), Math.round(y - ch * .35), Math.max(1, PX), Math.max(1, PX));
+                }
                 return;
             }
             cx.beginPath();
@@ -17401,7 +17424,8 @@ function drawerLabels(t = Date.now()) {
                     k = (k + 1) % lines.length;
                 const [label, ...rest] = lines[k].split("|");
                 used.add(label.trim());
-                return { label: label.trim(), text: rest.join("|").trim(), since: at + start * 864e5 };
+                const lb = label.trim(); // (the lines have them in capitals, like on a label: shown as words)
+                return { label: lb === lb.toUpperCase() ? lb[0] + lb.slice(1).toLowerCase() : lb, text: rest.join("|").trim(), since: at + start * 864e5 };
             }
             start += stay + gap;
         }
@@ -17418,7 +17442,7 @@ function drawerTick() {
         S.drawers.at = Date.now();
         saveSoon();
     }
-    const now = drawerLabels(), sig = now.map(d => d ? d.label : "").join("|");
+    const now = drawerLabels(), sig = now.map(d => d ? d.label.toUpperCase() : "").join("|");
     if (sig === S.drawers.sig)
         return;
     const was = (S.drawers.sig || "|||").split("|");
@@ -18480,7 +18504,7 @@ function possumSummonEnd(p, now) {
     if (ok) {
         S.mess = (S.mess || []).filter(Boolean);
         if (S.mess.length < 14)
-            S.mess.push({ room: "archive", x: clamp(c.x / W, .06, .94), y: clamp((c.y - GY - 6) / (H - GY - 14), .05, .8), t: choice(["paper", "crumb", "leaf"]), r: 1.1, rot: rnd(0, 6) });
+            S.mess.push({ room: "archive", x: clamp(c.x / W, .06, .94), y: clamp((c.y - GY - 6) / (H - GY - 14), .05, MESS_MAXY), t: choice(["paper", "crumb", "leaf"]), r: 1.1, rot: rnd(0, 6) });
         for (let i = 0; i < 14; i++)
             addP({ type: "spark", x: c.x + rnd(-R * .4, R * .4), y: c.y - rnd(0, R * .3), vx: rnd(-40, 40), vy: -rnd(20, 60), g: 60, max: 1, col: "#9dffa8", size: 2, room: "archive" });
         sfx("sparkle");
@@ -20541,6 +20565,17 @@ function renderGlimpses() {
  */
 const POSTIT_MAX = 4, POSTIT_LIFE = 40 * 60e3;
 let postits = [], paperBirds = [];
+/* the sticky notes on the walls are kept in the save (S.postits: where, as a share of the room, and when, by the
+   clock), so they're still up after a reload until their time's over */
+function postitsSave() {
+    const now = performance.now(), wall = Date.now();
+    S.postits = postits.map(n => ({ room: n.room, fx: n.x / W, fy: n.y / H, at: Math.round(wall - (now - n.at)), rot: n.rot, curl: !!n.curl, tape: !!n.tape, sz: n.sz, col: n.col, text: n.text }));
+    saveSoon();
+}
+function postitsLoad() {
+    const now = performance.now(), wall = Date.now();
+    postits = (S.postits || []).filter(n => wall - n.at < POSTIT_LIFE).map(n => Object.assign({}, n, { x: n.fx * W, y: n.fy * H, at: now - (wall - n.at) }));
+}
 const TINY = ["#c2453a", "#e8a33c", "#f2d06b", "#6aa84f", "#3f9e9a", "#7a6fc0"];
 /* what Mite sketches: [what, the shop thing it needs to have] (nothing it hasn't got yet) */
 const SKETCHES = [["a snail, from the side", "snail"], ["the moon, slightly wrong"], ["Midnightcat, who moved"], ["a door that isn't there"], ["the kettle, mid-thought", "kettle"], ["you, from memory. Roughly"], ["a very small mountain"], ["the possum, upside down. Or the right way up for the possum"], ["a cloud shaped like a cloud"], ["the wagon, if it had legs"], ["a leaf from outside the window"], ["its own sprout, which it can't see very well"], ["the firefly jar, glowing", "jar"], ["the telescope, pointing at nothing yet", "scope"], ["the oven, with something in it", "oven"], ["a lantern, swaying", "lantern"]];
@@ -20634,6 +20669,7 @@ Object.assign(BEH, {
                     const spot = postitSpot(p);
                     if (spot)
                         postits.push({ room: view, x: spot.x, y: spot.y, at: performance.now(), rot: (Math.random() < .5 ? -1 : 1) * rnd(.1, .28), curl: Math.random() < .6, tape: Math.random() < .5, sz: rnd(.85, 1.15), col: b.col || "#f2d06b", text: b.text });
+                    postitsSave();
                     sfx("soft");
                     floatText(b.text, p.x, GY - R * 2.6, "#fff6c8");
                 }
@@ -20761,12 +20797,16 @@ function drawPastimesBehind() {
 /* the sticky notes on the walls: part of the room, so drawn with it, behind Mite and the cat (drawScene, camera.js) */
 function drawWallNotes() {
     const now = performance.now(), dk = sceneDark();
+    let gone = false;
     postits = postits.filter(n => {
         if (now - n.at < POSTIT_LIFE)
             return true;
         basketAdd("postit", n.room, n.x, n.y, n.col); // (come unstuck: into the basket)
+        gone = true;
         return false;
     });
+    if (gone)
+        postitsSave();
     for (const n of postits)
         withRoomLight(n.room, () => {
             const s = R * .46 * (n.sz || 1), q = PX, sw = Math.sin(performance.now() / 1300 + n.x) * .03; // (a little flutter)
@@ -21388,16 +21428,18 @@ const SPLURGES = [
     { id: "fireworks", name: "Fireworks", note: "That evening, tiny fireworks over the hills in every window. Bought now, they go off when it's dark." }
 ];
 let splurgeHit = null;
+/* a treat lasts the rest of the day it was bought on: gone when the next day starts (Settings: a new day starts at) */
+const splurgeEnd = () => dayStartTs(num(S.splurge && S.splurge.at)) + SPLURGE_DAY;
 function splurgeOn() {
     const s = S.splurge;
-    return s && s.k && Date.now() - num(s.at) < SPLURGE_DAY ? s.k : "";
+    return s && s.k && Date.now() < splurgeEnd() ? s.k : "";
 }
 function splurgeLeft() {
-    return splurgeOn() ? clamp(1 - (Date.now() - num(S.splurge.at)) / SPLURGE_DAY, 0, 1) : 0;
+    return splurgeOn() ? clamp((splurgeEnd() - Date.now()) / Math.max(1, splurgeEnd() - num(S.splurge.at)), 0, 1) : 0;
 }
 function buySplurge(id) {
     const it = SPLURGES.find(x => x.id === id);
-    if (!it || S.g < SPLURGE_PRICE)
+    if (!it || S.g < SPLURGE_PRICE || splurgeOn()) // (one at a time: the next once this one's gone)
         return;
     S.g -= SPLURGE_PRICE;
     S.splurge = { k: id, at: Date.now() };
@@ -21537,8 +21579,9 @@ function drawFireworks(x0, y0, w, h, t, dark) {
 function splurgeTap(p, room = "room") {
     if (!splurgeHit || (splurgeHit.room || "room") !== room || !hitIn(p, splurgeHit, 10))
         return false;
-    const k = splurgeOn();
-    speak(compose("splurge_" + k + "_tap") || compose("splurge_" + k) || "Ours, for today.", { ms: 5000 });
+    const k = splurgeOn(), eaten = 1 - splurgeLeft(), when = c => c ? "" : null; // (the cake: lines marked {whole}, {sliced}, {cherry}, {nocherry} only fit when that's true)
+    const st = { whole: when(eaten < .05), sliced: when(eaten >= .05), cherry: when(eaten < .33), nocherry: when(eaten >= .33) };
+    speak(compose("splurge_" + k + "_tap", st) || compose("splurge_" + k) || "Ours, for today.", { ms: 5000 });
     return true;
 }
 /* the shop: something special, a hundred glimmers, one day */
@@ -21547,13 +21590,14 @@ function renderSplurges() {
     if (!el)
         return;
     const on = splurgeOn(), left = splurgeLeft();
-    el.innerHTML = SPLURGES.map(s => `<div class="bld"><div style="min-width:0"><b>${esc(s.name)}</b><span class="own">${on === s.id ? `today, ${Math.max(1, Math.round(left * 24))} hours left` : ""}</span><p>${esc(s.note)}</p></div><span class="bacts"><button class="btn amber" data-splurge="${esc(s.id)}" ${S.g < SPLURGE_PRICE ? "disabled" : ""} aria-label="Buy ${esc(s.name)} for ${SPLURGE_PRICE} glimmers, for one day">${SPLURGE_PRICE} ◆</button></span></div>`).join("");
+    el.innerHTML = SPLURGES.map(s => `<div class="bld"><div style="min-width:0"><b>${esc(s.name)}</b><span class="own">${on === s.id ? `up today, until ${String(new Date(splurgeEnd()).getHours()).padStart(2, "0")}00` : ""}</span><p>${esc(s.note)}</p></div><span class="bacts">${on ? `<span class="owned">${on === s.id ? "Today's" : "After today's"}</span>` : `<button class="btn amber" data-splurge="${esc(s.id)}" ${S.g < SPLURGE_PRICE ? "disabled" : ""} aria-label="Buy ${esc(s.name)} for ${SPLURGE_PRICE} glimmers, for one day">${SPLURGE_PRICE} ◆</button>`}</span></div>`).join("");
     el.querySelectorAll("[data-splurge]").forEach(b => b.onclick = () => buySplurge(b.dataset.splurge));
 }
 
 </script>
 <script>/* js/scene/draw-world.js */
 "use strict";
+const BOOK_SPINES = ["#a8513c", "#3f6c8a", "#c49a3c", "#5c7a4a", "#7a4a6e"]; // the books on the wagon's shelf
 /*
  * draw-world.js - Drawing the whole scene every frame, back to front: sky, room, furniture, objects,
  * then particles. Mite is drawn after this, in loop.js.
@@ -21635,7 +21679,7 @@ function drawWorld(now, dt) {
         cx.arc(rm.lx, lyy + R * .08, R * .09, 0, 7);
         cx.fill();
     }
-    // books on a wall shelf
+    // books on a wall shelf (their colours: BOOK_SPINES, so the one Mite takes down is the one it reads)
     const bk = Math.min(14, own("books") || 0);
     if (bk) {
         const bx0 = W * .03, bw2 = R * .15, brd = GY - R * 2.3;
@@ -21646,7 +21690,7 @@ function drawWorld(now, dt) {
         for (let i = 0; i < bk; i++) {
             if (i === OA.bookOut)
                 continue;
-            const col = ["#a8513c", "#3f6c8a", "#c49a3c", "#5c7a4a", "#7a4a6e"][i % 5];
+            const col = BOOK_SPINES[i % 5];
             const row = Math.floor(i / 7), hh = R * (.28 + ((i * 7) % 3) * .03);
             cx.fillStyle = mix(col, "#20202a", dk * .6);
             cx.fillRect(bx0 + (i % 7) * R * .18, brd - row * R * .42 - hh, bw2, hh);
@@ -23297,8 +23341,9 @@ function renderTasks() {
     const tops = open.filter(t => !t.p || !open.some(o => o.id === t.p)).filter(vis).sort(cmp);
     const ul = $("taskList");
     ul.innerHTML = "";
+    document.body.classList.toggle("editing", !!editingId && S.tasks.some(t => t.id === editingId)); // (the add form steps aside while a task is edited: it sits over the list on a phone)
     if (!tops.length) {
-        ul.innerHTML = `<li class="empty">${open.length ? "Nothing in this filter." : "No open tasks. Add one above. Small ones count."}</li>`;
+        ul.innerHTML = `<li class="empty">${open.length ? "Nothing in this filter." : "No open tasks. Add one below. Small ones count."}</li>`;
     }
     const row = (t, child) => {
         const li = document.createElement("li");
@@ -23309,8 +23354,8 @@ function renderTasks() {
             li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="eTitle" value="${esc(t.t)}" maxlength="160" aria-label="Task">
         <span class="seg seg-size" id="eSize" role="group" aria-label="Size">${[[1, "Small"], [3, "Medium"], [8, "Big"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${t.s === v}">${l}</button>`).join("")}</span>
         <span class="seg" id="eTag" role="group" aria-label="Area">${[["work", "Work"], ["life", "Life"], ["", "Other"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(t.tag || "") === v}">${l}</button>`).join("")}</span>
-        <input type="date" id="eDue" value="${esc(t.due)}" aria-label="Due date"><label class="toggle">Plan for <input type="date" id="eOn" value="${esc(t.on || "")}"></label><input type="time" id="eAt" value="${esc(t.at || "")}" step="300" aria-label="Time"><label class="toggle"><input type="checkbox" id="eWeek" ${t.wk ? "checked" : ""}> This week</label>
-        <button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button>
+        <span class="tedit-when"><label class="toggle">Due <input type="date" id="eDue" value="${esc(t.due)}"></label><label class="toggle">Plan for <input type="date" id="eOn" value="${esc(t.on || "")}"></label><label class="toggle">At <input type="time" id="eAt" value="${esc(t.at || "")}" step="300"></label><label class="toggle"><input type="checkbox" id="eWeek" ${t.wk ? "checked" : ""}> This week</label></span>
+        <span class="tedit-acts"><button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button></span>
         <span class="tedit-more">${!child ? `<button class="btn" type="button" data-act="split">Split into steps</button><button class="btn ai" type="button" data-act="splitai" ${aiOn() ? "" : "disabled"}>✦ Split with AI</button>` : ""}<button class="btn danger" type="button" data-act="del">Delete</button></span></form>`;
             for (const id of ["eSize", "eTag"]) // (buttons, one of each pressed)
                 li.querySelectorAll(`#${id} button`).forEach(b => b.onclick = () => li.querySelectorAll(`#${id} button`).forEach(x => x.setAttribute("aria-pressed", x === b)));
@@ -23387,7 +23432,6 @@ function renderTasks() {
       <div style="min-width:0"><button class="tname" data-act="edit" title="Edit">${esc(t.t)}</button><div class="tmeta">
       ${isPicked(t) ? `<span class="chip sun">today</span>` : ""}${t.s > 1 ? `<span class="chip">${t.s === 3 ? "medium" : "big"}</span>` : ""}${t.tag ? `<span class="chip">${t.tag}</span>` : ""}
       ${d ? `<span class="chip ${d.cls}">${d.txt}</span>` : ""}${t.on ? `<span class="chip ${planInfo(t).past ? "amber" : "plan"}">${esc(planInfo(t).txt)}</span><a class="mini gcal" href="${esc(gcalUrl(t))}" target="_blank" rel="noopener noreferrer" title="Opens Google Calendar with this filled in">+ Google Calendar</a>` : ""}
-      ${age > 7 * 864e5 ? `<span class="chip">waiting ${fmtAge(age)}</span>` : ""}
       <button class="weekbtn" data-act="week" aria-pressed="${t.wk}">${t.wk ? "★ this week" : "☆ this week"}</button></div></div>
       <div class="tact"><button class="mini" data-act="edit2" aria-label="Edit, split or delete ${esc(t.t)}" title="Edit, split or delete">⋯</button></div>`;
         li.querySelector(".check").onclick = e => completeTask(t.id, e.currentTarget);
@@ -24142,6 +24186,7 @@ $("poolOwn").onclick = () => {
     toast("Add your lines at the end, then Save pool");
 };
 function renderContent() {
+    renderAside(); // (a game put aside before an import: settings.js)
     const st = S.settings;
     $("setLoc").value = st.wloc || "";
     $("setHome").value = homeKind();
@@ -24601,7 +24646,18 @@ $("tTitle").addEventListener("input", () => {
 /*
  * settings.js - Settings: name, work days, home, sound, AI, backups, reset.
  */
-$("saveSettings").onclick = () => {
+/* Settings save as you change them: a field changes (a text field: when you leave it), everything is read back in.
+   The hour fields are lists of whole hours, shown as 24-hour times (0500, 1700, 2300) */
+document.querySelectorAll("#tab-content select[data-hours]").forEach(sel => {
+    const [a, b] = sel.dataset.hours.split("-").map(Number);
+    for (let h = a; h <= b; h++)
+        sel.add(new Option(String(h).padStart(2, "0") + "00", String(h)));
+});
+$("tab-content").addEventListener("change", e => {
+    if (e.target.closest("input,select") && !e.target.closest("#poolSel"))
+        saveSettings();
+});
+function saveSettings() {
     const st = S.settings;
     const oldPet = st.pet;
     S.settingsAt = Date.now();
@@ -24657,9 +24713,9 @@ $("saveSettings").onclick = () => {
         speak(`${st.pet}. Yes. That feels right.`);
         note(`Got a new name: ${st.pet}.`);
     }
-    toast("Settings saved");
+    $("setSaved").textContent = `Saved ${hhmm()}. Changes save by themselves.`;
     afterChange();
-};
+}
 $("poolFind").oninput = () => poolFilter();
 $("poolFind").onkeydown = e => {
     if (e.key === "Enter") {
@@ -24718,12 +24774,20 @@ $("poolReset").onclick = () => {
     const k = $("poolSel").value;
     if (!k)
         return toast("Pick a pool first");
+    if (!Array.isArray(S.content.pools[k]))
+        return toast(`${k} is already the default`);
+    openRitual("Reset this pool?", "", `<p>The lines in <b>${esc(k)}</b> go back to the built-in ones. Lines you wrote or changed in it are removed.</p>`, [["Cancel", "primary", closeRitual], ["Reset", "danger", () => {
+                closeRitual();
+                resetPool(k);
+            }]]);
+};
+function resetPool(k) {
     S.contentAt = Date.now();
     delete S.content.pools[k];
     loadPoolEditor();
     toast(`${k} reset to default`);
     afterChange();
-};
+}
 $("personaSave").onclick = () => {
     S.contentAt = Date.now();
     S.content.persona = $("persona").value.trim();
@@ -24764,25 +24828,99 @@ $("importBtn").onclick = () => {
         return;
     }
     try {
-        const o = JSON.parse(raw);
-        if (o.mosslingContent) {
-            S.content = sanitizeState({ content: o.mosslingContent }).content;
-            S.contentAt = Date.now();
-            toast("Lines imported");
-        }
-        else if (o.tasks && o.settings) {
-            importSave(o);
-            toast("Save imported");
-        }
+        const o = JSON.parse(raw), done = msg => {
+            $("importText").value = "";
+            renderContent();
+            renderAll();
+            afterChange();
+            toast(msg);
+        };
+        if (o.mosslingContent)
+            confirmImport("lines", o, () => {
+                S.content = sanitizeState({ content: o.mosslingContent }).content;
+                S.contentAt = Date.now();
+                done("Lines imported");
+            });
+        else if (o.tasks && o.settings)
+            confirmImport("save", o, () => {
+                importSave(o);
+                done("Backup brought back");
+            });
         else
             throw 0;
-        $("importText").value = "";
-        renderContent();
-        afterChange();
     }
     catch (e) {
         toast("That doesn't look like a Mossling export");
     }
+};
+/* Bringing back a backup (or someone's lines) replaces what's here, so it asks first, and keeps the game as it was
+   aside in this browser (mossling.aside): "Go back to the game from before the import" on Backup and import */
+const ASIDE_KEY = "mossling.aside";
+function confirmImport(kind, o, apply) {
+    const at = num(o.savedAt), when = at ? `${wdmy(new Date(at))} ${hhmm(new Date(at))}` : "an unknown day";
+    const open = (o.tasks || []).filter(t => t && !t.d).length, fin = Math.max(num(o.doneTotal), (o.tasks || []).filter(t => t && t.d).length);
+    const body = kind === "save" ? `<p>This replaces the game on this device with the one in the backup, saved ${esc(when)}: ${open} open task${open === 1 ? "" : "s"}, ${fin} finished.</p>`
+        : `<p>This replaces your own lines with the ones in this export.</p>`;
+    openRitual(kind === "save" ? "Bring back this backup?" : "Replace your lines?", "", `${body}<p class="sub">Your game as it is now is put aside first. If it was the wrong file, you can go back to it from Backup and import.</p>`,
+        [["Cancel", "primary", closeRitual], ["Replace", "danger", () => {
+                closeRitual();
+                putAside();
+                apply();
+            }]]);
+}
+function putAside() {
+    try {
+        localStorage.setItem(ASIDE_KEY, JSON.stringify({ at: Date.now(), save: backupText() }));
+    }
+    catch (e) {
+        toast("Couldn't keep a copy aside: the browser's storage is full");
+    }
+    renderAside();
+}
+function asideCopy() {
+    try {
+        return JSON.parse(localStorage.getItem(ASIDE_KEY) || "null");
+    }
+    catch (e) {
+        return null;
+    }
+}
+function renderAside() {
+    const el = $("bkAside"), a = asideCopy();
+    if (!el)
+        return;
+    el.hidden = !a;
+    if (a)
+        el.textContent = `Go back to the game from before the import (${dmy(new Date(a.at))} ${hhmm(new Date(a.at))})`;
+}
+$("bkAside").onclick = () => {
+    const a = asideCopy();
+    if (!a)
+        return;
+    openRitual("Go back?", "", `<p>This puts back the game exactly as it was before the import on ${esc(dmy(new Date(a.at)))} ${esc(hhmm(new Date(a.at)))}, and drops the imported one.</p>`, [["Cancel", "primary", closeRitual], ["Go back", "danger", () => {
+                closeRitual();
+                const o = JSON.parse(a.save);
+                S = merge(defaultState(), o); // (as it was: replaced, not merged with the import)
+                ARCH = {};
+                const ar = cleanJSON(o.archive) || {};
+                for (const k of Object.keys(ar))
+                    if (dkey(k))
+                        mergeWeek(k, archClean(ar[k]));
+                rebuildFlat();
+                saveArchLocal();
+                KEEP = cleanKeep(o.keepsakes || {});
+                saveKeep();
+                try {
+                    localStorage.removeItem(ASIDE_KEY);
+                }
+                catch (e) {
+                }
+                renderAside();
+                renderContent();
+                renderAll();
+                afterChange();
+                toast("Back to the game from before the import");
+            }]]);
 };
 /* a whole save (a backup file, or the app's own copy): the game, the archive weeks and the keepsakes */
 function importSave(o) {
@@ -26248,6 +26386,7 @@ function messRoom(m) {
     return m && (m.room === "garden" || m.room === "archive") ? m.room : "room";
 }
 let nextMess = Date.now() + rnd(8, 20) * 60e3;
+const MESS_MAXY = .42; // (the floor's back part only: lower down, the buttons along the bottom would cover it)
 function addMess(n) {
     if (!Array.isArray(S.mess))
         S.mess = [];
@@ -26255,7 +26394,7 @@ function addMess(n) {
     for (let i = 0; i < n && S.mess.length < 14; i++) {
         const r = Math.random();
         const rr = Math.random(), room = rr < .5 ? "room" : rr < .75 ? "garden" : "archive"; // the whole wagon gets messy, the middle most
-        S.mess.push({ room, x: rnd(.06, .94), y: rnd(.05, .8), t: sea === "autumn" && r < .5 ? "leaf" : r < .7 ? "dust" : r < .88 ? "paper" : "crumb", r: rnd(.8, 1.25), rot: rnd(0, 6) });
+        S.mess.push({ room, x: rnd(.06, .94), y: rnd(.05, MESS_MAXY), t: sea === "autumn" && r < .5 ? "leaf" : r < .7 ? "dust" : r < .88 ? "paper" : "crumb", r: rnd(.8, 1.25), rot: rnd(0, 6) });
     }
     if (curTab === "care")
         renderCare();
@@ -27798,6 +27937,8 @@ function boot() {
     if (!S.plan)
         S.plan = { d: "", ids: [] };
     resize();
+    postitsLoad(); // (Mite's sticky notes back on the walls: pastimes.js)
+    (S.mess || []).forEach(m => m.y = Math.min(num(m.y), MESS_MAXY)); // (mess from before, out from behind the buttons)
     pet.x = W * .5;
     resetAdd();
     renderAll();
@@ -27865,6 +28006,11 @@ async function connect(prevSeen) {
         connectDone = true;
         if (firstStart && !uid)
             starterGift(); // not linked to an account: this browser is the whole game
+        if (!uid && /iPhone|iPad|iPod/.test(navigator.userAgent) && !navigator.standalone && !(typeof nativeApp === "function" && nativeApp())) // (Safari clears a site's data after a week without a visit, unless it's on the home screen)
+            setTimeout(() => {
+                if (hint("homescreen", "One thing, on an iPhone: Safari forgets a website's saved things after a week without a visit. Add me to your home screen (Share, then Add to Home Screen) and I stay.", 11000))
+                    note("Tip: add Small Things to the home screen (Share → Add to Home Screen), so Safari keeps the save.");
+            }, 25000);
     }
 }
 document.addEventListener("visibilitychange", async () => {
