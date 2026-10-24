@@ -835,7 +835,7 @@ body.editing #addForm{display:none}
     <div class="pane" id="tab-grow" role="tabpanel" hidden>
       <div>
         <h2>The wagon</h2>
-        <p class="sub">Finished tasks earn glimmers: 1 for small, 3 for medium, 6 for big. Spend them on things for the wagon; everything you buy shows up in the scene. <b id="shopBal"></b></p>
+        <p class="sub">Finished tasks earn glimmers: 1 for small, 3 for medium, 6 for big. Golden fireflies carry a few too, 10 a day at most. Spend them on things for the wagon; everything you buy shows up in the scene. <b id="shopBal"></b></p>
       </div>
       <details class="shopsec" data-sec="furn" open><summary><h3>Furniture</h3><span class="seccount" id="cnt-furn"></span><span class="secnew" id="new-furn" hidden>new</span></summary>
         <div class="shop" id="shop"></div></details>
@@ -3896,11 +3896,11 @@ const FESTIVALS = [
 const BUILDINGS = [
     { id: "jar", name: "Firefly jar", price: 4, max: 6, note: "A jar of slow, friendly light." },
     { id: "moss", name: "Moss patch", price: 6, max: 14, note: "Soft, green, quietly thriving." },
-    { id: "books", name: "Tiny library", price: 9, max: 14, note: "Every book is about something small." },
+    { id: "books", name: "Tiny library", price: 9, max: 14, lesson: "read", note: "Every book is about something small." },
     { id: "lantern", name: "Lantern string", price: 10, max: 9, note: "Paper lanterns along the ceiling." },
-    { id: "kettle", name: "Tea kettle", price: 18, max: 1, note: "Always just about to boil." },
+    { id: "kettle", name: "Tea kettle", price: 18, max: 1, lesson: "tea", note: "Always just about to boil." },
     { id: "snail", name: "Snail courier", price: 30, max: 1, note: "Brings the post. Slowly. Reliably." },
-    { id: "scope", name: "Observatory", price: 45, max: 1, note: "A brass telescope for very distant things." },
+    { id: "scope", name: "Observatory", price: 45, max: 1, lesson: "stargaze", note: "A brass telescope for very distant things." },
     { id: "vault", name: "Dream archive", price: 60, max: 1, note: "Drawers full of carefully filed dreams." },
     { id: "desk", name: "Writing desk", price: 12, max: 1, note: "For the nook, under the round window: a drawer, an inkpot, a quill, a stub of candle. Mite writes a letter a day at it, and the snail checks the post there." },
     { id: "chair", name: "Chesterfield & side table", price: 14, max: 1, note: "For the nook: a buttoned leather chair to read in, and a little table for the candle and the tea." },
@@ -4036,7 +4036,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -4109,6 +4109,10 @@ function sanitizeState(raw) {
     o.hat = HATS.some(h => h.id === s.hat) ? s.hat : "";
     o.lightsOut = !!s.lightsOut;
     ["b", "up", "trinkets", "altered", "hideAt", "showAt"].forEach(k => o[k] = numMap(s[k]));
+    BUILDINGS.forEach(b => { // (old saves had more firefly jars and moss than there's room for)
+        if (num(o.b[b.id]) > b.max)
+            o.b[b.id] = b.max;
+    });
     o.eco = num(s.eco) >= 2 ? 2 : 1;
     if (o.eco < 2 && ("g" in s || "gTotal" in s)) {
         // the old idle economy counted in millions; start over in small, earned glimmers
@@ -4224,6 +4228,7 @@ function sanitizeState(raw) {
     if (o.kettleStyle.at && o.kettleStyle.k !== "copper" && !o.b["kt_" + o.kettleStyle.k]) // (picked for free before the kettles were sold: it's yours)
         o.b["kt_" + o.kettleStyle.k] = 1;
     o.journal = { name: str(s.journal && s.journal.name, 40).replace(/\s+/g, " ").trim() || "Small journal", at: num(s.journal && s.journal.at) }; // the journal's name (journal.js)
+    o.amb = { d: s.amb && dkey(s.amb.d) ? dkey(s.amb.d) : "", g: clamp(num(s.amb && s.amb.g), 0, AMB_GLIM), f: clamp(num(s.amb && s.amb.f), 0, AMB_FINDS) }; // today's glimmers and finds from ambient things (economy.js)
     o.splurge = { k: s.splurge && ["ice", "balloons", "cake", "fireworks"].includes(s.splurge.k) ? s.splurge.k : "", at: num(s.splurge && s.splurge.at) }; // the day's treat (splurge.js)
     { // the raccoon's barter: this week's stock and what's been traded (barter.js)
         const b = s.barter && typeof s.barter === "object" ? s.barter : {};
@@ -4518,6 +4523,10 @@ function mergeStates(a, b) {
     o.rugCol.sh = Object.assign({}, o.rugCol.sh || {});
     o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
     o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small journal", at: 0 }) : Object.assign({}, b.journal); // the newest name
+    { // today's ambient glimmers and finds: the later day wins; the same day, the most of each
+        const x = a.amb || { d: "", g: 0, f: 0 }, y = b.amb || { d: "", g: 0, f: 0 };
+        o.amb = x.d === y.d ? { d: x.d, g: Math.max(num(x.g), num(y.g)), f: Math.max(num(x.f), num(y.f)) } : Object.assign({}, x.d > y.d ? x : y);
+    }
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
     o.shopSeen = { ids: [...new Set([...((a.shopSeen || {}).ids || []), ...((b.shopSeen || {}).ids || [])])].slice(-600), at: Math.max(num((a.shopSeen || {}).at), num((b.shopSeen || {}).at)) };
     o.barterOwn = uniq([...(a.barterOwn || []), ...(b.barterOwn || [])], x => x.k + "|" + String(x.n).toLowerCase()).slice(0, 400); // everything traded, from either side
@@ -6414,6 +6423,10 @@ function cost(b) {
     const n = S.b[b.id] || 0;
     return b.price + Math.floor(b.price * .2 * Math.min(n, b.max));
 }
+/* a shop item that waits for a lesson (b.lesson, owner 24-10-2026: finished tasks open up the shop): the lesson, or null */
+function lessonLock(b) {
+    return b.lesson && !hasLesson(b.lesson) ? LESSONS.find(l => l.id === b.lesson) || null : null;
+}
 function maxed(b) {
     return (S.b[b.id] || 0) >= b.max;
 }
@@ -6449,7 +6462,32 @@ function addG(x) {
     return x;
 }
 /* rewards, in glimmers */
-const PAY = { task: { 1: 1, 3: 3, 8: 6 }, pick: 1, fixDone: 1, anomaly: 3, gold: 4, rested: 3, selfcare: 1, selfcareMax: 3, sweep: 1, file: 1 };
+const PAY = { task: { 1: 1, 3: 3, 8: 6 }, pick: 1, fixDone: 1, rested: 3, selfcare: 1, selfcareMax: 3, file: 1 };
+/* ambient things (owner, 24-10-2026): tasks are where glimmers come from. Sweeping and anomalies pay nothing; a golden
+   firefly gives 1 to 3 glimmers or a small thing, never both, at most AMB_GLIM glimmers a day. Small things found
+   without a task (a firefly past the cap, the floor, the hand, the raccoon) are at most AMB_FINDS a day. */
+const AMB_GLIM = 10, AMB_FINDS = 3;
+function ambToday() {
+    if (!S.amb || S.amb.d !== actDay())
+        S.amb = { d: actDay(), g: 0, f: 0 };
+    return S.amb;
+}
+function ambGlim() { // a golden firefly's glimmers, or 0 once the day's are given
+    const a = ambToday(), n = Math.min(1 + Math.floor(Math.random() * 3), AMB_GLIM - a.g);
+    if (n <= 0)
+        return 0;
+    a.g += n;
+    return addG(n);
+}
+function ambFind() { // a small thing found without a task, or null once the day's are found
+    const a = ambToday();
+    if (a.f >= AMB_FINDS)
+        return null;
+    const it = findTrinket();
+    if (it)
+        a.f++;
+    return it;
+}
 function decayMom(dtMs) {
     S.mom *= Math.pow(.5, dtMs / (36 * 3600e3));
 }
@@ -14721,7 +14759,7 @@ function guestTick(dt, now) {
                 const eye = Math.random() < .2 ? findEye("raccoon") : null; // raccoons find everything, eyes included
                 if (eye)
                     setTimeout(() => speak(`${g.name} also left an eye. ${eye.name}. "Found it," it said. For the jar.`, { ms: 5000 }), 6500);
-                const it = findTrinket(), took = choice(["a teaspoon", "one sock", "a button", "the bottle cap I was saving", "a bit of string", "a shiny pebble"]);
+                const it = ambFind(), took = choice(["a teaspoon", "one sock", "a button", "the bottle cap I was saving", "a bit of string", "a shiny pebble"]);
                 if (it) {
                     floatText(it, g.x, GY + g.z - g.s * 1.6, "#ffe39a");
                     setTimeout(() => speak(`${g.name} left ${/^(a|an|the|some) /i.test(it) ? it : "a " + it} and took ${took}. That's how raccoon trading works.`, { ms: 6000 }), 1800);
@@ -15035,7 +15073,7 @@ function pickVisitorLine() {
  * anomalies.js - Strange (mostly friendly) things that happen in the wagon when Strangeness is on, in whichever
  * room Mite is in (anom.room: the nook, the wagon or the archive; anomGeo says where that room's window and
  * light are). One at a time, in `anom` (canvas.js): { type, room, t (seconds since it began), x, y, life, ... }.
- * Tap it and Mite deals with it: resolveAnom() logs an incident and pays a few glimmers.
+ * Tap it and Mite deals with it: resolveAnom() logs an incident (no glimmers since 24-10-2026).
  * Unresolved ones leave on their own after `life` seconds. Types:
  *   door, phone, eyes                the originals
  *   tentacle   a cup of tea appears on the floor; something from below takes it
@@ -15304,9 +15342,7 @@ function anomStamp() {
 }
 function anomPay(a) {
     anomSeen(a);
-    S.incidents++;
-    const g = addG(PAY.anomaly);
-    floatText("+" + g, a.x, a.y - R, "#f3d9ff");
+    S.incidents++; // (no glimmers: owner, 24-10-2026)
 }
 /* the ghost's gift: one origami on the garland by the window */
 function leaveOrigami(a) {
@@ -15385,7 +15421,7 @@ function resolveAnom() {
         anomPay(a);
         a.fed = a.t;
         pet.start("curious", { tx: clamp(a.x - R * 1.2, W * .1, W * .9) });
-        const it = Math.random() < .3 ? findTrinket() : null;
+        const it = Math.random() < .3 ? ambFind() : null;
         setTimeout(() => speak(anomLine("hand") || "I gave it a biscuit. It gave me a little wave. Then it went back down."), 1300);
         if (it)
             setTimeout(() => speak(`It left something on the floor where it was: ${it}.`, { ms: 4000 }), 6000);
@@ -24988,7 +25024,7 @@ function ambientTalk() {
         return;
     }
     if (r < .42 && Math.random() < .3) {
-        const it = findTrinket();
+        const it = ambFind();
         if (it) {
             speak(`Oh. I found this on the floor: ${it}. Cabinet.`);
             afterChange();
@@ -25290,17 +25326,17 @@ function catchGold() {
     gold = null;
     nextGold = performance.now() + rnd(600e3, 1500e3);
     S.flies++;
-    const r = Math.random();
-    if (r < .7) {
-        const g = addG(PAY.gold);
+    const g = Math.random() < .7 ? ambGlim() : 0, it = g ? null : ambFind();
+    if (g) {
         floatText("+" + g, x, y, "#ffd76a");
         speak(choice(["Got it. It was full of glimmer.", "Caught. It tickles.", "A golden one. Good catch, us."]));
     }
-    else {
-        const it = findTrinket();
+    else if (it) {
         speak(`It had something inside: ${it}.`);
         floatText(it, x, y, "#ffd76a");
     }
+    else
+        speak(choice(["Caught. Nothing inside today, just light. That's allowed.", "Empty. It only wanted to be caught.", "Just light in this one. I let it go again."]));
     pet.trigger("celebrate");
     for (let i = 0; i < 14; i++)
         addP({ type: "spark", x, y, vx: rnd(-120, 120), vy: rnd(-140, 40), g: 200, max: 1.2, col: "#ffd76a", size: rnd(3, 5) });
@@ -25790,8 +25826,8 @@ function renderShop() {
         const el = document.createElement("div");
         el.className = "bld";
         shopFurnShown.add(b.id);
-        const shown = Math.min(own, b.max), needs = !own && b.needs && !S.b[b.needs] ? BUILDINGS.find(x => x.id === b.needs) : null; // (the vase stands on the chest)
-        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : needs ? `<span class="owned">Needs the ${esc(needs.name.toLowerCase())}</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
+        const shown = Math.min(own, b.max), needs = !own && b.needs && !S.b[b.needs] ? BUILDINGS.find(x => x.id === b.needs) : null, ls = !own && lessonLock(b); // (the vase stands on the chest; some things wait for a lesson)
+        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : needs ? `<span class="owned">Needs the ${esc(needs.name.toLowerCase())}</span>` : ls ? `<span class="owned">After the lesson ${esc(ls.name)}: ${ls.n - doneCount()} more task${ls.n - doneCount() === 1 ? "" : "s"}</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
         if (own && RUG_DEF[b.id]) { // a rug: its colour and shape (S.rugCol); colours past the first three are bought once, then go on any rug
             const cur = rugCol(b.id).id, row = document.createElement("div");
             row.className = "rugcols";
@@ -26010,7 +26046,7 @@ function setRugShape(id, v) {
 }
 function buy(b) {
     const c = cost(b);
-    if (S.g < c || maxed(b) || (b.needs && !S.b[b.needs]))
+    if (S.g < c || maxed(b) || (b.needs && !S.b[b.needs]) || lessonLock(b))
         return;
     sfx("coin");
     S.g -= c;
@@ -28541,9 +28577,7 @@ function sweepAt(x, y, room = "room") {
         if (Math.hypot(mx - x, my - y) < Math.max(22, R * .5)) {
             S.mess.splice(i, 1);
             any = true;
-            S.care.swept++;
-            if (S.care.swept % 3 === 0)
-                addG(PAY.sweep);
+            S.care.swept++; // (no glimmers: owner, 24-10-2026)
             basketAdd(m.t, room, mx, my); // up and into the possum's basket in the nook (basket.js)
             for (let j = 0; j < 4; j++)
                 addP({ type: "spark", x: mx, y: my, vx: rnd(-50, 50), vy: rnd(-70, -10), g: 160, max: .5, col: "#d8d2c0", size: 2, room });
