@@ -19109,18 +19109,11 @@ function drawGarden(now, dt) {
             }
             else
                 fbookHit = null;
-            // the letter rack on the right end: pigeonholes with the replies in them (post.js); new ones stick out, with a seal.
-            // No desk yet: it hangs on the wall there, from a nail
-            {
+            // the letter rack on the right end of the desk: pigeonholes with the replies in them (post.js); new ones stick
+            // out, with a seal. It comes with the desk (owner, 24-10: on the wall by itself it looked strange); letters
+            // for you that come before then open as a card (post.js, yourLetterCard) and wait for the rack
+            if (hasDesk()) {
                 const rw = R * .56, rh = R * .44, rx = dx1 - R * .1 - rw, ry = dTop - rh, inbox = (S.post && S.post.inbox) || [];
-                if (!hasDesk()) {
-                    cx.fillStyle = mix("#8a7a60", "#2a241c", dk);
-                    cx.fillRect(rx + rw * .2, ry - R * .22, Math.max(1, PX * .5), R * .22);
-                    cx.fillRect(rx + rw * .8, ry - R * .22, Math.max(1, PX * .5), R * .22);
-                    cx.fillRect(rx + rw * .2, ry - R * .22, rw * .6, Math.max(1, PX * .5));
-                    cx.fillStyle = woodD;
-                    cx.fillRect(rx + rw / 2 - PX, ry - R * .26, PX * 2, PX * 2); // the nail
-                }
                 cx.fillStyle = woodD;
                 cx.fillRect(rx, ry, rw, rh);
                 cx.fillStyle = mix("#3a2618", "#120c08", dk);
@@ -19857,12 +19850,31 @@ function postWelcome() {
     corrRegister("in", "the world", WELCOME_LETTER, Date.now(), true);
     S.post.worldAt = Date.now();
     saveSoon();
+    yourLetterCard();
+}
+/* no desk yet, so no rack: a letter for you opens as a card when it comes (once nothing else is open), and waits
+   for the rack. Mite puts it in when the desk comes (buy, shop.js) */
+let yourCardTimer = 0;
+function yourLetterCard() {
+    clearTimeout(yourCardTimer);
+    yourCardTimer = setTimeout(function tryCard() {
+        const l = ((S.post && S.post.inbox) || []).find(x => x.you && !x.read);
+        if (!l || hasDesk())
+            return;
+        if (!booted || !$("ritual").hidden || talkHeld() || !$("dlg").hidden) {
+            yourCardTimer = setTimeout(tryCard, 3000);
+            return;
+        }
+        l.read = 1;
+        saveSoon();
+        showYourLetter(l);
+    }, 7000);
 }
 /* a letter for you, opened: on a card, as written */
 function showYourLetter(l) {
-    const first = l.text === WELCOME_LETTER;
-    openRitual(first ? "A letter, for you" : "Another letter from the world", first ? `It was in the rack when we got here. It's addressed to you, not me.` : `It came in the post. For you again.`,
-        `<div class="letter">${esc(homeTxt(l.text)).replace(/\n/g, "<br>")}</div>`, [["Put it back in the rack", "primary", closeRitual]]);
+    const first = l.text === WELCOME_LETTER, desk = hasDesk();
+    openRitual(first ? "A letter, for you" : "Another letter from the world", first ? `It came when we got here. It's addressed to you, not me.` : `It came in the post. For you again.`,
+        `<div class="letter">${esc(homeTxt(l.text)).replace(/\n/g, "<br>")}</div>`, [[desk ? "Put it back in the rack" : "Keep it (it goes in the rack once there's a desk)", "primary", closeRitual]]);
     sfx("card");
     return 3;
 }
@@ -19896,8 +19908,15 @@ function postTick(now) {
             corrRegister("in", "the world", text.replace(/ \/ /g, "\n\n"), t, true);
             if (S.post.inbox.length > 40)
                 S.post.inbox.splice(0, S.post.inbox.length - 40);
-            note("A letter came for you, from the world. It's in the rack in the nook.");
-            speak("A letter came. Not for me: it's got your name on it. It's in the rack in the nook.", { ms: 5000 });
+            if (hasDesk()) {
+                note("A letter came for you, from the world. It's in the rack in the nook.");
+                speak("A letter came. Not for me: it's got your name on it. It's in the rack in the nook.", { ms: 5000 });
+            }
+            else {
+                note("A letter came for you, from the world.");
+                speak("A letter came. Not for me: it's got your name on it.", { ms: 4000 });
+                yourLetterCard();
+            }
         }
         saveSoon();
     }
@@ -26003,6 +26022,8 @@ function buy(b) {
     else if (S.b[b.id] === 1 && b.id === "desk") {
         buySpeak("A writing desk, under the round window. An inkpot, a quill, a drawer that sticks a little. I'll write someone a letter today.", { ms: 7000 });
         note("Got the writing desk.");
+        if (((S.post && S.post.inbox) || []).some(l => l.you))
+            setTimeout(() => speak("And your letter from the world goes in the rack on the desk. I'd been keeping it safe.", { ms: 5000 }), 8000);
     }
     else if (S.b[b.id] === 1 && b.id === "gramo") {
         buySpeak("A gramophone, up by the pinboard. It came with one record. Or the record came with it. Tap it and I'll wind it up.", { ms: 7000 });
@@ -29996,7 +30017,7 @@ function starterGift() {
     S.gTotal += 100;
     note("A starting gift: 100 glimmers, for the shop.");
     postWelcome(); // and a letter on the desk in the nook (post.js)
-    setTimeout(() => note("There's a letter for you in the rack on the writing desk, in the nook."), 0);
+    setTimeout(() => note(hasDesk() ? "There's a letter for you in the rack on the writing desk, in the nook." : "A letter came for you, from the world."), 0);
     setTimeout(() => toast("100 glimmers to start with. The shop is in the Satchel → Shop."), 9000);
     afterChange();
 }
