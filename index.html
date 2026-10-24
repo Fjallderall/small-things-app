@@ -25733,6 +25733,21 @@ function renderShop() {
                 rw.onclick = () => buyRugRect(b.id);
             el.firstElementChild.appendChild(sh);
         }
+        if (own && b.id === "kettle") { // which kettles Mite uses, on the kettle's own card like a rug's colours: tap to switch one on or off (one at least), Mite takes one of these at random; ones not bought yet show their price (owner, 24-10)
+            const row = document.createElement("div");
+            row.className = "rugcols";
+            row.setAttribute("role", "group");
+            row.setAttribute("aria-label", "Kettles in use");
+            const kOwn = kettlesOwned(), ksw = k => `background:${k.body};box-shadow:inset 0 0 0 3px ${k.body},inset 0 0 0 5px ${k.flower || k.dark}`;
+            row.innerHTML = KETTLE_STYLES.map(k => kOwn.includes(k)
+                ? `<button type="button" class="rugsw" data-kt="${k.sid}" aria-pressed="${isShown(k.sid)}" title="${esc(k.name)}" aria-label="${esc(k.name)}" style="${ksw(k)}"></button>`
+                : `<button type="button" class="rugsw buy" data-kb="${k.sid}" ${S.g < k.price ? "disabled" : ""} title="${esc(k.name)}: ${k.price} glimmers" aria-label="Buy the ${esc(k.name.toLowerCase())} for ${k.price} glimmers" style="${ksw(k)}"><span>${k.price}◆</span></button>`).join("");
+            row.querySelectorAll("[data-kt]").forEach(bt => bt.onclick = () => toggleKettle(bt.dataset.kt));
+            row.querySelectorAll("[data-kb]").forEach(bt => bt.onclick = () => buyKettle(KETTLE_STYLES.find(k => k.sid === bt.dataset.kb)));
+            const hint = document.createElement("p");
+            hint.textContent = `In use: ${S.settings.pet} takes one of these at random for each brew.`;
+            el.firstElementChild.append(hint, row);
+        }
         const bb = el.querySelector("[data-b]");
         if (bb)
             bb.onclick = () => buy(b);
@@ -25781,14 +25796,6 @@ function renderShop() {
     });
     const kts = $("kettleShop"); // the kettles: Mite takes one of the ones in the scene at random for each brew
     kts.innerHTML = "";
-    const kOwn = kettlesOwned();
-    if (kOwn.length > 1) { // which kettles Mite uses: tap to pick, like a rug's colour, but any number (one at least); Mite takes one of these at random (owner, 24-10)
-        const row = document.createElement("div");
-        row.className = "bld kettlepick";
-        row.innerHTML = `<div style="min-width:0"><b>Kettles in use</b><p>${esc(S.settings.pet)} takes one of these at random for each brew.</p><div class="rugcols" role="group" aria-label="Kettles in use">${kOwn.map(k => `<button type="button" class="rugsw" data-kt="${k.sid}" aria-pressed="${isShown(k.sid)}" title="${esc(k.name)}" aria-label="${esc(k.name)}" style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 6px ${k.body},inset 0 0 0 11px ${k.flower}` : ""}"></button>`).join("")}</div></div>`;
-        row.querySelectorAll("[data-kt]").forEach(bt => bt.onclick = () => toggleKettle(bt.dataset.kt));
-        kts.appendChild(row);
-    }
     KETTLE_STYLES.forEach(k => {
         const own = kettlesOwned().includes(k), noKettle = !S.b.kettle;
         const where = !own ? "" : !isShown(k.sid) ? "not in use" : kettleStyle() === k.id ? "on the stove" : "on the shelf";
@@ -25870,7 +25877,7 @@ function buyKettle(k) {
     burst("spark", 6);
     afterChange();
 }
-/* a kettle in or out of use (the picker above the kettles); the last one in use stays */
+/* a kettle in or out of use (the picker on the tea kettle's card); the last one in use stays */
 function toggleKettle(sid) {
     const k = KETTLE_STYLES.find(x => x.sid === sid);
     if (!k || !kettlesOwned().includes(k))
