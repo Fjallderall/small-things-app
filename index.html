@@ -843,6 +843,8 @@ body.editing #addForm{display:none}
         <div class="shop" id="plantShop"></div></details>
       <details class="shopsec" data-sec="crystals" open><summary><h3>Crystals</h3><span class="seccount" id="cnt-crystals"></span><span class="secnew" id="new-crystals" hidden>new</span></summary><p class="sub">For the crystal shelf on the wall. Tap the shelf to look at them up close and see your glimmers.</p>
         <div class="shop" id="crystalShop"></div></details>
+      <details class="shopsec" data-sec="pantry" open><summary><h3>Pantry</h3><span class="seccount" id="cnt-pantry"></span></summary><p class="sub">Little things to buy again and again: an ingredient makes the next bake or pot of tea a special one, a treat goes to one of the residents.</p>
+        <div class="shop" id="pantryShop"></div></details>
       <details class="shopsec" data-sec="wall" open><summary><h3>On the wall</h3><span class="seccount" id="cnt-wall"></span><span class="secnew" id="new-wall" hidden>new</span></summary><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p>
         <div class="shop" id="wallShop"></div></details>
       <details class="shopsec" data-sec="splurge" open hidden><summary><h3>Something special</h3><span class="seccount" id="cnt-splurge"></span><span class="secnew" id="new-splurge" hidden>new</span></summary><p class="sub">A treat for the wagon, for the rest of the day. When the new day starts it's gone, and you can pick another.</p>
@@ -1072,7 +1074,7 @@ const POOL_INFO = {
     paint_medium: "While painting, about what it's painting with: medium | text (oils, acrylic, watercolour, gouache, pastel, chalk, pencil, marker, charcoal, ink, crayon, tempera)",
     paint_smell: "Now and then through the day: what the wagon smells like from the paint (medium | text, as paint_medium)",
     paint_carry: "A painting that wasn't finished goes on the next day ({item}: its title)",
-    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for the Cabinet: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", cat_circle_go: "Midnightcat, stepping out of the chalk circle so Mite can have a turn", cat_circle_wait: "Midnightcat, asking Mite to wait: she's busy in the chalk circle", circle_mite_wait: "Mite, waiting for its turn at the chalk circle while Midnightcat finishes", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the rug in the wagon ({rugcol}: its colour)", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the rug in the nook ({rugcol}: its colour)", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the archive's name plate ({plate}: what it says today)", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the rug in the archive ({rugcol}: its colour)", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})", serials: "Stories pen pals tell over several letters: Who | the letter (Who: a word from their name; the bits in order)", phone_key: "The phone: someone asking after a small brass key", key_thanks: "A letter from whoever had the brass key, after you gave it back (use / for a new paragraph)", kindreports: "The kind report anomaly: Who filed it | what it says | the Bureau memo explaining it ({pet})", look_puddle: "Mite, after mopping up the flowers' puddle", puddle_odd: "Mite, after mopping up a strange puddle (ink, honey, something glowing)", puddle_still: "Mite, mopping while the flowers still drip", archterms: "Archival terms Mite explains: Term | what it means", archive_digitise: "Archival work: digitising, scanning", archive_retention: "Archival work: the retention schedule", archive_deaccession: "Archival work: deaccessioning, weeding", archive_disaster: "Archival work: the disaster plan", archive_authority: "Archival work: authority records, names", archive_migrate: "Archival work: format migration, emulation", trinkets_spring: "Small things only found in spring: Name | note", trinkets_summer: "Small things only found in summer: Name | note", trinkets_autumn: "Small things only found in autumn: Name | note", trinkets_winter: "Small things only found in winter: Name | note"
+    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for the Cabinet: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", cat_circle_go: "Midnightcat, stepping out of the chalk circle so Mite can have a turn", cat_circle_wait: "Midnightcat, asking Mite to wait: she's busy in the chalk circle", circle_mite_wait: "Mite, waiting for its turn at the chalk circle while Midnightcat finishes", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the rug in the wagon ({rugcol}: its colour)", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the rug in the nook ({rugcol}: its colour)", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the archive's name plate ({plate}: what it says today)", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the rug in the archive ({rugcol}: its colour)", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})", serials: "Stories pen pals tell over several letters: Who | the letter (Who: a word from their name; the bits in order)", phone_key: "The phone: someone asking after a small brass key", key_thanks: "A letter from whoever had the brass key, after you gave it back (use / for a new paragraph)", kindreports: "The kind report anomaly: Who filed it | what it says | the Bureau memo explaining it ({pet})", look_puddle: "Mite, after mopping up the flowers' puddle", puddle_odd: "Mite, after mopping up a strange puddle (ink, honey, something glowing)", puddle_still: "Mite, mopping while the flowers still drip", archterms: "Archival terms Mite explains: Term | what it means", archive_digitise: "Archival work: digitising, scanning", archive_retention: "Archival work: the retention schedule", archive_deaccession: "Archival work: deaccessioning, weeding", archive_disaster: "Archival work: the disaster plan", archive_authority: "Archival work: authority records, names", archive_migrate: "Archival work: format migration, emulation", trinkets_spring: "Small things only found in spring: Name | note", trinkets_summer: "Small things only found in summer: Name | note", trinkets_autumn: "Small things only found in autumn: Name | note", trinkets_winter: "Small things only found in winter: Name | note", pantry_honey: "A special bake with wild honey from the pantry: same as bakes", pantry_spice: "A special bake with ember spice from the pantry: same as bakes", pantry_moonsugar: "A special bake with moon-sugar from the pantry: same as bakes", pantry_smoketea: "A special pot of smoked tea from the pantry: same as brews", pantry_starmint: "A special pot of star-mint tea from the pantry: same as brews", pantry_fogflower: "A special pot of fog-flower tea from the pantry: same as brews", treat_cat: "Mite, giving Midnightcat her catnip from the pantry", treat_possum: "Mite, giving the possum a bin-day biscuit from the pantry ({possum} is its name)", treat_snail: "Mite, giving the snail a lettuce leaf from the pantry ({snail} is its name)"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -1990,6 +1992,63 @@ const DEF = {
             "[night] P: Can't sleep? / S: …Thinking about leaves. / P: Me too. Different reasons.",
         ],
         possumnames: ["Crumpet", "Biscuit", "Dumpling", "Teaspoon", "Pudding", "Parsnip", "Mothball", "Button"],
+        pantry_honey: [
+            "Honey cake | It's still warm. The bees would approve, I think. I didn't ask them. | cake #e0a33c glow",
+            "Honey buns | Sticky. Everything I touch is a bit sticky now, including the calendar. | bun #d9a052",
+            "Honeycomb tart | The pattern came out on its own. The tart knows what it is. | tart #f0c040 sparkle",
+            "Honey bread | One slice for now, one for later, one for the bit of later after that. | bread #c8873e"
+        ],
+        pantry_spice: [
+            "Ember gingerbread | Warm all the way through, even the next day. Like a hearth you can eat. | gingerbread #a8683a smoke",
+            "Spice muffins | The wagon smells like an autumn I haven't had yet. | muffin #8a5a32",
+            "Ember pie | It hums when you cut it. Low and friendly. | pie #c8562f glow",
+            "Spiced buns | One crackled when I bit it. Like a log settling. | bun #b0602a sparkle"
+        ],
+        pantry_moonsugar: [
+            "Moon-sugar cookies | They glow a little in the dark. They taste of a clear night. | cookies #dcdcf0 glow",
+            "Crescent rolls, dusted | The sugar settles in the shape of tonight's moon, whichever one it is. | croissant #e8e0d0 sparkle",
+            "Pale moon cake | It's lighter than it should be. I had to hold it down while it cooled. | cake #e8e8f8 float",
+            "Midnight pudding | Dark on the outside, a little moon on top. Best eaten without looking. | pudding #3a3050 glow"
+        ],
+        pantry_smoketea: [
+            "Smoked tea | Tastes like sitting by a campfire somebody else is minding. | #6b3e26 cup=mug smoke",
+            "Fog over the kettle | The steam stays in the cup. It doesn't want to leave either. | #5a3a28 cup=teacup smoke layers",
+            "Old-boat tea | Smoky, salty, almost. The raccoon says that's how harbours taste. | #4a3020 cup=flask smoke",
+            "Ember-leaf tea | Hot even after it's gone cold. I don't know how. | #8a4a2a cup=mug glow"
+        ],
+        pantry_starmint: [
+            "Star mint tea | Cool and bright. Little points of light drift to the top. | #8fbf5a cup=glass float=star sparkle",
+            "Mint by moonlight | Tastes greener after dark. I checked twice. | #6fa87a cup=teacup float=moon glow",
+            "Cold star mint | It clinks, and there's no ice in it. | #a8d8b0 cup=glass bubbles",
+            "Pointing mint | One leaf on top, and it points north. Every time. | #7ab86a cup=mug float=leaf sparkle"
+        ],
+        pantry_fogflower: [
+            "Fog-flower tea | Pale grey and soft. I can't see the bottom of the cup, and the cup isn't deep. | #c8ccd4 cup=teacup layers",
+            "Fog bloom | A petal opens in the bowl, then a little mist comes out to look around. | #d8d0e0 cup=bowl float=petal smoke",
+            "Grey garden tea | Tastes like a garden early in the morning, before anyone's up. | #b0b8b0 cup=mug foam",
+            "Fog-flower in a thimble | Just a sip. That's all fog-flower needs. | #e0e0e8 cup=thimble glow"
+        ],
+        treat_cat: [
+            "A pinch of catnip for Midnightcat. She pretends not to care. She cares.",
+            "Catnip, delivered. Midnightcat rolled over twice and then looked very dignified about it.",
+            "I gave Midnightcat her catnip. She said something in Old Cat. I think it was a blessing.",
+            "Catnip for the archive cat. She's chasing something only she can see now. Normal.",
+            "Midnightcat accepted the catnip as tribute. I'm on her good list. For now."
+        ],
+        treat_possum: [
+            "A bin-day biscuit for {possum}. It held it like a medal.",
+            "{possum} got a biscuit. It's saving half in the basket, for a rainy night.",
+            "Here, {possum}. Shaped like a little bin. It thought that was very thoughtful.",
+            "{possum} took the biscuit, said thank you, and ate it upside down.",
+            "Bin-day biscuit, for {possum}. It closed its eyes while it ate. That's how you know."
+        ],
+        treat_snail: [
+            "A crisp lettuce leaf for {snail}. It will take about an hour. It's looking forward to every minute.",
+            "{snail} got its lettuce. It's eating very carefully around the holes it made.",
+            "Lettuce for {snail}. It said it will mention this on its post round.",
+            "I gave {snail} a leaf. It made a small, slow sound of joy.",
+            "{snail} is eating its lettuce in a straight line. Archive habits."
+        ],
         possumcookie: [
             "One for {possum}. Only one. ...Fine, two.",
             "{possum} has been waiting very patiently. And very close to the oven.",
@@ -4021,6 +4080,19 @@ const ACH = [
     ["fx1", "Root cause", "Finish a task from the fix-it list", s => (S.flags.fixes || 0) >= 1], ["fx5", "Quietly better", "Finish 5 fix-it tasks", s => (S.flags.fixes || 0) >= 5],
     ["fn10", "Field notes", "Jot down 10 things", s => S.tasks.filter(t => t.jot).length >= 10]
 ];
+/* the pantry (pantry.js): ingredients and treats, bought again and again */
+const PANTRY_MAX = 9;
+const PANTRY = [
+    { id: "honey", k: "bake", name: "Jar of wild honey", price: 3, note: "For one special bake in the oven." },
+    { id: "spice", k: "bake", name: "Ember spice", price: 3, note: "Warm to the touch. For one special bake." },
+    { id: "moonsugar", k: "bake", name: "Moon-sugar", price: 4, note: "Pale and a little luminous. For one special bake." },
+    { id: "smoketea", k: "brew", name: "Smoked tea leaves", price: 3, note: "For one special pot of tea." },
+    { id: "starmint", k: "brew", name: "Star mint", price: 4, note: "Cool, with points of light in it. For one special pot of tea." },
+    { id: "fogflower", k: "brew", name: "Fog-flower petals", price: 5, note: "Grey, soft, slightly there. For one special pot of tea." },
+    { id: "tcat", k: "treat", who: "cat", name: "Pouch of catnip", price: 2, note: "Mite gives it to Midnightcat the next time it visits her." },
+    { id: "tpossum", k: "treat", who: "possum", name: "Bin-day biscuit", price: 2, note: "For the possum, the next time Mite goes over to it." },
+    { id: "tsnail", k: "treat", who: "snail", name: "Crisp lettuce leaf", price: 2, note: "For the snail, the next time Mite goes over to it." }
+];
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 /* jotted notes (ids only) about building the app that were done by 24-10-2026, let go once on every device (boot.js) */
 const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu36t", "mvjpagoy1syb1", "mvjpb443c2gto", "mvjpbskekc1q9", "mvjqs6i428ut6", "mvjquch2oh80f", "mvjqvuayxpolg", "mvjqwymqsqqfb", "mvjqzixvljhjx", "mvjr05c1njw7f", "mvjr0wr17ab5l", "mvjr1ww7vc41b", "mvjr6es1nrbdw", "mvjrfezbbrzza", "mvjrfkz8nhw17", "mvjrm5h6f26b1", "mvjroybcgeebb", "mvjrptomfr8ww", "mvjrqsr0hq6ab", "mvjrrsreyxeby", "mvjry42ynq0x0", "mvjs8n0083gmu", "mvjs9vxev9amu", "mvjsahfwipc90", "mvjsdx24ntc6v", "mvjsfn3013t02", "mvjskwaca6cd8", "mvjsm32nua3xh", "mvjtouym4i2su", "mvjw1fdk5tpf8", "mvjz59v270u9o", "mvjzbh9eg3whh", "mvk0f6570eibb", "mvk0m6i65t03d", "mvk0o4nstcon0", "mvk103prpwve6", "mvk18107y2rq8", "mvkkhbp8gtot0", "mvkkibdo51e6o", "mvkklocvzcwsp", "mvkkucxwu0066", "mvkkvzg2z19a6", "mvkkxwnav3z2x", "mvkkzk8eal2x5", "mvkna90pei7x3", "mvkqk1xd3ms3m", "mvkqm9un5q346", "mvktt6diowg3u", "mvl4grtyeru5z", "mvligczo3d9e6", "mvlipjr17z5os", "mvlipz25tvn7v", "mvlir76umr9a9", "mvliswef2x3x8", "mvljfkhj1wpal", "mvljgnrxwpx4k", "mvljkcx6he9dt",
@@ -4036,7 +4108,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -4229,6 +4301,10 @@ function sanitizeState(raw) {
         o.b["kt_" + o.kettleStyle.k] = 1;
     o.journal = { name: str(s.journal && s.journal.name, 40).replace(/\s+/g, " ").trim() || "Small journal", at: num(s.journal && s.journal.at) }; // the journal's name (journal.js)
     o.amb = { d: s.amb && dkey(s.amb.d) ? dkey(s.amb.d) : "", g: clamp(num(s.amb && s.amb.g), 0, AMB_GLIM), f: clamp(num(s.amb && s.amb.f), 0, AMB_FINDS) }; // today's glimmers and finds from ambient things (economy.js)
+    o.pantry = {}; // ingredients and treats in stock (pantry.js)
+    for (const [k, v] of Object.entries(numMap(s.pantry)))
+        if (PANTRY.some(it => it.id === k) && num(v) > 0)
+            o.pantry[k] = Math.min(PANTRY_MAX, Math.floor(num(v)));
     o.splurge = { k: s.splurge && ["ice", "balloons", "cake", "fireworks"].includes(s.splurge.k) ? s.splurge.k : "", at: num(s.splurge && s.splurge.at) }; // the day's treat (splurge.js)
     { // the raccoon's barter: this week's stock and what's been traded (barter.js)
         const b = s.barter && typeof s.barter === "object" ? s.barter : {};
@@ -4527,6 +4603,7 @@ function mergeStates(a, b) {
         const x = a.amb || { d: "", g: 0, f: 0 }, y = b.amb || { d: "", g: 0, f: 0 };
         o.amb = x.d === y.d ? { d: x.d, g: Math.max(num(x.g), num(y.g)), f: Math.max(num(x.f), num(y.f)) } : Object.assign({}, x.d > y.d ? x : y);
     }
+    o.pantry = Object.assign({}, nw.pantry || {}); // (the newer save's stock: what was used up stays used up)
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
     o.shopSeen = { ids: [...new Set([...((a.shopSeen || {}).ids || []), ...((b.shopSeen || {}).ids || [])])].slice(-600), at: Math.max(num((a.shopSeen || {}).at), num((b.shopSeen || {}).at)) };
     o.barterOwn = uniq([...(a.barterOwn || []), ...(b.barterOwn || [])], x => x.k + "|" + String(x.n).toLowerCase()).slice(0, 400); // everything traded, from either side
@@ -10961,7 +11038,7 @@ const SCOPE_CAP = {
  * walked over: requestObj(kind) queues it (one more can wait), startObj starts the behaviour
  * from OBJ_ACT, and its show() runs at the moment of arrival (revealAt). objTick ends it.
  */
-const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () => showGlimpse() }, gdrawers: { beh: "opendrawer", revealAt: .8, show: () => openDrawer() }, gchair: { beh: "armread", revealAt: 1.2, show: () => showBook() || 8 }, gletters: { beh: "readletter", revealAt: .6, show: () => readLetter() }, cat: { beh: "catvisit", revealAt: 0, show: () => 8 }, possum: { beh: "possumchat", revealAt: 0, show: () => 8 }, possumcookie: { beh: "givecookie", revealAt: 0, room: "room", show: () => 5 }, gdesk: { beh: "write", revealAt: .3, show: () => 6 }, gplants: { beh: "gwater", revealAt: .6, show: () => {
+const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () => showGlimpse() }, gdrawers: { beh: "opendrawer", revealAt: .8, show: () => openDrawer() }, gchair: { beh: "armread", revealAt: 1.2, show: () => showBook() || 8 }, gletters: { beh: "readletter", revealAt: .6, show: () => readLetter() }, cat: { beh: "catvisit", revealAt: 0, show: () => (treatGive("cat"), 8) }, possum: { beh: "possumchat", revealAt: 0, show: () => (treatGive("possum"), 8) }, possumcookie: { beh: "givecookie", revealAt: 0, room: "room", show: () => 5 }, gdesk: { beh: "write", revealAt: .3, show: () => 6 }, gplants: { beh: "gwater", revealAt: .6, show: () => {
             const pl = pet.b && pet.b.sp && pet.b.sp.k === "sill" ? sillPlants("garden") : []; // (the window sill's pots: Mite says which one)
             if (pl.length) {
                 const p = choice(pl);
@@ -10979,7 +11056,7 @@ const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () 
             if (line && possum.ph === "hang")
                 snailSay(line, clamp(3000 + line.length * 45, 4000, 9000), "possum");
             return 5;
-        } }, guest: { beh: "guestchat", revealAt: 0, show: () => 8 }, snail: { beh: "snailchat", revealAt: 0, show: () => 8 }, oven: { beh: "bake", revealAt: 1.4, show: () => {
+        } }, guest: { beh: "guestchat", revealAt: 0, show: () => 8 }, snail: { beh: "snailchat", revealAt: 0, show: () => (treatGive("snail"), 8) }, oven: { beh: "bake", revealAt: 1.4, show: () => {
             startOvenJob();
             speak(choice(["In it goes. Now we wait.", "There. I'll keep an eye on it.", "Oven's on. I'll check on it in a bit."]), { ms: 3200 });
             return 2;
@@ -11544,7 +11621,8 @@ function showBrew() {
         recentBrews.length = 0;
         cand = all;
     }
-    const pick = choice(cand);
+    const special = pantryUse("brew"); // an ingredient in the pantry: a special pot of tea (pantry.js)
+    const pick = special || choice(cand);
     recentBrews.push(pick.text);
     if (recentBrews.length > Math.min(30, all.length - 1))
         recentBrews.shift();
@@ -13247,7 +13325,8 @@ function showBake() {
         recentBakes.length = 0;
         cand = all;
     }
-    const pick = choice(cand);
+    const special = typeof possumHere === "function" && !possumHere() ? null : pantryUse("bake"); // an ingredient in the pantry: a special bake (pantry.js; not before the possum has come in for its cookies)
+    const pick = special || choice(cand);
     recentBakes.push(pick.text);
     if (recentBakes.length > Math.min(30, all.length - 1))
         recentBakes.shift();
@@ -25923,6 +26002,7 @@ function renderShop() {
     $("shopBal").textContent = `You have ${S.g} glimmer${S.g === 1 ? "" : "s"}.`;
     const n = doneCount();
     $("lessons").innerHTML = LESSONS.map(l => `<li class="${n >= l.n ? "got" : ""}">${n >= l.n ? esc(l.name) : "Lesson " + (LESSONS.indexOf(l) + 1)}<small>${n >= l.n ? "learned" : `${n}/${l.n} tasks`}</small></li>`).join("");
+    renderPantry(); // ingredients and treats, to buy again and again (pantry.js)
     renderBarter(); // this week's things from the raccoon (barter.js)
     renderSplurges(); // a treat for a day (splurge.js)
     shopSections();
@@ -25940,6 +26020,10 @@ function updateShopAfford() {
         bt.textContent = c + " ◆";
         bt.disabled = S.g < c;
         bt.title = `${c} glimmers`;
+    });
+    document.querySelectorAll("#pantryShop button[data-p]").forEach(bt => {
+        const it = PANTRY.find(x => x.id === bt.dataset.p);
+        bt.disabled = !it || S.g < it.price;
     });
     {
         const el = $("shopBal");
@@ -26191,6 +26275,95 @@ function barterTrade(i) {
     note(`Traded ${s.price} glimmers with ${raccoonName()} for ${info.name.toLowerCase()}.`);
     buySpeak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, { tea: `${info.name}. I'll put it with the other teas. The kettle's already curious.`, bake: `${info.name}. I've got the recipe now too. The oven will make it some days.`, flower: `${info.name}. Straight into the vase.`, curio: `${info.name}! It gets its own drawer in the Cabinet.`, eye: (S.eyes || []).filter(inRaccJar).length === 1 ? `${info.name}. ${raccoonName()} brought a jar for it too, its own. For the rest of them, it says.` : `${info.name}. Into the raccoon's jar, with the others it brought.` }[s.k]]), { ms: 5000 });
     afterChange();
+}
+
+</script>
+<script>/* js/ui/pantry.js */
+"use strict";
+/*
+ * pantry.js - Small things to buy again and again (owner, 24-10-2026: glimmers need somewhere to go once the shop is
+ * bought out). Ingredients: baking and tea stay free, but with one in the pantry the next bake or pot of tea is a
+ * special one (pools pantry_<id>, the usual "Name | remark | look" lines). Treats: given to a resident the next
+ * time Mite goes over to it (pools treat_cat, treat_possum, treat_snail). Stock in S.pantry {id: n}, at most
+ * PANTRY_MAX of each.
+ */
+/* PANTRY and PANTRY_MAX are in world.js (the save needs them early) */
+/* what an item needs before it can be bought: the oven, the kettle, the possum, the snail */
+function pantryNeeds(it) {
+    if (it.k === "bake" && !S.b.oven)
+        return "Needs the oven";
+    if (it.k === "brew" && !S.b.kettle)
+        return "Needs the kettle";
+    if (it.who === "possum" && !(typeof possumHere === "function" && possumHere()))
+        return "Nobody to give it to yet";
+    if (it.who === "snail" && !S.b.snail)
+        return "Needs the snail";
+    return "";
+}
+function pantryN(id) {
+    return num((S.pantry || {})[id]);
+}
+function buyPantry(it) {
+    if (S.g < it.price || pantryN(it.id) >= PANTRY_MAX || pantryNeeds(it))
+        return;
+    sfx("coin");
+    S.g -= it.price;
+    S.pantry = S.pantry || {};
+    S.pantry[it.id] = pantryN(it.id) + 1;
+    if (pantryN(it.id) === 1)
+        buySpeak(it.k === "treat" ? `${it.name}. I'll take it over next time.` : `${it.name}, into the pantry. The next ${it.k === "bake" ? "bake" : "pot of tea"} will be a special one.`, { ms: 4000 });
+    afterChange();
+    renderShop();
+}
+/* the next bake or brew: a special one if there's an ingredient for it. Takes one and gives its line, or null */
+function pantryUse(k) {
+    const have = PANTRY.filter(it => it.k === k && pantryN(it.id) > 0);
+    if (!have.length)
+        return null;
+    const it = choice(have), c = ctx();
+    const lines = pool("pantry_" + it.id).map(parseLine).filter(x => x.text.includes("|") && x.conds.every(q => condOk(q, c) !== false));
+    if (!lines.length)
+        return null;
+    S.pantry[it.id] = pantryN(it.id) - 1;
+    const pick = choice(lines);
+    note(`Used the ${it.name.toLowerCase().replace(/^jar of /, "")}: ${pick.text.split("|")[0].trim()}.`);
+    return pick;
+}
+/* Mite's reached a resident: a treat, if there's one for it. A line and a few hearts over the resident */
+function treatGive(who) {
+    const it = PANTRY.find(x => x.who === who);
+    if (!it || pantryN(it.id) <= 0 || pantryNeeds(it))
+        return false;
+    const line = compose("treat_" + who);
+    if (!line)
+        return false;
+    S.pantry[it.id] = pantryN(it.id) - 1;
+    const p = who === "cat" ? { x: cat.x, y: catBox().y0, room: cat.room } : who === "possum" ? Object.assign(possumPos(), { room: possum.room }) : Object.assign(snailPos(), { room: snailRoom });
+    for (let i = 0; i < 5; i++)
+        addP({ type: "heart", room: p.room, x: p.x + rnd(-R * .2, R * .2), y: p.y - R * .2, vx: rnd(-20, 20), vy: -rnd(30, 60), g: -20, max: 1.3, col: "#e3a0b2", rot: 0, vr: 0, size: rnd(3, 5) });
+    speak(line, { ms: clamp(3000 + line.length * 45, 4000, 9000) });
+    saveSoon();
+    return true;
+}
+function renderPantry() {
+    const el = $("pantryShop");
+    if (!el)
+        return;
+    el.innerHTML = "";
+    PANTRY.forEach(it => {
+        const n = pantryN(it.id), need = pantryNeeds(it), row = document.createElement("div");
+        row.className = "bld";
+        row.innerHTML = `<div style="min-width:0"><b>${esc(it.name)}</b><span class="own">${n ? n + " in the pantry" : ""}</span><p>${esc(it.note)}</p></div><span class="bacts">${need ? `<span class="owned">${esc(need)}</span>` : n >= PANTRY_MAX ? `<span class="owned">The shelf is full</span>` : `<button class="btn amber" data-p="${it.id}" ${S.g < it.price ? "disabled" : ""} aria-label="Buy ${esc(it.name)} for ${it.price} glimmers">${it.price} ◆</button>`}</span>`;
+        const bt = row.querySelector("[data-p]");
+        if (bt)
+            bt.onclick = () => buyPantry(it);
+        el.appendChild(row);
+    });
+    const cnt = $("cnt-pantry");
+    if (cnt) {
+        const tot = PANTRY.reduce((a, it) => a + pantryN(it.id), 0);
+        cnt.textContent = tot ? `${tot} in stock` : "";
+    }
 }
 
 </script>
@@ -28723,13 +28896,12 @@ $("gameBox").addEventListener("click", e => {
     }
 });
 function endGame(score, label) {
-    const f = game.f;
-    const rw = addG(f < 1 ? (score >= .66 ? 1 : 0) : 1 + Math.round(2 * score));
+    // (no glimmers for games: owner, 24-10-2026; they're for fun)
     S.care.games++;
     game = null;
     $("gameBox").hidden = true;
     pet.start(score >= .66 ? "celebrate" : "hop");
-    toast(`${label}${rw ? ` · +${rw} glimmer${rw > 1 ? "s" : ""}` : ""}${f < 1 ? " (games pay less after three a day)" : ""}`);
+    toast(label);
     afterChange();
 }
 function closeGame() {
