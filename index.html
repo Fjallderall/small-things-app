@@ -896,7 +896,7 @@ body.editing #addForm{display:none}
 
     <div class="pane" id="tab-notebook" role="tabpanel" hidden>
       <div><h2><span class="pn">Mite</span>'s notebook</h2><p class="sub">What <span class="pn">Mite</span> noticed today, written down on its own. A fresh page every day, at the hour set under Settings (0500 to start with).</p></div>
-      <details class="shopsec colsec" data-sec="nb-heard" open><summary><h3>Overheard</h3></summary><p class="sub">Today's conversations with the snail, the cat, the possum and visitors.</p>
+      <details class="shopsec colsec" data-sec="nb-heard" open><summary><h3>Overheard</h3></summary><p class="sub">The last 50 things said: <span class="pn">Mite</span> on its own, and conversations with the snail, the cat, the possum and visitors.</p>
         <div class="heard" id="heard"></div></details>
       <details class="shopsec colsec" data-sec="nb-words" open><summary><h3>Words <span class="pn">Mite</span> invented</h3></summary>
         <div class="words" id="words"></div></details>
@@ -3320,10 +3320,10 @@ const DEF = {
             "[autumn] V: The leaves are pretending to be birds again. / M: Did you fall for it? / V: Twice. Pass the {treat}.",
             "[winter] V: Everyone outside is wearing their breath. / M: Like scarves? / V: Like small ghosts. Friendly ones. They go out ahead of you.",
             "V: The market had a stall selling jars of fog. / M: What kind of fog? / V: Harbour fog, morning fog, and one jar labelled 'do not'. / M: Did you buy any? / V: Morning. It's for emergencies.",
-            "V: I ran into the cat at number seven. / M: Oh no. / V: We had a very civil talk about property lines. I'll be using the drainpipe from now on.",
+            "V: I ran into the cat at number seven. / M: Oh no. / V: She and I had a very civil talk about property lines. I'll be using the drainpipe from now on.",
             "V: The train came through again. The one that doesn't stop. / M: The late one? / V: There's no timetable for it. Lights in every window, nobody in the seats. Lovely, really.",
             "V: I've been gathering seeds for winter. / M: How many? / V: Four hundred and twelve. / M: You counted? / V: Counting is half the gathering.",
-            "V: The children by the school drew a door in chalk. / M: Cute. / V: I heard knocking from it. Very polite knocking. I knocked back. / M: And? / V: We're pen pals now.",
+            "V: The children by the school drew a door in chalk. / M: Cute. / V: I heard knocking from it. Very polite knocking. I knocked back. / M: And? / V: It writes to me now. Lovely handwriting.",
             "V: My cousin's moving into a teapot. / M: Is that allowed? / V: The teapot hasn't objected. / M: Then I suppose it's settled.",
             "[travelling] V: Hopped on at the crossroads. Hope you don't mind. / M: Where are you going? / V: Wherever the wagon goes, then back again with a story. / M: That's a good way to travel.",
             "[burrow] V: Your tunnel's got a new root in it. / M: I've been meaning to name it. / V: I call it Gerald. / M: …Gerald it is.",
@@ -5455,6 +5455,12 @@ function cardCap(el, html) {
 function cardOpen() {
     return [...document.querySelectorAll(".scopeview")].some(e => !e.hidden && !e.classList.contains("out"));
 }
+/* a menu, a card or a close-up view is open: speech can't be read there, so lines wait (and emotes are skipped) until
+   it's closed (owner, 24-10) */
+function talkHeld() {
+    const r = $("ritual");
+    return cardOpen() || document.body.classList.contains("sheet") && !matchMedia("(min-width: 960px)").matches || !!r && !r.hidden; // (on a wide screen the menu sits beside the scene)
+}
 function typeFinish() {
     const st = bubbleType;
     if (!st || st.done)
@@ -5521,9 +5527,9 @@ function replyReady(now) {
 function laneFree(who, now, reply) {
     if (who === "mite") {
         const b = $("bubble");
-        return !cardOpen() && (b.hidden || now >= speakReadUntil || b.classList.contains("thinking") || reply && replyReady(now));
+        return !talkHeld() && (b.hidden || now >= speakReadUntil || b.classList.contains("thinking") || reply && replyReady(now));
     }
-    return $("bubble2").hidden || now >= b2ReadUntil;
+    return !talkHeld() && ($("bubble2").hidden || now >= b2ReadUntil);
 }
 function speakPump(now) {
     if (!speakQ.length)
@@ -5549,7 +5555,9 @@ function speak(text, opts = {}) {
     text = homeTxt(text);
     const b = $("bubble"), small = emote || thinking;
     const reply = !opts.fromQ && !speakWhole && (speakReply || now - lastInput <= 700);
-    if (!small && (cardOpen() || floorTaken() && !opts.convo)) { // a card, or a conversation: the line waits for it
+    if (small && talkHeld() && !opts.convo)
+        return;
+    if (!small && (talkHeld() || floorTaken() && !opts.convo)) { // a menu or card, or a conversation: the line waits for it
         talkQueue("mite", text, opts, reply);
         return;
     }
@@ -5601,6 +5609,8 @@ function speak(text, opts = {}) {
             S.said.length = 40;
         if (curTab === "talk" && typeof renderSaid === "function")
             renderSaid();
+        if (!emote && typeof heard === "function")
+            heard(S.settings.pet, text, Date.now()); // (Overheard keeps everything said, not only conversations)
     }
 }
 function hint(key, text, ms = 7500) {
@@ -8384,8 +8394,9 @@ const BEH = {
             return (c.wx && c.wx.cloud < .5 ? 1.3 : .5) + (c.workday ? 0 : .6);
         }, init(b, p) {
             b.act = rnd(14, 24);
-            let tx = rnd(W * .25, W * .75);
-            if (own("hearth") && Math.abs(tx - hearthX()) < R * 2)
+            const rug = { room: "rug", garden: "grug", archive: "arug" }[view];
+            let tx = rug && own(rug) ? W * .5 + rnd(-R * .3, R * .3) : rnd(W * .25, W * .75); // on the rug, in the middle, if this room has one (owner, 24-10)
+            if (!(rug && own(rug)) && own("hearth") && Math.abs(tx - hearthX()) < R * 2)
                 tx = clamp(hearthX() + (tx < hearthX() ? -1 : 1) * R * 2.4, W * .2, W * .8);
             b.tx = tx;
             b.sp = 0;
@@ -8937,13 +8948,15 @@ Object.assign(BEH, {
             po.feet = false;
             po.sy = -.05;
         } },
-    /* at the edge of the chalk circle, looking back into the past (circle.js: showGlimpse) */
+    /* in the middle of the chalk circle, looking back into the past (circle.js: showGlimpse) */
     scry: { d: [60, 60], w: c => 0, init(b) {
             b.act = 9;
         }, step(b, p, t, po, dt) {
             const ta = goTo(b, p, po, dt, circleGeo().x, 0, b.act);
             if (ta < 0)
                 return;
+            const into = clamp(Math.min(ta, b.act - ta) / 1.2, 0, 1); // it steps into the middle of the circle, and back out at the end (owner, 24-10)
+            po.ground = -(circleGeo().y - GY - R * .15) * into * into * (3 - 2 * into);
             po.ward = clamp(ta / 1.5, 0, 1);
             po.eyes = ta < 2.2 ? "closed" : "open";
             po.arms = [-1.6, -1.6];
@@ -13447,8 +13460,8 @@ function drawNookLoft(dk) {
     cx.fillStyle = dark;
     cx.fillRect(g.balL - t * .3, g.balY + t, g.balR - g.balL + t * .6, Math.max(2, 2 * u));
 }
-/* the stairs up to it: drawn after the chesterfield (drawGarden), so they stand in front of it and Mite is never
-   half inside the chair on the way up */
+/* the stairs up to it: drawn just before the chesterfield (drawGarden), so the chair stands in front of them; Mite is
+   drawn after both, so it is never half inside the chair on the way up */
 function drawNookStairs(dk) {
     const g = nookLoftGeo(), { wood, dark, lite, u } = loftCols(dk), t = Math.max(4, R * .12, 3 * u);
     const n = Math.max(6, Math.round(g.rise / (R * .32))), sw = (g.stX1 - g.stX0) / n, sh = g.rise / n;
@@ -14153,7 +14166,9 @@ function snailSay(text, ms, who, emote, fromQ) {
     const now = performance.now(), b2 = $("bubble2");
     who = who || "snail";
     ms = ms || 5000;
-    if (!emote && !fromQ && (floorTaken() || !b2.hidden && now < b2ReadUntil)) {
+    if (emote && talkHeld())
+        return;
+    if (!emote && (talkHeld() || !fromQ && (floorTaken() || !b2.hidden && now < b2ReadUntil))) {
         talkQueue(who, text, { ms });
         return;
     }
@@ -14169,6 +14184,12 @@ function snailSay(text, ms, who, emote, fromQ) {
     snail2Until = now + ms;
     b2ReadUntil = emote ? 0 : now + Math.min(ms, clamp(800 + b2.textContent.length * 40, 1500, 4500) / talkF());
     blip("o", ["guest", "cat", "possum"].includes(b2Who) ? b2Who : "snail");
+    if (!emote)
+        heard(b2Name(b2Who), b2.textContent, Date.now());
+}
+/* the name over a second-bubble line in Overheard */
+function b2Name(who) {
+    return who === "cat" ? CAT_NAME : who === "possum" ? possumName() : who === "guest" ? (guest ? guest.name : "Visitor") : who === "snail" ? snailName() : String(who || "");
 }
 function heard(w, t, c) {
     S.heard = (S.heard || []);
@@ -14211,9 +14232,19 @@ function runConvo(line, onEnd) {
     lastCid = cid;
     let i = 0, total = 0;
     const fill = t => homeTxt(fillText(guestFill(t.replace(/\{snail\}/g, snailName())), ctx()));
+    let heldSince = 0;
     const next = () => {
         if (id !== convoId)
             return;
+        if (i < beats.length && talkHeld()) { // a menu or card is open: the conversation waits for it (a minute at most)
+            heldSince = heldSince || performance.now();
+            if (performance.now() - heldSince < 60e3) {
+                setTimeout(next, 600);
+                return;
+            }
+            i = beats.length;
+        }
+        heldSince = 0;
         if (i >= beats.length) {
             dlgClose(id);
             onEnd && onEnd();
@@ -14353,6 +14384,10 @@ function animalTalkTick(now) {
     animalTalkAt = now + rnd(45e3, 120e3) * paceK();
     if (!$("dlg").hidden || objQ.cur || !$("bubble2").hidden || S.lightsOut)
         return;
+    if (talkHeld() || speakQ.length || !$("bubble").hidden && now < speakReadUntil + 1500) { // Mite is talking (or you can't read it now): a little later (owner, 24-10)
+        animalTalkAt = now + rnd(6e3, 12e3);
+        return;
+    }
     const here = [];
     if (cat.ready && (cat.ph === "sit" || cat.ph === "walk") && cat.g === 0)
         here.push({ k: "C", room: cat.room, x: cat.x });
@@ -19065,7 +19100,7 @@ function drawGarden(now, dt) {
             gardenHits.drawers = { x: x0, y: top - R * .1, w: drW, h: drH + R * .1, cx: drX };
             { // the tenants' list on the wall above it, in a little frame: four lines, one per drawer (tap it to read)
                 const q = PX, fw = Math.round(R * .5 / q) * q, fh = Math.round(R * .56 / q) * q, fx = Math.round((drX + drW * .12) / q) * q, fy = Math.round((top - R * 1.15) / q) * q;
-                cx.fillStyle = mix("#3a2416", "#100a06", dk * .7); // the frame
+                cx.fillStyle = mix("#7a5636", "#1e140c", dk * .7); // the frame (a lighter wood: the dark edge was too heavy, owner 24-10)
                 cx.fillRect(fx - q, fy - q, fw + q * 2, fh + q * 2);
                 cx.fillStyle = mix("#c9a24a", "#3a2a10", dk * .7);
                 cx.fillRect(fx, fy, fw, fh);
@@ -19086,10 +19121,10 @@ function drawGarden(now, dt) {
             drawVase(dk, t); // the vase of flowers on the drawers (flowers.js)
         else
             flowerHit = null;
+        drawNookStairs(dk); // the stairs up to the platform, behind the chair (owner, 24-10; loft.js)
         if (hasChair())
-            drawChesterfield(g, dk, t, wood, woodD); // the chesterfield and the side table
+            drawChesterfield(g, dk, t, wood, woodD); // the chesterfield and the side table, in front of the stairs
     });
-    drawNookStairs(dk); // the stairs up to the platform, in front of the chair (loft.js)
     if (hasChair()) { // the candle's flame and glow (on the side table, which comes with the chair): a little always, more in the evening
         const c = gardenCandle(g), fl = 1 + Math.sin(t * 9) * .04 + Math.sin(t * 23) * .03, up = Math.sin(t * 9) + Math.sin(t * 23) * .6 > .9 ? PX : 0;
         const fx = Math.floor(c.x / PX) * PX - PX / 2, fy = Math.floor(c.y / PX) * PX;
@@ -25500,12 +25535,20 @@ function renderShop() {
     });
     const kts = $("kettleShop"); // the kettles: Mite takes one of the ones in the scene at random for each brew
     kts.innerHTML = "";
+    const kOwn = kettlesOwned();
+    if (kOwn.length > 1) { // which kettles Mite uses: tap to pick, like a rug's colour, but any number (one at least); Mite takes one of these at random (owner, 24-10)
+        const row = document.createElement("div");
+        row.className = "bld kettlepick";
+        row.innerHTML = `<div style="min-width:0"><b>Kettles in use</b><p>${esc(S.settings.pet)} takes one of these at random for each brew.</p><div class="rugcols" role="group" aria-label="Kettles in use">${kOwn.map(k => `<button type="button" class="rugsw" data-kt="${k.sid}" aria-pressed="${isShown(k.sid)}" title="${esc(k.name)}" aria-label="${esc(k.name)}" style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 6px ${k.body},inset 0 0 0 11px ${k.flower}` : ""}"></button>`).join("")}</div></div>`;
+        row.querySelectorAll("[data-kt]").forEach(bt => bt.onclick = () => toggleKettle(bt.dataset.kt));
+        kts.appendChild(row);
+    }
     KETTLE_STYLES.forEach(k => {
         const own = kettlesOwned().includes(k), noKettle = !S.b.kettle;
-        const where = !own ? "" : !isShown(k.sid) ? "put away" : kettleStyle() === k.id ? "on the stove" : "on the shelf";
+        const where = !own ? "" : !isShown(k.sid) ? "not in use" : kettleStyle() === k.id ? "on the stove" : "on the shelf";
         const el = document.createElement("div");
         el.className = "bld";
-        el.innerHTML = `<div style="min-width:0"><b><i class="kswatch" style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 3px ${k.body},inset 0 0 0 6px ${k.flower}` : ""}"></i>${esc(k.name)}</b>${shopNewTag(k.sid)}<span class="own">${where}</span><p>${esc(k.note)}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${k.sid}" ${isShown(k.sid) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : noKettle ? `<span class="owned">Needs the kettle</span>` : `<button class="btn amber" data-w="${k.sid}" ${S.g < k.price ? "disabled" : ""} aria-label="Buy ${esc(k.name)} for ${k.price} glimmers">${k.price} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b><i class="kswatch" style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 3px ${k.body},inset 0 0 0 6px ${k.flower}` : ""}"></i>${esc(k.name)}</b>${shopNewTag(k.sid)}<span class="own">${where}</span><p>${esc(k.note)}</p></div><span class="bacts">${own ? `<span class="owned">Owned</span>` : noKettle ? `<span class="owned">Needs the kettle</span>` : `<button class="btn amber" data-w="${k.sid}" ${S.g < k.price ? "disabled" : ""} aria-label="Buy ${esc(k.name)} for ${k.price} glimmers">${k.price} ◆</button>`}</span>`;
         const wb = el.querySelector("[data-w]");
         if (wb)
             wb.onclick = () => buyKettle(k);
@@ -25580,6 +25623,19 @@ function buyKettle(k) {
     note(`New kettle: ${k.name}.`);
     burst("spark", 6);
     afterChange();
+}
+/* a kettle in or out of use (the picker above the kettles); the last one in use stays */
+function toggleKettle(sid) {
+    const k = KETTLE_STYLES.find(x => x.sid === sid);
+    if (!k || !kettlesOwned().includes(k))
+        return;
+    const on = isShown(sid);
+    if (on && kettlesShown().length < 2)
+        return toast("One kettle stays in use.");
+    setShown(sid, !on);
+    sfx("tock");
+    afterChange();
+    renderShop();
 }
 /* a rug's colour, picked in the shop */
 function setRugCol(id, c) {
@@ -25824,7 +25880,7 @@ function renderHeard() {
     if (!el)
         return;
     const groups = [];
-    for (const h of (S.heard || []).filter(x => x.at >= dayStartTs())) {
+    for (const h of (S.heard || [])) { // the last 50 lines, whoever said them
         const g = groups[groups.length - 1];
         if (g && g.c === h.c)
             g.l.push(h);
@@ -25834,7 +25890,7 @@ function renderHeard() {
     el.innerHTML = groups.reverse().map(g => {
         const d = new Date(g.at);
         return `<section><time>${wdmy(d)} ${hhmm(d)}</time>${g.l.map(h => `<p class="${h.w === S.settings.pet ? "" : "o"}"><b>${esc(h.w)}</b>${esc(h.t)}</p>`).join("")}</section>`;
-    }).join("") || `<span class="sub">Nothing yet. When ${esc(S.settings.pet)} talks with the snail or a visitor, it's written down here.</span>`;
+    }).join("") || `<span class="sub">Nothing yet. Whatever ${esc(S.settings.pet)} and the others say is written down here.</span>`;
 }
 /* a new day (at the hour set in Settings): the notebook and what was overheard start on a fresh page. The incident
    reports are kept in their own log (S.inc), so they're not lost with it */
@@ -27847,7 +27903,7 @@ function welcome(prevSeen, isNew) {
     }
     S.lastDay = today;
     if (!isNew && away > 3 * 3600e3)
-        addMess(Math.min(6, Math.floor(away / (3 * 3600e3))));
+        addMess(Math.min(8, Math.floor(away / (1.5 * 3600e3))));
     if (S.lightsOut && Date.now() - S.lightsAt > 6 * 3600e3) {
         const hh = new Date().getHours();
         if (hh >= 6 && hh < 21)
@@ -28086,13 +28142,13 @@ function selfCare(id) {
 function messRoom(m) {
     return m && (m.room === "garden" || m.room === "archive") ? m.room : "room";
 }
-let nextMess = Date.now() + rnd(8, 20) * 60e3;
+let nextMess = Date.now() + rnd(4, 10) * 60e3; // (more mess than before: owner, 24-10)
 const MESS_MAXY = .42; // (the floor's back part only: lower down, the buttons along the bottom would cover it)
 function addMess(n) {
     if (!Array.isArray(S.mess))
         S.mess = [];
     const sea = season(new Date().getMonth());
-    for (let i = 0; i < n && S.mess.length < 14; i++) {
+    for (let i = 0; i < n && S.mess.length < 18; i++) {
         const r = Math.random();
         const rr = Math.random(), room = rr < .5 ? "room" : rr < .75 ? "garden" : "archive"; // the whole wagon gets messy, the middle most
         S.mess.push({ room, x: rnd(.06, .94), y: rnd(.05, MESS_MAXY), t: sea === "autumn" && r < .5 ? "leaf" : r < .7 ? "dust" : r < .88 ? "paper" : "crumb", r: rnd(.8, 1.25), rot: rnd(0, 6) });
@@ -28144,8 +28200,8 @@ setInterval(() => {
     if (document.hidden)
         return;
     if (Date.now() > nextMess) {
-        addMess(1);
-        nextMess = Date.now() + rnd(15, 35) * 60e3;
+        addMess(Math.random() < .3 ? 2 : 1);
+        nextMess = Date.now() + rnd(6, 14) * 60e3;
     }
     checkRested();
 }, 60e3);
