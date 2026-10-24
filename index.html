@@ -406,6 +406,7 @@ p.glimpse{font-family:var(--f-read,var(--f-body));font-size:16px;line-height:1.5
 .chip.sun{background:#f2c14e;color:#3a2a08}
 .chip.plan{background:var(--leaf-soft)}
 .letter{background:#fbf6e9;color:#2a241c;border:1px solid #e3d6b8;border-radius:4px;padding:12px 14px;font-family:Georgia,serif;font-size:15px;line-height:1.55;white-space:normal;overflow-wrap:anywhere;margin:6px 0}
+.corrorig{margin:2px 0 10px}.corrorig summary{cursor:pointer;font-size:13px;opacity:.85;padding:4px 0}.corrorig .letter{opacity:.85}
 .agenda{display:flex;flex-direction:column;gap:4px;margin-top:8px}
 .agenda h4{margin:8px 0 2px;font-family:var(--f-display);font-size:14px;color:var(--muted)}
 .arow{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:14px}
@@ -913,6 +914,7 @@ body.editing #addForm{display:none}
         <label class="field">Bedtime<select id="setBed" data-hours="0-23"></select></label>
         <label class="field">A new day starts at<select id="setDayStart" data-hours="0-23" aria-describedby="dayStartHint"></select><small class="sub" id="dayStartHint">Until then it still counts as the day before: what you finish, the journal, filing the day, the notebook page. Due dates and times keep the clock. For night shifts, pick when your day really begins.</small></label>
         <label class="field">Night light at<select id="setNight" aria-describedby="nightHint"><option value="-1">Off</option></select><small class="sub" id="nightHint">From then until the new day starts, the room's main light goes down. Lanterns, candles and the reading lamp stay on; Mite stays up.</small></label>
+        <label class="field">Liveliness<select id="setPace" aria-describedby="paceHint"><option value="0">Calm</option><option value="1">Normal</option><option value="2">Lively</option></select><small class="sub" id="paceHint">How often <span class="pn">Mite</span> talks to itself, things drift past, the residents chat and hunt, and <span class="pn">Mite</span> notices things. Strange things follow Strangeness.</small></label>
         <label class="field">Strangeness<select id="setStrange"><option value="0">Off: just cosy</option><option value="1">Some: the odd door</option><option value="2">A lot: thin place</option></select></label>
         <label class="field">Weather location (lat, lon)<input id="setLoc" maxlength="30" placeholder="e.g. 48.86, 2.35" inputmode="decimal"></label>
         <label class="field">Talk speed<select id="setTalk"><option value="0">Slow</option><option value="1">Normal</option><option value="2">Fast</option></select></label>
@@ -3952,7 +3954,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
 function defaultState() {
     return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
-        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
+        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
 }
 let S = defaultState();
@@ -4231,6 +4233,7 @@ function sanitizeState(raw) {
     o.settings.lamp = [0, 1, 2].includes(num(st.lamp)) ? num(st.lamp) : 0; // the lamp by hand: auto, on, half (camera.js)
     if ("nightLight" in st) // when the night light comes on (nightLight, camera.js; 0-23, -1 off)
         o.settings.nightLight = clamp(Math.round(num(st.nightLight, 0)), -1, 23);
+    o.settings.pace = [0, 1, 2].includes(num(st.pace)) ? num(st.pace) : 0; // liveliness: 0 calm, 1 normal, 2 lively (paceK)
     if ("strange" in st)
         o.settings.strange = clamp(num(st.strange, 1), 0, 2);
     if ("sound" in st)
@@ -4985,6 +4988,11 @@ const STRANGE_PERSONA = " The wagon is a quietly uncanny place, a thin place, lo
 function strangeness() {
     const v = S.settings.strange;
     return v === undefined ? 1 : +v;
+}
+/* liveliness (Settings): how far apart the everyday events are (Mite's remarks, drifters, observations, the
+   residents' chats, the cat's hunts). Calm, the default, has them about half as often as normal. */
+function paceK() {
+    return [2, 1, .7][num(S.settings.pace)] || 2;
 }
 function personaFull() {
     return persona() + (strangeness() > 0 ? STRANGE_PERSONA : "");
@@ -14279,7 +14287,7 @@ let animalTalkAt = performance.now() + rnd(40e3, 90e3);
 function animalTalkTick(now) {
     if (now < animalTalkAt)
         return;
-    animalTalkAt = now + rnd(45e3, 120e3);
+    animalTalkAt = now + rnd(45e3, 120e3) * paceK();
     if (!$("dlg").hidden || objQ.cur || !$("bubble2").hidden || S.lightsOut)
         return;
     const here = [];
@@ -16821,7 +16829,7 @@ function driftTick(dt, now) {
     if (document.hidden || reduced)
         return;
     if (now > nextDrift) {
-        nextDrift = now + rnd(25e3, 70e3);
+        nextDrift = now + rnd(25e3, 70e3) * paceK();
         const rmName = choice(ROOMS.filter(roomVisible)) || view; // in a room you can see
         const ks = driftKinds(rmName).filter(([k]) => !drifters.some(d => d.k === k));
         if (ks.length && drifters.length < DRIFT_MAX) {
@@ -18170,7 +18178,7 @@ function catHuntTick(dt, now) {
         if (k >= 1) {
             const kind = cat.prey && cat.prey.k;
             Object.assign(cat, { g: 0, prey: null, wig: 0, ph: "sit", until: now + rnd(8e3, 16e3) });
-            catHuntNext = now + rnd(60e3, 150e3);
+            catHuntNext = now + rnd(60e3, 150e3) * paceK();
             if (cat.room === view && Math.random() < .6)
                 setTimeout(() => {
                     if ($("bubble").hidden)
@@ -19601,6 +19609,8 @@ function showYourLetter(l) {
     return 3;
 }
 let postCheckAt = 0;
+/* how long a reply to the letter sent at `at` takes (the same on every device) */
+const postWait = at => (POST_DAYS[0] + hash01("post" + at) * (POST_DAYS[1] - POST_DAYS[0])) * 864e5;
 /* a letter Mite has just finished (write, behaviours.js) */
 function postSent(to, text) {
     S.post = S.post || { sent: [], inbox: [] };
@@ -19639,7 +19649,7 @@ function postTick(now) {
     for (const s of S.post.sent) {
         if (s.r)
             continue;
-        const h = hash01("post" + s.at), wait = (POST_DAYS[0] + h * (POST_DAYS[1] - POST_DAYS[0])) * 864e5;
+        const wait = postWait(s.at);
         if (t - s.at < wait)
             continue;
         if (num(S.flags.letterInDay) === dayNum()) // (one letter a day: the rest wait in the post)
@@ -19782,8 +19792,19 @@ function corrTransferNote() {
         note(`Transferred last week's correspondence to the paternoster: ${moved.length} letter${moved.length === 1 ? "" : "s"}, unfolded, de-pinned and in a folder, with a transfer list.`);
     saveSoon();
 }
+/* a reply and the letter it answers: a reply comes postWait() after Mite's letter to the same pen pal, so the pair
+   is found from the dates (older letters too; nothing extra is saved) */
+function corrPair(r) {
+    const all = KEEP.corr || [];
+    if (r.d === "in")
+        return r.you ? null : all.find(x => x.d === "out" && x.who === r.who && Math.abs(Math.round(x.at + postWait(x.at)) - r.at) < 3) || null;
+    return all.find(x => x.d === "in" && !x.you && x.who === r.who && Math.abs(Math.round(r.at + postWait(r.at)) - x.at) < 3) || null;
+}
 function corrRows(list) {
-    return list.map(r => `<li><button type="button" class="linkbtn pnbox" data-corr="${esc(r.id)}"><b>${esc(corrNo(r))}</b> · ${r.d === "in" ? "from" : "to"} ${esc(r.who)}</button><br><span class="sub">${r.d === "in" ? "Received" : "Sent"} ${esc(wdmy(new Date(r.at)))}</span></li>`).join("");
+    return list.map(r => {
+        const p = corrPair(r), pl = p ? ` · ${r.d === "in" ? "reply to" : "answered:"} ${esc(corrNo(p))}` : "";
+        return `<li><button type="button" class="linkbtn pnbox" data-corr="${esc(r.id)}"><b>${esc(corrNo(r))}</b> · ${r.d === "in" ? "from" : "to"} ${esc(r.who)}</button><br><span class="sub">${r.d === "in" ? "Received" : "Sent"} ${esc(wdmy(new Date(r.at)))}${pl}</span></li>`;
+    }).join("");
 }
 function wireCorr(el) {
     el.querySelectorAll("[data-corr]").forEach(b => b.onclick = () => showCorrItem(b.dataset.corr));
@@ -19817,8 +19838,12 @@ function showCorrItem(id) {
     const wk = corrWeek(r), filed = wk < weekKey(Date.now());
     const body = r.text ? `<div class="letter">${esc(homeTxt(r.text)).replace(/\n/g, "<br>")}</div>` : `<p class="sub">No copy was kept of this one: it was sent before ${esc(S.settings.pet)} kept a letter book.</p>`;
     const meta = `${r.d === "in" ? `From ${esc(r.who)}, received` : `To ${esc(r.who)}, sent`} ${esc(dmy(new Date(r.at)))} · ${filed ? `transferred to the paternoster, week ${weekNo(wk)}` : "in the desk, current file"}`;
-    openRitual(corrNo(r), r.d === "out" ? `${S.settings.pet}'s copy.` : "", `${body}<p class="ritmeta">${meta}</p>`,
-        [[filed ? "The week's folder" : "The drawer", "", () => filed ? showCorrFolder(wk) : showCorrDrawer()], ["Close", "primary", closeRitual]]);
+    const p = corrPair(r); // (a reply shows the letter it answers above it; a sent letter links to its reply)
+    const orig = p && r.d === "in" ? `<details class="corrorig"><summary>${esc(S.settings.pet)}'s letter, ${esc(corrNo(p))}, sent ${esc(dmy(new Date(p.at)))}</summary>${p.text ? `<div class="letter">${esc(homeTxt(p.text)).replace(/\n/g, "<br>")}</div>` : `<p class="sub">No copy was kept of this one.</p>`}</details>` : "";
+    const btns = [[filed ? "The week's folder" : "The drawer", "", () => filed ? showCorrFolder(wk) : showCorrDrawer()], ["Close", "primary", closeRitual]];
+    if (p)
+        btns.unshift([r.d === "in" ? `${S.settings.pet}'s letter` : "The reply", "", () => showCorrItem(p.id)]);
+    openRitual(corrNo(r), r.d === "out" ? `${S.settings.pet}'s copy.` : p ? `In reply to ${corrNo(p)}.` : "", `${orig}${body}<p class="ritmeta">${meta}</p>`, btns);
     if (fresh)
         sfx("card");
 }
@@ -20754,7 +20779,7 @@ function observeTick(now) {
         return obsStep(now);
     if (now < obsAt)
         return;
-    obsAt = now + rnd(70e3, 150e3);
+    obsAt = now + rnd(70e3, 150e3) * paceK();
     if (obsBusy())
         return;
     const who = choice(obsWho());
@@ -24375,7 +24400,7 @@ function frame(now) {
     }
     // ambient talk
     if (now > talkAt) {
-        talkAt = now + rnd(40e3, 95e3);
+        talkAt = now + rnd(40e3, 95e3) * paceK();
         ambientTalk();
     }
     uiAcc += dt;
@@ -25817,6 +25842,7 @@ function renderContent() {
     }
     $("setStrange").value = String(strangeness());
     $("setTalk").value = String(S.settings.talk ?? 1);
+    $("setPace").value = String(num(S.settings.pace));
     $("setBackup").value = String(S.settings.backup ?? 1);
     const days = (el, arr, name) => {
         el.innerHTML = [1, 2, 3, 4, 5, 6, 0].map(d => `<label><input type="checkbox" id="${name}${d}" data-d="${d}" ${arr.includes(d) ? "checked" : ""}>${DAYS[d]}</label>`).join("");
@@ -26328,6 +26354,7 @@ function saveSettings() {
     }
     st.doneBy = clamp(+$("setDoneBy").value || 19, 12, 23);
     st.talk = clamp(Math.round(+$("setTalk").value), 0, 2);
+    st.pace = clamp(Math.round(+$("setPace").value), 0, 2) || 0;
     st.backup = clamp(Math.round(+$("setBackup").value), 0, 2);
     st.strange = +$("setStrange").value;
     if (!st.strange) {
