@@ -79,6 +79,7 @@ button{cursor:pointer}
 .dlg.done .dlgnext{opacity:1;animation:dlgbob 1s steps(2) infinite}
 @keyframes dlgbob{50%{transform:translateY(2px)}}
 .dlg.cat{border-color:#4a3a66}.dlg.cat b{background:#4a3a66}
+.dlg.circle{border-color:#3e5a6a}.dlg.circle b{background:#3e5a6a}
 .dlg.possum{border-color:#5a5a52}.dlg.possum b{background:#5a5a52}
 .dlg.snail{border-color:#6b4a2a}.dlg.snail b{background:#6b4a2a}.dlg.guest b,.dlg.guest{border-color:#7a4a4a}.dlg.guest b{background:#7a4a4a}
 body.game .dlg{bottom:calc(env(safe-area-inset-bottom,0px) + 128px)}
@@ -308,6 +309,10 @@ body.game.sheet .toasts{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 1
 body.game .toasts.stay,body.game.sheet .toasts.stay{top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto;z-index:31}
 .rugcols{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .rugsw{width:40px;height:40px;min-width:40px;min-height:40px;border:2px solid var(--line);padding:0;cursor:pointer}
+.rugsw.buy{position:relative;opacity:.55;border-style:dashed}
+.rugsw.buy span{position:absolute;inset:auto 0 0 0;font-size:11px;line-height:14px;background:var(--panel);color:var(--ink)}
+.rugsw.buy:disabled{opacity:.3;cursor:default}
+.rugcols [aria-pressed="true"].btn{outline:2px solid var(--ink);outline-offset:1px}
 .rugsw[aria-pressed="true"]{border-color:var(--ink);outline:2px solid var(--ink);outline-offset:2px}
 .toast.bought{background:var(--panel);color:var(--ink);border:2px solid var(--line);cursor:pointer;max-width:520px;line-height:1.4}
 @media (prefers-reduced-motion: reduce){body.game .panel,body.game.sheet .panel{transition:none}}
@@ -1037,7 +1042,7 @@ const POOL_INFO = {
     gramophone_stop: "Mite, lifting the gramophone's needle before the record's done",
     crochet: "Mite, now and then while knitting: on crochet (it can't; it isn't a moss skill)",
     nameplates: "What the archive's name plate says, one per day (short, at most 20 characters; shown in capitals; letters, commas and full stops only: the plate's font has no & or brackets)",
-    shade_hand: "Mite, when you tap the shadow hand from the night door and it waves back",
+    shade_hand: "Mite, when you tap the shadow hand from the night door and it waves back", shade_gramo: "Mite, when the shadow hand from the night door has put a record on the gramophone ({rec})",
     shade_tendrils: "Mite, when you tap the shadow tendrils from the night door and they slip back in, shy",
     catball: "Mite, when Midnightcat joins in with the ball",
     cathunt: "Mite, after Midnightcat pounces on a spore, a seed or a loose page",
@@ -1060,7 +1065,7 @@ const POOL_INFO = {
     pat: "When patted", pat_many: "Patted a lot quickly", task_added: "New task ({task})", task_done: "Task finished ({task})",
     task_done_big: "Big task finished ({task})", task_done_old: "Long-waiting task finished ({task}, {age})", all_done: "List empty",
     late: "After bedtime", after_work: "After work hours on a workday", day_off: "On non-workdays",
-    buy: "Bought something ({item})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
+    buy: "Bought something ({item})", buy_rugcol: "Bought a new rug colour ({col})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum a cookie ({possum} is its name)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
     observe: "A resident sits looking at something, then talks about it ({thing}): who | A: ... / B: ... (who: cat, possum, snail or any; A is the one looking, B whoever answers: Mite or another resident)",
@@ -1253,6 +1258,7 @@ const DEF = {
             "No work today. Maybe something with your hands?",
             "[offday] Free day. Make something?"
         ],
+        buy_rugcol: ["The {col} wool's here. I'll weave it in tonight. The other rugs can borrow it.", "A {col} rug. It changes the whole floor. The floor seems pleased.", "I held the {col} wool up to the light first. Good wool.", "The rug and I talked the {col} over. It said yes, in its way."],
         buy: ["A {item}. I'll put it by the wall.", "Oh, a {item}. I've always wanted one.", "We're expanding.", "{item} installed. I've already named it."],
         trinket: ["I found something: {item}. For the cabinet.", "Look. {item}. It was under a leaf.", "For you: {item}. I've labelled it."],
         level: ["Level {level}. My sprout grew. Look.", "I feel taller. Level {level}."],
@@ -1688,9 +1694,10 @@ const DEF = {
             "It came in to see the lights. Ours are nice. It agrees."
         ],
         gramophone: [
-            "One record. It's the only one it'll play. I think it chose.",
+            "Five records, and it picks. Today it picked '{rec}'.",
+            "'{rec}'. An old one. It sounds like a village square on a slow afternoon.",
             "Wound up. Needle down. Listen: a little dust first, then the song.",
-            "The label's worn off. I've decided the song is called 'Thursday'.",
+            "The label's half worn off. What's left says '{rec}'. I'll believe it.",
             "[night] Quiet music for a dark nook. The horn holds it in, mostly.",
             "[rainy] Rain on the roof and a record going round. That's the whole plan.",
             "Somebody danced to this once. You can hear it in the scratches.",
@@ -1737,6 +1744,13 @@ const DEF = {
             "It waved, then pointed at the tea. I'll leave a cup by the door tonight.",
             "A wave from the other side of the night door. Nice to be noticed.",
             "It waved, slowly, like it learned how from a book. I'm proud of it."
+        ],
+        shade_gramo: [
+            "The hand from the night door wound up the gramophone. It knew which way the crank goes.",
+            "Somebody put a record on. Somebody without a body, mostly. It has good taste.",
+            "The shadow hand played '{rec}'. I think it's been listening through the door.",
+            "It wound the gramophone, put the needle down, and went back in. No bow. Very modest.",
+            "[night] Music from the nook, and nobody up there. Nobody I can see. Thank you, hand."
         ],
         shade_tendrils: [
             "Oh, they're shy. In they went. Sorry, tendrils.",
@@ -1954,6 +1968,14 @@ const DEF = {
             "S: Your fur is very dark. / C: I keep the night in it for later. / S: …That's useful.",
             "C: Mrow. Your shell is a staircase. / S: …I've never climbed it. / C: Good. It goes somewhere.",
             "[rainy] S: …Lovely weather. / C: For you. / S: For me. / C: Mrrp. I will allow it.",
+        ],
+        circlecall: [
+            "Wick | Aunt Maudlin | P: Hhh. Is this thing on. / S: …Say the words. / P: Wick, Wick, come out of the stick. / F: Hello? Is that the possum? / P: It's us. The snail's here too. / A: IS THAT THE POSSUM. Wick, ask if it's eating properly. / F: She wants to know if you're eating properly. / P: I eat everything. / A: That's not what I asked, dear. / S: …We should go. / F: Same time next week?",
+            "Bramble | Aunt Hesper | S: …It's glowing. That means it worked. / F: Snail! You called! / P: Hhh. We were bored. / A: Bramble, who is it? Is it the nice snail? Tell the snail I've knitted it a scarf. / S: …I don't have a neck. / A: I KNOW, dear. It's a very long scarf. / F: Sorry. She's been knitting since spring. / P: Can I have the scarf.",
+            "Wick | Aunt Maudlin | P: Wick. It's the possum. Are you there. / F: Possum! We were just having supper. / A: Is that the possum? Put it on. POSSUM. Are you warm enough? Do you have a hat? / P: …I have a basket. / A: A basket is not a hat. Wick, send it a hat. / F: I'm not sending it a hat. / S: …She means well. / F: She always means well. That's the problem.",
+            "Moll | Aunt Brisket | S: …Moll? It's the snail. And the possum. / F: Oh, hello! Hang on, my aunt wants to say hello. / A: HELLO SNAIL. HELLO POSSUM. Are you both sleeping enough? You look tired. / P: You can't see us. / A: I can tell, dear. I can always tell. / F: She really can, it's awful. / S: …We'll go to bed early. / A: Promise. / P: Hhh. Fine.",
+            "Bramble | Aunt Hesper | P: Bramble. The circle's working tonight. / F: Lovely! Is the snail there? / S: …Hello. / A: Is that the snail? Bramble, ask it about its shell. Has it seen someone about the little crack? / S: …It's a pattern. / A: That's what they all say, dear. / F: I'm so sorry. / P: She's nice. She's just very loud through the floor.",
+            "Moll | Aunt Brisket | P: Moll. We found a whole crumb today. / F: A whole one! / A: Moll, tell them I've got a cake for them. Tell them to come round. Tell them Sunday. / F: She says Sunday. / S: …We don't really go round. / A: Then I'll come THERE. / P: …Hhh. Close the circle. Close it now. / F: Bye! Love you! Sorry!"
         ],
         possumsnail: [
             "P: Hhh. Hello, {snail}. / S: …Hello. Please don't eat my lettuce. / P: I would never. / S: …You did, last week. / P: That was a different me.",
@@ -3882,9 +3904,9 @@ const BUILDINGS = [
     { id: "rental", name: "Renter's chest", price: 16, max: 1, note: "For the nook: a chest of drawers whose drawers are let out to tenants. Brass labels, a list of who's in." },
     { id: "vase", name: "Vase & pressed flowers", price: 10, max: 1, needs: "rental", note: "A vase for the top of the renter's chest, with a book for drying what's been in it. Visitors bring flowers; Mite picks some on walks." },
     { id: "closet", name: "Bigger-inside closet", price: 80, max: 1, note: "Measured from the inside, it doesn't end. Built into the archive's shelves." },
-    { id: "rug", name: "Round rug: the wagon", price: 8, max: 1, note: "For the middle of the wagon's floor. Woven, warm, a good place to lie and look at the ceiling. Pick its colour once it's down." },
-    { id: "grug", name: "Round rug: the nook", price: 8, max: 1, note: "For the nook's floor, by the chesterfield. Soft as moss. Pick its colour once it's down." },
-    { id: "arug", name: "Round rug: the archive", price: 8, max: 1, note: "For the archive's floor. Muffles footsteps, which archives like. Pick its colour once it's down." },
+    { id: "rug", name: "Rug: the wagon", price: 8, max: 1, note: "For the middle of the wagon's floor. Woven, warm, a good place to lie and look at the ceiling. Red, green or blue come with it; more colours and a rectangular weave are for sale here once it's down." },
+    { id: "grug", name: "Rug: the nook", price: 8, max: 1, note: "For the nook's floor, by the chesterfield. Soft as moss. Red, green or blue come with it; more colours and a rectangular weave are for sale here once it's down." },
+    { id: "arug", name: "Rug: the archive", price: 8, max: 1, note: "For the archive's floor. Muffles footsteps, which archives like. Red, green or blue come with it; more colours and a rectangular weave are for sale here once it's down." },
     { id: "circle", name: "Chalk circle", price: 100, max: 1, needs: "arug", note: "Chalked onto the rug in the archive, with candles and old signs. Tap it and Mite looks back into the past: a little of everyone's family history. Midnightcat likes to sit in the middle." },
     { id: "ndoor", name: "Night door", price: 130, max: 1, note: "Opens onto somewhere else. At the far end of the nook." },
     { id: "hearth", name: "Fireplace", price: 35, max: 1, note: "A small stone hearth. Crackles. Takes the edge off grey days." },
@@ -3894,20 +3916,29 @@ const BUILDINGS = [
     { id: "easel", name: "Easel", price: 0, max: 1, note: "Mite's own. One painting a day, sent to a friend the next morning." }
 ];
 /* the rugs' colours (picked in the shop once a rug is bought; S.rugCol): fill, fill at dark, trim, trim at dark.
-   The first three are the rugs as they always were */
+   The first three are the rugs as they always were and come with them; the others are bought once (p, glimmers) and then
+   go on any rug. A rectangular weave is bought once too (RUG_RECT_PRICE); then each rug is oval or rectangular (S.rugCol.sh) */
 const RUG_COLS = [
     { id: "red", name: "Red", c: ["#9c4f3c", "#3a1d17", "#e2b56a", "#4a3a20"] },
     { id: "green", name: "Green", c: ["#618f46", "#16231a", "#b8d682", "#2a3a20"] },
     { id: "blue", name: "Blue", c: ["#425a85", "#10142a", "#9ab9d7", "#1e2848"] },
-    { id: "ochre", name: "Ochre", c: ["#a8843c", "#33260f", "#f0dca0", "#4a3a20"] },
-    { id: "plum", name: "Plum", c: ["#6e3f6a", "#1e1020", "#e0b0c8", "#2e1a2c"] },
-    { id: "teal", name: "Teal", c: ["#3f7a74", "#0e2220", "#b0dcc8", "#1a3634"] },
-    { id: "grey", name: "Grey", c: ["#6a6c70", "#1a1b1e", "#d4d0c4", "#2a2a2a"] }
+    { id: "ochre", name: "Ochre", p: 5, c: ["#a8843c", "#33260f", "#f0dca0", "#4a3a20"] },
+    { id: "plum", name: "Plum", p: 6, c: ["#6e3f6a", "#1e1020", "#e0b0c8", "#2e1a2c"] },
+    { id: "teal", name: "Teal", p: 6, c: ["#3f7a74", "#0e2220", "#b0dcc8", "#1a3634"] },
+    { id: "grey", name: "Grey", p: 4, c: ["#6a6c70", "#1a1b1e", "#d4d0c4", "#2a2a2a"] }
 ];
 const RUG_DEF = { rug: "red", grug: "green", arug: "blue" };
+const RUG_RECT_PRICE = 8;
+function rugColOwned(c) {
+    const r = RUG_COLS.find(x => x.id === c);
+    return !!r && (!r.p || ((S.rugCol && S.rugCol.own) || []).includes(c));
+}
 function rugCol(id) {
     const k = (S.rugCol && S.rugCol[id]) || RUG_DEF[id];
-    return RUG_COLS.find(c => c.id === k) || RUG_COLS[0];
+    return RUG_COLS.find(c => c.id === k && rugColOwned(c.id)) || RUG_COLS.find(c => c.id === RUG_DEF[id]) || RUG_COLS[0];
+}
+function rugRect(id) {
+    return !!(S.rugCol && S.rugCol.rect && S.rugCol.sh && S.rugCol.sh[id] === "rect");
 }
 /* plants for the windowsill */
 const PLANTS = [
@@ -3999,7 +4030,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -4166,7 +4197,11 @@ function sanitizeState(raw) {
     o.postcards = arr(s.postcards, 60).map(p => ({ id: str(p.id, 30), y: clamp(Math.round(num(p.y)), 2000, 3000), at: num(p.at) })).filter(p => /^[a-z0-9_-]+$/i.test(p.id)); // postcards kept on the board (festivals.js)
     { // the rugs' colours (world.js RUG_COLS; picked in the shop)
         const r = s.rugCol || {}, ok = ["red", "green", "blue", "ochre", "plum", "teal", "grey"], pick = (k, d) => ok.includes(r[k]) ? r[k] : d;
-        o.rugCol = { rug: pick("rug", "red"), grug: pick("grug", "green"), arug: pick("arug", "blue"), at: num(r.at) };
+        const rOwn = (Array.isArray(r.own) ? r.own : []).filter(c => ok.indexOf(c) > 2); // (bought colours; a colour already on a rug from before they were sold counts as bought)
+        ["rug", "grug", "arug"].forEach(k => ok.indexOf(r[k]) > 2 && rOwn.push(r[k]));
+        const rSh = {};
+        ["rug", "grug", "arug"].forEach(k => r.sh && r.sh[k] === "rect" && (rSh[k] = "rect"));
+        o.rugCol = { rug: pick("rug", "red"), grug: pick("grug", "green"), arug: pick("arug", "blue"), own: [...new Set(rOwn)], rect: r.rect ? 1 : 0, sh: rSh, at: num(r.at) };
     }
     o.kettleStyle = { k: ["copper", "blue", "green", "pink", "bluefl"].includes(s.kettleStyle && s.kettleStyle.k) ? s.kettleStyle.k : "copper", at: num(s.kettleStyle && s.kettleStyle.at) }; // the kettle's looks (draw-world.js)
     o.postits = arr(s.postits, 12).map(n => ({ room: ["room", "garden", "archive"].includes(n.room) ? n.room : "room", fx: clamp(num(n.fx), 0, 1), fy: clamp(num(n.fy), 0, 1), at: num(n.at), rot: clamp(num(n.rot), -1, 1), curl: !!n.curl, tape: !!n.tape, sz: clamp(num(n.sz, 1), .5, 1.5), col: /^#[0-9a-f]{6}$/i.test(n.col) ? n.col : "#f2d06b", text: str(n.text, 60) })); // Mite's sticky notes on the walls (pastimes.js)
@@ -4472,6 +4507,9 @@ function mergeStates(a, b) {
         o.seasonal = sa.s === sb.s ? { s: sa.s, got: mmax(sa.got, sb.got) } : sa.s > sb.s ? JSON.parse(JSON.stringify(sa)) : JSON.parse(JSON.stringify(sb));
     }
     o.rugCol = num((a.rugCol || {}).at) >= num((b.rugCol || {}).at) ? Object.assign({}, a.rugCol || {}) : Object.assign({}, b.rugCol || {});
+    o.rugCol.own = [...new Set([...((a.rugCol || {}).own || []), ...((b.rugCol || {}).own || [])])]; // (bought colours and the weave are kept from either side)
+    o.rugCol.rect = ((a.rugCol || {}).rect || (b.rugCol || {}).rect) ? 1 : 0;
+    o.rugCol.sh = Object.assign({}, o.rugCol.sh || {});
     o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
     o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small journal", at: 0 }) : Object.assign({}, b.journal); // the newest name
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
@@ -5872,6 +5910,37 @@ const SONGS = [
     { name: "biscuit tin", bpm: 82, lead: "box", drums: "brush", prog: [[53, 57, 60, 64], [50, 53, 57, 60], [55, 59, 62, 65], [48, 52, 55, 60]], b: [[57, 60, 64, 67], [53, 57, 60, 64], [50, 53, 57, 60], [55, 59, 62, 65]], mel: [72, 74, 76, 77, 79, 81] },
     { name: "night archive", bpm: 56, keys: "pluck", lead: "kalimba", drums: "rim", prog: [[45, 52, 55, 60], [41, 48, 53, 57], [43, 50, 53, 59], [40, 47, 52, 55]], b: [[41, 48, 53, 57], [43, 50, 55, 59], [45, 52, 57, 60], [44, 52, 56, 59]], mel: [69, 71, 72, 76, 79, 81], night: 1 }
 ];
+/* the gramophone's records (only on the gramophone, never in the background music): the old town songs of
+   21-10-2026, made gentler: slower, softer stabs and bass, quiet drums (brush, shaker or none), a little crackle.
+   Seventh chords, swung, a walking bass (bass: "walk"), piano stabs on the off-beats (keys: "stab") and a fixed tune
+   (motif: one bar per chord, [beat, note] pairs; motif2 for the bridge). Original tunes */
+const RECORDS = [
+    { name: "morning market", rec: 1, bpm: 84, keys: "stab", bass: "walk", lead: "marimba", drums: "shaker",
+        prog: [[53, 57, 60, 64], [50, 53, 57, 60], [55, 58, 62, 65], [48, 52, 55, 58]], b: [[46, 50, 53, 57], [45, 48, 52, 55], [55, 58, 62, 65], [48, 52, 55, 58]],
+        motif: [[[0, 72], [.66, 76], [1, 77], [2, 79], [3, 76]], [[0, 74], [1, 72], [1.66, 69], [2, 72]], [[0, 70], [.66, 74], [1, 77], [2, 74], [3, 72]], [[0, 79], [1, 76], [2, 72], [3, 70]]],
+        motif2: [[[0, 77], [1, 74], [2, 69], [3, 72]], [[0, 76], [1, 72], [2, 69], [2.66, 67]], [[0, 70], [1, 74], [2, 77], [3, 74]], [[0, 72], [1, 76], [2, 79], [3.66, 81]]] },
+    { name: "bus stop shuffle", rec: 1, bpm: 88, keys: "stab", bass: "walk", lead: "whistle", drums: "brush",
+        prog: [[55, 59, 62, 66], [52, 55, 59, 62], [57, 60, 64, 67], [50, 54, 57, 60]], b: [[48, 52, 55, 59], [47, 50, 54, 57], [45, 48, 52, 55], [50, 54, 57, 60]],
+        motif: [[[0, 74], [.66, 76], [1, 79], [2, 78], [2.66, 76], [3, 74]], [[0, 71], [1, 74], [2, 76], [3, 79]], [[0, 81], [.66, 79], [1, 76], [2, 72], [3, 76]], [[0, 78], [1, 74], [2, 72], [3, 69]]],
+        motif2: [[[0, 76], [1, 79], [2, 83], [3, 81]], [[0, 78], [1, 74], [2, 71], [3, 74]], [[0, 72], [.66, 74], [1, 76], [2, 79], [3, 76]], [[0, 78], [1, 81], [2, 84], [3, 78]]] },
+    { name: "sleepy pier", rec: 1, bpm: 66, keys: "stab", bass: "walk", lead: "vibes", drums: "none",
+        prog: [[50, 53, 57, 60], [55, 59, 62, 65], [48, 52, 55, 59], [45, 49, 52, 55]], b: [[53, 57, 60, 64], [53, 56, 60, 62], [52, 55, 59, 62], [45, 49, 52, 55]],
+        motif: [[[0, 77], [1.66, 76], [2, 74], [3, 72]], [[0, 71], [1, 74], [2, 77], [3, 76]], [[0, 76], [2, 72], [2.66, 74]], [[0, 73], [1, 76], [2, 79], [3, 77]]],
+        motif2: [[[0, 81], [1, 79], [2, 76], [3, 72]], [[0, 80], [1, 77], [2, 74], [3, 72]], [[0, 71], [1, 74], [2, 79], [3, 78]], [[0, 76], [1, 73], [2, 69], [3, 73]]] },
+    { name: "lantern waltz", rec: 1, bpm: 76, meter: 3, bass: "walk", lead: "box", drums: "shaker",
+        prog: [[51, 55, 58, 62], [48, 51, 55, 58], [53, 56, 60, 63], [46, 50, 53, 56]], b: [[56, 60, 63, 67], [55, 58, 62, 65], [53, 56, 60, 63], [46, 50, 53, 56]],
+        motif: [[[0, 79], [1, 82], [2, 79]], [[0, 75], [1, 77], [2, 79]], [[0, 80], [1, 77], [2, 72]], [[0, 74], [1, 77], [2, 80]]],
+        motif2: [[[0, 84], [1, 82], [2, 79]], [[0, 82], [1, 79], [2, 74]], [[0, 77], [1, 80], [2, 84]], [[0, 82], [1, 80], [2, 77]]] },
+    { name: "acorn hunt", rec: 1, bpm: 82, keys: "stab", bass: "walk", lead: "marimba", drums: "brush",
+        prog: [[48, 52, 55, 57], [45, 48, 52, 55], [50, 53, 57, 60], [55, 59, 62, 65]], b: [[53, 57, 60, 64], [52, 56, 59, 62], [57, 60, 64, 67], [55, 59, 62, 65]],
+        motif: [[[0, 76], [.66, 79], [1, 81], [2, 79], [3, 76]], [[0, 72], [1, 76], [1.66, 79], [2, 76], [3, 72]], [[0, 74], [.66, 77], [1, 81], [2, 77], [3, 74]], [[0, 71], [1, 74], [2, 77], [2.66, 79]]],
+        motif2: [[[0, 81], [1, 79], [2, 76], [3, 72]], [[0, 80], [1, 76], [2, 71], [3, 74]], [[0, 76], [1, 79], [2, 84], [3, 81]], [[0, 79], [.66, 77], [1, 74], [2, 71], [3, 67]]] }
+];
+function pickRecord() { // (a different one from last time)
+    const sg = choice(RECORDS.filter(x => x.name !== Gramo.last));
+    Gramo.last = sg.name;
+    return sg;
+}
 function pickSong(night) {
     const prev = Snd.lastSong, opts = SONGS.filter(x => x !== prev && !(Snd.recent || []).includes(x.name)), pool = opts.length ? opts : SONGS.filter(x => x !== prev);
     const weighted = pool.flatMap(x => night && x.night || !night && !x.night ? [x, x] : [x]);
@@ -5887,6 +5956,19 @@ function playLead(kind, m, t, bt, fade, M) {
     }
     else if (kind === "flute")
         tone(f, t, bt * 1.3, { vol: .011 * fade, atk: .07, bus: M });
+    else if (kind === "marimba") { // wooden, quick to die away
+        tone(f, t, .32, { vol: .018 * fade, bus: M });
+        tone(f * 4, t, .05, { vol: .003 * fade, bus: M });
+    }
+    else if (kind === "whistle") { // two close sines: a slight warble
+        tone(f, t, bt * .85, { vol: .010 * fade, atk: .04, bus: M });
+        tone(f * 1.006, t, bt * .85, { vol: .005 * fade, atk: .055, bus: M });
+    }
+    else if (kind === "vibes") { // bell-like, the beating of two sines for the vibrato
+        tone(f, t, 1.4, { vol: .012 * fade, bus: M });
+        tone(f * 1.007, t, 1.4, { vol: .008 * fade, bus: M });
+        tone(f * 4, t, .08, { vol: .0015 * fade, bus: M });
+    }
     else if (kind === "kalimba") {
         tone(f, t, .7, { vol: .016 * fade, bus: M });
         tone(f * 5.4, t, .08, { vol: .002 * fade, bus: M });
@@ -5896,10 +5978,11 @@ function playLead(kind, m, t, bt, fade, M) {
 }
 function songTick(t, dk) {
     if (!Snd.song) {
-        const night = dk > .6, sg = pickSong(night), carry = Snd.carry && Snd.carry > t ? Snd.carry : t + .3;
-        Snd.lastSong = sg;
-        const bpm = (sg.bpm || 70) - (night ? 8 : 0);
-        Snd.song = { sg, bar: 0, bars: (sg.meter === 3 ? 40 : 32), beat: bpm / 60, next: carry, drums: (sg.drums || "brush") !== "none" && !(night && !sg.drums) && Math.random() < .9, last: (sg.mel || MEL)[2], first: !Snd.carry };
+        const rec = Gramo.on && !Gramo.song, night = dk > .6, sg = rec ? (Gramo.rec || pickRecord()) : pickSong(night), carry = Snd.carry && Snd.carry > t ? Snd.carry : t + .3;
+        if (!rec)
+            Snd.lastSong = sg;
+        const bpm = (sg.bpm || 70) - (night && !rec ? 8 : 0);
+        Snd.song = { sg, bar: 0, bars: (sg.meter === 3 ? 40 : 32), beat: bpm / 60, next: carry, drums: (sg.drums || "brush") !== "none" && !(night && !sg.drums) && (sg.rec || Math.random() < .9), last: (sg.mel || MEL)[2], first: !Snd.carry };
         if (Gramo.on && !Gramo.song)
             Gramo.song = Snd.song;
         const g = document.getElementById("sndG");
@@ -5924,6 +6007,9 @@ function songTick(t, dk) {
             if (k === 0 || Math.random() < .8)
                 tone(mtof(ch[order[k % 8]]), t0 + k * bt / 2, .45, { type: "triangle", vol: .014 * fade, bus: M });
     }
+    else if (keys === "stab") // short soft piano chords on the swung off-beats, the root left to the bass
+        for (const k of [.66, 1.66, 2.66, 3.66].filter(k => k === 1.66 || k === 3.66 || Math.random() < .25))
+            ch.slice(1).forEach((m, i) => tone(mtof(m), t0 + bt * k + i * .014, bt * .4, { type: "triangle", vol: .008 * fade, bus: M }));
     else if (mb === 3) // waltz: chord on one, soft stabs on two and three
         ch.forEach((m, i) => {
             tone(mtof(m), t0 + i * .03, bt * 2.4, { vol: .024 * fade, bus: M });
@@ -5941,11 +6027,24 @@ function songTick(t, dk) {
         if (Math.random() < .5)
             ch.slice(1).forEach((m, i) => tone(mtof(m), t0 + bt * 2.5 + i * .03, bt * 1.3, { vol: .016 * fade, bus: M }));
     }
-    tone(mtof(ch[0] - 12), t0, bt * 1.6, { vol: .07 * fade, bus: M });
-    if (Math.random() < .6)
-        tone(mtof(ch[0] - 12 + 7), t0 + bt * (mb === 3 ? 2 : 2.5), bt * .9, { vol: .05 * fade, bus: M });
+    if (sg.bass === "walk") { // a walking bass: root, chord notes, then a half step into the next bar's root
+        const nx = ((sec === 2 && so.bar % 8 !== 7) || (sec === 1 && so.bar % 8 === 7) ? sg.b : sg.prog)[(so.bar + 1) % 4][0] - 12, r = ch[0] - 12;
+        const walk = mb === 3 ? [r, r + 7, nx + (nx > r ? -1 : 1)] : [r, ch[1] - 12, ch[2] - 12, nx + (nx > r ? -1 : 1)];
+        walk.forEach((m, k) => tone(mtof(m), t0 + bt * k, bt * .85, { vol: .045 * fade, bus: M }));
+    }
+    else {
+        tone(mtof(ch[0] - 12), t0, bt * 1.6, { vol: .07 * fade, bus: M });
+        if (Math.random() < .6)
+            tone(mtof(ch[0] - 12 + 7), t0 + bt * (mb === 3 ? 2 : 2.5), bt * .9, { vol: .05 * fade, bus: M });
+    }
+    const tune = sg.motif && (sec === 2 ? sg.motif2 : sg.motif);
+    if (tune && (sec > 0 || so.bar % 8 >= 4)) { // the record's own tune; in the intro its second half, softly and lower
+        for (const [pos, m] of tune[so.bar % 4])
+            if (sec === 0 || Math.random() > .06)
+                playLead(sg.lead, sec === 0 ? m - 12 : m, t0 + bt * pos, bt, sec === 0 ? fade * .6 : fade, M);
+    }
     // a few melody notes, stepping, swung
-    if (sec > 0 && (so.bar % 2 === 1 || Math.random() < (sec === 2 ? .7 : .4))) {
+    else if (!tune && sec > 0 && (so.bar % 2 === 1 || Math.random() < (sec === 2 ? .7 : .4))) {
         let m = so.last;
         for (const pos of mb === 3 ? [0, 1, 2, 2.5] : [0, 1.66, 2, 3, 3.66]) {
             if (Math.random() < .42) {
@@ -5989,23 +6088,23 @@ function songTick(t, dk) {
     }
 } // one song flows straight into the next
 /* the gramophone in the nook (garden.js): wound up, it plays one song, with the music on or off (not with the sound
-   off: then the record turns quietly). It stops when its song ends, or after GRAMO_MAX */
+   off: then the record turns quietly). It plays one of its own RECORDS; it stops when the record ends, or after GRAMO_MAX */
 const GRAMO_MAX = 150e3;
-const Gramo = { on: false, at: 0, song: null };
+const Gramo = { on: false, at: 0, song: null, last: "", rec: null };
 function gramoPlay() {
     Gramo.on = true;
     Gramo.at = performance.now();
-    Gramo.song = null;
-    if (sndMode() === 3) // (with the music on, the record is the song that's playing)
-        Gramo.song = Snd.song;
-    else { // (otherwise a fresh song)
-        Snd.song = null;
-        Snd.carry = 0;
-    }
+    Gramo.song = null; // (one of its own records, from the start: the background song stops for it)
+    Gramo.rec = pickRecord();
+    Snd.song = null;
+    Snd.carry = 0;
 }
 function gramoStop() {
+    if (Gramo.on && Snd.song && Snd.song.sg.rec) // (the needle lifted mid-record: the background music starts afresh)
+        Snd.song = null, Snd.carry = 0;
     Gramo.on = false;
     Gramo.song = null;
+    Gramo.rec = null;
 }
 function gramoPlaying() {
     if (Gramo.on && performance.now() - Gramo.at > GRAMO_MAX)
@@ -14159,6 +14258,9 @@ function deskChairOverMite() {
  * emoticons. Each line goes into the Overheard log (heard). Also the snail's own state.
  */
 let b2Who = "snail";
+/* voices from somewhere else, through the chalk circle (F the friend, A the friend's aunt): their names, for the
+   conversation that's on (circleCall, possum.js) */
+let convoFar = {};
 /* the second bubble (the snail, Midnightcat, the possum, a visitor): one line at a time, through the same queue as
    Mite's (speech.js). A line waits while the one showing isn't readable yet, or while a conversation has the floor;
    the conversation's own emotes (emote) always show */
@@ -14222,7 +14324,7 @@ function introBeat(who) {
 }
 function runConvo(line, onEnd) {
     let beats = String(line).split(/\s+\/\s+/).map(x => x.trim()).filter(Boolean).map(x => {
-        const m = x.match(/^([MSVCP]):\s*(.*)$/);
+        const m = x.match(/^([MSVCPFA]):\s*(.*)$/);
         return m ? { who: m[1], t: m[2] } : { who: "M", t: x };
     });
     if (beats.some(b => b.who === "M")) // (Mite's in it: it introduces whoever you haven't met yet)
@@ -14251,10 +14353,12 @@ function runConvo(line, onEnd) {
             return;
         }
         const bt = beats[i++], txt = fill(bt.t);
-        const name = bt.who === "S" ? snailName() : bt.who === "V" ? (guest ? guest.name : "Visitor") : bt.who === "C" ? CAT_NAME : bt.who === "P" ? possumName() : S.settings.pet, em = emoteFor(txt, bt.who);
+        const name = bt.who === "S" ? snailName() : bt.who === "V" ? (guest ? guest.name : "Visitor") : bt.who === "C" ? CAT_NAME : bt.who === "P" ? possumName() : (bt.who === "F" || bt.who === "A") && convoFar[bt.who] ? convoFar[bt.who] : S.settings.pet, em = emoteFor(txt, bt.who);
         heard(name, txt, cid);
-        dlgShow(name, txt, WHO_KIND[bt.who] || "", id, next); // (first: from now on the conversation has the floor)
-        if (bt.who === "M")
+        dlgShow(name, txt, bt.who === "F" || bt.who === "A" ? "circle" : WHO_KIND[bt.who] || "", id, next); // (first: from now on the conversation has the floor)
+        if (bt.who === "F" || bt.who === "A") // (a voice through the chalk circle: nobody here to show a little look)
+            ;
+        else if (bt.who === "M")
             speak(em, { emote: true, ms: dlgTime(txt) * 1000 });
         else
             snailSay(em, dlgTime(txt) * 1000, WHO_KIND[bt.who], true);
@@ -14354,7 +14458,7 @@ $("dlg").addEventListener("click", e => {
 let snailCarry = false, snailPause = false, snail2Until = 0, convoId = 0, convoWho = [];
 /* the room a speaker is in (M Mite, S the snail, C Midnightcat, P the possum, V a visitor) */
 function whoRoom(w) {
-    return w === "S" || w === "snail" ? snailRoom : w === "C" || w === "cat" ? cat.room : w === "P" || w === "possum" ? possum.room : w === "M" ? view : "room";
+    return w === "S" || w === "snail" ? snailRoom : w === "C" || w === "cat" ? cat.room : w === "P" || w === "possum" ? possum.room : w === "F" || w === "A" ? "archive" : w === "M" ? view : "room";
 }
 /* tapping something that's being said: the view goes to whoever is saying it, so you can watch */
 function lookAtSpeaker(w) {
@@ -19326,6 +19430,10 @@ function drawGramo(dk, t) {
             if (i !== 1)
                 cx.fillRect(nx2 + q * 2, ny2 - q * 4, q, q * 2); // a flag
         }
+    if (ndShadeLate) { // the night door's shadow hand at the crank, in front of it (draw-world.js)
+        ndShadeLate();
+        ndShadeLate = null;
+    }
     gardenHits.gramo = { x: x - R * .15, y: my - R * .35, w: mx - x + R * .55, h: floor - my + R * .4, cx: mid }; // (generous: it's small and up high)
 }
 /* Mite at the gramophone (the ggramo object, interactions.js): wind it up and put the needle down, or lift it */
@@ -19337,7 +19445,7 @@ function gramoShow() {
     }
     gramoPlay();
     sndUnlock();
-    const line = compose("gramophone") || "One record. It's the only one it'll play. I think it chose.";
+    const line = compose("gramophone", { rec: Gramo.rec ? Gramo.rec.name : "" }) || "Wound up. Needle down. Listen: a little dust first, then the song.";
     speak(sndMode() ? line : line + " (The sound's off, so it turns quietly.)", { ms: 6000 });
     return 6;
 }
@@ -20035,6 +20143,37 @@ function possumSummonEnd(p, now) {
     if (line && roomVisible("archive"))
         setTimeout(() => snailSay(line, clamp(3000 + line.length * 45, 4000, 8000), "possum"), 300);
 }
+/* the possum and the snail call a friend through the chalk circle (pool circlecall: "Friend | Aunt | P: / S: / F: /
+   A:"): the friend answers, and the friend's aunt, who means well, joins in. The possum stands in the middle, the
+   snail stays put; the circle sparkles violet while they talk. Only heard while the archive's on screen (otherwise the
+   line's busy, and they try again another time) */
+function snailFree() {
+    return own("snail") && !snailAsleep && !snailPause && !snailCarry && !snailPost && snailTalkUntil < performance.now();
+}
+function circleCall(p, now) {
+    p.call = 0;
+    const raw = compose("circlecall"), parts = raw ? raw.split("|").map(x => x.trim()) : [];
+    if (parts.length < 3 || !roomVisible("archive") || floorTaken()) {
+        Object.assign(p, { summon: false, ph: "sit", until: now + 3000 });
+        possumSummonAt = now + rnd(4, 8) * 60e3;
+        return;
+    }
+    const hold = now + 120e3;
+    Object.assign(p, { ph: "summon", until: hold, dir: 1, calling: true });
+    p.talkUntil = hold;
+    snailTalkUntil = hold;
+    convoFar = { F: parts[0], A: parts[1] };
+    sfx("sparkle");
+    runConvo(parts.slice(2).join(" | "), () => {
+        const t = performance.now();
+        convoFar = {};
+        p.calling = false;
+        p.talkUntil = 0;
+        snailTalkUntil = 0;
+        Object.assign(p, { summon: false, ph: "sit", until: t + 2500 });
+        possumSummonAt = t + rnd(8, 16) * 60e3;
+    });
+}
 /* k black (ears, eyes), g grey fur, l the lighter belly, w the white face, p pink (nose, paws, tail), - shut eyes */
 const POSSUM_SPRITES = { // small: about the size of Midnightcat's head and shoulders
     walk1: [
@@ -20344,11 +20483,17 @@ function possumTick(dt, now) {
             if (now < p.until)
                 return;
             break;
-        case "summon": // in the middle of the chalk circle, calling up something delicious (circle.js)
+        case "summon": // in the middle of the chalk circle, calling up something delicious (circle.js); or on a call (p.calling)
             if (Math.random() < .2)
                 addP({ type: "spark", x: p.x + rnd(-R * .5, R * .5), y: p.fy - rnd(0, R * .6), vx: rnd(-8, 8), vy: -rnd(8, 22), g: -5, max: 1.1, col: choice(["#b89ae8", "#9dffa8", "#e8d0a0"]), size: 2, room: p.room });
             if (now < p.until)
                 return;
+            if (p.calling) { // (the call ran out without its ending: just back to sitting)
+                Object.assign(p, { calling: false, summon: false, ph: "sit", until: now + 2500, talkUntil: 0 });
+                convoFar = {};
+                possumSummonAt = now + rnd(8, 16) * 60e3;
+                return;
+            }
             possumSummonEnd(p, now);
             return;
         case "beg": // by the oven, waiting; once the tray's out, Mite comes over and hands it one
@@ -20508,6 +20653,15 @@ function possumTick(dt, now) {
     if (p.room === "archive" && own("circle") && now > possumSummonAt && !catInCircle() && Math.random() < .35) {
         const c = circleGeo();
         if (p.summon && Math.abs(p.x - c.x) < 4) { // there: up on its hind legs
+            if (p.call) { // (a call to a friend: it waits in the circle for the snail, four minutes at most)
+                if (snailRoom === "archive" && snailFree())
+                    return circleCall(p, now);
+                if (now - p.call < 240e3) {
+                    Object.assign(p, { ph: "sit", until: now + 4000 });
+                    return;
+                }
+                p.call = 0;
+            }
             Object.assign(p, { ph: "summon", until: now + 6000, dir: 1 });
             const line = compose("possumsummon") || "Garbage of the deep, I call upon thee.";
             if (roomVisible("archive"))
@@ -20515,6 +20669,11 @@ function possumTick(dt, now) {
             return;
         }
         p.summon = true;
+        if (!p.call && own("snail") && Math.random() > .65) { // now and then it's a call instead: the snail's asked along
+            p.call = now;
+            snailGoal = "archive";
+            snailGoalUntil = now + 360e3;
+        }
         Object.assign(p, { ph: "walk", tx: c.x, ty: c.y });
         return;
     }
@@ -23848,13 +24007,15 @@ function drawNightDoor(dk, x, sky, y = GY) { // (y: what it stands on)
 /* every now and then something reaches out of the night door: shadow tendrils curling out along the floor and up the
    wall, or a shadow hand that feels about and goes back in. Only with Strangeness on; more often at night.
    (ndShade: the one going on now; tests can start one with ndShade = { k, t0, side, dur }) */
-let ndShade = null, ndNext = 0;
+let ndShade = null, ndNext = 0, ndShadeLate = null;
 function drawDoorShade(x, y, w, h, sky) {
     const now = performance.now();
+    ndShadeLate = null;
     if (!ndNext)
         ndNext = now + rnd(120e3, 300e3); // (not straight away)
     if (!ndShade && now > ndNext && S.settings.strange) {
-        ndShade = { k: Math.random() < .55 ? "tendrils" : "hand", t0: now, side: Math.random() < .5 ? -1 : 1, dur: rnd(6e3, 9e3), seed: Math.random() * 9 };
+        const gr = own("gramo") && !gramoPlaying() && Math.random() < .3; // (now and then it puts a record on: the gramophone stands right beside the door)
+        ndShade = gr ? { k: "gramo", t0: now, side: 1, dur: 9e3, seed: Math.random() * 9 } : { k: Math.random() < .55 ? "tendrils" : "hand", t0: now, side: Math.random() < .5 ? -1 : 1, dur: rnd(6e3, 9e3), seed: Math.random() * 9 };
         ndNext = now + ndShade.dur + (sky.dark > .4 ? rnd(360e3, 840e3) : rnd(720e3, 1500e3)); // about once in 10 minutes at night, once in 18 by day (was ~once a minute)
     }
     const a = ndShade;
@@ -23894,6 +24055,8 @@ function drawDoorShade(x, y, w, h, sky) {
             line(pts, R * .11, R * .02);
         }
     }
+    else if (a.k === "gramo") // the hand reaches over to the gramophone beside the door and plays it (drawn after the
+        ndShadeLate = () => drawShadeGramo(a, x, y, w, h, e, t, grow, line, ink, halo); // gramophone and the railing: drawGramo)
     else { // a hand: out of the gap at the side, high up, feeling about, fingers curling and uncurling, then back in
         const sd = a.side, reach = R * 1.15 * grow, hy = y - h * .85 + Math.sin(t * 1.3) * R * .06, hx = x + sd * (w / 2 + reach);
         const arm = [];
@@ -23929,6 +24092,55 @@ function drawDoorShade(x, y, w, h, sky) {
     }
     cx.restore();
 }
+/* the shadow hand plays the gramophone: out of the door's right-hand gap, along to the gramophone's crank; it winds
+   (the palm going round), puts the needle down at 5.2 s (gramoPlay, once) and goes back in. Mite says so if it's
+   in the nook (shade_gramo) */
+const SHADE_GRAMO_AT = 5200;
+function drawShadeGramo(a, x, y, w, h, e, t, grow, line, ink, halo) {
+    const g = gramoGeo(), tx = g.cx, ty = g.y - g.h / 2, ox = x + w / 2, oy = y - h * .62;
+    const wind = e > 1600 && e < SHADE_GRAMO_AT, ang = (e - 1600) / 1000 * Math.PI * 2.4;
+    const hx = ox + (tx - ox) * grow + (wind ? Math.cos(ang) * R * .06 : 0), hy = oy + (ty - oy) * grow + (wind ? Math.sin(ang) * R * .05 : 0);
+    if (!a.played && e > SHADE_GRAMO_AT) {
+        a.played = true;
+        if (!gramoPlaying()) {
+            gramoPlay();
+            if (view === "garden" && pet.beh !== "sleep")
+                setTimeout(() => speak(compose("shade_gramo", { rec: Gramo.rec ? Gramo.rec.name : "" }) || "The hand from the night door put a record on.", { ms: 6000 }), 1500);
+        }
+    }
+    cx.save();
+    cx.lineCap = "round";
+    const arm = [];
+    for (let k = 0; k <= 8; k++) {
+        const f = k / 8;
+        arm.push([ox - w * .05 + (hx - ox + w * .05) * f, oy + (hy - oy) * f - Math.sin(f * Math.PI) * R * .1 * grow]);
+    }
+    line(arm, R * .14, R * .11);
+    if (grow < .2)
+        return cx.restore();
+    const pr = R * .15 * grow, curl = wind ? .7 : .35 + .2 * Math.sin(t * 2.4 + a.seed);
+    cx.fillStyle = halo;
+    cx.beginPath();
+    cx.ellipse(hx, hy, pr + R * .025, pr + R * .025, 0, 0, 7);
+    cx.fill();
+    cx.fillStyle = ink;
+    cx.beginPath();
+    cx.ellipse(hx, hy, pr, pr, 0, 0, 7);
+    cx.fill();
+    for (let f = 0; f < 4; f++) { // the fingers, curled round the crank while it winds
+        const an0 = -1.1 + f * .45, L = R * .34 * grow, pts = [];
+        let px = hx + Math.cos(an0) * pr, py = hy + Math.sin(an0) * pr;
+        pts.push([px, py]);
+        for (let k = 1; k <= 3; k++) {
+            const an = an0 + curl * .7 * k;
+            px += Math.cos(an) * L / 3;
+            py += Math.sin(an) * L / 3;
+            pts.push([px, py]);
+        }
+        line(pts, R * .07, R * .045, true);
+    }
+    cx.restore();
+}
 /* a tap on the shadow while it's out: the hand waves back (and now and then leaves something on the platform for
    the vase), the tendrils are shy and slip back in. Mite says something (lines shade_hand, shade_tendrils) */
 function shadeTap(p) {
@@ -23938,6 +24150,8 @@ function shadeTap(p) {
     const now = performance.now(), e = now - a.t0, x = ndoorX(), y = nookLoftGeo().balY;
     if (e < 1000 || e > a.dur - 1000 || Math.abs(p.x - x) > R * 1.9 || p.y > y + R * .2 || p.y < y - R * 2.2)
         return false;
+    if (a.k === "gramo") // (busy with the record: it doesn't stop for a tap)
+        return true;
     if (a.k === "hand") {
         if (a.wave && now - a.wave < 2600)
             return true;
@@ -24038,7 +24252,23 @@ function rugPattern(c) {
 }
 function drawRugFor(dk, id) {
     if (own(id))
-        drawRug(dk, ...rugCol(id).c);
+        rugRect(id) ? drawRugRect(dk, ...rugCol(id).c) : drawRug(dk, ...rugCol(id).c);
+}
+/* the rectangular weave: the same middle as the oval, two trim borders and a fringe at both short ends */
+function drawRugRect(dk, col, colDark, trim, trimDark) {
+    const ry = GY + (H - GY) * .42, w = Math.round(R * 4.6), h = Math.round((H - GY) * .5), x = Math.round(W * .5 - w / 2), y = Math.round(ry - h / 2);
+    const tc = mix(trim, trimDark, dk);
+    cx.fillStyle = tc; // the fringe
+    for (let k = 1; k < h - 1; k += 3) {
+        cx.fillRect(x - 6, y + k, 6, 2);
+        cx.fillRect(x + w, y + k, 6, 2);
+    }
+    cx.fillStyle = rugPattern(mix(col, colDark, Math.round(dk * 10) / 10));
+    cx.fillRect(x, y, w, h);
+    cx.strokeStyle = tc;
+    cx.lineWidth = 2;
+    for (const [fx, fy] of [[.07, .14], [.27, .36]])
+        cx.strokeRect(Math.round(x + w * fx), Math.round(y + h * fy), Math.round(w * (1 - fx * 2)), Math.round(h * (1 - fy * 2)));
 }
 function drawRug(dk, col, colDark, trim, trimDark) {
     const ry = GY + (H - GY) * .42;
@@ -25478,14 +25708,30 @@ function renderShop() {
         shopFurnShown.add(b.id);
         const shown = Math.min(own, b.max), needs = !own && b.needs && !S.b[b.needs] ? BUILDINGS.find(x => x.id === b.needs) : null; // (the vase stands on the chest)
         el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : needs ? `<span class="owned">Needs the ${esc(needs.name.toLowerCase())}</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
-        if (own && RUG_DEF[b.id]) { // a rug: its colour (S.rugCol)
+        if (own && RUG_DEF[b.id]) { // a rug: its colour and shape (S.rugCol); colours past the first three are bought once, then go on any rug
             const cur = rugCol(b.id).id, row = document.createElement("div");
             row.className = "rugcols";
             row.setAttribute("role", "group");
             row.setAttribute("aria-label", `Colour of the ${b.name.toLowerCase()}`);
-            row.innerHTML = RUG_COLS.map(c => `<button type="button" class="rugsw" data-rc="${c.id}" aria-pressed="${c.id === cur}" title="${c.name}" aria-label="${c.name}" style="background:${c.c[0]};box-shadow:inset 0 0 0 3px ${c.c[0]},inset 0 0 0 5px ${c.c[2]}"></button>`).join("");
+            row.innerHTML = RUG_COLS.map(c => rugColOwned(c.id)
+                ? `<button type="button" class="rugsw" data-rc="${c.id}" aria-pressed="${c.id === cur}" title="${c.name}" aria-label="${c.name}" style="background:${c.c[0]};box-shadow:inset 0 0 0 3px ${c.c[0]},inset 0 0 0 5px ${c.c[2]}"></button>`
+                : `<button type="button" class="rugsw buy" data-rb="${c.id}" ${S.g < c.p ? "disabled" : ""} title="${c.name}: ${c.p} glimmers" aria-label="Buy the colour ${c.name} for ${c.p} glimmers" style="background:${c.c[0]};box-shadow:inset 0 0 0 3px ${c.c[0]},inset 0 0 0 5px ${c.c[2]}"><span>${c.p}◆</span></button>`).join("");
             row.querySelectorAll("[data-rc]").forEach(bt => bt.onclick = () => setRugCol(b.id, bt.dataset.rc));
+            row.querySelectorAll("[data-rb]").forEach(bt => bt.onclick = () => buyRugCol(bt.dataset.rb, b.id));
             el.firstElementChild.appendChild(row);
+            const sh = document.createElement("div");
+            sh.className = "rugcols";
+            sh.setAttribute("role", "group");
+            sh.setAttribute("aria-label", `Shape of the ${b.name.toLowerCase()}`);
+            const rect = rugRect(b.id);
+            sh.innerHTML = S.rugCol.rect
+                ? `<button type="button" class="btn small" data-rs="oval" aria-pressed="${!rect}">Oval</button><button type="button" class="btn small" data-rs="rect" aria-pressed="${rect}">Rectangle</button>`
+                : `<button type="button" class="btn small amber" data-rw ${S.g < RUG_RECT_PRICE ? "disabled" : ""} aria-label="Buy the rectangular weave for ${RUG_RECT_PRICE} glimmers">Rectangular weave ${RUG_RECT_PRICE} ◆</button>`;
+            sh.querySelectorAll("[data-rs]").forEach(bt => bt.onclick = () => setRugShape(b.id, bt.dataset.rs));
+            const rw = sh.querySelector("[data-rw]");
+            if (rw)
+                rw.onclick = () => buyRugRect(b.id);
+            el.firstElementChild.appendChild(sh);
         }
         const bb = el.querySelector("[data-b]");
         if (bb)
@@ -25639,9 +25885,47 @@ function toggleKettle(sid) {
 }
 /* a rug's colour, picked in the shop */
 function setRugCol(id, c) {
-    if (!RUG_DEF[id] || !RUG_COLS.some(x => x.id === c) || !(S.b[id] > 0))
+    if (!RUG_DEF[id] || !rugColOwned(c) || !(S.b[id] > 0))
         return;
     S.rugCol = Object.assign({}, S.rugCol, { [id]: c, at: Date.now() });
+    sfx("tock");
+    afterChange();
+    renderShop();
+}
+/* a rug colour bought (once; then it goes on any rug): it goes straight onto the rug it was bought from */
+function buyRugCol(c, id) {
+    const r = RUG_COLS.find(x => x.id === c);
+    if (!r || !r.p || rugColOwned(c) || S.g < r.p || !(S.b[id] > 0))
+        return;
+    sfx("coin");
+    S.g -= r.p;
+    S.rugCol = Object.assign({}, S.rugCol, { own: [...(S.rugCol.own || []), c], [id]: c, at: Date.now() });
+    buySpeak(compose("buy_rugcol", { col: r.name.toLowerCase() }) || `${r.name} wool. I'll weave it into the rug tonight. It'll go on the others too, if they ask.`);
+    note(`Got ${r.name.toLowerCase()} wool for the rugs.`);
+    afterChange();
+    renderShop();
+}
+/* the rectangular weave (once): then every rug can be oval or rectangular */
+function buyRugRect(id) {
+    if (S.rugCol.rect || S.g < RUG_RECT_PRICE || !(S.b[id] > 0))
+        return;
+    sfx("coin");
+    S.g -= RUG_RECT_PRICE;
+    S.rugCol = Object.assign({}, S.rugCol, { rect: 1, sh: Object.assign({}, S.rugCol.sh, { [id]: "rect" }), at: Date.now() });
+    buySpeak("A pattern for square corners. The rug won't mind. Rugs are very adaptable, mostly.");
+    note("Got the rectangular weave for the rugs.");
+    afterChange();
+    renderShop();
+}
+function setRugShape(id, v) {
+    if (!S.rugCol.rect || !RUG_DEF[id] || !(S.b[id] > 0))
+        return;
+    const sh = Object.assign({}, S.rugCol.sh);
+    if (v === "rect")
+        sh[id] = "rect";
+    else
+        delete sh[id];
+    S.rugCol = Object.assign({}, S.rugCol, { sh, at: Date.now() });
     sfx("tock");
     afterChange();
     renderShop();
