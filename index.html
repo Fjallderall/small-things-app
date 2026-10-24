@@ -4023,7 +4023,9 @@ const ACH = [
 ];
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 /* jotted notes (ids only) about building the app that were done by 24-10-2026, let go once on every device (boot.js) */
-const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu36t", "mvjpagoy1syb1", "mvjpb443c2gto", "mvjpbskekc1q9", "mvjqs6i428ut6", "mvjquch2oh80f", "mvjqvuayxpolg", "mvjqwymqsqqfb", "mvjqzixvljhjx", "mvjr05c1njw7f", "mvjr0wr17ab5l", "mvjr1ww7vc41b", "mvjr6es1nrbdw", "mvjrfezbbrzza", "mvjrfkz8nhw17", "mvjrm5h6f26b1", "mvjroybcgeebb", "mvjrptomfr8ww", "mvjrqsr0hq6ab", "mvjrrsreyxeby", "mvjry42ynq0x0", "mvjs8n0083gmu", "mvjs9vxev9amu", "mvjsahfwipc90", "mvjsdx24ntc6v", "mvjsfn3013t02", "mvjskwaca6cd8", "mvjsm32nua3xh", "mvjtouym4i2su", "mvjw1fdk5tpf8", "mvjz59v270u9o", "mvjzbh9eg3whh", "mvk0f6570eibb", "mvk0m6i65t03d", "mvk0o4nstcon0", "mvk103prpwve6", "mvk18107y2rq8", "mvkkhbp8gtot0", "mvkkibdo51e6o", "mvkklocvzcwsp", "mvkkucxwu0066", "mvkkvzg2z19a6", "mvkkxwnav3z2x", "mvkkzk8eal2x5", "mvkna90pei7x3", "mvkqk1xd3ms3m", "mvkqm9un5q346", "mvktt6diowg3u", "mvl4grtyeru5z", "mvligczo3d9e6", "mvlipjr17z5os", "mvlipz25tvn7v", "mvlir76umr9a9", "mvliswef2x3x8", "mvljfkhj1wpal", "mvljgnrxwpx4k", "mvljkcx6he9dt"];
+const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu36t", "mvjpagoy1syb1", "mvjpb443c2gto", "mvjpbskekc1q9", "mvjqs6i428ut6", "mvjquch2oh80f", "mvjqvuayxpolg", "mvjqwymqsqqfb", "mvjqzixvljhjx", "mvjr05c1njw7f", "mvjr0wr17ab5l", "mvjr1ww7vc41b", "mvjr6es1nrbdw", "mvjrfezbbrzza", "mvjrfkz8nhw17", "mvjrm5h6f26b1", "mvjroybcgeebb", "mvjrptomfr8ww", "mvjrqsr0hq6ab", "mvjrrsreyxeby", "mvjry42ynq0x0", "mvjs8n0083gmu", "mvjs9vxev9amu", "mvjsahfwipc90", "mvjsdx24ntc6v", "mvjsfn3013t02", "mvjskwaca6cd8", "mvjsm32nua3xh", "mvjtouym4i2su", "mvjw1fdk5tpf8", "mvjz59v270u9o", "mvjzbh9eg3whh", "mvk0f6570eibb", "mvk0m6i65t03d", "mvk0o4nstcon0", "mvk103prpwve6", "mvk18107y2rq8", "mvkkhbp8gtot0", "mvkkibdo51e6o", "mvkklocvzcwsp", "mvkkucxwu0066", "mvkkvzg2z19a6", "mvkkxwnav3z2x", "mvkkzk8eal2x5", "mvkna90pei7x3", "mvkqk1xd3ms3m", "mvkqm9un5q346", "mvktt6diowg3u", "mvl4grtyeru5z", "mvligczo3d9e6", "mvlipjr17z5os", "mvlipz25tvn7v", "mvlir76umr9a9", "mvliswef2x3x8", "mvljfkhj1wpal", "mvljgnrxwpx4k", "mvljkcx6he9dt",
+    // groups 10–14 (24-10-2026): finished jots, let go with her yes. Add each batch's finished jot ids here.
+    "mvm90k4dqhplg", "mvm929q48c270", "mvm93kr39hyi5", "mvm94889k2eqg", "mvm955q9877rv", "mvm99lf4mzzyl", "mvm9cqdnmj3bx", "mvm9ei2vicr31", "mvm9hkn7nxpsc", "mvm9ixx1qyd9t", "mvma7ruzv0wn5", "mvma91rm728vw", "mvmccxu92ek34", "mvmcd5ec86ory", "mvmcehsltzpqp", "mvmcflvdl8516", "mvmciprekwc0r", "mvmcj5ha9neno", "mvmf29ioxaqz5", "mvmf4xv7bwwcg", "mvmf65keepu4t", "mvmfd05pu4dtk", "mvmfnzznk80k8", "mvmfor9nt72js", "mvmfpzaxyfo5i", "mvmm75kdvxdab", "mvmm8y68bg492", "mvmmcxslzxl4v", "mvmmer955ae70", "mvmmfa23wrutl", "mvmmgff6qx0u0", "mvmmgze4fr38a", "mvmmqstv6f8wc", "mvmn9o396cg56"];
 
 </script>
 <script>/* js/core/state.js */
@@ -30058,8 +30060,8 @@ function boot() {
         if (!isNew)
             S.b.rug = S.b.grug = S.b.arug = Math.max(1, num(S.b.arug));
     }
-    if (!S.flags.m_devjots) { // the owner's jotted notes about building this app, done and written up elsewhere (her yes, 24-10-2026): let go, once
-        S.flags.m_devjots = 1;
+    if (num(S.flags.m_devjots) < DEV_JOTS.length) { // the owner's jotted notes about building this app, once done (her yes, 24-10-2026): let go.
+        S.flags.m_devjots = DEV_JOTS.length; // (a count, so ids added to DEV_JOTS later are let go too; running again is harmless)
         const gone = new Set(DEV_JOTS);
         S.tasks = S.tasks.filter(t => {
             if (!t.jot || !gone.has(t.id))
