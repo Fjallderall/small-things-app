@@ -847,6 +847,8 @@ body.editing #addForm{display:none}
         <div class="shop" id="pantryShop"></div></details>
       <details class="shopsec" data-sec="wall" open><summary><h3>On the wall</h3><span class="seccount" id="cnt-wall"></span><span class="secnew" id="new-wall" hidden>new</span></summary><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p>
         <div class="shop" id="wallShop"></div></details>
+      <details class="shopsec" data-sec="season" open><summary><h3>This season: <span id="seasShopHead"></span></h3><span class="seccount" id="cnt-season"></span><span class="secnew" id="new-season" hidden>new</span></summary><p class="sub">A few things for each season. What you buy comes out every year in its season and goes into the seasonal box in between; what you don't buy comes back next year.</p><p class="sub" id="seasBox" hidden></p>
+        <div class="shop" id="seasShop"></div></details>
       <details class="shopsec" data-sec="splurge" open hidden><summary><h3>Something special</h3><span class="seccount" id="cnt-splurge"></span><span class="secnew" id="new-splurge" hidden>new</span></summary><p class="sub">A treat for the wagon, for the rest of the day. When the new day starts it's gone, and you can pick another.</p>
         <div class="shop" id="splurgeShop"></div></details>
       <details class="shopsec" data-sec="barter" open hidden><summary><h3>The raccoon's barter</h3><span class="seccount" id="cnt-barter"></span><span class="secnew" id="new-barter" hidden>new</span></summary>
@@ -1039,6 +1041,22 @@ body.editing #addForm{display:none}
  * Lines you add in the app live in your save (S.content.pools), not here.
  */
 const POOL_INFO = {
+    seas_sfrog: "Mite, tapping the frogspawn jar on the nook's windowsill (the tadpoles change colour every morning)",
+    seas_snest: "Mite, tapping the nest with one blue egg on the wall (the egg hums, never hatches)",
+    seas_swillow: "Mite, tapping the pussy willow in a bottle on the mantel (the catkins purr when stroked)",
+    seas_schain: "Mite, tapping the rain chain beside the wagon's window (it rings when it rains somewhere else)",
+    seas_sstorm: "Mite, tapping the thunderstorm in a jar on the mantel (flickers and grumbles in the evening)",
+    seas_sshell: "Mite, tapping the shell from another sea on the archive's windowsill",
+    seas_smill: "Mite, tapping the paper windmill in a pot on the wagon's windowsill (turns without wind)",
+    seas_snet: "Mite, tapping the butterfly net leaning in the wagon's corner (it caught a sound once and kept it)",
+    seas_swreath: "Mite, tapping the oak-leaf wreath on the wall (it rustles when there's no draught)",
+    seas_sgourd: "Mite, tapping the gourd by the fire that knocks back",
+    seas_smothl: "Mite, tapping the moth lantern under the nook's platform (a moth inside does the lighting)",
+    seas_smush: "Mite, tapping the string of drying mushrooms along the nook's beam (one more now and then)",
+    seas_sglobe: "Mite, tapping the snow globe of the wagon on the mantel (someone small inside waves)",
+    seas_sicicle: "Mite, tapping the icicle under a dome on the archive's windowsill (never melts, drips upwards)",
+    seas_smitten: "Mite, tapping the one knitted mitten pinned to the wall (with a note: waiting for the other one)",
+    seas_sfrost: "Mite, tapping the frost ferns on the wagon's window (now and then they spell a word)",
     gramophone: "Mite, winding up the gramophone in the nook (the record starts)",
     gramophone_stop: "Mite, lifting the gramophone's needle before the record's done",
     crochet: "Mite, now and then while knitting: on crochet (it can't; it isn't a moss skill)",
@@ -2289,6 +2307,102 @@ const DEF = {
             "[travelling] The view keeps changing. I say goodbye to each bit of it.",
             "[strange] Someone drew a little door in the mist on the glass. From the outside.",
             "I cleaned the window. Now outside is a bit more outside.",
+        ],
+        seas_sfrog: [
+            "The tadpoles are blue today. Yesterday they were orange. They don't seem to notice.",
+            "I counted the tadpoles. Then I counted again. The numbers agreed, which was a surprise to all of us.",
+            "One tadpole has legs already. It's being very modest about it.",
+            "I asked the tadpoles what colour they'll be tomorrow. They swam off. Keeping it a surprise."
+        ],
+        seas_snest: [
+            "The egg is humming again. A different tune from yesterday. It's working on something.",
+            "I put my ear to the egg. It stopped humming. Shy, I think.",
+            "Nobody's come for the egg. It doesn't seem to be waiting for anyone. Just humming.",
+            "The nest smells of spring and a bit of string. The egg is warm, which it shouldn't be."
+        ],
+        seas_swillow: [
+            "I stroked a catkin. It purred. Midnightcat looked over, very offended.",
+            "The pussy willow is purring by itself today. Something must have pleased it.",
+            "Soft as a mouse's ear. Purrs like a much bigger animal.",
+            "One catkin went yellow overnight. It purrs a bit louder now. Proud."
+        ],
+        seas_schain: [
+            "The rain chain rang just now. Dry as anything here. Somewhere it's pouring.",
+            "I held a cup of the rain chain to my ear. Rain, far away. On a tin roof, I think.",
+            "It rings for rain somewhere else. I like knowing someone else's garden is getting watered.",
+            "Quiet today. Nowhere it rains, apparently. Or nowhere it cares about."
+        ],
+        seas_sstorm: [
+            "The storm in the jar grumbled at me. Fair. I tapped the glass.",
+            "It drizzles inside the jar all day. In the evening it works up to lightning.",
+            "I think the storm is small, not far away. Hard to tell with storms.",
+            "The jar's warm. Storms run warm. I didn't know that before."
+        ],
+        seas_sshell: [
+            "I listened to the shell. A sea, but the waves come in the wrong order.",
+            "There's a sea in the shell that isn't on any map. I checked all the maps. Even the wagon's.",
+            "Someone in the shell's sea is singing. Not very well. Very happily.",
+            "The shell smells of salt and something like oranges. Another sea, another smell."
+        ],
+        seas_smill: [
+            "The windmill's turning. The window's shut. I've stopped asking.",
+            "It turned the other way for a minute this morning. Then it thought better of it.",
+            "I blew on the windmill. It slowed down. It prefers its own wind.",
+            "Four colours, going round. It's the busiest thing on the sill and it isn't even a plant."
+        ],
+        seas_snet: [
+            "The sound in the net is a door closing, far off. It goes round and round in there.",
+            "I tried to let the sound out of the net. It didn't want to go.",
+            "No butterflies in the net. Just the sound. It's a better catch, honestly.",
+            "The net rustled. That was the sound, turning over in its sleep."
+        ],
+        seas_swreath: [
+            "The wreath rustled. I shut the window. It rustled again, to make a point.",
+            "Every leaf a different brown. I counted seven browns. There are more, I think.",
+            "One acorn's missing. I suspect the possum. The possum suspects me.",
+            "It rustles like someone's walking through leaves. Somewhere outside. Nobody is."
+        ],
+        seas_sgourd: [
+            "I knocked on the gourd. It knocked back. Twice. That's new.",
+            "Knock, knock. Knock, knock. We don't get further than that. It's a start.",
+            "The gourd's stripes go round once more than they should. I've counted.",
+            "I didn't knock and it knocked anyway. I said come in. Nothing came in. Good."
+        ],
+        seas_smothl: [
+            "The moth turned the light up a bit when I came over. Very kind of it.",
+            "It's a good lantern. The moth does all the work. I just say thank you.",
+            "I asked the moth if it wanted to come out. It dimmed the light. That's a no.",
+            "The moth's shadow on the wall is much bigger than the moth. It knows."
+        ],
+        seas_smush: [
+            "Five mushrooms. Yesterday four. I didn't add one. Nobody admits to it.",
+            "They smell of woods after rain. The whole nook does now.",
+            "I'm not going to eat the extra one. You don't eat the one that turned up by itself.",
+            "The string sags a little more every week. Mushrooms are heavier than they look. Some of them."
+        ],
+        seas_sglobe: [
+            "The little wagon in the globe has its lamp on. So does ours. I checked.",
+            "Someone in the globe waved. I waved back. Then I wondered who was in ours.",
+            "I shook the globe. Inside, the snow fell. Outside, so did a bit. Coincidence.",
+            "It's always winter in there. Even in summer it stays in the box being winter."
+        ],
+        seas_sicicle: [
+            "The icicle dripped. Upwards. The drop's on the top of the dome now, very pleased.",
+            "It doesn't melt. Not by the fire, not in my paws. I tried both, scientifically.",
+            "The dome's cold to touch. The archive's a little quieter around it.",
+            "Filed under: rariteiten, cold. It's the only thing in that file."
+        ],
+        seas_smitten: [
+            "The note still says waiting for the other one. I've looked everywhere. Even the closet.",
+            "I could knit it a partner. It might not be the right one. It knows the difference.",
+            "Somewhere there's a left mitten waiting on a wall too, I think. Patient, both of them.",
+            "Warm, even pinned up. It's keeping a hand warm. Just not here."
+        ],
+        seas_sfrost: [
+            "The frost wrote something. By the time I came over it was ferns again.",
+            "Ferns of frost. They grow in from the edge, a little more each morning.",
+            "I breathed on the window to see better. The frost wrote 'thank you'. For the warmth, I think.",
+            "It's a different pattern every day. The same word, sometimes. I'm writing them down."
         ],
         look_lamp: [
             "The lamp's been warm and orange for as long as I've lived here. Very reliable lamp.",
@@ -4048,6 +4162,30 @@ const WALL = [
     { id: "wclock", name: "Cuckoo clock (wrong)", price: 24, note: "Keeps perfect time. Just not ours.", line: "The clock says it's a different time. It's very confident. I've stopped arguing." },
     { id: "wmoon", name: "Pickled moon", price: 28, note: "A rariteit in a jar. A small crescent, glowing gently.", line: "The pickled moon is waxing again. I don't know how. The lid's on." },
     { id: "wmirror", name: "Mirror, slightly late", price: 36, note: "A rariteit. Your reflection catches up eventually.", line: "In the mirror I'm still waving from a minute ago. Polite of me." }
+];
+/* the shop's seasonal things (seasonal.js): s is the season they belong to (1 spring … 4 winter, turning at the
+   equinoxes and solstices), at where they go. The shop shows only this season's; one bought comes out every year in
+   its season and is packed into the seasonal box in between; one not bought comes back to the shop next year.
+   at: wall (a wall slot), mantel (the fireplace's; the wagon's windowsill without one), sill:<room>, chain (beside the
+   wagon's window), net and gourd (the wagon's floor), balcony (under the nook's platform), beam (the nook's beam),
+   frost (on the wagon's window). The lines are the seas_<id> pools. */
+const SEASONAL = [
+    { id: "sfrog", s: 1, at: "sill:garden", name: "Frogspawn jar", price: 8, note: "For the nook's windowsill. The tadpoles are a different colour every morning." },
+    { id: "snest", s: 1, at: "wall", name: "Nest with one blue egg", price: 12, note: "For the wall. The egg hums. It has never hatched and doesn't seem to mind." },
+    { id: "swillow", s: 1, at: "mantel", name: "Pussy willow in a bottle", price: 10, note: "For the mantel. The catkins purr when you stroke them." },
+    { id: "schain", s: 1, at: "chain", name: "Rain chain", price: 16, note: "Hangs beside the wagon's window. It rings when it rains somewhere else." },
+    { id: "sstorm", s: 2, at: "mantel", name: "Thunderstorm in a jar", price: 18, note: "For the mantel. Flickers and grumbles quietly in the evenings." },
+    { id: "sshell", s: 2, at: "sill:archive", name: "Shell from another sea", price: 9, note: "For the archive's windowsill. The sea inside isn't on any map." },
+    { id: "smill", s: 2, at: "sill:room", name: "Paper windmill in a pot", price: 8, note: "For the wagon's windowsill. It turns. There's no wind." },
+    { id: "snet", s: 2, at: "net", name: "Butterfly net", price: 12, note: "Leans in the corner of the wagon. It caught a sound once and kept it." },
+    { id: "swreath", s: 3, at: "wall", name: "Oak-leaf wreath", price: 12, note: "For the wall. It rustles when there's no draught at all." },
+    { id: "sgourd", s: 3, at: "gourd", name: "Gourd that knocks back", price: 9, note: "Sits on the wagon's floor. Knock on it and it knocks back." },
+    { id: "smothl", s: 3, at: "balcony", name: "Moth lantern", price: 16, note: "Hangs under the nook's platform. A moth lives inside and does the lighting." },
+    { id: "smush", s: 3, at: "beam", name: "String of drying mushrooms", price: 10, note: "Along the nook's beam. Now and then there's one more than yesterday." },
+    { id: "sglobe", s: 4, at: "mantel", name: "Snow globe of the wagon", price: 18, note: "For the mantel. Someone very small inside waves, sometimes." },
+    { id: "sicicle", s: 4, at: "sill:archive", name: "Icicle under a dome", price: 14, note: "A rariteit for the archive's windowsill. It never melts. It drips upwards." },
+    { id: "smitten", s: 4, at: "wall", name: "One knitted mitten", price: 8, note: "Pinned to the wall with a note: waiting for the other one." },
+    { id: "sfrost", s: 4, at: "frost", name: "Frost-fern window", price: 20, note: "Frost on the wagon's window, all winter. Now and then it spells a word." }
 ];
 const LESSONS = [
     { n: 3, id: "wave", name: "Waving" }, { n: 6, id: "read", name: "Reading tiny books" }, { n: 10, id: "juggle", name: "Juggling pebbles" },
@@ -11139,11 +11277,11 @@ function requestObj(kind, fx, fy) {
 function startObj(kind) {
     let a = OBJ_ACT[kind];
     if (!a && kind.startsWith("wall:")) {
-        const w = WALL.find(x => x.id === kind.slice(5)), hit = wallHits.find(h => h.id === (w && w.id));
+        const w = WALL.find(x => x.id === kind.slice(5)) || SEAS_BY_ID[kind.slice(5)], hit = wallHits.find(h => h.id === (w && w.id));
         if (!w || !hit)
             return;
         a = { beh: "admire", revealAt: .5, extra: { tx: hit.cx }, show: () => {
-                speak(Math.random() < .25 ? w.line : compose("wall_" + w.id) || w.line, { ms: 6500 }); // (lines: wall_<id>)
+                speak(w.s ? compose("seas_" + w.id) || w.note : Math.random() < .25 ? w.line : compose("wall_" + w.id) || w.line, { ms: 6500 }); // (lines: wall_<id>, a seasonal one's seas_<id>)
                 return 6.5;
             } };
     }
@@ -12267,7 +12405,9 @@ function drawWall(rm, dk, tsec) {
     wallHits = [];
     const taken = own("crystals") ? plankSlots() : [];
     const slots = wallSlots().filter(s => !taken.includes(s) && !taken.some(t => t.x === s.x && t.y === s.y));
-    const items = WALL.filter(w => own(w.id));
+    const sw = seasWall(); // this season's wall piece (seasonal.js) gets a slot: if the wall is full, the last piece makes room for it
+    let items = WALL.filter(w => own(w.id));
+    items = items.length + sw.length > slots.length ? items.slice(0, Math.max(0, slots.length - sw.length)).concat(sw) : items.concat(sw);
     const sz = clamp(R * .62, 16, R * .9);
     items.slice(0, slots.length).forEach((w, i) => {
         const { x, y } = slots[i];
@@ -12285,6 +12425,8 @@ function wframe(w, h, col, dk) {
     cx.fillRect(-w / 2, -h / 2, w, h);
 }
 function drawWallPiece(id, s, dk, t) {
+    if (SEAS_BY_ID[id])
+        return drawSeasPiece(id, s, dk, t);
     const D = c => mix(c, "#1a1410", dk * .65), L = Math.max(1, s * .035);
     if (id === "wposter") {
         wframe(s * .8, s * 1.05, "#e9e0c8", dk);
@@ -12964,10 +13106,14 @@ function drawSill(rm, dk, t) {
 }
 /* plants standing in a row on a sill at y, centred on x, across 2 * half */
 function drawSillPlants(pl, x, y, half, dk, t) {
-    pl.forEach((p, i) => {
+    const row = sillRow(pl, drawingRoom); // (and the seasonal things on this sill, at the end: seasonal.js)
+    row.forEach((p, i) => {
         cx.save();
-        cx.translate(x - half + half * 2 * (i + .5) / pl.length, y);
-        drawPlant(p.id, Math.max(10, R * .42), dk, t, i);
+        cx.translate(x - half + half * 2 * (i + .5) / row.length, y);
+        if (p.seas)
+            drawSeasPiece(p.seas, SEAS_SILL_S(), dk, t);
+        else
+            drawPlant(p.id, Math.max(10, R * .42), dk, t, i);
         cx.restore();
     });
 }
@@ -18786,6 +18932,8 @@ function drawScene(now, dt) {
     withRoom("garden", () => other = drawGarden(now, dt));
     withRoom("room", () => sky = drawWorld(now, dt));
     withRoom("archive", () => other = drawArchiveRoom(now, dt) || other);
+    for (const r of ROOMS) // the seasonal things that aren't on a sill or the wall (seasonal.js)
+        withRoom(r, () => drawSeasonal(r, sceneDark(), now / 1000));
     drawWallNotes(); // Mite's sticky notes on the walls (pastimes.js)
     withRoom("room", () => drawYarnBall(sceneDark())); // the wool she plays with, on the wagon floor (cat.js), behind Mite
     if (!catOut())
@@ -19147,11 +19295,14 @@ function drawGarden(now, dt) {
     drawLayered(() => {
         // the plants you've bought share the two window sills: every other one stands here (easel.js, sillPlants)
         {
-            const pl = sillPlants("garden"), y = wy1 - Math.max(4, wr * .1) * .5;
-            pl.forEach((pp, i) => {
+            const pl = sillPlants("garden"), y = wy1 - Math.max(4, wr * .1) * .5, row = sillRow(pl, "garden"); // (the seasonal things on the sill at the end: seasonal.js)
+            row.forEach((pp, i) => {
                 cx.save();
-                cx.translate(wx0 + ww * (i + .5) / pl.length, y);
-                drawPlant(pp.id, Math.max(10, R * .42), dk, t, i + 1);
+                cx.translate(wx0 + ww * (i + .5) / row.length, y);
+                if (pp.seas)
+                    drawSeasPiece(pp.seas, SEAS_SILL_S(), dk, t);
+                else
+                    drawPlant(pp.id, Math.max(10, R * .42), dk, t, i + 1);
                 cx.restore();
             });
             if (pl.length)
@@ -21133,7 +21284,7 @@ function drawBasket(dk) {
  * The interaction itself is the "look:<id>" kind in startObj (interactions.js).
  */
 function lookSpots(rm) {
-    const out = [], add = (id, pool, r, low) => out.push(Object.assign({ id, pool, room: rm, low: !!low, cx: r.x + r.w / 2 }, r));
+    const out = seasSpots(rm), add = (id, pool, r, low) => out.push(Object.assign({ id, pool, room: rm, low: !!low, cx: r.x + r.w / 2 }, r));
     const rugY = GY + (H - GY) * .42, rug = { x: W * .5 - R * 1.3, y: rugY - (H - GY) * .15, w: R * 2.6, h: (H - GY) * .3 }; // (only its middle: a big finger near the edge shouldn't send Mite off to the rug)
     if (rm === "room") {
         const r = room(), ly = lampY(r);
@@ -21216,6 +21367,540 @@ function lookLine(s) {
 }
 
 </script>
+<script>/* js/scene/seasonal.js */
+"use strict";
+/*
+ * seasonal.js - The shop's seasonal things (SEASONAL, world.js): four for each season. Bought ones come out every
+ * year in their season and are packed into the seasonal box in between; unbought ones come back to the shop next year.
+ * Bought is S.b[id] like the wall pieces (and "In the scene" hides one); the season turns at the equinoxes and
+ * solstices (seasonOf, catalogue.js), by the calendar.
+ *   seasNow()          this season, 1 spring … 4 winter
+ *   seasOut()          the seasonal things that are out now (bought, shown, this season)
+ *   seasSill(rm)       the ones standing on that room's windowsill (they join the plants' row: easel.js, garden.js)
+ *   seasWall()         the ones on the wagon's wall (they take a wall slot: wall.js)
+ *   seasSpots(rm)      where the others are, for a tap (looks.js: "look:<id>", lines seas_<id>)
+ *   drawSeasonal(rm)   draws the ones that aren't on a sill or the wall
+ *   seasTurn()         at a season's turn: a note (and Mite says) what went into the box and what came out
+ */
+const SEAS_BY_ID = Object.fromEntries(SEASONAL.map(b => [b.id, b]));
+const SEAS_NAMES = ["", "spring", "summer", "autumn", "winter"];
+function seasNow() {
+    return +seasonOf(dayKey()).split("-")[1];
+}
+const seasItems = (n = seasNow()) => SEASONAL.filter(b => b.s === n);
+const seasOut = () => SEASONAL.filter(b => b.s === seasNow() && own(b.id));
+/* where it goes: the mantel's things stand on the wagon's windowsill while there's no fireplace */
+function seasAt(b) {
+    return b.at === "mantel" && !own("hearth") ? "sill:room" : b.at;
+}
+const seasSill = rm => seasOut().filter(b => seasAt(b) === "sill:" + rm);
+const seasWall = () => seasOut().filter(b => b.at === "wall");
+/* how Mite says where it put it */
+function seasPlace(b) {
+    return { wall: "on the wall", mantel: "on the mantel", "sill:room": "on the windowsill", "sill:garden": "on the windowsill in the nook", "sill:archive": "on the archive's little windowsill", chain: "beside the window", net: "in the corner", gourd: "by the fire", balcony: "under the platform in the nook", beam: "along the beam in the nook", frost: "on the window" }[seasAt(b)] || "out";
+}
+/* a windowsill's row: the plants, then the seasonal things (x, y: the middle of the sill, half: half its width) */
+function seasSillGeo(rm) {
+    if (rm === "room") {
+        const r = room();
+        return { x: r.wx, y: r.wy + r.wr * .93, half: r.wr };
+    }
+    if (rm === "archive") {
+        const aw = archWindow(archGeo());
+        return { x: aw.wx, y: aw.wy + aw.wr * .92, half: aw.wr * 1.15 };
+    }
+    const g = gardenGeo();
+    return { x: (g.wx0 + g.wx1) / 2, y: g.wy1 - Math.max(4, g.wr * .1) * .5, half: (g.wx1 - g.wx0) / 2 };
+}
+const sillRow = (pl, rm) => [...pl, ...seasSill(rm).map(b => ({ seas: b.id }))];
+const SEAS_SILL_S = () => Math.max(10, R * .42); // (the plants' size)
+const seasMantelX = () => hearthX() - R * 1.35 * .3;
+const seasGourdX = () => hearthX() - R * 1.35 * .62 - R * .32;
+/* the spots of the things that are out in this room (not the wall's: those are in wallHits) */
+function seasSpots(rm) {
+    const out = [], add = (b, r, low) => out.push(Object.assign({ id: b.id, pool: "seas_" + b.id, name: "the " + b.name.toLowerCase(), room: rm, low: !!low, cx: r.x + r.w / 2 }, r));
+    for (const b of seasOut()) {
+        const at = seasAt(b);
+        if (at === "wall")
+            continue;
+        if (at.startsWith("sill:")) {
+            if (at !== "sill:" + rm)
+                continue;
+            const g = seasSillGeo(rm), row = sillRow(sillPlants(rm), rm), i = row.findIndex(e => e.seas === b.id), s = SEAS_SILL_S();
+            const x = g.x - g.half + g.half * 2 * (i + .5) / row.length;
+            add(b, { x: x - s * .55, y: g.y - s * 1.3, w: s * 1.1, h: s * 1.35 });
+            continue;
+        }
+        const home = { mantel: "room", chain: "room", net: "room", gourd: "room", frost: "room", balcony: "garden", beam: "garden" }[at];
+        if (home !== rm)
+            continue;
+        if (at === "mantel") {
+            const s = R * .5;
+            add(b, { x: seasMantelX() - s * .5, y: GY - R * 1.35 - s * 1.2, w: s, h: s * 1.2 });
+        }
+        else if (at === "chain") {
+            const r = room();
+            add(b, { x: r.wx + r.wr * 1.1 - R * .2, y: r.wy - r.wr * .95, w: R * .4, h: r.wr * 1.85 });
+        }
+        else if (at === "net")
+            add(b, { x: W - R * .8, y: GY - R * 2, w: R * .65, h: R * 2 }, true);
+        else if (at === "gourd")
+            add(b, { x: seasGourdX() - R * .3, y: GY - R * .45, w: R * .6, h: R * .5 }, true);
+        else if (at === "frost") {
+            const r = room();
+            add(b, { x: r.wx - r.wr, y: r.wy - r.wr, w: r.wr * 2, h: r.wr * 1.6 });
+        }
+        else if (at === "balcony") {
+            const lg = nookLoftGeo();
+            add(b, { x: W * .3 - R * .35, y: lg.balY, w: R * .7, h: R * 1.3 });
+        }
+        else if (at === "beam") {
+            const g = gardenGeo();
+            add(b, { x: W * .36, y: g.glassY, w: W * .18, h: R * .75 });
+        }
+    }
+    return out;
+}
+/* a tap on one of the small ones (the frost is the whole window: that one waits for the window's turn, looks.js) */
+function seasTap(p, rm) {
+    if (pet.beh === "sleep")
+        return false;
+    const h = seasSpots(rm).find(s => s.id !== "sfrost" && hitIn(p, s, 4));
+    if (!h || !notOnMite(p))
+        return false;
+    requestObj("look:" + h.id, h.cx, h.y);
+    return true;
+}
+/* the ones that aren't on a sill or the wall, drawn after the room (camera.js) */
+function drawSeasonal(rm, dk, t) {
+    for (const s of seasSpots(rm)) {
+        const b = SEAS_BY_ID[s.id], at = seasAt(b);
+        if (at.startsWith("sill:"))
+            continue;
+        cx.save();
+        if (at === "mantel")
+            cx.translate(seasMantelX(), GY - R * 1.35);
+        else if (at === "chain") {
+            const r = room();
+            cx.translate(r.wx + r.wr * 1.1, r.wy - r.wr * .95);
+        }
+        else if (at === "net")
+            cx.translate(W - R * .55, GY);
+        else if (at === "gourd")
+            cx.translate(seasGourdX(), GY);
+        else if (at === "balcony")
+            cx.translate(W * .3, nookLoftGeo().balY + R * .1);
+        else if (at === "beam")
+            cx.translate(W * .36, gardenGeo().glassY + R * .12); // (between the hanging plants and the pinboard)
+        drawSeasPiece(b.id, at === "mantel" ? R * .5 : at === "balcony" || at === "beam" ? R * 1.35 : R, dk, t);
+        cx.restore();
+    }
+}
+/* one piece, at the origin: standing things on it (sills, mantel, floor), wall pieces centred on it, hanging things
+   from it. s is the plants' size on a sill, R * .5 on the mantel, the wall slot's size on the wall, R elsewhere */
+function drawSeasPiece(id, s, dk, t) {
+    const D = c => mix(c, "#1a1410", dk * .65), L = Math.max(PX * .67, s * .05), now = new Date();
+    const rect = (c, x, y, w, h) => { cx.fillStyle = D(c); cx.fillRect(x, y, w, h); };
+    const oval = (c, x, y, rx, ry, a = 0) => { cx.fillStyle = D(c); cx.beginPath(); cx.ellipse(x, y, rx, ry, a, 0, 7); cx.fill(); };
+    const shade = (x, y, rx, ry, a = .25) => { cx.fillStyle = `rgba(0,0,0,${a})`; cx.beginPath(); cx.ellipse(x, y, rx, ry, 0, 0, 7); cx.fill(); };
+    const glass = (x, y, w, h) => { cx.fillStyle = `rgba(200,225,235,${.35 - dk * .15})`; cx.fillRect(x, y, w, h); cx.fillStyle = "rgba(255,255,255,.45)"; cx.fillRect(x + w * .12, y + h * .12, Math.max(1, w * .1), h * .55); };
+    if (id === "sfrog") { // a jar of pond water; the tadpoles' colour comes from the date
+        const w = s * .72, h = s * .9, hue = (Math.floor(Date.now() / 864e5) * 67) % 360;
+        rect("#5d7a52", -w / 2, -h * .78, w, h * .78);
+        glass(-w / 2, -h, w, h);
+        rect("#8a6a48", -w * .4, -h * 1.08, w * .8, h * .12);
+        cx.fillStyle = mix(`hsl(${hue},55%,45%)`, "#1a1410", dk * .65);
+        for (let i = 0; i < 4; i++) {
+            const a = t * .7 + i * 1.7, x = Math.sin(a) * w * .28, y = -h * .42 + Math.cos(a * 1.3 + i) * h * .2;
+            cx.fillRect(x, y, Math.max(1, s * .09), Math.max(1, s * .07));
+            cx.fillRect(x - Math.sign(Math.cos(a)) * s * .07, y + s * .02, Math.max(1, s * .05), Math.max(1, s * .03));
+        }
+        for (let i = 0; i < 6; i++) { // the spawn
+            oval("#d8e4c8", -w * .25 + (i % 3) * w * .22, -h * .12 - Math.floor(i / 3) * h * .1, s * .06, s * .06);
+            rect("#2a2a22", -w * .25 + (i % 3) * w * .22 - L / 2, -h * .12 - Math.floor(i / 3) * h * .1 - L / 2, L, L);
+        }
+    }
+    else if (id === "snest") { // centred on a wall slot
+        shade(2, s * .14, s * .44, s * .2);
+        oval("#6e4f30", 0, s * .1, s * .42, s * .2);
+        cx.strokeStyle = D("#9a7448");
+        cx.lineWidth = L;
+        for (let i = 0; i < 6; i++) {
+            cx.beginPath();
+            cx.moveTo(-s * .4 + i * s * .1, s * .02 + (i % 2) * s * .08);
+            cx.lineTo(-s * .2 + i * s * .1, s * .2 - (i % 2) * s * .06);
+            cx.stroke();
+        }
+        const hum = Math.sin(t * 30) * (Math.sin(t * .7) > .6 ? s * .015 : 0);
+        oval("#7fb8d8", hum, -s * .02, s * .15, s * .19);
+        oval("#b8dcef", hum - s * .05, -s * .08, s * .04, s * .05);
+        oval("#5a3c22", 0, s * .02, s * .42, s * .07);
+        if (Math.sin(t * .7) > .6) { // humming
+            cx.strokeStyle = D("#e9dcbf");
+            cx.lineWidth = L;
+            for (const k of [-1, 1]) {
+                cx.beginPath();
+                cx.arc(0, -s * .02, s * (.26 + .04 * Math.sin(t * 4)), k < 0 ? Math.PI * .85 : -Math.PI * .15, k < 0 ? Math.PI * 1.15 : Math.PI * .15);
+                cx.stroke();
+            }
+        }
+    }
+    else if (id === "swillow") { // a green bottle with three stems of catkins
+        rect("#3f6b4a", -s * .17, -s * .5, s * .34, s * .5);
+        rect("#3f6b4a", -s * .08, -s * .7, s * .16, s * .2);
+        rect("#7fa98a", -s * .12, -s * .45, Math.max(1, s * .05), s * .35);
+        cx.strokeStyle = D("#5a3e2a");
+        cx.lineWidth = L;
+        const st = [[-.32, -1.5], [.05, -1.75], [.34, -1.4]];
+        for (const [dx, top] of st) {
+            cx.beginPath();
+            cx.moveTo(0, -s * .66);
+            cx.quadraticCurveTo(dx * s * .4, -s * 1.1, dx * s, top * s);
+            cx.stroke();
+            for (let k = 1; k <= 3; k++) {
+                const f = k / 3.4, x = dx * s * f, y = -s * .66 + (top * s + s * .66) * f;
+                oval("#e2ddd2", x + s * .06, y, s * .06, s * .09);
+            }
+        }
+    }
+    else if (id === "schain") { // little copper cups on a chain, from the eaves down past the sill; it rings for rain elsewhere
+        const n = 7, h = room().wr * 1.85, step = h / n;
+        rect("#6a4a2a", -s * .02, 0, Math.max(1, s * .03), h);
+        const ring = (t % 23) < 2.2;
+        for (let i = 0; i < n; i++) {
+            const sw = ring ? Math.sin(t * 9 + i) * s * .02 : 0;
+            rect("#b8723c", -s * .09 + sw, i * step + step * .25, s * .18, step * .45);
+            rect("#e0a060", -s * .09 + sw, i * step + step * .25, s * .18, Math.max(1, step * .1));
+            if (ring && (i + Math.floor(t * 4)) % 3 === 0)
+                rect("#bfe0f0", sw - s * .015, i * step + step * .75, Math.max(1, s * .03), step * .2);
+        }
+    }
+    else if (id === "sstorm") { // a jar with a small dark cloud in it; it flickers in the evening
+        const w = s * .8, h = s * 1.05, eve = now.getHours() >= 18 || now.getHours() < 6 || dk > .3;
+        const fl = eve && (t % 6.5) < .18;
+        rect("#2e3440", -w / 2, -h, w, h);
+        if (fl)
+            rect("#d8e4ff", -w / 2, -h, w, h);
+        oval("#5a6272", -w * .12, -h * .62, w * .26, h * .14);
+        oval("#6a7284", w * .12, -h * .66, w * .24, h * .16);
+        oval("#4e5564", 0, -h * .55, w * .3, h * .12);
+        if (fl) {
+            cx.strokeStyle = "#fff6c0";
+            cx.lineWidth = L * 1.2;
+            cx.beginPath();
+            cx.moveTo(0, -h * .5);
+            cx.lineTo(-w * .1, -h * .3);
+            cx.lineTo(w * .05, -h * .28);
+            cx.lineTo(-w * .05, -h * .08);
+            cx.stroke();
+        }
+        else
+            for (let i = 0; i < 3; i++) // a drizzle
+                rect("#8fa0c0", -w * .2 + i * w * .2, -h * .42 + ((t * 20 + i * 5) % (h * .3)), Math.max(1, s * .03), s * .06);
+        glass(-w / 2, -h, w, h);
+        rect("#6a5a4a", -w * .55, -h - s * .1, w * 1.1, s * .12);
+    }
+    else if (id === "sshell") { // a conch, lying on the sill
+        shade(s * .05, 0, s * .5, s * .08, .2);
+        cx.fillStyle = D("#f0dcc8");
+        cx.beginPath();
+        cx.moveTo(-s * .5, -s * .1);
+        cx.quadraticCurveTo(-s * .2, -s * .65, s * .3, -s * .45);
+        cx.quadraticCurveTo(s * .55, -s * .3, s * .4, 0);
+        cx.lineTo(-s * .4, 0);
+        cx.closePath();
+        cx.fill();
+        oval("#e8a8a0", s * .28, -s * .2, s * .14, s * .16);
+        cx.strokeStyle = D("#b89478");
+        cx.lineWidth = L;
+        for (let i = 0; i < 3; i++) {
+            cx.beginPath();
+            cx.moveTo(-s * (.38 - i * .2), -s * (.12 + i * .1));
+            cx.lineTo(-s * (.3 - i * .2), -s * .02);
+            cx.stroke();
+        }
+    }
+    else if (id === "smill") { // a pot with a stick and a paper windmill that turns by itself
+        cx.fillStyle = D("#b0603a");
+        cx.beginPath();
+        cx.moveTo(-s * .3, -s * .42);
+        cx.lineTo(s * .3, -s * .42);
+        cx.lineTo(s * .22, 0);
+        cx.lineTo(-s * .22, 0);
+        cx.fill();
+        rect("#c97a50", -s * .34, -s * .48, s * .68, s * .1);
+        rect("#c8a878", -L / 2, -s * 1.3, L, s * .85);
+        cx.save();
+        cx.translate(0, -s * 1.32);
+        cx.rotate(t * 1.6);
+        ["#e0b040", "#6aa0c8", "#d06a5a", "#7ab070"].forEach((c, i) => {
+            cx.rotate(Math.PI / 2);
+            cx.fillStyle = D(c);
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(s * .32, -s * .05);
+            cx.lineTo(s * .3, s * .14);
+            cx.fill();
+        });
+        cx.restore();
+        oval("#f3ead6", 0, -s * 1.32, s * .05, s * .05);
+    }
+    else if (id === "snet") { // leaning in the corner, the hoop up high; the sound it kept shows as a little glint
+        cx.save();
+        cx.rotate(.1); // (leaning against the wall, the hoop up in the corner)
+        rect("#c09868", -s * .03, -s * 1.55, s * .06, s * 1.55);
+        cx.strokeStyle = D("#e0d0a8");
+        cx.lineWidth = Math.max(PX, s * .035);
+        cx.beginPath();
+        cx.ellipse(0, -s * 1.55 - s * .2, s * .2, s * .22, 0, 0, 7);
+        cx.stroke();
+        cx.fillStyle = `rgba(230,225,210,${.3 - dk * .1})`;
+        cx.beginPath();
+        cx.moveTo(-s * .2, -s * 1.75);
+        cx.quadraticCurveTo(0, -s * 1.2, s * .2, -s * 1.75);
+        cx.fill();
+        if ((t % 11) < 1.6) { // the sound, moving about in the net
+            cx.fillStyle = `rgba(255,240,170,${.8 - dk * .2})`;
+            cx.fillRect(Math.sin(t * 5) * s * .06, -s * 1.5, Math.max(1, s * .04), Math.max(1, s * .04));
+            cx.fillRect(Math.sin(t * 5) * s * .06 + s * .04, -s * 1.54, Math.max(1, s * .02), Math.max(1, s * .06));
+        }
+        cx.restore();
+    }
+    else if (id === "swreath") { // oak leaves in a ring on the wall; they rustle now and then
+        const rus = Math.sin(t * .5) > .75 ? Math.sin(t * 14) * .15 : 0;
+        cx.strokeStyle = "rgba(0,0,0,.22)";
+        cx.lineWidth = s * .14;
+        cx.beginPath();
+        cx.arc(2, 3, s * .3, 0, 7);
+        cx.stroke();
+        const cols = ["#b8582c", "#d08a30", "#8a4a26", "#c46a2a", "#9a6a2a"];
+        for (let i = 0; i < 14; i++) {
+            const a = i / 14 * Math.PI * 2;
+            oval(cols[i % cols.length], Math.cos(a) * s * .3, Math.sin(a) * s * .3, s * .13, s * .07, a + Math.PI / 2 + rus * ((i % 2) ? 1 : -1));
+        }
+        for (let i = 0; i < 4; i++) { // acorns
+            const a = i / 4 * Math.PI * 2 + .4;
+            oval("#7a5a30", Math.cos(a) * s * .3, Math.sin(a) * s * .3, s * .05, s * .06);
+            rect("#4a3420", Math.cos(a) * s * .3 - s * .05, Math.sin(a) * s * .3 - s * .07, s * .1, s * .04);
+        }
+    }
+    else if (id === "sgourd") { // a squat striped gourd by the hearth; now and then it knocks
+        const knock = (t % 17) < 1.2, jig = knock ? Math.round(Math.sin(t * 20)) * s * .01 : 0;
+        shade(0, -s * .02, s * .3, s * .05);
+        oval("#d9922e", jig, -s * .17, s * .27, s * .18);
+        cx.strokeStyle = D("#5f7a3a");
+        cx.lineWidth = Math.max(1, s * .03);
+        for (const k of [-.14, 0, .14]) {
+            cx.beginPath();
+            cx.ellipse(jig + k * s, -s * .17, s * .05, s * .17, 0, 0, 7);
+            cx.stroke();
+        }
+        rect("#4a3a20", jig - s * .02, -s * .42, s * .04, s * .09);
+        cx.strokeStyle = D("#5f7a3a");
+        cx.beginPath();
+        cx.arc(jig + s * .05, -s * .4, s * .04, Math.PI, 0);
+        cx.stroke();
+        if (knock) { // little knocking lines
+            cx.strokeStyle = D("#f3e7c8");
+            cx.lineWidth = Math.max(1, s * .02);
+            for (const k of [-1, 1]) {
+                cx.beginPath();
+                cx.moveTo(k * s * .33, -s * .28);
+                cx.lineTo(k * s * .4, -s * .32);
+                cx.moveTo(k * s * .34, -s * .18);
+                cx.lineTo(k * s * .42, -s * .18);
+                cx.stroke();
+            }
+        }
+    }
+    else if (id === "smothl") { // a cord from the platform, a little brass lantern, the moth inside is the light
+        rect("#c8b088", -L / 2, 0, L, s * .3);
+        const lw = s * .3, lh = s * .36, y0 = s * .34, glow = .6 + .25 * Math.sin(t * 2.3) + (dk > .3 ? .15 : 0);
+        softGlow(0, y0 + lh * .55, s * .7, `rgba(255,170,90,${.2 + dk * .3})`);
+        cx.fillStyle = D("#b08a3a"); // the roof
+        cx.beginPath();
+        cx.moveTo(-lw * .65, y0 + s * .02);
+        cx.lineTo(0, y0 - s * .1);
+        cx.lineTo(lw * .65, y0 + s * .02);
+        cx.fill();
+        cx.fillStyle = `rgba(255,${185 + Math.round(40 * glow)},${90 + Math.round(40 * glow)},${.7 + .25 * glow})`;
+        cx.fillRect(-lw / 2, y0 + s * .02, lw, lh);
+        rect("#b08a3a", -lw / 2, y0 + s * .02, Math.max(PX, s * .04), lh);
+        rect("#b08a3a", lw / 2 - Math.max(PX, s * .04), y0 + s * .02, Math.max(PX, s * .04), lh);
+        rect("#b08a3a", -lw * .65, y0 + lh, lw * 1.3, s * .05);
+        const open = Math.sin(t * 16) > 0, mx = Math.sin(t * 1.3) * lw * .12, my = y0 + lh * .5 + Math.cos(t * 1.7) * lh * .12; // the moth
+        cx.fillStyle = "rgba(80,50,30,.85)";
+        cx.beginPath();
+        cx.ellipse(mx - s * .045, my, open ? s * .06 : s * .03, s * .05, -.4, 0, 7);
+        cx.ellipse(mx + s * .045, my, open ? s * .06 : s * .03, s * .05, .4, 0, 7);
+        cx.fill();
+        cx.fillRect(mx - s * .012, my - s * .05, s * .024, s * .1);
+    }
+    else if (id === "smush") { // a string along the beam with mushrooms drying on it; on some days one more
+        const span = W * .18, n = 4 + (Math.floor(Date.now() / 864e5) % 3 === 0 ? 1 : 0);
+        cx.strokeStyle = D("#c8b088");
+        cx.lineWidth = Math.max(1, s * .02);
+        cx.beginPath();
+        cx.moveTo(0, 0);
+        cx.quadraticCurveTo(span / 2, s * .4, span, 0);
+        cx.stroke();
+        for (let i = 0; i < n; i++) {
+            const f = (i + .5) / n, x = span * f, y = s * .4 * 2 * f * (1 - f) + s * .02, cap = s * (.1 + (i % 3) * .02);
+            rect("#e6d8b8", x - s * .015, y, s * .03, s * .1);
+            cx.fillStyle = D(["#8a5a36", "#b88a5a", "#6e4a30"][i % 3]);
+            cx.beginPath();
+            cx.arc(x, y + s * .1, cap, Math.PI, 0);
+            cx.fill();
+            rect("#e6d8b8", x - cap * .7, y + s * .1, cap * 1.4, Math.max(1, s * .015));
+        }
+    }
+    else if (id === "sglobe") { // a snow globe of the wagon, on a wooden base; someone small inside waves now and then
+        const r = s * .42, cy = -s * .1 - r;
+        rect("#6e4a2e", -s * .4, -s * .14, s * .8, s * .14);
+        rect("#8a5e3a", -s * .34, -s * .2, s * .68, s * .08);
+        cx.save();
+        cx.beginPath();
+        cx.arc(0, cy, r, 0, 7);
+        cx.clip();
+        rect("#40506a", -r, cy - r, r * 2, r * 2);
+        rect("#e8eef4", -r, cy + r * .45, r * 2, r);
+        rect("#7a3e2e", -r * .5, cy - r * .05, r, r * .5); // the little wagon
+        cx.fillStyle = D("#5a2a20");
+        cx.beginPath();
+        cx.arc(0, cy - r * .05, r * .5, Math.PI, 0);
+        cx.fill();
+        rect("#ffd88a", -r * .12, cy + r * .08, r * .22, r * .18);
+        if ((t % 19) < 1.5) // waving from the window
+            rect("#2a2a2a", r * .02 + Math.round(Math.sin(t * 10)) * r * .04, cy - r * .02, Math.max(1, r * .07), r * .12);
+        cx.fillStyle = "rgba(255,255,255,.9)";
+        for (let i = 0; i < 9; i++)
+            cx.fillRect(-r + ((i * 37) % 17) / 17 * r * 2 + Math.sin(t + i) * r * .06, cy - r + ((t * 6 + i * 13) % (r * 2)), Math.max(1, s * .03), Math.max(1, s * .03));
+        cx.restore();
+        cx.fillStyle = `rgba(220,235,245,${.18})`;
+        cx.beginPath();
+        cx.arc(0, cy, r, 0, 7);
+        cx.fill();
+        cx.fillStyle = "rgba(255,255,255,.5)";
+        cx.fillRect(-r * .55, cy - r * .55, Math.max(1, r * .15), r * .3);
+    }
+    else if (id === "sicicle") { // a glass dome on a base, an icicle hanging inside; its drops go up
+        const w = s * .7, h = s * 1.05;
+        rect("#5a4a5a", -w * .6, -s * .1, w * 1.2, s * .1);
+        cx.fillStyle = D("#cfe8f4");
+        cx.beginPath();
+        cx.moveTo(-w * .15, -h * .82);
+        cx.lineTo(w * .15, -h * .82);
+        cx.lineTo(0, -h * .25);
+        cx.fill();
+        rect("#f4fbff", -w * .06, -h * .8, Math.max(1, w * .06), h * .3);
+        for (let i = 0; i < 2; i++) { // dripping upwards
+            const k = ((t * .4 + i * .5) % 1);
+            rect("#e0f4ff", -s * .02, -h * .25 - k * h * .5 + (k > .9 ? 99 : 0), Math.max(1, s * .05), Math.max(1, s * .06));
+        }
+        cx.fillStyle = `rgba(210,230,240,${.28 - dk * .1})`;
+        cx.beginPath();
+        cx.moveTo(-w / 2, -s * .1);
+        cx.lineTo(-w / 2, -h + w / 2);
+        cx.arc(0, -h + w / 2, w / 2, Math.PI, 0);
+        cx.lineTo(w / 2, -s * .1);
+        cx.fill();
+        cx.fillStyle = "rgba(255,255,255,.45)";
+        cx.fillRect(-w * .36, -h * .75, Math.max(1, w * .08), h * .4);
+    }
+    else if (id === "smitten") { // centred on a wall slot: one red mitten on a pin, a paper note beside it
+        cx.fillStyle = "rgba(0,0,0,.25)";
+        cx.fillRect(-s * .26 + 2, -s * .32 + 3, s * .36, s * .62);
+        rect("#a83a32", -s * .26, -s * .2, s * .36, s * .5);
+        oval("#a83a32", -s * .08, -s * .2, s * .18, s * .14);
+        oval("#a83a32", s * .12, -s * .02, s * .07, s * .12, -.4);
+        rect("#f0e6d6", -s * .28, s * .2, s * .4, s * .12);
+        for (let i = 0; i < 3; i++)
+            rect("#d06a5a", -s * .2 + i * s * .1, -s * .05, s * .05, s * .05);
+        oval("#c8a040", -s * .08, -s * .33, s * .035, s * .035);
+        rect("#efe6cf", s * .14, -s * .02, s * .28, s * .22);
+        rect("#8a7a5a", s * .18, s * .04, s * .2, Math.max(1, s * .025));
+        rect("#8a7a5a", s * .18, s * .1, s * .14, Math.max(1, s * .025));
+        oval("#c8a040", s * .28, 0, s * .03, s * .03);
+    }
+}
+/* frost ferns on the wagon's window, all winter (drawn over the glass, under nothing much); now and then a word */
+const FROST_WORDS = ["hello", "soon", "warm?", "still here", "thank you", "we waited"];
+function drawFrost(dk, t) {
+    if (!seasOut().some(b => b.id === "sfrost"))
+        return;
+    const r = room(), rr = r.wr * .95;
+    cx.save();
+    cx.beginPath();
+    cx.arc(r.wx, r.wy, rr, 0, 7);
+    cx.clip();
+    cx.strokeStyle = `rgba(235,245,255,${.7 - dk * .2})`;
+    cx.lineWidth = PX * .8;
+    for (let i = 0; i < 11; i++) { // ferns growing in from the rim, the lower half more
+        const a = Math.PI * (.1 + i * .17), len = rr * (.32 + ((i * 7) % 5) * .05);
+        const x0 = r.wx + Math.cos(a) * rr, y0 = r.wy + Math.sin(a) * rr, ux = -Math.cos(a), uy = -Math.sin(a);
+        cx.beginPath();
+        cx.moveTo(x0, y0);
+        cx.lineTo(x0 + ux * len, y0 + uy * len);
+        for (let k = 1; k < 5; k++) {
+            const px = x0 + ux * len * k / 5, py = y0 + uy * len * k / 5, br = len * (.28 - k * .045);
+            for (const sd of [-1, 1]) {
+                cx.moveTo(px, py);
+                cx.lineTo(px + (ux * .5 - uy * sd) * br, py + (uy * .5 + ux * sd) * br);
+            }
+        }
+        cx.stroke();
+    }
+    cx.fillStyle = `rgba(235,245,255,${.18 - dk * .06})`;
+    cx.fillRect(r.wx - rr, r.wy + rr * .35, rr * 2, rr * .7);
+    const cyc = t % 90; // a word, once in a while
+    if (cyc < 7) {
+        const w = FROST_WORDS[Math.floor(t / 90) % FROST_WORDS.length], a = Math.min(1, cyc, 7 - cyc);
+        cx.fillStyle = `rgba(240,248,255,${.75 * a})`;
+        cx.font = `${Math.max(8, Math.round(R * .22))}px monospace`;
+        cx.textAlign = "center";
+        cx.fillText(w, r.wx, r.wy - rr * .15);
+        cx.textAlign = "left";
+    }
+    cx.restore();
+}
+/* buying one (the shop's seasonal section) */
+function buySeas(b) {
+    if (S.g < b.price || (S.b[b.id] || 0) > 0 || b.s !== seasNow())
+        return;
+    sfx("coin");
+    S.g -= b.price;
+    S.b[b.id] = 1;
+    if (!isShown(b.id))
+        setShown(b.id, true);
+    const sn = SEAS_NAMES[b.s];
+    buySpeak(`I put the ${b.name.toLowerCase()} ${seasPlace(b)}. When ${sn} is over it goes in the seasonal box, and it comes out again next ${sn}.`);
+    note(`For ${sn}: ${b.name}. It comes out every ${sn}.`);
+    burst("spark", 6);
+    afterChange();
+}
+/* a season's turn: what went into the box and what came out (S.flags.seasAt: the season, as year * 10 + season) */
+function seasTurn() {
+    const [y, n] = seasonOf(dayKey()).split("-").map(Number), code = y * 10 + n, was = num(S.flags.seasAt);
+    if (was === code)
+        return;
+    S.flags.seasAt = Math.max(was, code);
+    saveSoon();
+    if (!was || code < was)
+        return;
+    const nm = b => b.name.toLowerCase(), list = a => a.length > 1 ? a.slice(0, -1).join(", ") + " and " + a[a.length - 1] : a[0];
+    const packed = SEASONAL.filter(b => b.s === was % 10 && (S.b[b.id] || 0) > 0).map(nm), out = SEASONAL.filter(b => b.s === n && (S.b[b.id] || 0) > 0).map(nm);
+    const fresh = SEASONAL.filter(b => b.s === n && !(S.b[b.id] || 0)).length;
+    if (!packed.length && !out.length) {
+        if (fresh)
+            note(`The shop has its ${SEAS_NAMES[n]} things in.`);
+        return;
+    }
+    const txt = (packed.length ? `I packed the ${list(packed)} into the seasonal box. ` : "") + (out.length ? `The ${list(out)} came out again: it's ${SEAS_NAMES[n]}.` : `It's ${SEAS_NAMES[n]}.`);
+    note(txt + (fresh ? ` The shop has its ${SEAS_NAMES[n]} things in.` : ""));
+    setTimeout(() => speak(txt, { ms: 7000 }), 5000);
+}
+
+</script>
 <script>/* js/scene/observe.js */
 "use strict";
 /*
@@ -21235,10 +21920,10 @@ function obsThings(rm) {
     const out = [], add = (id, name, h) => h && out.push({ id, name, cx: h.cx !== undefined ? h.cx : h.x + h.w / 2, y: h.y });
     for (const s of lookSpots(rm))
         if (!/rug$/.test(s.id))
-            add(s.id, /^moss/.test(s.id) ? "the moss" : OBS_NAMES[s.id], s);
+            add(s.id, /^moss/.test(s.id) ? "the moss" : OBS_NAMES[s.id] || s.name, s);
     if (rm === "room") {
         for (const h of wallHits) {
-            const w = WALL.find(x => x.id === h.id);
+            const w = WALL.find(x => x.id === h.id) || SEAS_BY_ID[h.id];
             if (w)
                 add("wall:" + h.id, "the " + (/^[A-Z][a-z]/.test(w.name) ? w.name[0].toLowerCase() + w.name.slice(1) : w.name), h);
         }
@@ -23751,6 +24436,7 @@ function drawWorld(now, dt) {
     drawBackWall(dk, "room");
     // window to the real sky
     drawWindow(rm, sky, d, hf, tsec, dt, dk);
+    drawFrost(dk, tsec); // the frost-fern window, in winter (seasonal.js)
     drawSuncatchers(rm, sky, hf, tsec, dk);
     drawWall(rm, dk, tsec);
     drawCrystalShelf(dk, tsec); // the crystal shelf on the wall (crystals.js)
@@ -25227,6 +25913,8 @@ cv.addEventListener("pointerdown", e => {
         catchGold();
         return;
     }
+    if (seasTap(p, rm)) // a seasonal thing (seasonal.js): small, so before the rooms' bigger things
+        return;
     if (rm === "garden") {
         gardenTap(p);
         return;
@@ -25811,14 +26499,15 @@ const SHOP_SECS = {
     plants: { ids: () => PLANTS.map(b => b.id), has: id => (S.b[id] || 0) > 0 },
     crystals: { ids: () => CRYSTALS.map(b => b.id), has: id => (S.b[id] || 0) > 0 },
     kettles: { ids: () => KETTLE_STYLES.map(k => k.sid), has: id => kettlesOwned().some(k => k.sid === id) },
-    wall: { ids: () => WALL.map(b => b.id), has: id => (S.b[id] || 0) > 0 }
+    wall: { ids: () => WALL.map(b => b.id), has: id => (S.b[id] || 0) > 0 },
+    season: { ids: () => seasItems().map(b => b.id), has: id => (S.b[id] || 0) > 0 } // (this season's: not counted for everything bought)
 };
 /* everything in the shop bought (furniture, plants, crystals, kettles, the wall): then Something special and the
    raccoon's barter open up, and stay open */
 function shopComplete() {
     if (num(S.flags.shopAll))
         return true;
-    if (!Object.values(SHOP_SECS).every(c => c.ids().every(c.has)))
+    if (!Object.entries(SHOP_SECS).every(([k, c]) => k === "season" || c.ids().every(c.has)))
         return false;
     S.flags.shopAll = 1;
     saveSoon();
@@ -25964,6 +26653,22 @@ function renderShop() {
             wb.onclick = () => buyWall(b);
         ws.appendChild(el);
     });
+    const ss = $("seasShop"), sn = seasNow(); // this season's things (seasonal.js)
+    ss.innerHTML = "";
+    $("seasShopHead").textContent = SEASON_NAMES[sn];
+    byPrice(seasItems(sn)).forEach(b => {
+        const own = (S.b[b.id] || 0) > 0;
+        const el = document.createElement("div");
+        el.className = "bld";
+        el.innerHTML = `<div style="min-width:0"><b>${esc(b.name)}</b>${shopNewTag(b.id)}<span class="own">${own ? (isShown(b.id) ? seasPlace(b) : "put away") : ""}</span><p>${esc(b.note)}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
+        const wb = el.querySelector("[data-w]");
+        if (wb)
+            wb.onclick = () => buySeas(b);
+        ss.appendChild(el);
+    });
+    const box = SEASONAL.filter(b => b.s !== sn && (S.b[b.id] || 0) > 0), bx = $("seasBox");
+    bx.hidden = !box.length;
+    bx.textContent = box.length ? "In the seasonal box until their season: " + box.map(b => `${b.name} (${SEAS_NAMES[b.s]})`).join(", ") + "." : "";
     const ps = $("plantShop");
     ps.innerHTML = "";
     byPrice(PLANTS).forEach(b => {
@@ -28045,6 +28750,7 @@ function renderSeasonFiled() {
 /* everything from a season that's over goes into the catalogue */
 function archiveCrafts() {
     fileSeasonal(); // (and the season's small things into the archive)
+    seasTurn(); // (and the shop's seasonal things: into the box, out of it: seasonal.js)
     const cur = seasonOf(actDay()), have = new Set((KEEP.cat || []).map(catKey)), add = [];
     const oldP = (S.gallery || []).filter(g => paintRec(g).s < cur), oldK = (S.knits || []).filter(k => knitRec(k).s < cur);
     if (!oldP.length && !oldK.length)
