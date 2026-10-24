@@ -506,6 +506,7 @@ body.pixel.game .stage{border:0}
 .cabglim{margin:10px 0 0;font-family:var(--f-mono);font-size:14px;color:#ffe9a8;background:rgba(24,18,34,.85);padding:4px 10px;border-radius:99px}
 body.pixel .cabclose{border-radius:0;font-family:var(--f-display);font-size:22px}
 body.pixel .cabglim{border-radius:0;font-family:var(--f-display);font-size:18px;line-height:18px;border:2px solid #ffe9a8}
+#cabGlim{max-width:min(320px,90vw);text-align:center}#cabGlim .cabwhy{display:block;margin-top:4px;font-family:var(--f-body,inherit);font-size:13px;line-height:1.35;color:#f3e7c8;font-weight:400}
 .dlg.crystal{border-color:#4a3a66}.dlg.crystal b{background:#4a3a66}
 .pinbox{aspect-ratio:96/60}
 .eyelist li{display:flex;gap:10px;align-items:flex-start}
@@ -842,8 +843,6 @@ body.editing #addForm{display:none}
         <div class="shop" id="plantShop"></div></details>
       <details class="shopsec" data-sec="crystals" open><summary><h3>Crystals</h3><span class="seccount" id="cnt-crystals"></span><span class="secnew" id="new-crystals" hidden>new</span></summary><p class="sub">For the crystal shelf on the wall. Tap the shelf to look at them up close and see your glimmers.</p>
         <div class="shop" id="crystalShop"></div></details>
-      <details class="shopsec" data-sec="kettles" open><summary><h3>Kettles</h3><span class="seccount" id="cnt-kettles"></span><span class="secnew" id="new-kettles" hidden>new</span></summary><p class="sub">For the kettle on the stove. <span class="pn">Mite</span> takes one of the kettles in the scene at random each time it makes tea.</p>
-        <div class="shop" id="kettleShop"></div></details>
       <details class="shopsec" data-sec="wall" open><summary><h3>On the wall</h3><span class="seccount" id="cnt-wall"></span><span class="secnew" id="new-wall" hidden>new</span></summary><p class="sub">Posters, certificates and oddities. Tap one in the scene and <span class="pn">Mite</span> will tell you about it.</p>
         <div class="shop" id="wallShop"></div></details>
       <details class="shopsec" data-sec="splurge" open hidden><summary><h3>Something special</h3><span class="seccount" id="cnt-splurge"></span><span class="secnew" id="new-splurge" hidden>new</span></summary><p class="sub">A treat for the wagon, for the rest of the day. When the new day starts it's gone, and you can pick another.</p>
@@ -6123,7 +6122,7 @@ function ambTick() {
         return;
     const a = Snd.ctx, t = a.currentTime, running = !document.hidden && a.state === "running", on = sndMode() >= 2 && running, music = running && (sndMode() === 3 || sndMode() >= 1 && gramoPlaying());
     Snd.amb.gain.setTargetAtTime(on ? 1 : 0, t, .8);
-    Snd.mus.gain.setTargetAtTime(music ? 1.2 : 0, t, 1.5);
+    Snd.mus.gain.setTargetAtTime(music ? (gramoPlaying() ? 1.9 : 1.2) : 0, t, 1.5); // (the gramophone a bit louder: owner, 24-10)
     if (!music && Snd.song) {
         Snd.song = null;
         Snd.carry = 0;
@@ -7164,7 +7163,7 @@ function floatText(text, x, y, col, room) { // (room: where x is; Mite's room un
     addP(Object.assign({ type: "text", text, x: x ?? pet.x, y: y ?? GY - R * 2.6, vy: -16, max: 3.2, col: col || "#ffe39a", size: 16 }, room ? { room } : {}));
 }
 /* golden firefly + ambient fireflies + snail */
-let gold = null, nextGold = performance.now() + rnd(120e3, 300e3);
+let gold = null, nextGold = performance.now() + rnd(300e3, 600e3); // (rarer, owner 24-10: about every 10 to 25 minutes)
 const flies = Array.from({ length: 8 }, () => ({ x: Math.random(), y: Math.random(), p: Math.random() * 9 }));
 let snailX = Math.random();
 let anom = null, nextAnom = performance.now() + rnd(180e3, 480e3), eerie = 0, moonGlow = false;
@@ -14746,8 +14745,13 @@ function guestTick(dt, now) {
             return;
         }
     }
-    if (!guestOut())
-        drawLayered(() => drawGuest(g, now));
+}
+/* the visitor in the wagon, drawn with the room (draw-world.js); on its way out or out on the floor it's drawn
+   after Mite instead (drawAnimals). It moves every frame whichever room is on screen (loop.js), so one walking out
+   into the next room keeps going (owner, 24-10: the rat stood still at the edge) */
+function guestDraw(now) {
+    if (guest && !guestOut())
+        drawLayered(() => drawGuest(guest, now));
 }
 /* is the visitor out on the floor in front of where Mite stands? Then it's drawn after Mite (drawAnimals) */
 function guestOut() { // (also on its way out: drawn unclipped, so it walks on into the next room instead of vanishing at the edge)
@@ -17364,7 +17368,7 @@ function drawCrystalShelf(dk, tsec) {
         });
     });
     // the glimmers, drifting slowly round the shelf and twinkling
-    const n = S.g > 0 ? clamp(Math.round(Math.sqrt(S.g) * 1.3), 2, 18) : 0, rx = (x1 - x0) * .62, ry = R * .42;
+    const n = S.g > 0 ? clamp(Math.round(Math.sqrt(S.g) * .45), 1, 6) : 0, rx = (x1 - x0) * .62, ry = R * .42;
     for (let i = 0; i < n; i++) {
         const a = t * (.18 + (i % 3) * .05) * (i % 2 ? 1 : -1) + i * 2.399;
         const gx = mx + Math.cos(a) * rx * (1 + .08 * Math.sin(i * 1.3)), gy = y - R * .15 + Math.sin(a) * ry;
@@ -17399,7 +17403,7 @@ function openCabinet() {
     }
     sfx("sparkle");
     $("bubble").hidden = true;
-    $("cabGlim").textContent = `◆ ${S.g} glimmer${S.g === 1 ? "" : "s"}`;
+    $("cabGlim").innerHTML = `◆ ${S.g} glimmer${S.g === 1 ? "" : "s"}<small class="cabwhy">This is where your glimmers like to live: among the crystals, drifting round the shelf. The more you have, the more of them you'll see here.</small>`;
     // one invisible button over each spot, so crystals can be tapped (and reached with the keyboard)
     const list = cabinetCrystals(), hits = $("cabHits");
     hits.innerHTML = "";
@@ -17510,7 +17514,7 @@ function drawCabView(t) {
         }
     }
     // the glimmers, drifting round the shelf
-    const n = S.g > 0 ? clamp(Math.round(Math.sqrt(S.g) * 1.6), 3, 22) : 0, tt = reduced ? 0 : t;
+    const n = S.g > 0 ? clamp(Math.round(Math.sqrt(S.g) * .8), 2, 12) : 0, tt = reduced ? 0 : t;
     for (let i = 0; i < n; i++) {
         const a = tt * (.2 + (i % 3) * .05) * (i % 2 ? 1 : -1) + i * 2.399;
         const x = CV_W / 2 + Math.cos(a) * 42, y = 24 + Math.sin(a) * 18;
@@ -23790,7 +23794,7 @@ function drawWorld(now, dt) {
     boxHits = [];
     drawCalendar(sx0 + R * .5, GY - rowH * 3 - R * .85, dk);
     pileDk = dk; // (today's pile is drawn later, in front of Mite and the treats: drawPile)
-    guestTick(dt, performance.now());
+    guestDraw(performance.now()); // (it moves in loop.js)
     drawMess(dk, "room"); // mess on the floor (any room: drawMess)
     drawSplurge(dk, now / 1000); // the day's treat, if there is one (splurge.js)
     // ball
@@ -24728,6 +24732,7 @@ function frame(now) {
         cx.setTransform(DPR, 0, 0, DPR, 0, 0);
         catTick(dt, now); // Midnightcat moves between the rooms whichever one is on screen (cat.js)
         possumTick(dt, now); // and so does the possum (possum.js)
+        guestTick(dt, now); // and a visitor (visitors.js; drawn with the wagon or by drawAnimals)
         snailTick(dt); // and the snail, slowly (snail.js)
         animalTalkTick(now); // and now and then two of them have a little chat (conversations.js)
         observeTick(now); // or one of them sits and looks at something, and talks about it (observe.js)
@@ -24827,7 +24832,7 @@ function frame(now) {
             withRoom(gold.room || "room", () => glow(gold.x, gold.y, R * .22 * pulse, "rgba(255,205,70,.95)"));
             if (gold.t > 13) {
                 gold = null;
-                nextGold = now + rnd(180e3, 480e3);
+                nextGold = now + rnd(600e3, 1500e3);
             }
         }
         for (const r of ROOMS) // each room's particles, in that room
@@ -25262,7 +25267,7 @@ function catchGold() {
     sfx("sparkle");
     const x = gold.x, y = gold.y;
     gold = null;
-    nextGold = performance.now() + rnd(180e3, 480e3);
+    nextGold = performance.now() + rnd(600e3, 1500e3);
     S.flies++;
     const r = Math.random();
     if (r < .7) {
@@ -25852,19 +25857,6 @@ function renderShop() {
             wb.onclick = () => buyWall(b);
         cs.appendChild(el);
     });
-    const kts = $("kettleShop"); // the kettles: Mite takes one of the ones in the scene at random for each brew
-    kts.innerHTML = "";
-    KETTLE_STYLES.forEach(k => {
-        const own = kettlesOwned().includes(k), noKettle = !S.b.kettle;
-        const where = !own ? "" : !isShown(k.sid) ? "not in use" : kettleStyle() === k.id ? "on the stove" : "on the shelf";
-        const el = document.createElement("div");
-        el.className = "bld";
-        el.innerHTML = `<div style="min-width:0"><b><i class="kswatch" style="background:${k.body};${k.flower ? `box-shadow:inset 0 0 0 3px ${k.body},inset 0 0 0 6px ${k.flower}` : ""}"></i>${esc(k.name)}</b>${shopNewTag(k.sid)}<span class="own">${where}</span><p>${esc(k.note)}</p></div><span class="bacts">${own ? `<span class="owned">Owned</span>` : noKettle ? `<span class="owned">Needs the kettle</span>` : `<button class="btn amber" data-w="${k.sid}" ${S.g < k.price ? "disabled" : ""} aria-label="Buy ${esc(k.name)} for ${k.price} glimmers">${k.price} ◆</button>`}</span>`;
-        const wb = el.querySelector("[data-w]");
-        if (wb)
-            wb.onclick = () => buyKettle(k);
-        kts.appendChild(el);
-    });
     document.querySelectorAll("#tab-grow input[data-vis]").forEach(cb => cb.onchange = () => {
         setShown(cb.dataset.vis, cb.checked);
         sfx("tock");
@@ -25880,7 +25872,7 @@ function renderShop() {
     updateShopAfford();
 }
 function updateShopAfford() {
-    document.querySelectorAll("#wallShop button[data-w],#plantShop button[data-w],#crystalShop button[data-w],#kettleShop button[data-w]").forEach(bt => {
+    document.querySelectorAll("#wallShop button[data-w],#plantShop button[data-w],#crystalShop button[data-w]").forEach(bt => {
         const k = KETTLE_STYLES.find(x => x.sid === bt.dataset.w), b = k ? { id: k.sid, price: k.price } : WALL.find(x => x.id === bt.dataset.w) || PLANTS.find(x => x.id === bt.dataset.w) || CRYSTALS.find(x => x.id === bt.dataset.w);
         const o = (S.b[b.id] || 0) > 0;
         bt.disabled = o || S.g < b.price;
@@ -27208,6 +27200,9 @@ function eraseAll() {
     S.g = S.gTotal = RESTART_G; // the starting gift again, so the shop isn't empty-handed on day one
     S.flags.starter = 1; // (it's the gift, not earned: earnedG)
     S.flags.m_furn = S.flags.m_rugs = S.flags.m_possum = 1; // (a new game starts without the desk, the chair and the rugs: they're in the shop)
+    postits = []; // (Mite's sticky notes on the walls: pastimes.js)
+    Object.assign(possum, { ready: false, arriving: false, chat: false, given: false, carry: false, cookie: 0 }); // (it moves in again with the first cookies: possum.js)
+    basketBall = 0;
     S.wiped = Date.now(); // (another device's copy of the old game won't be merged back in: mergeStates)
     note(`We met. Again, technically. ${RESTART_G} glimmers to start with.`);
     postWelcome(); // a letter on the desk again (post.js)
@@ -29470,7 +29465,7 @@ function autoFileOld() {
 /* the credits page: inspirations (tone and ideas only: no names, characters, places or text taken from them),
    the fonts and their licence */
 const CREDITS_HTML = `<div><h2>Credits and inspiration</h2><p class="sub">Small Things is a small, original thing. These are the works whose mood it borrows: their tone and ideas, never their characters, places or words. It isn't affiliated with any of them.</p></div>
-<div><h3>Inspiration</h3><p class="sub">The SCP Foundation, Control, World of Darkness, Fallen London, The Elder Scrolls V: Skyrim, Persona, Fallout, cosy witch games and virtual pets.</p></div>
+<div><h3>Inspiration</h3><p class="sub">The SCP Foundation, Control, World of Darkness, Fallen London, The Elder Scrolls V: Skyrim, Persona, Fallout, Animal Crossing, Stardew Valley, cosy witch games and virtual pets.</p></div>
 <div><h3>Fonts</h3><p class="sub">Bricolage Grotesque, Atkinson Hyperlegible, IBM Plex Mono, DotGothic16 and VT323, each under the SIL Open Font License 1.1.</p></div>
 <div><h3>Made with</h3><p class="sub">Written, drawn and built with Claude. All the pixel art is drawn in code, and all of it is original.</p></div>
 <div><h3>What it cost to build</h3><p class="sub">Small Things was built with an AI model over a few weeks of heavy use. Running a model takes electricity, so here is an honest estimate of what building it cost. It's an order of magnitude, not a measurement.</p>
