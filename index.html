@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 23-10-2026 -->
+<!-- Small Things, shared build of 24-10-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -699,6 +699,7 @@ body.pixel .scopeview .mlabel .ml-credit{font-size:12px}
 body.pixel .wxicon{width:18px;height:18px}
 /* the note with the backup: the file holds everything you've written, and isn't locked */
 .bkwarn{margin:8px 0 0;padding:8px 10px;border-left:3px solid #c98a2e;background:rgba(201,138,46,.1);border-radius:0 6px 6px 0;font-size:13.5px;line-height:1.45;color:var(--ink)}
+.bkfreq{margin:8px 0 0;font-size:13px;color:var(--ink)}
 .bkwarn.small{margin:4px 0 6px;padding:5px 8px;font-size:12.5px}
 
 /* the line pools: a search over the pools' names, what they're for and their lines (collection.js, poolFilter) */
@@ -762,6 +763,7 @@ body.editing #addForm{display:none}
         <p><strong>Back up today?</strong> Everything in one small file. Send it to yourself (a messenger, email) or keep it in your files.</p>
         <p class="bkwarn small">It holds all the text you've written here and isn't locked, so keep it somewhere private.</p>
         <div class="row"><button class="btn primary" type="button" id="bkSend">Send to…</button><button class="btn" type="button" id="bkSave">Download</button><button class="btn ghost" type="button" id="bkLater">Not today</button></div>
+        <p class="bkfreq small">Ask me: <button class="linkbtn" type="button" data-bkfreq="2">once a week</button> · <button class="linkbtn" type="button" data-bkfreq="0">not at all</button> <span class="sub">(Settings can change it back)</span></p>
       </div>
       <div class="evecard" id="eveCard" hidden>
         <p><strong>Done for today?</strong> Mite files the pile and carries it to the archive.</p>
@@ -1023,6 +1025,8 @@ body.editing #addForm{display:none}
  * Lines you add in the app live in your save (S.content.pools), not here.
  */
 const POOL_INFO = {
+    gramophone: "Mite, winding up the gramophone in the nook (the record starts)",
+    gramophone_stop: "Mite, lifting the gramophone's needle before the record's done",
     crochet: "Mite, now and then while knitting: on crochet (it can't; it isn't a moss skill)",
     nameplates: "What the archive's name plate says, one per day (short, at most 20 characters; shown in capitals; letters, commas and full stops only: the plate's font has no & or brackets)",
     shade_hand: "Mite, when you tap the shadow hand from the night door and it waves back",
@@ -1674,6 +1678,21 @@ const DEF = {
             "This one's on its own errand. I won't keep it.",
             "Little lamp with wings. Midnightcat's going to want this one.",
             "It came in to see the lights. Ours are nice. It agrees."
+        ],
+        gramophone: [
+            "One record. It's the only one it'll play. I think it chose.",
+            "Wound up. Needle down. Listen: a little dust first, then the song.",
+            "The label's worn off. I've decided the song is called 'Thursday'.",
+            "[night] Quiet music for a dark nook. The horn holds it in, mostly.",
+            "[rainy] Rain on the roof and a record going round. That's the whole plan.",
+            "Somebody danced to this once. You can hear it in the scratches.",
+            "It plays a bit slow. Or the evening's a bit fast. One of them.",
+            "Midnightcat pretends not to listen. Her ear's turned this way."
+        ],
+        gramophone_stop: [
+            "Needle up. The record can rest a while.",
+            "Stopping it halfway. It'll remember where it was. It never does.",
+            "Quiet again. The horn's still humming, a little."
         ],
         crochet: [
             "People ask if I crochet. I don't. It's not a moss skill. Moss knits, or it doesn't.",
@@ -2345,7 +2364,7 @@ const DEF = {
             "Stored. If anyone asks for it, I'll know where it is. I'll need a packed lunch to fetch it."
         ],
         archive_ingest: [
-            "Ingest: a new box comes in, gets checked, gets an accession number, and only then goes on a shelf. Nothing skips the queue. Not even the cat.",
+            "Accessioning: a new box comes in, gets checked, gets an accession number, and only then goes on a shelf. Nothing skips the queue. Not even the cat.",
             "Accessioning is writing down that we've taken something in: what it is, who from, when. This one: a tin, from the possum, Tuesday.",
             "With digital things, what arrives is a submission package. After the checks it becomes an archival package. In here it's a box, but the idea's the same.",
             "Checked, counted, numbered. Now it officially belongs to the archive. It looks relieved.",
@@ -2373,7 +2392,7 @@ const DEF = {
             "Rehousing: out of the old shoebox, into an acid-free one. The shoebox was very attached. I thanked it.",
             "Paperclips out. They rust, and the rust stains. I keep them in a jar. The jar is not part of the collection.",
             "Cool, dark and steady, not too damp, not too dry. Archives like it the way a quiet cellar does.",
-            "A new box, a new label. Pencil, never pen. Ink doesn't come out, and neither do mistakes in ink."
+            "A new folder, a note on it in soft pencil, never pen. Near the documents, ink doesn't come out, and neither do mistakes in ink."
         ],
         archive_appraise: [
             "Appraisal: deciding what's worth keeping for the long run. Tuesday's shopping list: no. The shopping list with a drawing of the possum on it: yes.",
@@ -2758,37 +2777,37 @@ const DEF = {
         ],
         archterms: [
             "Accession | formally taking something into the archive. It gets a number, a date and a line in the register, and from then on it's ours to look after.",
-            "Provenance | where something came from and whose hands it passed through. Without it a letter is just paper; with it, it's evidence.",
+            "Provenance | who created or collected the records, and who has held them since. That context is what makes them trustworthy evidence.",
             "Respect des fonds | keep the records of one creator together, never mixed with anyone else's. The possum's papers stay the possum's.",
             "Original order | leave things in the order their creator kept them. That order is information too.",
             "Fonds | everything one person or organisation made and kept, as a whole. The biggest level in an archive.",
-            "Series | records within a fonds made or kept together for the same purpose: all the shopping lists, or all the letters out.",
+            "Series | records within a fonds kept together because they come from the same activity or filing system: all the shopping lists, or all the letters sent.",
             "Finding aid | the guide to what's in a collection and where. A map, but for boxes.",
             "Appraisal | deciding what's worth keeping for good, and why. The hardest part, and the most important.",
-            "Retention schedule | a list of how long each kind of record is kept before it's reviewed or destroyed. Seven years for receipts, for ever for the good stuff.",
+            "Retention schedule | a list of how long each kind of record is kept, and what happens after: destroyed, or transferred to the archive for good. Receipts often seven years.",
             "Deaccession | formally taking something out of the collection, written down, with reasons. Not losing it: letting it go on purpose.",
-            "Fixity | proof that a digital file hasn't changed since it came in. You check it again and again, quietly.",
-            "Checksum | a short code worked out from a file. If even one bit of the file changes, the checksum changes too.",
+            "Fixity | a digital file staying exactly as it was. Archives check it regularly by recalculating its checksum and comparing.",
+            "Checksum | a short code calculated from a file's contents. Change even one bit of the file and, with a good method, the code comes out different.",
             "Bit rot | digital files slowly going wrong on old disks, one bit at a time. Fixity checks are how you catch it.",
             "Rehousing | moving records into better boxes and folders: acid-free, the right size, no rusty paperclips.",
-            "Acid-free | paper and card that won't yellow or crumble, and won't harm what's kept in it.",
-            "Ingest | taking digital records into the archive's system: checked, described, and stored in more than one place.",
+            "Acid-free | paper and card made without acid, often with a buffer added. It ages far more slowly and doesn't pass acid on to what's kept in it.",
+            "Ingest | taking digital records into the archive's system: received, checked, described, and packaged for long-term storage.",
             "Metadata | information about information: who made it, when, what it is. A box without a label is a mystery; the label is metadata.",
             "Authority record | one agreed form of a name, so that 'the possum', 'Possum' and 'P.' all lead to the same papers.",
             "Extent | how much there is: in boxes, files or metres of shelf. 'One box' is an extent. So is 'a worrying amount'.",
             "Linear metre | how archives measure paper: the length of shelf it takes up.",
-            "Closure period | some records stay closed for a set time, to protect the people in them. Then they open.",
+            "Closure period | some records stay closed to the public for a set number of years, often to protect the privacy of the people in them. Then they open.",
             "Reading room | where you come to read the records. Pencils only, clean hands, and someone kind keeping an eye on things.",
             "Chain of custody | an unbroken record of who has held something, so you know it wasn't swapped or changed on the way.",
-            "Vital records | the ones you'd save first in a disaster. Every archive keeps a list and hopes never to need it.",
-            "Disaster plan | what to do in a flood or a fire: who to call, what to save first, and that wet paper goes in the freezer.",
+            "Vital records | the records an organisation can't do without to keep working or prove its rights after a disaster. They get extra protection, often a copy kept elsewhere.",
+            "Disaster plan | what to do in a flood or a fire: who to call, what to save first, and that wet paper goes in the freezer within two days, before mould starts.",
             "Digitisation | making a digital copy of paper or photos. The scan helps people read it; the original is still kept.",
             "Born-digital | records that were digital from the start: emails, phone photos, a list in an app. Like this one.",
             "Format migration | moving a file to a newer format before the old one can't be opened any more.",
             "Emulation | keeping old files readable by pretending to be the old computer they need. Very convincing pretending.",
             "Weeding | taking out duplicates and things of no lasting value. Gentler than it sounds. Mostly paperclips.",
             "Archival bond | the relationship between records made in the same activity. A letter and its reply mean more together.",
-            "Records continuum | the idea that records are never just 'current' or 'archived': they keep being used, by different people, for different reasons, all their lives."
+            "Records continuum | a model, from Australia in the 1990s, that treats records management and archiving as one continuous whole: a record can be evidence for its maker and memory for everyone, at once."
         ],
         archive_digitise: [
             "The scanner hums. Every page gets a good look and a filename that means something. 'scan_final_2' is not a filename.",
@@ -3821,12 +3840,15 @@ const FESTIVALS = [
 const BUILDINGS = [
     { id: "jar", name: "Firefly jar", price: 4, max: 6, note: "A jar of slow, friendly light." },
     { id: "moss", name: "Moss patch", price: 6, max: 14, note: "Soft, green, quietly thriving." },
-    { id: "books", name: "Tiny library", price: 9, max: 14, note: "Every book is about something small. The first one comes with a chair to read it in." },
+    { id: "books", name: "Tiny library", price: 9, max: 14, note: "Every book is about something small." },
     { id: "lantern", name: "Lantern string", price: 10, max: 9, note: "Paper lanterns along the ceiling." },
     { id: "kettle", name: "Tea kettle", price: 18, max: 1, note: "Always just about to boil." },
     { id: "snail", name: "Snail courier", price: 30, max: 1, note: "Brings the post. Slowly. Reliably." },
     { id: "scope", name: "Observatory", price: 45, max: 1, note: "A brass telescope for very distant things." },
     { id: "vault", name: "Dream archive", price: 60, max: 1, note: "Drawers full of carefully filed dreams." },
+    { id: "desk", name: "Writing desk", price: 12, max: 1, note: "For the nook, under the round window: a drawer, an inkpot, a quill, a stub of candle. Mite writes a letter a day at it, and the snail checks the post there." },
+    { id: "chair", name: "Chesterfield & side table", price: 14, max: 1, note: "For the nook: a buttoned leather chair to read in, and a little table for the candle and the tea." },
+    { id: "gramo", name: "Gramophone", price: 40, max: 1, note: "Up on the nook's platform, by the pinboard. Tap it and Mite winds it up: one record, then it stops. Plays with the music off too (not with the sound off)." },
     { id: "rental", name: "Renter's chest", price: 16, max: 1, note: "For the nook: a chest of drawers whose drawers are let out to tenants. Brass labels, a list of who's in." },
     { id: "vase", name: "Vase & pressed flowers", price: 10, max: 1, needs: "rental", note: "A vase for the top of the renter's chest, with a book for drying what's been in it. Visitors bring flowers; Mite picks some on walks." },
     { id: "closet", name: "Bigger-inside closet", price: 80, max: 1, note: "Measured from the inside, it doesn't end. Built into the archive's shelves." },
@@ -3916,6 +3938,8 @@ const ACH = [
     ["fn10", "Field notes", "Jot down 10 things", s => S.tasks.filter(t => t.jot).length >= 10]
 ];
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+/* jotted notes (ids only) about building the app that were done by 24-10-2026, let go once on every device (boot.js) */
+const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu36t", "mvjpagoy1syb1", "mvjpb443c2gto", "mvjpbskekc1q9", "mvjqs6i428ut6", "mvjquch2oh80f", "mvjqvuayxpolg", "mvjqwymqsqqfb", "mvjqzixvljhjx", "mvjr05c1njw7f", "mvjr0wr17ab5l", "mvjr1ww7vc41b", "mvjr6es1nrbdw", "mvjrfezbbrzza", "mvjrfkz8nhw17", "mvjrm5h6f26b1", "mvjroybcgeebb", "mvjrptomfr8ww", "mvjrqsr0hq6ab", "mvjrrsreyxeby", "mvjry42ynq0x0", "mvjs8n0083gmu", "mvjs9vxev9amu", "mvjsahfwipc90", "mvjsdx24ntc6v", "mvjsfn3013t02", "mvjskwaca6cd8", "mvjsm32nua3xh", "mvjtouym4i2su", "mvjw1fdk5tpf8", "mvjz59v270u9o", "mvjzbh9eg3whh", "mvk0f6570eibb", "mvk0m6i65t03d", "mvk0o4nstcon0", "mvk103prpwve6", "mvk18107y2rq8", "mvkkhbp8gtot0", "mvkkibdo51e6o", "mvkklocvzcwsp", "mvkkucxwu0066", "mvkkvzg2z19a6", "mvkkxwnav3z2x", "mvkkzk8eal2x5", "mvkna90pei7x3", "mvkqk1xd3ms3m", "mvkqm9un5q346", "mvktt6diowg3u", "mvl4grtyeru5z", "mvligczo3d9e6", "mvlipjr17z5os", "mvlipz25tvn7v", "mvlir76umr9a9", "mvliswef2x3x8", "mvljfkhj1wpal", "mvljgnrxwpx4k", "mvljkcx6he9dt"];
 
 </script>
 <script>/* js/core/state.js */
@@ -3928,7 +3952,7 @@ const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 function defaultState() {
     return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
-        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
+        settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
 }
 let S = defaultState();
@@ -4204,6 +4228,7 @@ function sanitizeState(raw) {
         o.settings.bed = clamp(num(st.bed, 1), 0, 23);
     if ("dayStart" in st) // when a new day of activity begins (actDay; 0-23, 5 = 0500)
         o.settings.dayStart = clamp(Math.round(num(st.dayStart, 5)), 0, 23);
+    o.settings.lamp = [0, 1, 2].includes(num(st.lamp)) ? num(st.lamp) : 0; // the lamp by hand: auto, on, half (camera.js)
     if ("nightLight" in st) // when the night light comes on (nightLight, camera.js; 0-23, -1 off)
         o.settings.nightLight = clamp(Math.round(num(st.nightLight, 0)), -1, 23);
     if ("strange" in st)
@@ -5325,10 +5350,10 @@ function expandG(t, depth = 0, bud = { n: 0 }) {
 }
 function fillText(t, c) {
     c = c || ctx();
-    return expandG(t).replace(/\{(\w+)\}/g, (m, v) => {
+    return expandG(expandG(t).replace(/\{(\w+)\}/g, (m, v) => { // (and once more after: a filled-in value can hold "{#creature}" too)
         const x = varVal(c, v);
         return x == null ? "" : x;
-    });
+    }));
 }
 let bubbleUntil = 0, bubbleW = 0;
 /* say a line from a pool (compose picks it: only lines whose [conditions] fit the moment, specific lines
@@ -5376,7 +5401,7 @@ function cardCap(el, html) {
         speakReadUntil = 0;
         speakWhole = false;
         if (t && !b.classList.contains("thinking") && !b.classList.contains("emote"))
-            speakQ.unshift({ text: t, opts: {}, at: performance.now() });
+            talkQueue("mite", t, {}, true);
     }
     $("bubble2").hidden = true;
 }
@@ -5389,6 +5414,7 @@ function typeFinish() {
     if (!st || st.done)
         return false;
     st.done = true;
+    lineDoneAt = performance.now();
     clearTimeout(st.timer);
     st.ty.textContent = st.text;
     st.tr.textContent = "";
@@ -5410,37 +5436,83 @@ function talkF() {
 function typeF() {
     return [.7, 1, 2.6][S && S.settings ? S.settings.talk ?? 1 : 1] || 1;
 }
-/* Mite finishes a thought before starting the next: while a line is still typing, or hasn't been readable for a
-   moment yet (speakReadUntil), a new line waits in speakQ and speakPump() shows it after. Little emotes and the
-   thinking dots are just skipped then. Queued lines go stale after 15 seconds. */
-let speakQ = [], speakReadUntil = 0, lastInput = -1e9, speakWhole = false, speakReply = false; // speakReply: said in answer to a tap (an interaction you asked for), so it never queues // speakWhole: the line showing may not be cut off
-/* a line that answers something you just did (a tap, a key, a purchase) doesn't wait: it's a reply */
+/* ---------- one speech system ----------
+   Everyone's lines go through one queue (speakQ: { who, text, opts, at }): who is "mite" (the big bubble) or the
+   one other speaker (snail, cat, possum, guest: the second bubble). At most two bubbles; a line that's showing is
+   never replaced before it has been readable for a moment (speakReadUntil, b2ReadUntil). A reply to a tap goes to
+   the front of the queue: the line showing finishes typing at once and stays up just under a second more (REPLY_GAP),
+   then the reply takes its place.
+   A conversation (the dialogue box) has the floor: other lines wait until it ends, then come in order. A card on
+   screen holds Mite's lines too. Little emotes and the thinking dots are skipped rather than queued. Queued lines go
+   stale 15 seconds after they could first have been said. Floating labels, cards and notes are separate. */
+let speakQ = [], speakReadUntil = 0, lastInput = -1e9, speakWhole = false, speakReply = false, b2ReadUntil = 0, lineDoneAt = 0; // lineDoneAt: when the line showing was all there // speakReply: said in answer to a tap (it goes first) // speakWhole: the line showing may not be cut short
+/* a line that answers something you just did (a tap, a key, a purchase) goes first */
 ["pointerdown", "keydown", "click"].forEach(ev => document.addEventListener(ev, () => lastInput = performance.now(), true));
-function speakPump(now) {
-    if (!speakQ.length || now < speakReadUntil || cardOpen())
+function floorTaken() { // a conversation is playing in the dialogue box
+    const d = $("dlg");
+    return !!d && !d.hidden;
+}
+function talkQueue(who, text, opts, first) {
+    const now = performance.now();
+    if (speakQ.some(q => q.who === who && q.text === text))
         return;
-    while (speakQ.length && now - speakQ[0].at > 15000)
-        speakQ.shift();
-    const q = speakQ.shift();
-    if (q)
-        speak(q.text, q.opts);
+    const it = { who, text, opts: opts || {}, at: now };
+    if (first)
+        speakQ.unshift(it);
+    else
+        speakQ.push(it);
+    const mine = speakQ.filter(q => q.who === who);
+    if (mine.length > 3)
+        speakQ.splice(speakQ.lastIndexOf(mine[first ? 3 : 0]), 1);
+}
+const REPLY_GAP = 900;
+/* can a reply to a tap go up now? (the line showing has been all there for a moment) */
+function replyReady(now) {
+    const b = $("bubble");
+    return b.hidden || b.classList.contains("thinking") || !speakWhole && (!bubbleType || bubbleType.done) && now >= lineDoneAt + REPLY_GAP / talkF();
+}
+/* is this speaker's bubble free for a new line? */
+function laneFree(who, now, reply) {
+    if (who === "mite") {
+        const b = $("bubble");
+        return !cardOpen() && (b.hidden || now >= speakReadUntil || b.classList.contains("thinking") || reply && replyReady(now));
+    }
+    return $("bubble2").hidden || now >= b2ReadUntil;
+}
+function speakPump(now) {
+    if (!speakQ.length)
+        return;
+    if (floorTaken()) { // (waiting for a conversation doesn't count towards going stale)
+        speakQ.forEach(q => q.at = Math.max(q.at, now));
+        return;
+    }
+    speakQ = speakQ.filter(q => now - q.at <= 15000);
+    for (const who of ["mite", "other"]) {
+        const i = speakQ.findIndex(q => (q.who === "mite") === (who === "mite"));
+        if (i < 0 || !laneFree(speakQ[i].who, now, speakQ[i].opts.reply))
+            continue;
+        const q = speakQ.splice(i, 1)[0];
+        if (q.who === "mite")
+            speak(q.text, Object.assign({}, q.opts, { fromQ: 1, reply: 0 }));
+        else
+            snailSay(q.text, q.opts.ms, q.who, false, true);
+    }
 }
 function speak(text, opts = {}) {
     const { ms, thinking, emote, voice } = opts, now = performance.now();
     text = homeTxt(text);
-    const b = $("bubble");
-    if (cardOpen() && !thinking && !emote) { // a card is open: the line waits until it's closed
-        if (!speakQ.some(q => q.text === text))
-            speakQ.push({ text, opts, at: now });
+    const b = $("bubble"), small = emote || thinking;
+    const reply = !opts.fromQ && !speakWhole && (speakReply || now - lastInput <= 700);
+    if (!small && (cardOpen() || floorTaken() && !opts.convo)) { // a card, or a conversation: the line waits for it
+        talkQueue("mite", text, opts, reply);
         return;
     }
-    if (!b.hidden && now < speakReadUntil && !b.classList.contains("thinking") && ((now - lastInput > 700 && !speakReply) || speakWhole)) {
-        if (emote || thinking)
+    if (!b.hidden && now < speakReadUntil && !b.classList.contains("thinking") && !(reply && !small && replyReady(now))) {
+        if (small)
             return;
-        if (!speakQ.some(q => q.text === text))
-            speakQ.push({ text, opts, at: now });
-        if (speakQ.length > 3)
-            speakQ.shift();
+        if (reply)
+            typeFinish(); // (the line showing is finished at once: the reply follows it a moment later)
+        talkQueue("mite", text, Object.assign({}, opts, reply ? { reply: 1 } : {}), reply);
         return;
     }
     const typed = !thinking && !emote && !reduced && text.length > 2;
@@ -5450,6 +5522,7 @@ function speak(text, opts = {}) {
         if (bubbleType)
             typeFinish();
         b.textContent = text;
+        lineDoneAt = now;
         if (emote)
             blip("a", voice);
     }
@@ -5771,6 +5844,8 @@ function songTick(t, dk) {
         Snd.lastSong = sg;
         const bpm = (sg.bpm || 70) - (night ? 8 : 0);
         Snd.song = { sg, bar: 0, bars: (sg.meter === 3 ? 40 : 32), beat: bpm / 60, next: carry, drums: (sg.drums || "brush") !== "none" && !(night && !sg.drums) && Math.random() < .9, last: (sg.mel || MEL)[2], first: !Snd.carry };
+        if (Gramo.on && !Gramo.song)
+            Gramo.song = Snd.song;
         const g = document.getElementById("sndG");
         if (g) {
             g.title = "Playing: " + sg.name;
@@ -5853,17 +5928,48 @@ function songTick(t, dk) {
     if (so.bar >= so.bars) {
         Snd.carry = so.next;
         Snd.song = null;
+        if (Gramo.on && Gramo.song === so) // the record's done
+            gramoStop();
     }
 } // one song flows straight into the next
+/* the gramophone in the nook (garden.js): wound up, it plays one song, with the music on or off (not with the sound
+   off: then the record turns quietly). It stops when its song ends, or after GRAMO_MAX */
+const GRAMO_MAX = 150e3;
+const Gramo = { on: false, at: 0, song: null };
+function gramoPlay() {
+    Gramo.on = true;
+    Gramo.at = performance.now();
+    Gramo.song = null;
+    if (sndMode() === 3) // (with the music on, the record is the song that's playing)
+        Gramo.song = Snd.song;
+    else { // (otherwise a fresh song)
+        Snd.song = null;
+        Snd.carry = 0;
+    }
+}
+function gramoStop() {
+    Gramo.on = false;
+    Gramo.song = null;
+}
+function gramoPlaying() {
+    if (Gramo.on && performance.now() - Gramo.at > GRAMO_MAX)
+        gramoStop();
+    return Gramo.on;
+}
 function ambTick() {
     if (!Snd.ctx)
         return;
-    const a = Snd.ctx, t = a.currentTime, on = sndMode() >= 2 && !document.hidden && a.state === "running", music = on && sndMode() === 3;
+    const a = Snd.ctx, t = a.currentTime, running = !document.hidden && a.state === "running", on = sndMode() >= 2 && running, music = running && (sndMode() === 3 || sndMode() >= 1 && gramoPlaying());
     Snd.amb.gain.setTargetAtTime(on ? 1 : 0, t, .8);
     Snd.mus.gain.setTargetAtTime(music ? 1.2 : 0, t, 1.5);
     if (!music && Snd.song) {
         Snd.song = null;
         Snd.carry = 0;
+    }
+    if (music && !on) { // (the gramophone alone: no ambience, just the record)
+        const d = new Date();
+        songTick(t, skyAt(d.getHours() + d.getMinutes() / 60).dark);
+        return;
     }
     if (!on)
         return;
@@ -5901,7 +6007,7 @@ function ambTick() {
         tone(392, t, .35, { vol: .012, glide: .9, bus: Snd.amb });
         tone(370, t + .5, .6, { vol: .01, glide: .9, bus: Snd.amb });
     }
-    if (sndMode() === 3)
+    if (music)
         songTick(t, dk);
 }
 setInterval(ambTick, 500);
@@ -6907,7 +7013,7 @@ function nearestHit(p, list) {
 /* in the sleeping nook; anything else walks Mite back to the wagon first. GARDEN_ONLY: things that only happen there */
 const GARDEN_OK = new Set(["answerphone", "opendrawer", "armread", "readletter", "possumchat", "write", "snailchat", "idle", "wander", "curious", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "stare", "bow", "dizzy", "gwater", "catvisit", "fromGarden", "eat", "drink", "admire", "descend", "nookup", "gpin", "gpossum", "chairSit", "gsmell", "gfread", "fbookchair", "ghang", "ndoorlisten"]);
 const GARDEN_ONLY = new Set(["gwater", "write", "armread", "readletter", "opendrawer", "gsmell", "gfread", "fbookchair"]);
-const LOFT_OK = new Set(["ndoorlisten", "ghang", "gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow"]);
+const LOFT_OK = new Set(["ndoorlisten", "ghang", "ggramo", "gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow"]);
 /*
  * Mite's live state.
  *   x, dir       where Mite is and which way it faces
@@ -7522,6 +7628,10 @@ const BEH = {
             po.prop = "food";
             po.food = b.food || "berry";
             po.bite = t;
+            if (po.food === "shroom" && t > 2 && !b.glowed) { // the glowing mushroom: the eyes light up once it's eaten, not before (care.js)
+                b.glowed = 1;
+                glowUntil = Date.now() + 60e3;
+            }
             po.noArms = true;
             const ph = (t * 1.4) % 1; // one bite every ~0.7 s: up, nibble, down a little
             po.mouth = po.food === "bowl" ? (Math.floor(t * 4) % 2 ? "open" : "smile") : ph < .45 ? "open" : "smile";
@@ -7755,10 +7865,10 @@ const BEH = {
                 po.eyes = "happy";
                 po.mouth = "smile";
                 if (Math.random() < .04)
-                    addP({ type: "heart", x: cat.x + rnd(-R * .15, R * .15), y: GY - cat.g - catSize() * 1.1, vx: rnd(-20, 20), vy: -rnd(30, 60), g: -20, max: 1.2, col: "#e3a0b2", rot: 0, vr: 0, size: rnd(3, 5) });
+                    addP({ type: "heart", room: cat.room, x: cat.x + rnd(-R * .15, R * .15), y: catBox().y0 + R * .1, vx: rnd(-20, 20), vy: -rnd(30, 60), g: -20, max: 1.2, col: "#e3a0b2", rot: 0, vr: 0, size: rnd(3, 5) });
                 if (ta > .5 && !b.prr) {
                     b.prr = 1;
-                    floatText("prr", cat.x, GY - cat.g - catSize() * 1.2, "#e6e0f0");
+                    floatText("prr", cat.x, catBox().y0 - R * .15, "#e6e0f0", cat.room); // (catBox: where she is drawn, her depth on the floor included)
                 }
                 if (ta > 2) {
                     b.petted = 1;
@@ -8418,7 +8528,7 @@ function chooseBeh() {
  * as the behaviours in behaviours.js (d, w, init, step); GARDEN_OK (pet.js) lists what may run there.
  */
 Object.assign(BEH, {
-    write: { d: [60, 60], w: c => view === "garden" && !c.late && num(S.flags.letterDay) < dayNum() ? .25 : 0, init(b, p) { // one letter a day, by itself (tap the desk for more)
+    write: { d: [60, 60], w: c => view === "garden" && hasDesk() && !c.late && num(S.flags.letterDay) < dayNum() ? .25 : 0, init(b, p) { // one letter a day, by itself (tap the desk for more)
             const g = gardenGeo();
             b.tx = clamp(g.wcx, R * 1.05, W - R * 1.05);
             b.act = rnd(16, 24);
@@ -8482,7 +8592,7 @@ Object.assign(BEH, {
         } },
     /* very now and then: Mite fetches the dried flower book from the desk, reads it in the chair, and puts it back
        (so you find out it's there: flowers.js) */
-    fbookchair: { d: [60, 60], w: c => view === "garden" && hasChair() && hasVase() && (S.flowerBook || []).length ? .06 : 0, init(b) {
+    fbookchair: { d: [60, 60], w: c => view === "garden" && hasChair() && hasDesk() && hasVase() && (S.flowerBook || []).length ? .06 : 0, init(b) {
             b.act = rnd(12, 18);
             b.ph = "fetch";
         }, step(b, p, t, po, dt) {
@@ -8667,6 +8777,13 @@ Object.assign(BEH, {
             po.lookOverride = { x: 0, y: -1 }; // up at the snapshot
             po.mouth = "o";
             po.eyes = ta > 1 && ta < 1.4 ? "happy" : "open";
+        } }),
+    /* winding up the gramophone (or lifting the needle): garden.js */
+    ggramo: nookUp({ act: () => 3, at: () => gramoGeo().x - R * .4, face: 1, fn(b, p, ta, po) {
+            po.lookOverride = { x: 1, y: .3 };
+            po.mouth = ta > 2.2 ? "smile" : "o";
+            if (ta < 2.2)
+                po.arms = Math.sin(ta * 10) > 0 ? [-1.3, -.4] : [-.4, -1.3]; // turning the crank
         } }),
     ghang: nookUp({ act: () => 10, at: () => { const g = gardenGeo(); return (g.bx0 + g.bx1) / 2; }, face: 0, fn(b, p, ta, po) { // pinning up the first postcards
             const g = gardenGeo(), k = boardHung();
@@ -10624,7 +10741,7 @@ const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () 
             }
             say("greenhouse");
             return 5;
-        } }, gvase: { beh: "gsmell", revealAt: 1, show: () => showFlower() }, gfbook: { beh: "gfread", revealAt: .6, show: () => showFlowerBook() }, ghang: { beh: "ghang", revealAt: 0, show: () => 9 }, gpin: { beh: "gpin", revealAt: .4, show: () => { // a snapshot on the pinboard, from up on the platform
+        } }, gvase: { beh: "gsmell", revealAt: 1, show: () => showFlower() }, gfbook: { beh: "gfread", revealAt: .6, show: () => showFlowerBook() }, ghang: { beh: "ghang", revealAt: 0, show: () => 9 }, ggramo: { beh: "ggramo", revealAt: 2.2, show: () => gramoShow() }, gpin: { beh: "gpin", revealAt: .4, show: () => { // a snapshot on the pinboard, from up on the platform
             const line = compose("pin_" + (gardenPin && gardenPin.photo)) || compose("pinboard") || "That one's from a while ago. Good place.";
             speak(line, { ms: 5500 });
             return 5.5;
@@ -10811,7 +10928,7 @@ function startObj(kind) {
         };
         return;
     }
-    const stayUp = view === "garden" ? ["gplants", "gpin", "gpossum", "ghang"].includes(kind) : ["sill", "scope"].includes(kind) && own("loft"); // (things up on the platform or balcony: Mite stays up there)
+    const stayUp = view === "garden" ? ["gplants", "gpin", "gpossum", "ghang", "ggramo"].includes(kind) : ["sill", "scope"].includes(kind) && own("loft"); // (things up on the platform or balcony: Mite stays up there)
     if (pet.ground > 0 && (view === "room" || view === "garden") && !stayUp) {
         pet.start("descend");
         const cur0 = { kind, shown: false, b: pet.b };
@@ -12194,7 +12311,7 @@ function pointLights(t) {
         withRoomLight("garden", () => {
             nightLights(t, "garden");
             const g = gardenGeo(), fl = 1 + Math.sin(t * 9) * .04 + Math.sin(t * 23) * .03;
-            for (const c of [hasChair() ? gardenCandle(g) : null, { x: g.dx0 + R * .62, y: g.dTop - R * .2 }].filter(Boolean)) { // (the side table's candle only with the chair)
+            for (const c of [hasChair() ? gardenCandle(g) : null, hasDesk() ? { x: g.dx0 + R * .62, y: g.dTop - R * .2 } : null].filter(Boolean)) { // (the side table's candle with the chair, the stub with the desk)
                 if (!behindMite("garden", c.x, c.y))
                     glow(c.x, c.y - PX * 1.5, PX * 1.2, "rgba(255,210,120,.8)");
                 softGlow(c.x, c.y - PX, R * 1.4 * fl, "rgba(255,190,110,.32)");
@@ -13958,16 +14075,28 @@ function deskChairOverMite() {
  * emoticons. Each line goes into the Overheard log (heard). Also the snail's own state.
  */
 let b2Who = "snail";
-function snailSay(text, ms, who, emote) {
-    b2Who = who || "snail";
-    const b2 = $("bubble2");
+/* the second bubble (the snail, Midnightcat, the possum, a visitor): one line at a time, through the same queue as
+   Mite's (speech.js). A line waits while the one showing isn't readable yet, or while a conversation has the floor;
+   the conversation's own emotes (emote) always show */
+function snailSay(text, ms, who, emote, fromQ) {
+    const now = performance.now(), b2 = $("bubble2");
+    who = who || "snail";
+    ms = ms || 5000;
+    if (!emote && !fromQ && (floorTaken() || !b2.hidden && now < b2ReadUntil)) {
+        talkQueue(who, text, { ms });
+        return;
+    }
+    if (emote && !floorTaken() && !b2.hidden && now < b2ReadUntil) // (a little look doesn't cut a line short)
+        return;
+    b2Who = who;
     b2.classList.toggle("guestb", b2Who === "guest");
     b2.classList.toggle("catb", b2Who === "cat");
     b2.classList.toggle("possumb", b2Who === "possum");
     b2.classList.toggle("emote", !!emote);
     b2.textContent = homeTxt(guestFill(String(text).replace(/\{snail\}/g, snailName()).replace(/\{possum\}/g, possumName())));
     b2.hidden = false;
-    snail2Until = performance.now() + ms;
+    snail2Until = now + ms;
+    b2ReadUntil = emote ? 0 : now + Math.min(ms, clamp(800 + b2.textContent.length * 40, 1500, 4500) / talkF());
     blip("o", ["guest", "cat", "possum"].includes(b2Who) ? b2Who : "snail");
 }
 function heard(w, t, c) {
@@ -14022,11 +14151,11 @@ function runConvo(line, onEnd) {
         const bt = beats[i++], txt = fill(bt.t);
         const name = bt.who === "S" ? snailName() : bt.who === "V" ? (guest ? guest.name : "Visitor") : bt.who === "C" ? CAT_NAME : bt.who === "P" ? possumName() : S.settings.pet, em = emoteFor(txt, bt.who);
         heard(name, txt, cid);
+        dlgShow(name, txt, WHO_KIND[bt.who] || "", id, next); // (first: from now on the conversation has the floor)
         if (bt.who === "M")
             speak(em, { emote: true, ms: dlgTime(txt) * 1000 });
         else
             snailSay(em, dlgTime(txt) * 1000, WHO_KIND[bt.who], true);
-        dlgShow(name, txt, WHO_KIND[bt.who] || "", id, next);
     };
     beats.forEach(b => total += dlgTime(fill(b.t)));
     next();
@@ -14704,7 +14833,7 @@ const ANOM_LIFE = { figure: 20, double: 18, hand: 16, drips: 22,  tentacle: 12.5
 /* where the window (for the ghost) and the light (for the moth) are in a room */
 function anomGeo(rmName) {
     if (rmName === "garden") {
-        const g = gardenGeo(), c = hasChair() ? gardenCandle(g) : { x: g.dx0 + R * .62, y: g.dTop - R * .1 }; // (no chair yet: the stub of candle on the desk)
+        const g = gardenGeo(), c = hasChair() ? gardenCandle(g) : hasDesk() ? { x: g.dx0 + R * .62, y: g.dTop - R * .1 } : { x: g.wcx, y: g.wy1 - g.wr * .2 }; // (no chair: the stub of candle on the desk; neither: the window)
         return { wx: g.wcx, wy: g.wy1 - g.wr * .5, wr: g.wr * .55, lx: c.x, ly: c.y - R * .5 };
     }
     if (rmName === "archive") {
@@ -16981,7 +17110,7 @@ function drawCrystalShelf(dk, tsec) {
                 return;
             }
             if (c.shape === "bottle") { // bottled starlight: it glows, and a star or two twinkles in it
-                glow(sx, y - ch * .3, R * .11 * (1 + .15 * Math.sin(t * 2.3)), c.glow + "aa");
+                glow(sx, y - ch * .3, R * .075 * (1 + .08 * Math.sin(t * 1.4)), c.glow + Math.round(255 * (.16 + .18 * dk)).toString(16).padStart(2, "0")); // (subtle: a little more after dark)
                 cx.fillStyle = col;
                 cx.fillRect(sx - cw, y - ch * .6, cw * 2, ch * .6);
                 cx.fillRect(sx - cw * .4, y - ch * .85, cw * .8, ch * .25);
@@ -18245,7 +18374,13 @@ function enterRoom(v) {
 /* the night light (Settings: night light at, 0000 to start with): from then until the day starts the rooms' main
    light goes down, fading over ten minutes each way. Only the light: Mite stays up, and every small light (the
    lanterns, candles, the reading lamp, the bulb, the fire) stays on (pointLights, lights.js). -1: off */
+/* the lamp, by hand (S.settings.lamp): 0 auto (the night light comes on by itself, Settings), 1 on (full light, all
+   evening), 2 half (the night light now). Lights out (sleep) is separate */
 function nightLight(now = new Date()) {
+    const lamp = S && S.settings ? num(S.settings.lamp) : 0;
+    return lamp === 1 ? 0 : lamp === 2 ? 1 : nightLightAuto(now);
+}
+function nightLightAuto(now = new Date()) {
     const a = S && S.settings ? S.settings.nightLight ?? 0 : 0, b = S && S.settings ? S.settings.dayStart ?? 5 : 5;
     if (a < 0 || a === b)
         return 0;
@@ -18525,10 +18660,14 @@ function drawPinPhoto(k, w, h, dk) {
         cx.fillRect(m + iw * .45, m + ih * .25, iw * .12, ih * .1);
     }
 }
-/* what's in the nook so far: the chesterfield (and its side table) comes with the first book; the renter's chest
+/* what's in the nook so far (all bought in the shop): the chesterfield and its side table, the writing desk, the renter's chest
    (rental), then the vase on top of it with the dried flower book for the desk (vase) */
 function hasChair() {
-    return (S.b.books || 0) > 0;
+    return own("chair") > 0;
+}
+/* the writing desk under the window (with it: letters written, the snail's post round, the flower book) */
+function hasDesk() {
+    return own("desk") > 0;
 }
 /* the pinboard starts empty: the first tap on it, Mite climbs up and pins up the first four postcards, one by one */
 const BOARD_FIRST = 4;
@@ -18691,6 +18830,7 @@ function drawGarden(now, dt) {
         // the little writing desk under the window: drawer, inkpot and quill, a letter, a candle
         {
             const { dx0, dx1, dTop } = g, lw = Math.max(PX * 2, R * .1);
+            if (hasDesk()) {
             gardenHits.desk = { x: dx0, y: dTop - R * .3, w: dx1 - dx0, h: GY - dTop + R * .3, cx: (dx0 + dx1) / 2 };
             cx.fillStyle = woodD;
             cx.fillRect(dx0 + R * .06, dTop, lw, GY - dTop);
@@ -18731,9 +18871,21 @@ function drawGarden(now, dt) {
                 drawFlowerBook(dk); // the dried flower book on the left of the desk (flowers.js)
             else
                 fbookHit = null;
-            // the letter rack on the right end: pigeonholes with the replies in them (post.js); new ones stick out, with a seal
+            }
+            else
+                fbookHit = null;
+            // the letter rack on the right end: pigeonholes with the replies in them (post.js); new ones stick out, with a seal.
+            // No desk yet: it hangs on the wall there, from a nail
             {
                 const rw = R * .56, rh = R * .44, rx = dx1 - R * .1 - rw, ry = dTop - rh, inbox = (S.post && S.post.inbox) || [];
+                if (!hasDesk()) {
+                    cx.fillStyle = mix("#8a7a60", "#2a241c", dk);
+                    cx.fillRect(rx + rw * .2, ry - R * .22, Math.max(1, PX * .5), R * .22);
+                    cx.fillRect(rx + rw * .8, ry - R * .22, Math.max(1, PX * .5), R * .22);
+                    cx.fillRect(rx + rw * .2, ry - R * .22, rw * .6, Math.max(1, PX * .5));
+                    cx.fillStyle = woodD;
+                    cx.fillRect(rx + rw / 2 - PX, ry - R * .26, PX * 2, PX * 2); // the nail
+                }
                 cx.fillStyle = woodD;
                 cx.fillRect(rx, ry, rw, rh);
                 cx.fillStyle = mix("#3a2618", "#120c08", dk);
@@ -18802,6 +18954,7 @@ function drawGarden(now, dt) {
             });
             gardenHits.boardAll = { x: bx0, y: by0, w: bw, h: bh, cx: bx0 + bw / 2 };
         }
+        drawGramo(dk, t); // the gramophone up on the platform, if bought (after the pinboard: its horn reaches up)
         // the little chest of drawers for rent by the armchair: brass labels, blank while a drawer is to let
         if (hasDrawers())
         {
@@ -18964,6 +19117,88 @@ function drawChesterfield(g, dk, t, wood, woodD) {
     cx.globalAlpha = 1;
     gardenHits.table = { x: tx - R * .4, y: ty - R * .7, w: R * .8, h: th + R * .7, cx: tx };
 }
+/* ---------- the gramophone (shop: gramo), up on the platform under the pinboard's right end ---------- */
+function gramoGeo() {
+    const g = gardenGeo(), lg = nookLoftGeo(), q = PX, w = Math.round(R * .66 / q) * q, stand = Math.round(R * .5 / q) * q;
+    const x = Math.round(Math.min(g.bx1 - R * 1.25, lg.stX0 - w - R * .2) / q) * q;
+    return { x, y: lg.balY - stand, floor: lg.balY, w, h: Math.round(R * .28 / q) * q, cx: x + w / 2 };
+}
+function drawGramo(dk, t) {
+    gardenHits.gramo = null;
+    if (!own("gramo"))
+        return;
+    const { x, y, floor, w, h, cx: mid } = gramoGeo(), q = PX, on = gramoPlaying();
+    const wood = mix("#9a6438", "#2a1a10", dk), woodD = mix("#5e3a20", "#160e08", dk), brass = mix("#f0c45a", "#5a4620", dk * .8), brassD = mix("#b08430", "#2e2410", dk * .8), brassL = mix("#fff0b0", "#7a6a3a", dk * .8);
+    // its little stand, so it looks out over the railing
+    cx.fillStyle = woodD;
+    cx.fillRect(x - q, y, w + q * 2, q * 2);
+    cx.fillRect(x + q, y + q * 2, q * 2, floor - y - q * 2);
+    cx.fillRect(x + w - q * 3, y + q * 2, q * 2, floor - y - q * 2);
+    cx.fillStyle = woodD;
+    cx.fillRect(x, y - h, w, h);
+    cx.fillStyle = wood;
+    cx.fillRect(x + q, y - h + q, w - q * 2, h - q * 2);
+    cx.fillStyle = brassD;
+    cx.fillRect(mid - q, y - h + q * 2, q * 2, q); // the crank's plate
+    // the record on the turntable: a thin black disc, with its red label; a glint goes round while it plays
+    const ty = y - h - q;
+    cx.fillStyle = mix("#1a1614", "#0a0808", dk);
+    cx.fillRect(x + q, ty, w - q * 2, q);
+    cx.fillStyle = mix("#b6343c", "#3a1414", dk);
+    cx.fillRect(mid - q, ty, q * 2, q);
+    if (on && !reduced) {
+        cx.fillStyle = mix("#9a9088", "#3a3530", dk);
+        cx.fillRect(x + q + ((t * 40) % (w - q * 3)), ty, q, q);
+    }
+    // the neck, and the horn curving up and out to the right
+    const nx = x + q * 2, ny = ty - R * .32;
+    cx.fillStyle = brassD;
+    cx.fillRect(nx, ny, q * 2, ty - ny);
+    const mx = nx + R * .5, my = ny - R * .36;
+    cx.fillStyle = brass;
+    for (let s = 0; s <= 1.0001; s += .1) {
+        const px = (1 - s) * (1 - s) * nx + 2 * (1 - s) * s * (nx - R * .02) + s * s * mx, py = (1 - s) * (1 - s) * ny + 2 * (1 - s) * s * (my + R * .08) + s * s * my, r = R * (.045 + .22 * s * s);
+        cx.beginPath();
+        cx.ellipse(px, py, r, r * .9, 0, 0, 7);
+        cx.fill();
+    }
+    cx.fillStyle = brassL; // a shine along the top of the horn
+    cx.fillRect(Math.round((mx - R * .22) / q) * q, Math.round((my - R * .16) / q) * q, q * 2, q);
+    cx.fillStyle = mix("#3a2a14", "#120c06", dk); // the mouth
+    cx.beginPath();
+    cx.ellipse(mx + R * .05, my - R * .03, R * .17, R * .13, -.6, 0, 7);
+    cx.fill();
+    // the tone arm, resting on the record
+    cx.fillStyle = brassD;
+    cx.fillRect(x + w - q * 2, ty - q * 2, q, q * 2);
+    cx.fillRect(mid + q, ty - q * 2, x + w - q * 2 - mid - q, q);
+    // notes drift out of the horn while it plays
+    if (on && !reduced)
+        for (let i = 0; i < 3; i++) {
+            const ph = (t * .3 + i / 3) % 1, nx2 = Math.round((mx + R * .1 + ph * R * .5 + Math.sin(ph * 6 + i * 2) * R * .12) / q) * q, ny2 = Math.round((my - R * .1 - ph * R * .8) / q) * q;
+            if (ph > .85)
+                continue;
+            cx.fillStyle = mix("#fff6dc", "#e8dcb8", dk * .3);
+            cx.fillRect(nx2, ny2, q * 2, q * 2); // the head
+            cx.fillRect(nx2 + q, ny2 - q * 4, q, q * 4); // the stem
+            if (i !== 1)
+                cx.fillRect(nx2 + q * 2, ny2 - q * 4, q, q * 2); // a flag
+        }
+    gardenHits.gramo = { x: x - R * .1, y: my - R * .3, w: mx - x + R * .5, h: floor - my + R * .3, cx: mid };
+}
+/* Mite at the gramophone (the ggramo object, interactions.js): wind it up and put the needle down, or lift it */
+function gramoShow() {
+    if (gramoPlaying()) {
+        gramoStop();
+        speak(compose("gramophone_stop") || "Needle up. The record can rest a while.", { ms: 4500 });
+        return 4.5;
+    }
+    gramoPlay();
+    sndUnlock();
+    const line = compose("gramophone") || "One record. It's the only one it'll play. I think it chose.";
+    speak(sndMode() ? line : line + " (The sound's off, so it turns quietly.)", { ms: 6000 });
+    return 6;
+}
 /* where the night door is: up on the nook's platform, just left of the pinboard */
 function ndoorX() {
     const g = gardenGeo(), lg = nookLoftGeo();
@@ -19008,6 +19243,10 @@ function gardenTap(p) {
     if (pl) {
         gardenPlantAt = pl.cx;
         requestObj("gplants", pl.cx, pl.y);
+        return;
+    }
+    if (gardenHits.gramo && hitIn(p, gardenHits.gramo, 12)) { // the gramophone: Mite goes up and winds it (or stops it)
+        requestObj("ggramo", gardenHits.gramo.cx, gardenHits.gramo.y);
         return;
     }
     if (gardenHits.letters && hitIn(p, gardenHits.letters, 30)) { // the letter rack: Mite reads what's come
@@ -19056,7 +19295,7 @@ function gardenTap(p) {
 }
 let gardenPlantAt = 0, gardenPin = null;
 function isGardenKind(kind) {
-    return kind === "gplants" || kind === "gdesk" || kind === "gchair" || kind === "gletters" || kind === "gdrawers" || kind === "gpin" || kind === "gpossum" || kind === "gvase" || kind === "gfbook" || kind === "ghang";
+    return kind === "ggramo" || kind === "gplants" || kind === "gdesk" || kind === "gchair" || kind === "gletters" || kind === "gdrawers" || kind === "gpin" || kind === "gpossum" || kind === "gvase" || kind === "gfbook" || kind === "ghang";
 }
 /* which way Mite walks to get to another room (one step at a time; startObj and pet.start chain them) */
 function routeTo(target) {
@@ -19171,7 +19410,7 @@ function snailTick(dt) {
         return;
     }
     // visiting the nook: now and then up the writing desk to check the post
-    if (snailRoom === "garden" && now > snailPostAt && pet.beh !== "write") {
+    if (snailRoom === "garden" && now > snailPostAt && pet.beh !== "write" && hasDesk()) {
         snailPostAt = now + rnd(6, 14) * 60e3;
         snailPost = { ph: "to", until: 0 };
         return;
@@ -23392,10 +23631,10 @@ let ndShade = null, ndNext = 0;
 function drawDoorShade(x, y, w, h, sky) {
     const now = performance.now();
     if (!ndNext)
-        ndNext = now + rnd(25e3, 60e3);
+        ndNext = now + rnd(120e3, 300e3); // (not straight away)
     if (!ndShade && now > ndNext && S.settings.strange) {
         ndShade = { k: Math.random() < .55 ? "tendrils" : "hand", t0: now, side: Math.random() < .5 ? -1 : 1, dur: rnd(6e3, 9e3), seed: Math.random() * 9 };
-        ndNext = now + ndShade.dur + (sky.dark > .4 ? rnd(30e3, 90e3) : rnd(60e3, 180e3));
+        ndNext = now + ndShade.dur + (sky.dark > .4 ? rnd(360e3, 840e3) : rnd(720e3, 1500e3)); // about once in 10 minutes at night, once in 18 by day (was ~once a minute)
     }
     const a = ndShade;
     if (!a)
@@ -24112,7 +24351,7 @@ function frame(now) {
     }
     roomArrows(); // the arrows to look into the other room (garden.js)
     speakPump(now); // a line that waited for Mite to finish the last one (speech.js)
-    b.classList.toggle("more", speakQ.length > 0 && (!bubbleType || bubbleType.done)); // ▾: tap for the next line
+    b.classList.toggle("more", speakQ.some(q => q.who === "mite") && (!bubbleType || bubbleType.done)); // ▾: tap for the next line
     if (!b.hidden) {
         if (now > bubbleUntil && !(bubbleType && !bubbleType.done)) { // never while it's still typing
             b.hidden = true;
@@ -24669,6 +24908,7 @@ function renderTasks() {
     renderJots();
     $("eveCard").hidden = !eveCardDue();
     $("bkCard").hidden = !backupDue();
+    $("bkCard").querySelector('[data-bkfreq="2"]').hidden = num(S.settings.backup) === 2; // (already weekly: only "not at all")
     if (typeof safekeepStatus === "function")
         safekeepStatus();
     const open = openTasks().concat(editingId ? S.tasks.filter(t => t.id === editingId && !t.d && isAhead(t)) : []);
@@ -25158,16 +25398,24 @@ function buy(b) {
     S.b[b.id] = (S.b[b.id] || 0) + 1;
     if (b.id === "jar" && nameFireflies(true))
         return afterChange();
-    if (S.b[b.id] === 1 && b.id === "books") { // the first book comes with a chair
-        speak("A book! I'll need somewhere to read it. Oh. There's a chair in the nook now. A big soft one. It looks like it's been waiting.", { ms: 7000 });
-        note("Got a tiny library. A chesterfield turned up in the nook to read in.");
+    if (S.b[b.id] === 1 && b.id === "chair") {
+        speak("A chair in the nook. A big soft one, with a table for the tea. I'm going to read in it until it knows my shape.", { ms: 7000 });
+        note("Got the chesterfield and its side table.");
+    }
+    else if (S.b[b.id] === 1 && b.id === "desk") {
+        speak("A writing desk, under the round window. An inkpot, a quill, a drawer that sticks a little. I'll write someone a letter today.", { ms: 7000 });
+        note("Got the writing desk.");
+    }
+    else if (S.b[b.id] === 1 && b.id === "gramo") {
+        speak("A gramophone, up by the pinboard. It came with one record. Or the record came with it. Tap it and I'll wind it up.", { ms: 7000 });
+        note("Got a gramophone.");
     }
     else if (S.b[b.id] === 1 && b.id === "rental") {
         speak("The chest is in the nook. Four drawers to let. The top's bare. It looks like it's waiting for a vase.", { ms: 7000 });
         note("Got the renter's chest.");
     }
     else if (S.b[b.id] === 1 && b.id === "vase") {
-        speak("The vase goes on the chest, the flower book on the desk. Lavender first, it's tradition.", { ms: 6000 });
+        speak(hasDesk() ? "The vase goes on the chest, the flower book on the desk. Lavender first, it's tradition." : "The vase goes on the chest. The flower book waits in a drawer until there's a desk for it. Lavender first, it's tradition.", { ms: 6000 });
         note("Got a vase and a book for pressed flowers.");
         if (S.vase)
             S.vase.at = Date.now(); // (fresh from today: a week before Mite picks new ones)
@@ -26346,6 +26594,7 @@ function eraseAll() {
     S = defaultState();
     S.g = S.gTotal = RESTART_G; // the starting gift again, so the shop isn't empty-handed on day one
     S.flags.starter = 1; // (it's the gift, not earned: earnedG)
+    S.flags.m_furn = 1; // (a new game starts without the desk and chair: they're in the shop)
     S.wiped = Date.now(); // (another device's copy of the old game won't be merged back in: mergeStates)
     note(`We met. Again, technically. ${RESTART_G} glimmers to start with.`);
     postWelcome(); // a letter on the desk again (post.js)
@@ -26475,6 +26724,19 @@ async function saveBackup(text, fromShare) {
 }
 $("bkSend").onclick = $("bkSend2").onclick = () => sendBackup();
 $("bkSave").onclick = $("bkSave2").onclick = () => saveBackup();
+/* on the card itself: ask once a week from now on, or not at all (Settings, Preferences: Backup reminder) */
+$("bkCard").addEventListener("click", e => {
+    const b = e.target.closest("[data-bkfreq]");
+    if (!b)
+        return;
+    S.settings.backup = +b.dataset.bkfreq;
+    S.flags.bkLater = actDay();
+    const sel = $("setBackup");
+    if (sel)
+        sel.value = String(S.settings.backup);
+    toast(S.settings.backup ? "Backup reminder: once a week" : "Backup reminder: off. It's in Settings if you want it back.");
+    afterChange();
+});
 $("bkLater").onclick = () => {
     S.flags.bkLater = actDay();
     saveSoon();
@@ -27588,8 +27850,8 @@ function welcome(prevSeen, isNew) {
     setTimeout(() => {
         if (away > 4 * 3600e3) {
             const acts = pool("away").slice();
-            const a1 = choice(acts).replace(/\{n\}/g, ri(3, 40));
-            let a2 = choice(acts).replace(/\{n\}/g, ri(3, 40));
+            const a1 = expandG(choice(acts)).replace(/\{n\}/g, ri(3, 40)); // (expandG: "{#creature}" and such, filled in before it goes into the line)
+            let a2 = expandG(choice(acts)).replace(/\{n\}/g, ri(3, 40));
             if (a2 === a1)
                 a2 = "";
             const t = compose("return_long", { away: a2 ? `${a1} and ${a2}` : a1 });
@@ -27735,8 +27997,6 @@ function feed(id) {
     S.care.fed++;
     S.fedUntil = Math.min(Date.now() + 3600e3, Math.max(Date.now(), S.fedUntil) + 600e3);
     sfx("munch");
-    if (s.id === "shroom")
-        glowUntil = Date.now() + 60e3;
     pet.start("eat", { food: s.id, next: s.next });
     setTimeout(() => say("snack", { item: s.name.toLowerCase() }), 2700);
     afterChange();
@@ -27760,6 +28020,15 @@ function wash() {
 function bedOnTime(now = new Date()) {
     const m = (now.getHours() * 60 + now.getMinutes() - (S.settings.bed ?? 23) * 60 + 1440) % 1440;
     return m <= 15 || m >= 1440 - 120;
+}
+/* the lamp: auto, on, half (nightLight, camera.js); lights out is the sleep light, below */
+const LAMP_NAMES = ["Lamp: auto", "Lamp: on", "Lamp: half"];
+function cycleLamp() {
+    S.settings.lamp = (num(S.settings.lamp) + 1) % 3;
+    if (S.lightsOut)
+        toggleLights(); // (choosing a lamp wakes things up)
+    speak(["Lamp on automatic: it dims by itself in the evening.", "Lamp on. All of it. Every corner where I can see it.", "Half light. Cosy. The small lamps carry on."][S.settings.lamp], { ms: 4000 });
+    afterChange();
 }
 function toggleLights() {
     const offAt = num(S.lightsAt);
@@ -28045,7 +28314,7 @@ function renderCare() {
         const c = snackCost(s);
         return `<button class="btn" data-feed="${s.id}" ${S.g < c ? "disabled" : ""}>${s.name}<span class="sync">${fmt(c)}</span></button>`;
     }).join("")}</div>
-  <div class="care-grid"><button class="btn" data-act="play">Play ball</button><button class="btn" data-act="wash">Bath</button><button class="btn" data-act="lights">${S.lightsOut ? "Lights on" : "Lights out"}</button></div>
+  <div class="care-grid"><button class="btn" data-act="play">Play ball</button><button class="btn" data-act="wash">Bath</button><button class="btn" data-act="lamp">${LAMP_NAMES[num(S.settings.lamp)] || LAMP_NAMES[0]}</button><button class="btn" data-act="lights">${S.lightsOut ? "Lights on" : "Lights out"}</button></div>
   <div><h2>Look after yourself</h2><p class="sub">Log it and ${pn} does the same. The first ${PAY.selfcareMax} of each kind per day earn a glimmer.</p></div>
   <div class="care-grid">${SELF.map(x => `<button class="btn" data-self="${x.id}">${x.label}<span class="sync">${today[x.id] || 0}</span></button>`).join("")}</div>
   <div><h2>Games</h2><p class="sub">${played} of 3 full-reward games played today. After that they pay a quarter, so they stay a break and not a hiding place.</p></div>
@@ -28068,6 +28337,8 @@ $("careBody").addEventListener("click", e => {
         wash();
     else if (b.dataset.act === "lights")
         toggleLights();
+    else if (b.dataset.act === "lamp")
+        cycleLamp();
     if (!b.dataset.game)
         closeSheet();
 });
@@ -28097,6 +28368,10 @@ function renderTray(level) {
         add("Bath", () => {
             wash();
             closeTray();
+        });
+        add(LAMP_NAMES[num(S.settings.lamp)] || LAMP_NAMES[0], () => {
+            cycleLamp();
+            renderTray("root");
         });
         add(S.lightsOut ? "Lights on" : "Lights out", () => {
             toggleLights();
@@ -29506,6 +29781,24 @@ function boot() {
         S.flags.m_rental = 1;
         if (!isNew && S.drawers && S.drawers.at && !S.b.rental)
             S.b.rental = 1;
+    }
+    if (!S.flags.m_furn) { // the writing desk was always there, and the chair came with the first book: a save from then keeps them
+        S.flags.m_furn = 1;
+        if (!isNew) {
+            S.b.desk = Math.max(1, num(S.b.desk));
+            if (num(S.b.books) > 0)
+                S.b.chair = Math.max(1, num(S.b.chair));
+        }
+    }
+    if (!S.flags.m_devjots) { // the owner's jotted notes about building this app, done and written up elsewhere (her yes, 24-10-2026): let go, once
+        S.flags.m_devjots = 1;
+        const gone = new Set(DEV_JOTS);
+        S.tasks = S.tasks.filter(t => {
+            if (!t.jot || !gone.has(t.id))
+                return true;
+            tomb(t.id);
+            return false;
+        });
     }
     if (!S.flags.m_vase) { // the vase and the flower book used to come with the chest: a save with the chest keeps them
         S.flags.m_vase = 1;
