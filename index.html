@@ -303,6 +303,13 @@ body.game .subtabs .chipbtn{min-height:44px;padding:6px 12px}
 body.game.sheet .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:15}
 body.game .toasts{left:50%;transform:translateX(-50%);bottom:auto;top:calc(env(safe-area-inset-top,0px) + 64px);align-items:center;z-index:30}
 body.game.sheet .toasts{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 16px)}
+/* the "bought" messages: they stay until tapped, at the top, over the shop's sheet when it's open */
+.toasts.stay{top:calc(16px + env(safe-area-inset-top,0px));bottom:auto;z-index:31}
+body.game .toasts.stay,body.game.sheet .toasts.stay{top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto;z-index:31}
+.rugcols{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.rugsw{width:40px;height:40px;min-width:40px;min-height:40px;border:2px solid var(--line);padding:0;cursor:pointer}
+.rugsw[aria-pressed="true"]{border-color:var(--ink);outline:2px solid var(--ink);outline-offset:2px}
+.toast.bought{background:var(--panel);color:var(--ink);border:2px solid var(--line);cursor:pointer;max-width:520px;line-height:1.4}
 @media (prefers-reduced-motion: reduce){body.game .panel,body.game.sheet .panel{transition:none}}
 .hud .fed{background:rgba(79,125,66,.7)}
 .inline-in{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 10px}
@@ -581,6 +588,7 @@ body.pixel .desk .desk-h,.desk .desk-h{font-family:var(--f-body);font-size:14px;
   body.game .grab{visibility:hidden}
   body.game .dock,body.game .tray,body.game .talkbar{left:calc((100vw - var(--side)) / 2)}
   body.game.sheet .toasts{right:var(--side)}
+  body.game.sheet .toasts.stay{right:auto;left:calc((100vw - var(--side)) / 2)}
 }
 @media (min-width: 960px) and (prefers-reduced-motion: reduce){body.game .world{transition:none}}
 
@@ -809,7 +817,7 @@ body.editing #addForm{display:none}
     <div class="pane" id="tab-talk" role="tabpanel" hidden>
       <div><h2>Talk to <span class="pn">Mite</span></h2><p class="sub" id="talkInfo"></p></div>
       <ul class="chatlog" id="chatLog"></ul>
-      <form class="row" id="chatForm" autocomplete="off"><input type="text" class="inline-in" id="chatIn" maxlength="600" placeholder="Tell Mite something" aria-label="Message"><button class="btn primary" type="submit">Send</button><button class="btn ai" type="button" id="chatAI">✦ Send with AI</button></form>
+      <form class="row" id="chatForm" autocomplete="off"><input type="text" class="inline-in" id="chatIn" maxlength="600" placeholder="Tell Mite something" aria-label="Message"><button class="btn primary" type="submit">Send</button></form>
       <div><h3><span class="pn">Mite</span> remembers</h3><p class="sub">Things <span class="pn">Mite</span> picked up from your conversations, used in later chats and suggestions. Remove anything you don't want kept.</p></div>
       <ul class="memlist" id="memList"></ul>
       <div><h3>Said recently</h3><p class="sub">Tap a speech bubble to keep it on screen; tap again to let it go.</p></div>
@@ -929,8 +937,6 @@ body.editing #addForm{display:none}
     </div>
 
     <div class="pane" id="tab-lines" role="tabpanel" hidden>
-      <div><h2>AI or not, every time</h2><p class="sub">Wherever AI could help (Ask, Split, Talk, new lines) there are two buttons. The plain one runs on Mite's own lines, on this device. The dashed ✦ one asks Claude, shows roughly what it costs, and files what it writes into the lines below, so the offline library keeps growing and you need AI less over time.</p></div>
-
       <div><h2>Lines</h2><p class="sub">Every pool is one entry per line. Add as many as you like; your pet picks lines that fit the moment and avoids repeating itself.</p></div>
       <div class="poolfind">
         <input type="search" id="poolFind" placeholder="Find a pool or a line" aria-label="Find a pool or a line" aria-controls="poolSel" aria-describedby="poolFindN" autocomplete="off" spellcheck="false" enterkeyhint="search">
@@ -959,15 +965,14 @@ body.editing #addForm{display:none}
         Days <code>mon</code>…<code>sun</code>, <code>workday</code> <code>offday</code> <code>office</code> <code>home</code>; times <code>morning</code> <code>afternoon</code> <code>evening</code> <code>night</code> <code>h9-12</code>; state <code>busy</code> (6+ open) <code>open0</code> <code>done0</code> <code>doneSome</code> <code>streak3</code> <code>lvl5</code> <code>messy</code> (6+ bits of mess); seasons <code>autumn</code> <code>winter</code> <code>spring</code> <code>summer</code>; moon <code>fullmoon</code> <code>newmoon</code> <code>waxing</code> <code>waning</code>; <code>halloween</code> (20–31 Oct); <code>strange</code> (Strangeness on); anomalies <code>door</code> <code>phone</code> <code>eyes</code> (omen pool); <code>rare</code> makes a line four times less likely.<br>
         <b>Variables</b>: <code>{you}</code> <code>{pet}</code> <code>{open}</code> <code>{oldest}</code> <code>{oldestAge}</code> <code>{smallest}</code> <code>{doneToday}</code> <code>{week}</code> <code>{total}</code> <code>{streak}</code> <code>{level}</code> <code>{favHour}</code> <code>{daysTogether}</code> <code>{doneBy}</code> <code>{bed}</code> <code>{pats}</code> <code>{moon}</code> <code>{clearance}</code> <code>{incidents}</code> <code>{n}</code> (random number), plus <code>{task}</code> <code>{age}</code> <code>{item}</code> <code>{away}</code> <code>{awayTime}</code> where the pool provides them. A line whose variable is unknown at that moment is skipped.
       </div>
-      <div><h3>Personality (only used when AI help is on)</h3></div>
+      <div><h3>Personality (only used for ✦ Write 8 more with AI)</h3></div>
       <textarea id="persona" style="min-height:110px" aria-label="Personality"></textarea>
       <div><button class="btn" id="personaSave">Save personality</button></div>
 
     </div>
 
     <div class="pane" id="tab-data" role="tabpanel" hidden>
-      <div id="usageSec"><div><h2>AI usage</h2><p class="sub">Every AI call is logged here. Counts are estimates from text length (about 3.6 characters per token); the real number is somewhat higher because the platform adds its own framing to each call.</p></div>
-      <div class="usage" id="usage"></div></div>
+
 
       <div id="dataSec">
       <div><h2>Backup</h2><p class="sub">Keep a copy somewhere safe, or use it to move to another device: send the file to yourself (mail, a chat, a cloud drive), save it, or copy it.</p><p class="sub" id="bkStatus"></p>
@@ -996,7 +1001,7 @@ body.editing #addForm{display:none}
 <div class="scrim" id="scrim"></div>
 <div class="nextup" id="nextUp" hidden><button class="check" id="nuCheck" aria-label="Done"></button><div class="nu-text"><small id="nuMeta">next up</small><span id="nuTitle"></span></div><button class="nu-skip" id="nuSkip">Not now</button><button class="nu-skip" id="nuClose" aria-label="Close">✕</button></div>
 <div class="tray" id="tray" hidden></div>
-<form class="talkbar" id="talkBar" hidden autocomplete="off"><input id="talkIn" maxlength="600" placeholder="Tell Mite something" aria-label="Message"><button class="btn primary" type="submit">Send</button><button type="button" class="btn ai" id="talkAI" aria-label="Send with AI">✦</button><button type="button" class="btn" id="talkHist">History</button></form>
+<form class="talkbar" id="talkBar" hidden autocomplete="off"><input id="talkIn" maxlength="600" placeholder="Tell Mite something" aria-label="Message"><button class="btn primary" type="submit">Send</button><button type="button" class="btn" id="talkHist">History</button></form>
 <nav class="dock" aria-label="Game controls">
   <button type="button" class="dockbtn arrow" id="lookGarden" aria-label="Look left" hidden><svg viewBox="0 0 7 9" width="21" height="27" shape-rendering="crispEdges" aria-hidden="true"><path d="M5 0h1v9H5zM4 1h1v7H4zM3 2h1v5H3zM2 3h1v3H2zM1 4h1v1H1z" fill="currentColor"/></svg></button>
   <button class="dockbtn" id="dMite" aria-label="Mite: care, talk, ask">♡<span class="lbl pn">Mite</span></button>
@@ -1016,6 +1021,7 @@ body.editing #addForm{display:none}
 </section>
 <div class="ritual" id="ritual" hidden role="dialog" aria-modal="true" aria-labelledby="ritTitle"><div class="ritcard"><h2 id="ritTitle"></h2><p class="ritline" id="ritLine"></p><div id="ritBody"></div><div class="row" id="ritBtns"></div></div></div>
 <div class="toasts" id="toasts"></div>
+<div class="toasts stay" id="toastsStay" aria-live="polite"></div>
 
 <!-- Code, in load order. Every file shares one global scope; app/boot.js starts everything. -->
 <script>/* js/content/lines.js */
@@ -1062,7 +1068,7 @@ const POOL_INFO = {
     paint_medium: "While painting, about what it's painting with: medium | text (oils, acrylic, watercolour, gouache, pastel, chalk, pencil, marker, charcoal, ink, crayon, tempera)",
     paint_smell: "Now and then through the day: what the wagon smells like from the paint (medium | text, as paint_medium)",
     paint_carry: "A painting that wasn't finished goes on the next day ({item}: its title)",
-    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for the Cabinet: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the red rug in the wagon", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the green rug in the nook", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the archive's name plate ({plate}: what it says today)", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the blue rug in the archive", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})", serials: "Stories pen pals tell over several letters: Who | the letter (Who: a word from their name; the bits in order)", phone_key: "The phone: someone asking after a small brass key", key_thanks: "A letter from whoever had the brass key, after you gave it back (use / for a new paragraph)", kindreports: "The kind report anomaly: Who filed it | what it says | the Bureau memo explaining it ({pet})", look_puddle: "Mite, after mopping up the flowers' puddle", puddle_odd: "Mite, after mopping up a strange puddle (ink, honey, something glowing)", puddle_still: "Mite, mopping while the flowers still drip", archterms: "Archival terms Mite explains: Term | what it means", archive_digitise: "Archival work: digitising, scanning", archive_retention: "Archival work: the retention schedule", archive_deaccession: "Archival work: deaccessioning, weeding", archive_disaster: "Archival work: the disaster plan", archive_authority: "Archival work: authority records, names", archive_migrate: "Archival work: format migration, emulation", trinkets_spring: "Small things only found in spring: Name | note", trinkets_summer: "Small things only found in summer: Name | note", trinkets_autumn: "Small things only found in autumn: Name | note", trinkets_winter: "Small things only found in winter: Name | note"
+    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for the Cabinet: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", cat_circle_go: "Midnightcat, stepping out of the chalk circle so Mite can have a turn", cat_circle_wait: "Midnightcat, asking Mite to wait: she's busy in the chalk circle", circle_mite_wait: "Mite, waiting for its turn at the chalk circle while Midnightcat finishes", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the rug in the wagon ({rugcol}: its colour)", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the rug in the nook ({rugcol}: its colour)", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the archive's name plate ({plate}: what it says today)", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the rug in the archive ({rugcol}: its colour)", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})", serials: "Stories pen pals tell over several letters: Who | the letter (Who: a word from their name; the bits in order)", phone_key: "The phone: someone asking after a small brass key", key_thanks: "A letter from whoever had the brass key, after you gave it back (use / for a new paragraph)", kindreports: "The kind report anomaly: Who filed it | what it says | the Bureau memo explaining it ({pet})", look_puddle: "Mite, after mopping up the flowers' puddle", puddle_odd: "Mite, after mopping up a strange puddle (ink, honey, something glowing)", puddle_still: "Mite, mopping while the flowers still drip", archterms: "Archival terms Mite explains: Term | what it means", archive_digitise: "Archival work: digitising, scanning", archive_retention: "Archival work: the retention schedule", archive_deaccession: "Archival work: deaccessioning, weeding", archive_disaster: "Archival work: the disaster plan", archive_authority: "Archival work: authority records, names", archive_migrate: "Archival work: format migration, emulation", trinkets_spring: "Small things only found in spring: Name | note", trinkets_summer: "Small things only found in summer: Name | note", trinkets_autumn: "Small things only found in autumn: Name | note", trinkets_winter: "Small things only found in winter: Name | note"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -2514,6 +2520,27 @@ const DEF = {
             "Wait till it's dark. Then: sparkles.",
             "Pop. Pop. Fizz. That's the forecast for tonight."
         ],
+        cat_circle_go: [
+            "Go on, then. I'll keep the candles warm.",
+            "Your turn. Mind the third sign, it bites.",
+            "Have it. My warlock can hold.",
+            "After you. The past is more your thing than mine.",
+            "Fine. Look back. I'll be over here, looking forward."
+        ],
+        cat_circle_wait: [
+            "In a moment. I'm on a call.",
+            "Wait your turn. A pact doesn't sign itself.",
+            "Nearly done. He's reading the small print.",
+            "Hold on. Somebody's summoning me and they've brought snacks.",
+            "One minute. Then it's yours."
+        ],
+        circle_mite_wait: [
+            "I'll wait. I'm good at waiting.",
+            "Of course. Patron business first.",
+            "I'll sit here by the edge. Take your time.",
+            "No hurry. The past will still be there.",
+            "Waiting. Quietly. Not touching the chalk."
+        ],
         catritual: [
             "Not now. A warlock is calling. I'll be right back.",
             "One moment. Somebody's bargaining with me in a cellar three towns over. I'll be right back.",
@@ -2568,7 +2595,7 @@ const DEF = {
             "[fullmoon] The chalk's glowing a bit tonight. I didn't buy glowing chalk.",
         ],
         look_rug: [
-            "The red rug. Soft, warm and about four hundred crumbs deep. I'll get to it.",
+            "The {rugcol} rug. Soft, warm and about four hundred crumbs deep. I'll get to it.",
             "I once lay on this rug and watched the ceiling for an hour. Productive hour.",
             "The pattern on the rug goes round and round and never ends. I've checked.",
             "[strange] The X under the rug is still there. Rugs keep secrets well.",
@@ -2596,8 +2623,8 @@ const DEF = {
             "[strange] There's writing on top of the beam. Standing on the chair I can just read it: 'you're doing fine'.",
         ],
         look_greenrug: [
-            "The green rug. Like moss you're allowed to stand on.",
-            "The green rug's softer than the red one. Don't tell the red one.",
+            "The {rugcol} rug. Soft as moss, and you're allowed to stand on it.",
+            "The nook's rug is softer than the wagon's. Don't tell the wagon's.",
             "I lost a button on this rug once. It's still in there somewhere. The rug's keeping it.",
         ],
         look_archwindow: [
@@ -2637,9 +2664,9 @@ const DEF = {
             "[strange] I counted the stars the lamp makes on the wall. Then I counted again. There was one more. It's fine.",
         ],
         look_bluerug: [
-            "The blue rug. The colour of the archive at night.",
-            "The blue rug muffles footsteps. Archives love a blue rug.",
-            "I found a page under the blue rug. It said 'keep going'. Good page.",
+            "The {rugcol} rug. The quietest thing in the archive, apart from me.",
+            "The rug muffles footsteps. Archives love a good rug.",
+            "I found a page under the rug. It said 'keep going'. Good page.",
         ],
         look_moss: [
             "Moss. Some of it's a relative, probably. Hello, cousin.",
@@ -3855,7 +3882,10 @@ const BUILDINGS = [
     { id: "rental", name: "Renter's chest", price: 16, max: 1, note: "For the nook: a chest of drawers whose drawers are let out to tenants. Brass labels, a list of who's in." },
     { id: "vase", name: "Vase & pressed flowers", price: 10, max: 1, needs: "rental", note: "A vase for the top of the renter's chest, with a book for drying what's been in it. Visitors bring flowers; Mite picks some on walks." },
     { id: "closet", name: "Bigger-inside closet", price: 80, max: 1, note: "Measured from the inside, it doesn't end. Built into the archive's shelves." },
-    { id: "circle", name: "Chalk circle", price: 100, max: 1, note: "Chalked onto the blue rug in the archive, with candles and old signs. Tap it and Mite looks back into the past: a little of everyone's family history. Midnightcat likes to sit in the middle." },
+    { id: "rug", name: "Round rug: the wagon", price: 8, max: 1, note: "For the middle of the wagon's floor. Woven, warm, a good place to lie and look at the ceiling. Pick its colour once it's down." },
+    { id: "grug", name: "Round rug: the nook", price: 8, max: 1, note: "For the nook's floor, by the chesterfield. Soft as moss. Pick its colour once it's down." },
+    { id: "arug", name: "Round rug: the archive", price: 8, max: 1, note: "For the archive's floor. Muffles footsteps, which archives like. Pick its colour once it's down." },
+    { id: "circle", name: "Chalk circle", price: 100, max: 1, needs: "arug", note: "Chalked onto the rug in the archive, with candles and old signs. Tap it and Mite looks back into the past: a little of everyone's family history. Midnightcat likes to sit in the middle." },
     { id: "ndoor", name: "Night door", price: 130, max: 1, note: "Opens onto somewhere else. At the far end of the nook." },
     { id: "hearth", name: "Fireplace", price: 35, max: 1, note: "A small stone hearth. Crackles. Takes the edge off grey days." },
     { id: "oven", name: "Little oven", price: 28, max: 1, note: "Cast iron, four legs, one small door. The kettle sits on top. Bakes things, some of them normal." },
@@ -3863,6 +3893,22 @@ const BUILDINGS = [
     { id: "loft", name: "Little stairs and balcony", price: 22, max: 1, note: "Up to the windowsill. Better for watering, better for looking out." },
     { id: "easel", name: "Easel", price: 0, max: 1, note: "Mite's own. One painting a day, sent to a friend the next morning." }
 ];
+/* the rugs' colours (picked in the shop once a rug is bought; S.rugCol): fill, fill at dark, trim, trim at dark.
+   The first three are the rugs as they always were */
+const RUG_COLS = [
+    { id: "red", name: "Red", c: ["#9c4f3c", "#3a1d17", "#e2b56a", "#4a3a20"] },
+    { id: "green", name: "Green", c: ["#618f46", "#16231a", "#b8d682", "#2a3a20"] },
+    { id: "blue", name: "Blue", c: ["#425a85", "#10142a", "#9ab9d7", "#1e2848"] },
+    { id: "ochre", name: "Ochre", c: ["#a8843c", "#33260f", "#f0dca0", "#4a3a20"] },
+    { id: "plum", name: "Plum", c: ["#6e3f6a", "#1e1020", "#e0b0c8", "#2e1a2c"] },
+    { id: "teal", name: "Teal", c: ["#3f7a74", "#0e2220", "#b0dcc8", "#1a3634"] },
+    { id: "grey", name: "Grey", c: ["#6a6c70", "#1a1b1e", "#d4d0c4", "#2a2a2a"] }
+];
+const RUG_DEF = { rug: "red", grug: "green", arug: "blue" };
+function rugCol(id) {
+    const k = (S.rugCol && S.rugCol[id]) || RUG_DEF[id];
+    return RUG_COLS.find(c => c.id === k) || RUG_COLS[0];
+}
 /* plants for the windowsill */
 const PLANTS = [
     { id: "pfern", name: "Fern", price: 5, line: "The fern unrolled another leaf. Very slowly. Very proudly." },
@@ -3953,10 +3999,10 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
-        mess: [], chat: [], memories: [], followups: [], ai: { calls: [], tot: {} }, care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
+        mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
 }
 let S = defaultState();
 let db = null, uid = null, sample = null;
@@ -4118,6 +4164,10 @@ function sanitizeState(raw) {
                 o.anomLog[k] = { n: clamp(Math.round(num(L[k].n)), 0, 1e6), first: num(L[k].first), last: num(L[k].last), h: (Array.isArray(L[k].h) ? L[k].h : []).filter(x => typeof x === "string" && /^[0-9a-z]{1,8}$/.test(x)).slice(0, 80) };
     }
     o.postcards = arr(s.postcards, 60).map(p => ({ id: str(p.id, 30), y: clamp(Math.round(num(p.y)), 2000, 3000), at: num(p.at) })).filter(p => /^[a-z0-9_-]+$/i.test(p.id)); // postcards kept on the board (festivals.js)
+    { // the rugs' colours (world.js RUG_COLS; picked in the shop)
+        const r = s.rugCol || {}, ok = ["red", "green", "blue", "ochre", "plum", "teal", "grey"], pick = (k, d) => ok.includes(r[k]) ? r[k] : d;
+        o.rugCol = { rug: pick("rug", "red"), grug: pick("grug", "green"), arug: pick("arug", "blue"), at: num(r.at) };
+    }
     o.kettleStyle = { k: ["copper", "blue", "green", "pink", "bluefl"].includes(s.kettleStyle && s.kettleStyle.k) ? s.kettleStyle.k : "copper", at: num(s.kettleStyle && s.kettleStyle.at) }; // the kettle's looks (draw-world.js)
     o.postits = arr(s.postits, 12).map(n => ({ room: ["room", "garden", "archive"].includes(n.room) ? n.room : "room", fx: clamp(num(n.fx), 0, 1), fy: clamp(num(n.fy), 0, 1), at: num(n.at), rot: clamp(num(n.rot), -1, 1), curl: !!n.curl, tape: !!n.tape, sz: clamp(num(n.sz, 1), .5, 1.5), col: /^#[0-9a-f]{6}$/i.test(n.col) ? n.col : "#f2d06b", text: str(n.text, 60) })); // Mite's sticky notes on the walls (pastimes.js)
     o.basket = { t: (Array.isArray(s.basket && s.basket.t) ? s.basket.t.slice(-20) : []).filter(k => ["dust", "paper", "crumb", "leaf", "postit"].includes(k)), at: num(s.basket && s.basket.at) }; // the possum's basket (basket.js)
@@ -4186,14 +4236,6 @@ function sanitizeState(raw) {
         if (f && !f.done && !f.task && str(f.t, 200) && !o.tasks.some(t => t.id === "fx" + sid(f.id)))
             o.tasks.push({ id: ("fx" + sid(f.id)).slice(0, 40), t: str(f.t, 160), s: 1, tag: "work", wk: false, due: "", c: num(f.at) || Date.now(), d: 0, jot: 1, u: num(f.at) || Date.now() });
     o.aiLog = arr(s.aiLog, 300).map(e => ({ k: Object.prototype.hasOwnProperty.call(POOL_INFO, e.k) ? e.k : "idle", l: str(e.l, 400), at: num(e.at), src: sid(e.src) }));
-    const ai = s.ai && typeof s.ai === "object" ? s.ai : {};
-    o.ai = { calls: arr(ai.calls, 300).map(c => ({ at: num(c.at), k: sid(c.k), i: num(c.i), o: num(c.o), tier: sid(c.tier), ms: num(c.ms) })), tot: {} };
-    if (ai.tot && typeof ai.tot === "object")
-        ["chat", "ask", "split", "lines"].forEach(k => {
-            const t = ai.tot[k];
-            if (t && typeof t === "object")
-                o.ai.tot[k] = { n: num(t.n), i: num(t.i), o: num(t.o) };
-        });
     o.care = {};
     ["fed", "played", "washed", "games", "swept"].forEach(k => o.care[k] = num(s.care && s.care[k]));
     o.selfcare = {};
@@ -4429,6 +4471,7 @@ function mergeStates(a, b) {
         const sa = a.seasonal || { s: "", got: {} }, sb = b.seasonal || { s: "", got: {} };
         o.seasonal = sa.s === sb.s ? { s: sa.s, got: mmax(sa.got, sb.got) } : sa.s > sb.s ? JSON.parse(JSON.stringify(sa)) : JSON.parse(JSON.stringify(sb));
     }
+    o.rugCol = num((a.rugCol || {}).at) >= num((b.rugCol || {}).at) ? Object.assign({}, a.rugCol || {}) : Object.assign({}, b.rugCol || {});
     o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
     o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small journal", at: 0 }) : Object.assign({}, b.journal); // the newest name
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
@@ -4502,11 +4545,6 @@ function mergeStates(a, b) {
     o.said = uniq([...(nw.said || []), ...(od.said || [])], x => x.at + "|" + x.t).sort((x, y) => y.at - x.at).slice(0, 40);
     o.words = uniq([...(nw.words || []), ...(od.words || [])], w => w.w).sort((x, y) => y.at - x.at).slice(0, 80);
     o.aiLog = uniq([...(nw.aiLog || []), ...(od.aiLog || [])], e => e.k + "|" + e.l).sort((x, y) => y.at - x.at).slice(0, 300);
-    o.ai = { calls: uniq([...((nw.ai || {}).calls || []), ...((od.ai || {}).calls || [])], c => c.at + "|" + c.k).sort((x, y) => y.at - x.at).slice(0, 300), tot: {} };
-    for (const k of new Set([...Object.keys((a.ai || {}).tot || {}), ...Object.keys((b.ai || {}).tot || {})])) {
-        const x = ((a.ai || {}).tot || {})[k] || {}, y = ((b.ai || {}).tot || {})[k] || {};
-        o.ai.tot[k] = { n: Math.max(num(x.n), num(y.n)), i: Math.max(num(x.i), num(y.i)), o: Math.max(num(x.o), num(y.o)) };
-    }
     o.archPending = [...new Set([...(a.archPending || []), ...(b.archPending || [])])];
     const sa = a.streak || {}, sb = b.streak || {};
     o.streak = (sa.last || "") > (sb.last || "") ? sa : (sb.last || "") > (sa.last || "") ? sb : { n: Math.max(num(sa.n), num(sb.n)), last: sa.last || "" };
@@ -4829,7 +4867,6 @@ function fitSave() {
     S.notes = S.notes.slice(0, 120);
     S.inc = (S.inc || []).slice(0, 50);
     S.aiLog = S.aiLog.slice(0, 100);
-    S.ai.calls = S.ai.calls.slice(0, 60);
     S.words = S.words.slice(0, 40);
     j = JSON.stringify(S);
     if (!sizeWarned) {
@@ -6577,11 +6614,16 @@ function note(text) {
     if (curTab === "notebook")
         renderNotebook();
 }
-function toast(text, { undo, cls, act } = {}) {
+function toast(text, { undo, cls, act, stay, who } = {}) {
     const el = document.createElement("div");
     el.className = "toast" + (cls ? " " + cls : "");
     const sp = document.createElement("span");
-    sp.textContent = text;
+    if (who) {
+        const b = document.createElement("b");
+        b.textContent = who + ": ";
+        sp.appendChild(b);
+    }
+    sp.appendChild(document.createTextNode(text));
     el.appendChild(sp);
     if (undo) {
         const b = document.createElement("button");
@@ -6607,10 +6649,30 @@ function toast(text, { undo, cls, act } = {}) {
     x.setAttribute("aria-label", "Close");
     x.onclick = () => el.remove();
     el.appendChild(x);
+    if (stay) { // stays until it's read: a tap anywhere on it closes it (the "bought" messages, over the shop)
+        el.onclick = () => el.remove();
+        el.setAttribute("role", "status");
+        $("toastsStay").appendChild(el);
+        while ($("toastsStay").children.length > 3)
+            $("toastsStay").firstChild.remove();
+        return el;
+    }
     $("toasts").appendChild(el);
     setTimeout(() => el.remove(), (undo || act) ? 9000 : 4500);
     while ($("toasts").children.length > 4)
         $("toasts").firstChild.remove();
+    return el;
+}
+/* what Mite says about something just bought. With the shop (the sheet) open the bubble would be hidden behind it, so
+   the line comes as a message on top of the shop that stays until it's tapped away (owner, 24-10-2026) */
+function buySpeak(text, opts) {
+    if (!text)
+        return text;
+    if (document.body.classList.contains("sheet"))
+        toast(text, { cls: "bought", stay: true, who: S.settings.pet });
+    else
+        speak(text, opts);
+    return text;
 }
 function checkAch() {
     const s = { done: doneCount(), today: doneOn(actDay()), owned: boughtCount(), trinkets: Object.keys(S.trinkets).length };
@@ -13589,8 +13651,8 @@ function drawArchiveRoom(now, dt) {
     drawCeiling(dk, "archive");
     drawPlankFloor(dk);
     drawMoss(dk, "archive"); // (draw-world.js)
-    drawRug(dk, "#425a85", "#10142a", "#9ab9d7", "#1e2848");
-    drawCircle(dk, tsec); // the chalk circle on the blue rug (circle.js)
+    drawRugFor(dk, "arug");
+    drawCircle(dk, tsec); // the chalk circle on the rug (circle.js)
     drawMess(dk, "archive"); // (between two palette colours: the same woven dither as the red one) // a blue rug, the same shape as the wagon's red one
     // a small round window above the reading desk, with its share of the plants on the sill (easel.js)
     {
@@ -17500,7 +17562,7 @@ function catSpotsLow(room) {
     if (room === "archive") {
         const g = archGeo();
         const out = [...(catDeskFree() ? [{ x: g.deskX0 + R * .45, g: R * .95 + R * .16, desk: true }] : []), { x: g.x0 + R * 1.2, g: 0 }, { x: (g.x0 + g.x1) / 2, g: 0 }, { x: g.x1 - R * 1.6, g: 0 }];
-        if (own("circle")) { // the middle of the chalk circle: one of her favourite places (circle.js)
+        if (own("circle") && !circleNotForCat()) { // the middle of the chalk circle: one of her favourite places (circle.js; not while it's Mite's turn)
             const c = circleGeo(), mid = { x: c.x, g: 0, z: c.y - GY, circle: true };
             out.push(mid, mid, mid);
         }
@@ -17615,6 +17677,7 @@ function catTick(dt, now) {
         cat.tz = 0; // the wool is by the wall; up on things there's no floor to be out on
     if (cat.g === 0 && cat.z !== cat.tz) // out across the floor or back to the wall, while she walks
         cat.z += Math.sign(cat.tz - cat.z) * Math.min(Math.abs(cat.tz - cat.z), spd * .7);
+    circleTurnTick(now); // (Mite waiting for its turn at the chalk circle)
     if (catYarnTick(dt, now) || catDoorTick(dt, now) || catBallTick(dt, now) || catHuntTick(dt, now))
         return;
     if (cat.ph === "stretch") { // front paws out, rump up; then on with her day
@@ -18804,7 +18867,7 @@ function drawGarden(now, dt) {
     cx.fillRect(0, g.glassY - Math.max(4, R * .1), W, Math.max(4, R * .1));
     drawPlankFloor(dk);
     drawMoss(dk, "garden"); // (draw-world.js)
-    drawRug(dk, "#618f46", "#16231a", "#b8d682", "#2a3a20"); // (colours between two palette colours, so the rug gets the same woven dither as the red one) // a green rug, the same shape as the wagon's red one
+    drawRugFor(dk, "grug"); // (colours between two palette colours, so the rug gets the same woven dither as the red one) // a green rug, the same shape as the wagon's red one
     drawMess(dk, "garden"); // mess on the nook floor
     drawNookLoft(dk); // the platform high on the wall, and its stairs (loft.js)
     drawLanterns(lanternString("garden"), dk); // and the lanterns underneath it, as many as along the wagon's ceiling (draw-world.js)
@@ -20689,7 +20752,8 @@ function lookSpots(rm) {
             add("lanterns", "look_lanterns", { x: 0, y: H * .03, w: W, h: H * .05 + R * .3 });
         if (own("hearth")) // the candle on the mantel
             add("hearthcandle", "look_hearthcandle", { x: hearthX() + R * .02, y: GY - R * 1.8, w: R * .5, h: R * .5 });
-        add("rug", "look_rug", rug, true);
+        if (own("rug"))
+            add("rug", "look_rug", rug, true);
     }
     else if (rm === "garden") {
         const g = gardenGeo();
@@ -20704,7 +20768,8 @@ function lookSpots(rm) {
         if (own("ndoor"))
             add("ndoor", "look_ndoor", { x: ndoorX() - R * .3, y: nookLoftGeo().balY - R * 1.45, w: R * .6, h: R * 1.45 });
         { const lg = nookLoftGeo(); add("nooklanterns", "look_lanterns", { x: 0, y: lg.balY + R * .15, w: W, h: R * .45 }); } // (the lanterns under the platform)
-        add("greenrug", "look_greenrug", rug, true);
+        if (own("grug"))
+            add("greenrug", "look_greenrug", rug, true);
     }
     else if (rm === "archive") {
         const g = archGeo(), aw = archWindow(g), bx = (g.x0 + g.x1) / 2, by = Math.max(R * .6, g.rail - R * .4);
@@ -20723,7 +20788,8 @@ function lookSpots(rm) {
         if (own("closet"))
             add("closet", "look_closet", { x: closetX() - R * .46, y: GY - R * 1.95, w: R * .92, h: R * 1.95 });
         add("shelves", "look_shelves", { x: g.x0, y: g.rail, w: g.x1 - g.x0, h: GY - g.rail - R * .1 }); // (between the boxes, or all of it while it's empty)
-        add("bluerug", "look_bluerug", rug, true);
+        if (own("arug"))
+            add("bluerug", "look_bluerug", rug, true);
     }
     for (const m of mossSpots())
         if (m.room === rm)
@@ -20753,7 +20819,8 @@ function lookSpot(id) {
 /* what Mite says when it gets there */
 function lookLine(s) {
     const many = s.id === "jarshelf" && eyeJarCount() > 1, n = typeof basketN === "function" ? basketN() : 0, empty = ARCH_FLAT.length === 0; // (the jar shelf: one jar or more; the basket: how much is in it; the shelves: anything filed yet)
-    return compose(s.pool, { plate: s.id === "nameplate" ? archPlate() : "", thejar: many ? "the jars" : "the jar", itthem: many ? "them" : "it", bits: n === 1 ? "one bit" : `${n} bits`, full: when(n > 0), emptyb: when(!n), bare: when(empty), filled: when(!empty) }) || "Hm. I'd never really looked at that before.";
+    const rugId = { rug: "rug", greenrug: "grug", bluerug: "arug" }[s.id];
+    return compose(s.pool, { plate: s.id === "nameplate" ? archPlate() : "", rugcol: rugId ? rugCol(rugId).name.toLowerCase() : "", thejar: many ? "the jars" : "the jar", itthem: many ? "them" : "it", bits: n === 1 ? "one bit" : `${n} bits`, full: when(n > 0), emptyb: when(!n), bare: when(empty), filled: when(!empty) }) || "Hm. I'd never really looked at that before.";
 }
 
 </script>
@@ -21700,7 +21767,7 @@ function flowerMonthName(key, list) {
 }
 /* the dried flower book, open: every flower so far, a fold per month (the newest open), each month named */
 function showFlowerBook() {
-    const list = (S.flowerBook || []).slice().sort((a, b) => a.at - b.at), months = new Map();
+    const list = (S.flowerBook || []).slice().sort((a, b) => b.at - a.at), months = new Map();
     list.forEach((f, i) => {
         const k = f.at > 1e9 ? dayKey(new Date(f.at)).slice(0, 7) : "0000-00";
         if (!months.has(k))
@@ -21951,7 +22018,7 @@ function archWallTap(p) {
 <script>/* js/scene/circle.js */
 "use strict";
 /*
- * circle.js - The chalk circle, in the archive: chalked onto the blue rug (rings, a unicursal hexagram, little
+ * circle.js - The chalk circle, in the archive: chalked onto the rug (rings, a unicursal hexagram, little
  * signs along the edge, candles). It's for looking back: tap it and Mite kneels at the edge and sees a glimpse of
  * someone's family history (the "glimpses" lines: Who | what Mite saw). Three a day; the ones seen are kept in
  * S.glimpses and listed in the Cabinet. Midnightcat likes to sit in the middle; when she does her own rituals
@@ -21960,6 +22027,8 @@ function archWallTap(p) {
  *   drawCircle(...)   on the rug (drawArchiveRoom)
  *   circleTap(p)      a tap in the archive: true if it was on the circle
  *   catInCircle()     is Midnightcat sitting in the middle, doing her rituals?
+ *   circleTurns()     a tap while she's in the middle: they take turns (she lets Mite go ahead, or asks it to wait
+ *                     and Mite looks once she's done); while Mite is at the circle she doesn't walk in either
  *   mouseGlimpses()   a glimpse for each mouse that's visited (S.mice): its found family. Seen once, the mouse
  *                     knows the circle told, and says so on its next visit (visitors.js)
  */
@@ -22047,8 +22116,58 @@ function circleTap(p) {
     const c = circleGeo();
     if (Math.hypot((p.x - c.x) / c.rx, (p.y - c.y) / (c.ry + R * .2)) > 1.05)
         return false;
+    if (catAtMiddle()) {
+        circleTurns();
+        return true;
+    }
     requestObj("scry", c.x, c.y);
     return true;
+}
+/* ---------- taking turns with Midnightcat (owner, 24-10-2026) ---------- */
+/* she's in the middle, or on her way there */
+function catAtMiddle() {
+    if (!own("circle") || cat.room !== "archive" || cat.g > 0 || cat.tg > 0)
+        return false;
+    const c = circleGeo(), near = (x, z) => Math.abs(x - c.x) < R * .3 && Math.abs(GY + z - c.y) < R * .3;
+    return near(cat.x, cat.z) || (cat.ph === "walk" && near(cat.tx, cat.tz));
+}
+/* the middle's not for her just now: Mite's been promised a turn, or is kneeling at the edge (cat.js, catSpotsLow) */
+function circleNotForCat() {
+    return performance.now() < (cat.circleOff || 0) || pet.beh === "scry" || (objQ.cur && objQ.cur.kind === "scry");
+}
+let circleWait = 0; // Mite is waiting for its turn (since when)
+function circleTurns() {
+    const now = performance.now(), c = circleGeo();
+    if (circleWait)
+        return speak(choice(["Still waiting my turn. She won't be long.", "After her. I'm in no hurry. The past isn't going anywhere."]), { ms: 3500 });
+    cat.circleOff = now + 90e3;
+    const go = !catInCircle() || Math.random() < .5; // (only passing through or just sitting down: she steps aside)
+    const line = compose(go ? "cat_circle_go" : "cat_circle_wait") || (go ? "Go on. I'll keep the candles warm." : "In a moment. I'm on a call.");
+    snailSay(line, clamp(3000 + line.length * 45, 4000, 8000), "cat");
+    heard(CAT_NAME, line, Date.now());
+    if (go) { // out of the middle, to one side, and Mite goes ahead
+        const side = cat.x < c.x ? -1 : 1;
+        Object.assign(cat, { ph: "walk", tx: clamp(c.x + side * R * 1.6, R, W - R), tg: 0, tz: cat.z, until: 0 });
+        setTimeout(() => requestObj("scry", c.x, c.y), 1200);
+        return;
+    }
+    circleWait = now; // Mite waits: she finishes up and leaves, then it's Mite's turn
+    cat.until = Math.min(cat.until || now, now + rnd(6e3, 10e3));
+    setTimeout(() => speak(compose("circle_mite_wait") || "I'll wait. I'm good at waiting.", { ms: 3500 }), 600);
+}
+/* every frame (cat.js): once she's out of the middle, Mite takes its turn */
+function circleTurnTick(now) {
+    if (!circleWait)
+        return;
+    if (now - circleWait > 60e3 || view !== "archive") {
+        circleWait = 0;
+        return;
+    }
+    if (!catAtMiddle() && !objQ.cur) {
+        circleWait = 0;
+        const c = circleGeo();
+        requestObj("scry", c.x, c.y);
+    }
 }
 /* ---------- glimpses into the past ---------- */
 function glimpseList() {
@@ -22121,7 +22240,7 @@ function renderGlimpses() {
     if (!el)
         return;
     const all = glimpseList(), by = {};
-    for (const s of S.glimpses || []) {
+    for (const s of (S.glimpses || []).slice().sort((a, b) => b.at - a.at)) { // (newest first)
         const g = all.find(x => x.key === s.k);
         if (g && !(by[g.who] || []).some(x => x.key === g.key))
             (by[g.who] = by[g.who] || []).push(g);
@@ -22710,7 +22829,7 @@ function drawEyeJars(dk, t, xRight, yTop) {
 }
 /* the card: every eye in the jars, what it is and where it came from */
 function showEyeJars() {
-    const have = (S.eyes || []).map(s => ({ s, e: EYES.find(e => e.id === s.k) })).filter(x => x.e);
+    const have = (S.eyes || []).slice().sort((a, b) => num(b.at) - num(a.at)).map(s => ({ s, e: EYES.find(e => e.id === s.k) })).filter(x => x.e); // (newest first)
     const from = { ghost: "left by the ghost", door: "through a door", dream: "from the dream archive", raccoon: "from the raccoon" };
     const body = have.length ? `<ul class="fbooklist eyelist">${have.map(x => `<li><canvas class="eyepic" width="24" height="16" data-eye="${esc(x.e.id)}" aria-hidden="true"></canvas><span><b>${esc(x.e.name)}</b> <span class="sub">${esc(from[x.s.from] || "found")} · ${esc(dmy(new Date(x.s.at)))}</span><br>${esc(x.e.note)}</span></li>`).join("")}</ul>` : "";
     openRitual(have.length ? "The eye jars" : "An empty jar", have.length ? `${have.length} of ${EYES.length} eyes, for reference. They're only looking.` : `Nothing in it yet. ${S.settings.pet} keeps it here, just in case.`, body, [["Close", "primary", closeRitual]]);
@@ -23068,7 +23187,7 @@ function buySplurge(id) {
     S.splurge = { k: id, at: Date.now() };
     sfx("coin");
     note(`Splurged: ${it.name.toLowerCase()}, for a day.`);
-    speak(compose("splurge_" + id) || "Oh! For me? For us. For today.", { ms: 6000 });
+    buySpeak(compose("splurge_" + id) || "Oh! For me? For us. For today.", { ms: 6000 });
     afterChange();
 }
 /* in the wagon (drawWorld), after the floor: the day's treat */
@@ -23283,7 +23402,7 @@ function drawWorld(now, dt) {
         cx.closePath();
         cx.fill();
     }
-    drawRug(dk, "#9c4f3c", "#3a1d17", "#e2b56a", "#4a3a20"); // the red rug
+    drawRugFor(dk, "rug"); // the wagon's rug (a shop item; its colour is picked there)
     const ry = GY + (H - GY) * .42; // (things stand on it)
     // hanging lamp
     const lyy = lampY(rm);
@@ -23881,6 +24000,10 @@ function rugPattern(c) {
     catch (e) {
     }
     return p;
+}
+function drawRugFor(dk, id) {
+    if (own(id))
+        drawRug(dk, ...rugCol(id).c);
 }
 function drawRug(dk, col, colDark, trim, trimDark) {
     const ry = GY + (H - GY) * .42;
@@ -25014,7 +25137,7 @@ function renderTasks() {
         <span class="seg" id="eTag" role="group" aria-label="Area">${[["work", "Work"], ["life", "Life"], ["", "Other"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(t.tag || "") === v}">${l}</button>`).join("")}</span>
         <span class="tedit-when"><label class="toggle">Due <input type="date" id="eDue" value="${esc(t.due)}"></label><label class="toggle">Plan for <input type="date" id="eOn" value="${esc(t.on || "")}"></label><label class="toggle">At <input type="time" id="eAt" value="${esc(t.at || "")}" step="300"></label><label class="toggle"><input type="checkbox" id="eWeek" ${t.wk ? "checked" : ""}> This week</label></span>
         <span class="tedit-acts"><button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button></span>
-        <span class="tedit-more">${!child ? `<button class="btn" type="button" data-act="split">Split into steps</button><button class="btn ai" type="button" data-act="splitai" ${aiOn() ? "" : "disabled"}>✦ Split with AI</button>` : ""}<button class="btn danger" type="button" data-act="del">Delete</button></span></form>`;
+        <span class="tedit-more">${!child ? `<button class="btn" type="button" data-act="split">Split into steps</button>` : ""}<button class="btn danger" type="button" data-act="del">Delete</button></span></form>`;
             for (const id of ["eSize", "eTag"]) // (buttons, one of each pressed)
                 li.querySelectorAll(`#${id} button`).forEach(b => b.onclick = () => li.querySelectorAll(`#${id} button`).forEach(x => x.setAttribute("aria-pressed", x === b)));
             const segVal = id => { const b = li.querySelector(`#${id} button[aria-pressed="true"]`); return b ? b.dataset.v : null; };
@@ -25048,13 +25171,6 @@ function renderTasks() {
                     sp.onclick = () => {
                         editingId = null;
                         offlineSplit(t);
-                    };
-                const sa = f.querySelector('[data-act="splitai"]');
-                if (sa)
-                    sa.onclick = () => {
-                        editingId = null;
-                        renderTasks();
-                        splitTask(t, sa);
                     };
                 f.querySelector('[data-act="del"]').onclick = () => {
                     editingId = null;
@@ -25242,7 +25358,7 @@ function shopComplete() {
         return false;
     S.flags.shopAll = 1;
     saveSoon();
-    setTimeout(() => speak(`That's everything in the shop. ${S.raccoonAt ? raccoonName() : "The raccoon"} says it has things the shop doesn't, and there's something special on the last page now.`, { ms: 6500 }), 1200);
+    setTimeout(() => buySpeak(`That's everything in the shop. ${S.raccoonAt ? raccoonName() : "The raccoon"} says it has things the shop doesn't, and there's something special on the last page now.`, { ms: 6500 }), 1200);
     return true;
 }
 let shopFurnShown = new Set(), shopSeenTimer = 0, shopSecSetting = false;
@@ -25327,6 +25443,15 @@ function renderShop() {
         shopFurnShown.add(b.id);
         const shown = Math.min(own, b.max), needs = !own && b.needs && !S.b[b.needs] ? BUILDINGS.find(x => x.id === b.needs) : null; // (the vase stands on the chest)
         el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : needs ? `<span class="owned">Needs the ${esc(needs.name.toLowerCase())}</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
+        if (own && RUG_DEF[b.id]) { // a rug: its colour (S.rugCol)
+            const cur = rugCol(b.id).id, row = document.createElement("div");
+            row.className = "rugcols";
+            row.setAttribute("role", "group");
+            row.setAttribute("aria-label", `Colour of the ${b.name.toLowerCase()}`);
+            row.innerHTML = RUG_COLS.map(c => `<button type="button" class="rugsw" data-rc="${c.id}" aria-pressed="${c.id === cur}" title="${c.name}" aria-label="${c.name}" style="background:${c.c[0]};box-shadow:inset 0 0 0 3px ${c.c[0]},inset 0 0 0 5px ${c.c[2]}"></button>`).join("");
+            row.querySelectorAll("[data-rc]").forEach(bt => bt.onclick = () => setRugCol(b.id, bt.dataset.rc));
+            el.firstElementChild.appendChild(row);
+        }
         const bb = el.querySelector("[data-b]");
         if (bb)
             bb.onclick = () => buy(b);
@@ -25430,13 +25555,13 @@ function buyWall(b) {
         setShown(b.id, true);
     const plant = PLANTS.includes(b);
     if (plant)
-        speak(`I put the ${b.name.toLowerCase()} on ${sillPlants("archive").includes(b) ? "the archive's little windowsill" : sillPlants("garden").includes(b) ? "the windowsill in the nook" : "the windowsill"}. It likes it there already.`);
+        buySpeak(`I put the ${b.name.toLowerCase()} on ${sillPlants("archive").includes(b) ? "the archive's little windowsill" : sillPlants("garden").includes(b) ? "the windowsill in the nook" : "the windowsill"}. It likes it there already.`);
     else if (crystal && !cabinetCrystals().includes(b)) // the shelf holds six: it waits in the box until you swap one out
-        speak(`The shelf is full, so the ${b.name.toLowerCase()} is in the box for now. Switch one off in the shop and it takes its place.`);
+        buySpeak(`The shelf is full, so the ${b.name.toLowerCase()} is in the box for now. Switch one off in the shop and it takes its place.`);
     else if (crystal)
-        speak(`I put the ${b.name.toLowerCase()} on the crystal shelf. It caught the light straight away, like it was waiting.`);
+        buySpeak(`I put the ${b.name.toLowerCase()} on the crystal shelf. It caught the light straight away, like it was waiting.`);
     else
-        say("buy", { item: b.name.toLowerCase() });
+        buySpeak(compose("buy", { item: b.name.toLowerCase() }));
     note(plant ? `New plant on the sill: ${b.name}.` : crystal ? `New crystal on the shelf: ${b.name}.` : `Hung up: ${b.name}.`);
     burst("spark", 6);
     afterChange();
@@ -25451,10 +25576,19 @@ function buyKettle(k) {
     if (!isShown(k.sid))
         setShown(k.sid, true);
     S.kettleStyle = { k: k.id, at: Date.now() };
-    speak(choice([`A ${k.name.toLowerCase()}! I'll take turns with them. It's only fair.`, `The ${k.name.toLowerCase()} is on the stove. The others don't mind. Much.`, `Another kettle. The tea will taste the same, but nicer.`]), { ms: 4000 });
+    buySpeak(choice([`A ${k.name.toLowerCase()}! I'll take turns with them. It's only fair.`, `The ${k.name.toLowerCase()} is on the stove. The others don't mind. Much.`, `Another kettle. The tea will taste the same, but nicer.`]), { ms: 4000 });
     note(`New kettle: ${k.name}.`);
     burst("spark", 6);
     afterChange();
+}
+/* a rug's colour, picked in the shop */
+function setRugCol(id, c) {
+    if (!RUG_DEF[id] || !RUG_COLS.some(x => x.id === c) || !(S.b[id] > 0))
+        return;
+    S.rugCol = Object.assign({}, S.rugCol, { [id]: c, at: Date.now() });
+    sfx("tock");
+    afterChange();
+    renderShop();
 }
 function buy(b) {
     const c = cost(b);
@@ -25466,33 +25600,33 @@ function buy(b) {
     if (b.id === "jar" && nameFireflies(true))
         return afterChange();
     if (S.b[b.id] === 1 && b.id === "chair") {
-        speak("A chair in the nook. A big soft one, with a table for the tea. I'm going to read in it until it knows my shape.", { ms: 7000 });
+        buySpeak("A chair in the nook. A big soft one, with a table for the tea. I'm going to read in it until it knows my shape.", { ms: 7000 });
         note("Got the chesterfield and its side table.");
     }
     else if (S.b[b.id] === 1 && b.id === "desk") {
-        speak("A writing desk, under the round window. An inkpot, a quill, a drawer that sticks a little. I'll write someone a letter today.", { ms: 7000 });
+        buySpeak("A writing desk, under the round window. An inkpot, a quill, a drawer that sticks a little. I'll write someone a letter today.", { ms: 7000 });
         note("Got the writing desk.");
     }
     else if (S.b[b.id] === 1 && b.id === "gramo") {
-        speak("A gramophone, up by the pinboard. It came with one record. Or the record came with it. Tap it and I'll wind it up.", { ms: 7000 });
+        buySpeak("A gramophone, up by the pinboard. It came with one record. Or the record came with it. Tap it and I'll wind it up.", { ms: 7000 });
         note("Got a gramophone.");
     }
     else if (S.b[b.id] === 1 && b.id === "rental") {
-        speak("The chest is in the nook. Four drawers to let. The top's bare. It looks like it's waiting for a vase.", { ms: 7000 });
+        buySpeak("The chest is in the nook. Four drawers to let. The top's bare. It looks like it's waiting for a vase.", { ms: 7000 });
         note("Got the renter's chest.");
     }
     else if (S.b[b.id] === 1 && b.id === "vase") {
-        speak(hasDesk() ? "The vase goes on the chest, the flower book on the desk. Lavender first, it's tradition." : "The vase goes on the chest. The flower book waits in a drawer until there's a desk for it. Lavender first, it's tradition.", { ms: 6000 });
+        buySpeak(hasDesk() ? "The vase goes on the chest, the flower book on the desk. Lavender first, it's tradition." : "The vase goes on the chest. The flower book waits in a drawer until there's a desk for it. Lavender first, it's tradition.", { ms: 6000 });
         note("Got a vase and a book for pressed flowers.");
         if (S.vase)
             S.vase.at = Date.now(); // (fresh from today: a week before Mite picks new ones)
     }
     else if (S.b[b.id] === 1) {
-        say("buy", { item: b.name.toLowerCase() });
+        buySpeak(compose("buy", { item: b.name.toLowerCase() }));
         note(`Got a ${b.name.toLowerCase()}.`);
     }
     else if (Math.random() < .15)
-        say("buy", { item: b.name.toLowerCase() });
+        buySpeak(compose("buy", { item: b.name.toLowerCase() }));
     burst("spark", 6);
     afterChange();
 }
@@ -25599,7 +25733,7 @@ function barterTrade(i) {
     }
     sfx("coin");
     note(`Traded ${s.price} glimmers with ${raccoonName()} for ${info.name.toLowerCase()}.`);
-    speak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, { tea: `${info.name}. I'll put it with the other teas. The kettle's already curious.`, bake: `${info.name}. I've got the recipe now too. The oven will make it some days.`, flower: `${info.name}. Straight into the vase.`, curio: `${info.name}! It gets its own drawer in the Cabinet.`, eye: (S.eyes || []).filter(inRaccJar).length === 1 ? `${info.name}. ${raccoonName()} brought a jar for it too, its own. For the rest of them, it says.` : `${info.name}. Into the raccoon's jar, with the others it brought.` }[s.k]]), { ms: 5000 });
+    buySpeak(choice([`${info.name}. ${raccoonName()} wrapped it in a sock. That's raccoon gift wrap.`, `A good trade. ${raccoonName()} says it's "barely haunted". I'll take barely.`, { tea: `${info.name}. I'll put it with the other teas. The kettle's already curious.`, bake: `${info.name}. I've got the recipe now too. The oven will make it some days.`, flower: `${info.name}. Straight into the vase.`, curio: `${info.name}! It gets its own drawer in the Cabinet.`, eye: (S.eyes || []).filter(inRaccJar).length === 1 ? `${info.name}. ${raccoonName()} brought a jar for it too, its own. For the rest of them, it says.` : `${info.name}. Into the raccoon's jar, with the others it brought.` }[s.k]]), { ms: 5000 });
     afterChange();
 }
 
@@ -25898,7 +26032,7 @@ function renderContent() {
     $("persona").value = persona();
     renderAiLog();
     renderGenReview();
-    renderUsage();
+    $("poolGen").disabled = !aiOn();
 }
 function loadPoolEditor() {
     const k = $("poolSel").value;
@@ -26298,6 +26432,11 @@ $("jotBtn").onclick = () => {
     else
         $("tTitle").focus();
 };
+// Enter in the form's fields posts nothing: only the Add and Jot buttons do (owner, 24-10-2026)
+$("addForm").addEventListener("keydown", e => {
+    if (e.key === "Enter" && e.target.tagName === "INPUT")
+        e.preventDefault();
+});
 $("addForm").addEventListener("submit", e => {
     e.preventDefault();
     if (/(^|\s)#(jot|todo)(?=\s|$)/i.test($("tTitle").value) || parseShort($("tTitle").value).jot) {
@@ -26350,7 +26489,7 @@ $("tTitle").addEventListener("input", () => {
 <script>/* js/ui/settings.js */
 "use strict";
 /*
- * settings.js - Settings: name, work days, home, sound, AI, backups, reset.
+ * settings.js - Settings: name, work days, home, sound, backups, reset.
  */
 /* Settings save as you change them: a field changes (a text field: when you leave it), everything is read back in.
    The hour fields are lists of whole hours, shown as 24-hour times (0500, 1700, 2300) */
@@ -26663,7 +26802,7 @@ function eraseAll() {
     S = defaultState();
     S.g = S.gTotal = RESTART_G; // the starting gift again, so the shop isn't empty-handed on day one
     S.flags.starter = 1; // (it's the gift, not earned: earnedG)
-    S.flags.m_furn = 1; // (a new game starts without the desk and chair: they're in the shop)
+    S.flags.m_furn = S.flags.m_rugs = 1; // (a new game starts without the desk, the chair and the rugs: they're in the shop)
     S.wiped = Date.now(); // (another device's copy of the old game won't be merged back in: mergeStates)
     note(`We met. Again, technically. ${RESTART_G} glimmers to start with.`);
     postWelcome(); // a letter on the desk again (post.js)
@@ -27468,25 +27607,11 @@ function safekeepStatus() {
 }
 
 </script>
-<script>/* js/ai/think.js */
-"use strict";
-/*
- * think.js - A short summary of the task list, for AI prompts.
- */
-function taskDigest() {
-    const today = dayKey();
-    return openTasks().slice(0, 40).map(t => {
-        const d = dueInfo(t);
-        return `- ${dq(t.t, 160)} [${t.s === 1 ? "small" : t.s === 3 ? "medium" : "big"}, ${t.tag || "no area"}${t.wk ? ", this week" : ""}${d ? ", " + d.txt : ""}, open ${fmtAge(Date.now() - t.c)}]`;
-    }).join("\n") || "(no open tasks)";
-}
-
-</script>
 <script>/* js/ai/library.js */
 "use strict";
 /*
- * library.js - Growing the line library with AI (optional): lines are checked (validLine) and filed into
- * pools, so they keep working offline. Also chatter and "ask what's next".
+ * library.js - Growing the line library with AI (✦ Write 8 more, owner only): lines are checked (validLine) and
+ * filed into pools, so they keep working offline. Also Mite's chatter (offline).
  */
 const POOL_VARS = { look_nameplate: ["plate"], snailtalk: ["snail"], visitortalk: ["visitor", "treat", "kind", "snail"], visitorbye: ["visitor", "treat", "kind"], suggest: ["task", "reason", "Reason"], followup: ["thing", "Thing"], talk_fallback: [], greet: [], return_short: ["awayTime"], return_long: ["away"], idle: [], observation: [], pat: [], pat_many: [], task_added: ["task"], task_done: ["task"], task_done_big: ["task"], task_done_old: ["task", "age"], all_done: [], late: [], after_work: [], day_off: [], buy: ["item"], trinket: ["item"], level: ["level"], lesson: ["item"], firefly: [], dream: [], story: [], chatter: [], hearth: [], fireflies: ["name", "name2", "all"], uncanny: [], omen: [], phone: [], clearance: ["clearance"], snack: ["item"], selfcare: [], goodnight: [], rested: [], morning: [], evening: [], picks_done: [] };
 const BASE_VARS = ["memory", "you", "pet", "open", "oldest", "oldestAge", "smallest", "doneToday", "week", "total", "streak", "level", "favHour", "daysTogether", "doneBy", "bed", "pats", "moon", "clearance", "incidents"];
@@ -27580,24 +27705,6 @@ function genPrompt(k, n) {
         (k in SPECIAL_FMT ? `Format: ${SPECIAL_FMT[k]}\n` : `Format: one spoken line per entry, max 25 words, in character. Optional conditions go in square brackets at the start, space-separated, chosen only from: ${CONDS}. (hA-B means hours A to B; streakN and lvlN mean at least N.) Put conditions on roughly a third of the lines, where the line only makes sense at that moment.${k === "omen" ? " Every omen line MUST start with a tag [door], [phone] or [eyes]." : ""} Variables in curly braces allowed in this pool: ${allowedVars(k).map(v => "{" + v + "}").join(" ")}. Use no other variables, and never invent task titles.\n`) +
         `No emoji, no exclamation marks, no motivational clichés, no guilt-tripping.\n\nExisting entries (do not repeat their ideas or phrasing):\n${dataBlock("existing-entries", ex ? ex.split("\n").map(l => dq(l, 400)).join("\n") : "(none)")}\n\nWrite ${n} new, varied entries. Return only a JSON array of strings.`;
 }
-function harvestPools(c) {
-    const cands = ["idle", "observation", "task_done", "task_added", "pat", "greet", "dream", "story", "return_short"];
-    if (strangeness() > 0)
-        cands.push("uncanny", "uncanny", "phone");
-    if (isLate(c.h))
-        cands.push("late");
-    else if (c.workday && c.h >= S.settings.doneBy)
-        cands.push("after_work");
-    if (!c.workday)
-        cands.push("day_off");
-    const out = [];
-    while (out.length < 3) {
-        const k = choice(cands);
-        if (!out.includes(k))
-            out.push(k);
-    }
-    return out;
-}
 function openTab(name) {
     showPane(name);
 }
@@ -27637,154 +27744,6 @@ function offlineChatter() {
         playChatter(t);
         S.flags.chatter = 1;
         saveSoon();
-    }
-}
-async function chatterAI() {
-    if (!aiOn())
-        return offlineChatter();
-    const st = S.settings, c = ctx();
-    const btn = {}; // started from the Mite tray; nothing to disable
-    btn.disabled = true;
-    const doneT = doneTasks().filter(t => actDay(t.d) === actDay()).map(t => t.t).join("; ") || "nothing yet";
-    const mems = (S.memories || []).slice(0, 40).sort(() => Math.random() - .5).slice(0, 4).map(m => dq(m.t, 220)).join("\n") || "(none)";
-    const said = (S.said || []).slice(0, 12).map(x => dq(x.t, 200)).join("\n") || "(none)";
-    const ex = pool("chatter").slice(-25).map(l => dq(l, 400)).join("\n");
-    const prompt = GUARD + `You are writing a short, fun bit of dialogue for a virtual pet who wants to chat with its person. It is not about tasks or productivity.\n\nCharacter:\n${dataBlock("character", dq(fillNames(personaFull()), 2000))}\nThe person is called ${dq(youN(), 30)}.\n\nSituation: ${c.now.toLocaleDateString("en-GB", { weekday: "long" })} ${String(c.h).padStart(2, "0")}:${String(c.now.getMinutes()).padStart(2, "0")}, ${c.moon}, ${c.workday ? "a workday" : "a day off"}, ${S.lightsOut ? "lights out" : "lights on"}. Things in the wagon: ${Object.keys(S.b).filter(k => S.b[k] > 0).join(", ") || "not much yet"}.\n${dataBlock("things-the-person-told-the-pet", mems)}\n${dataBlock("done-today", dq(doneT, 800))}\n${dataBlock("said-recently", said)}\n${dataBlock("existing-chatter", ex || "(none)")}\n\n` +
-        `1. "say": a list of 2 to 4 short speech bubbles (max 22 words each) that ${st.pet} says in a row: a tiny anecdote, a musing, a question, a joke, a small discovery in the wagon${strangeness() > 0 ? ", or something gently uncanny" : ""}. Surprising and specific, warm, dry humour. It may use the situation or one remembered thing. Don't repeat the ideas of the said-recently or existing-chatter entries. Don't nag about tasks.\n` +
-        `2. "keep": a reusable version for the offline library, as one string with the bubbles separated by " / ". It must not mention task titles, remembered facts or today's specifics, and must work any time its conditions fit. Start it with conditions in square brackets (from: ${CONDS}) only if it fits certain moments. Variables allowed: ${allowedVars("chatter").map(v => "{" + v + "}").join(" ")}.\n` +
-        `3. "action": one of ${TALK_ACTIONS.join(", ")}.\n\nPlain text, no emoji, no exclamation marks, no motivational clichés.\nReturn only JSON: {"say": ["...", "..."], "keep": "...", "action": "..."}`;
-    speak("…", { ms: 60000, thinking: true });
-    pet.start("lookAround");
-    try {
-        const r = await aiCall("chatter", prompt, { json: true });
-        let beats = Array.isArray(r && r.say) ? r.say : typeof (r && r.say) === "string" ? r.say.split(/\s+\/\s+/) : [];
-        beats = beats.filter(x => typeof x === "string" && x.trim() && !unsafe(x)).map(x => x.replace(/\s+/g, " ").replace(/\s\/\s/g, " ").trim().slice(0, 240)).slice(0, 4);
-        if (!beats.length)
-            throw { code: "shape" };
-        playChatter(beats.join(" / "), { action: typeof r.action === "string" && TALK_ACTIONS.includes(r.action) ? r.action : null });
-        S.flags.chatter = 1;
-        const kept = typeof r.keep === "string" ? addLines("chatter", [r.keep], "chatter").length : 0;
-        if (kept) {
-            toast(`${st.pet} kept this one for later`, { act: { label: "Review", fn: reviewLog } });
-            if (curTab === "content" || curTab === "lines" || curTab === "data") {
-                loadPoolEditor();
-                renderAiLog();
-            }
-        }
-        afterChange();
-    }
-    catch (e) {
-        if (e && e.code === "not_granted") {
-            toast("AI wasn't allowed this time. Mite chatted on its own.");
-            offlineChatter();
-        }
-        else if (e && e.code === "rate_limited") {
-            speak("My head is full. Ask me again in a bit.");
-        }
-        else
-            speak("I had something to say and it wandered off. Try again?");
-    }
-    btn.disabled = false;
-    updAiUI();
-}
-async function askAI() {
-    if (!aiOn())
-        return offlineSuggest();
-    const st = S.settings, c = ctx();
-    const btn = {};
-    btn.disabled = true;
-    const doneT = doneTasks().filter(t => actDay(t.d) === actDay()).map(t => t.t).join("; ") || "nothing yet";
-    const hp = harvestPools(c);
-    const prompt = GUARD + `You are writing dialogue for a virtual pet.\n\nCharacter:\n${dataBlock("character", dq(fillNames(personaFull()), 2000))}\n\nSituation: It is ${c.now.toLocaleDateString("en-GB", { weekday: "long" })} ${String(c.h).padStart(2, "0")}:${String(c.now.getMinutes()).padStart(2, "0")}, ${c.moon}. ${youN()} works on ${st.work.map(d => DAYS[d]).join(", ") || "no fixed days"} (office on ${st.office.map(d => DAYS[d]).join(", ") || "none"}), wants to stop working by ${st.doneBy}:00 and be in bed by ${st.bed}:00. Today is ${c.workday ? "a workday" : "a day off"}. \n${dataBlock("done-today", dq(doneT, 1500))}\n${dataBlock("open-tasks", taskDigest())}\n\n` +
-        `1. "say": what ${st.pet} says to ${youN()} now. Suggest ONE specific next task from the list (or rest, if the time or day fits that better) with a concrete reason from the data: deadline, size, time of day, how long it has waited, work vs life. Rule: ${isWorkHours(c) ? `it is work hours on a workday, so pick a work task if there is one; life tasks only when no work is open` : `it is outside work hours, so never suggest a work task`}. Max 45 words.\n` +
-        `2. "lines": one NEW reusable line for each of these pools, kept for later offline use. They must not mention task titles or today's specifics, and must work any time their conditions fit. Start a line with conditions in square brackets (from: ${CONDS}) when it only fits certain moments.\n` + hp.map(k => `- "${k}": ${POOL_INFO[k]}; ${poolSpec(k)}`).join("\n") +
-        `\n\nAll in character, plain text, no emoji, no exclamation marks, no motivational clichés.\nReturn only JSON: {"say": "...", "lines": {${hp.map(k => `"${k}": "..."`).join(", ")}}}`;
-    speak("…", { ms: 60000, thinking: true });
-    pet.start("lookAround");
-    try {
-        const r = await aiCall("ask", prompt, { json: true });
-        const t = String(r && r.say || "").trim().slice(0, 600);
-        if (!t || unsafe(t))
-            throw { code: "shape" };
-        speak(t);
-        note(`Suggested: ${t}`);
-        S.flags.think = 1;
-        {
-            const lt = t.toLowerCase();
-            const hit = openTasks().filter(x => lt.includes(x.t.toLowerCase())).sort((a, b) => b.t.length - a.t.length)[0];
-            if (hit)
-                showNextUp(hit.id);
-        }
-        let n = 0;
-        const got = [];
-        if (r.lines && typeof r.lines === "object")
-            for (const k of hp) {
-                const v = r.lines[k];
-                const a = addLines(k, Array.isArray(v) ? v : [v], "ask");
-                if (a.length) {
-                    n += a.length;
-                    got.push(k);
-                }
-            }
-        if (n) {
-            toast(`${st.pet} kept ${n} new line${n > 1 ? "s" : ""} (${got.join(", ")})`, { act: { label: "Review", fn: reviewLog } });
-            if (curTab === "content" || curTab === "lines" || curTab === "data") {
-                loadPoolEditor();
-                renderAiLog();
-            }
-        }
-        afterChange();
-    }
-    catch (e) {
-        if (e && e.code === "not_granted") {
-            toast("AI wasn't allowed this time. Mite thought it over on its own.");
-            offlineSuggest();
-        }
-        else if (e && e.code === "rate_limited") {
-            speak("My head is full. Ask me again in a bit.");
-        }
-        else
-            speak("I lost my train of thought. Try again?");
-    }
-    btn.disabled = false;
-    updAiUI();
-}
-async function splitTask(t, btn) {
-    if (!aiOn())
-        return offlineSplit(t);
-    btn.disabled = true;
-    btn.textContent = "…";
-    speak("Let me look at that one.", { ms: 30000 });
-    pet.start("tidy");
-    const prompt = GUARD + `Break this task into 3 to 6 concrete first steps. Each step must be a physical, specific action that takes under 25 minutes, phrased as a short imperative (max 9 words). Context tag: ${t.tag}.\n${dataBlock("task", dq(t.t, 200))}\nAlso give 2 to 5 lowercase keywords, in English and Dutch, that identify this kind of task, so the same steps can be reused offline for similar tasks. Keep the steps general enough to fit similar tasks.\nReturn only JSON: {"steps": ["..."], "keywords": ["..."]}`;
-    try {
-        const r = await aiCall("split", prompt, { json: true });
-        let steps = Array.isArray(r) ? r : (r && r.steps);
-        const kws = r && Array.isArray(r.keywords) ? r.keywords : [];
-        if (!Array.isArray(steps))
-            throw { code: "shape" };
-        steps = steps.filter(x => typeof x === "string" && x.trim() && !unsafe(x)).map(x => x.trim().replace(/[;|]/g, ",").slice(0, 140)).slice(0, 6);
-        if (!steps.length)
-            throw { code: "shape" };
-        steps.forEach(x => addTask(x, 1, t.tag, t.wk, "", t.id));
-        const kw = kws.filter(k => !unsafe(k)).map(k => String(k).toLowerCase().replace(/[,|;]/g, " ").trim()).filter(k => k.length > 1).slice(0, 6);
-        const kept = kw.length ? addLines("steps", [kw.join(", ") + " | " + steps.join("; ")], "split").length : 0;
-        S.flags.split = 1;
-        speak(`${steps.length} small steps. The first one is tiny on purpose.`);
-        note(`Split "${t.t}" into ${steps.length} steps.`);
-        if (kept)
-            toast("Kept these steps for similar tasks, offline", { act: { label: "Review", fn: reviewLog } });
-        afterChange();
-    }
-    catch (e) {
-        if (e && e.code === "not_granted") {
-            toast("AI wasn't allowed this time. Split it the offline way.");
-            offlineSplit(t);
-        }
-        else {
-            speak("That one wouldn't split. Try again in a bit?");
-            btn.disabled = false;
-        }
     }
 }
 
@@ -27956,30 +27915,8 @@ function soundHint() {
 <script>/* js/ai/calls.js */
 "use strict";
 /*
- * calls.js - The one wrapper for AI calls (aiCall), with a log and token estimates.
+ * calls.js - The one wrapper for AI calls (aiCall). Only ✦ Write 8 more (new lines for the pools) uses it.
  */
-let lastAI = null;
-const estTok = n => Math.ceil(n / 3.6);
-function logAI(kind, inChars, outChars, tier, ms) {
-    if (!S.ai || !Array.isArray(S.ai.calls))
-        S.ai = { calls: [], tot: {} };
-    const rec = { at: Date.now(), k: kind, i: estTok(inChars), o: estTok(outChars), tier: tier || "", ms };
-    S.ai.calls.unshift(rec);
-    if (S.ai.calls.length > 300)
-        S.ai.calls.length = 300;
-    const t = S.ai.tot[kind] || (S.ai.tot[kind] = { n: 0, i: 0, o: 0 });
-    t.n++;
-    t.i += rec.i;
-    t.o += rec.o;
-    lastAI = rec;
-    if (curTab === "content" || curTab === "lines" || curTab === "data")
-        renderUsage();
-    setTimeout(() => {
-        if (typeof updAiUI === "function")
-            updAiUI();
-    }, 0);
-    return rec;
-}
 function parseJSONLoose(t) {
     const m = t.match(/```(?:json)?\s*([\s\S]*?)```/);
     let s = (m ? m[1] : t).trim();
@@ -28001,34 +27938,8 @@ function parseJSONLoose(t) {
 async function aiCall(kind, input, { json = false, tier = "quick", onText } = {}) {
     if (!aiOn())
         throw { code: "unavailable" };
-    const t0 = Date.now();
     const r = await sample(input, { modelTier: tier, cache: false, onText });
-    logAI(kind, typeof input === "string" ? input.length : input.reduce((a, m) => a + m.content.length, 0), r.text.length, r.modelTierApplied, Date.now() - t0);
-    saveSoon();
     return json ? parseJSONLoose(r.text) : r.text;
-}
-function renderUsage() {
-    const el = $("usage");
-    if (!el)
-        return;
-    const a = S.ai && S.ai.calls ? S.ai : { calls: [], tot: {} };
-    const K = { chat: "Talking", chatter: "Chat (bit of dialogue)", ask: "Ask what's next", split: "Split a task", lines: "Write more lines" };
-    const today = actDay();
-    const tc = a.calls.filter(c => actDay(c.at) === today);
-    const todayTok = tc.reduce((s, c) => s + c.i + c.o, 0);
-    let all = 0;
-    const rows = Object.keys(K).map(k => {
-        const t = a.tot[k] || { n: 0, i: 0, o: 0 };
-        all += t.i + t.o;
-        return `<tr><td>${K[k]}</td><td class="num">${t.n}</td><td class="num">${t.n ? fmt(Math.round(t.i / t.n)) : "–"}</td><td class="num">${t.n ? fmt(Math.round(t.o / t.n)) : "–"}</td><td class="num">${t.n ? fmt(Math.round((t.i + t.o) / t.n)) : "–"}</td><td class="num">${fmt(t.i + t.o)}</td></tr>`;
-    }).join("");
-    const recent = a.calls.slice(0, 15).map(c => {
-        const d = new Date(c.at);
-        return `<tr><td>${dmy(d)} ${hhmm(d)}</td><td>${K[c.k] || esc(c.k)}</td><td class="num">${fmt(c.i)}</td><td class="num">${fmt(c.o)}</td><td class="num">${fmt(c.i + c.o)}</td><td>${esc(c.tier)}</td></tr>`;
-    }).join("");
-    el.innerHTML = `<p class="sub">Today: ${tc.length} call${tc.length === 1 ? "" : "s"}, about ${fmt(todayTok)} tokens. All time: about ${fmt(all)} tokens.</p>
-  <table><thead><tr><th>Action</th><th class="num">Calls</th><th class="num">Avg in</th><th class="num">Avg out</th><th class="num">Avg per call</th><th class="num">Total</th></tr></thead><tbody>${rows}</tbody></table>
-  ${recent ? `<h3 style="margin-top:12px">Recent calls</h3><table><thead><tr><th>When</th><th>Action</th><th class="num">In</th><th class="num">Out</th><th class="num">Total</th><th>Model</th></tr></thead><tbody>${recent}</tbody></table>` : ""}`;
 }
 
 </script>
@@ -28480,19 +28391,11 @@ function renderTray(level) {
         add("What's next?", () => {
             closeTray();
             offlineSuggest();
-        }, "offline");
-        add("✦ What's next", () => {
-            closeTray();
-            askAI();
-        }, aiCostLabel("ask"), "", !aiOn());
+        });
         add("Chat", () => {
             closeTray();
             offlineChatter();
-        }, "offline");
-        add("✦ Chat", () => {
-            closeTray();
-            chatterAI();
-        }, aiCostLabel("chatter"), "", !aiOn());
+        });
     }
     add("✕", closeTray, undefined, "back");
 }
@@ -28530,127 +28433,31 @@ $("talkBar").addEventListener("submit", e => {
     e.preventDefault();
     const v = $("talkIn").value;
     $("talkIn").value = "";
-    sendChat(v, false);
+    sendChat(v);
 });
-$("talkAI").onclick = () => {
-    const v = $("talkIn").value;
-    if (!v.trim()) {
-        $("talkIn").focus();
-        return;
-    }
-    $("talkIn").value = "";
-    sendChat(v, true);
-};
 
 </script>
 <script>/* js/ui/talk.js */
 "use strict";
 /*
- * talk.js - Talking with Mite (with or without AI).
+ * talk.js - Talking with Mite: it answers from its own lines, on this device (offline.js: offlineChat).
  */
-const TALK_ACTIONS = ["hop", "celebrate", "sit", "wave", "spin", "stretch", "yawn", "lookAround", "tea", "read", "juggle", "bow", "listen", "stare"];
-const CHAT_POOLS = ["idle", "greet", "observation", "task_done", "pat", "dream", "story", "late", "day_off"];
+/* (AI was taken out entirely, 24-10-2026: Talk, Chat, What's next and Split all run on Mite's own lines) */
 let chatBusy = false;
-function chatPrompt(text) {
-    const st = S.settings, c = ctx(), pools = CHAT_POOLS.concat(strangeness() > 0 ? ["uncanny"] : []);
-    const hist = S.chat.slice(-11, -1).map(m => (m.r === "u" ? "USER" : "PET") + ": " + dq(m.t, 800)).join("\n");
-    const mems = S.memories.slice(0, 40).map(m => "- " + dq(m.t, 220)).join("\n") || "(nothing yet)";
-    return GUARD + `You are ${dq(st.pet, 20)}, a small virtual pet in ${youN()}'s personal task app, chatting with ${dq(youN(), 30)}.\nCharacter:\n${dataBlock("character", dq(fillNames(personaFull()), 2000))}\n\nNow: ${c.now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}, ${String(c.h).padStart(2, "0")}:${String(c.now.getMinutes()).padStart(2, "0")}, ${c.moon}. ${c.workday ? "A workday" : "A day off"}. Done today: ${c.doneToday}.\n${dataBlock("open-tasks", openTasks().slice(0, 8).map(t => "- " + dq(t.t, 160)).join("\n") || "none")}\n\nWhat you remember about the user:\n${dataBlock("memories", mems)}\n\nRecent conversation:\n${dataBlock("history", hist || "(this is the start)")}\n\nThe user's new message:\n${dataBlock("message", dq(text, 600))}\n\n` +
-        `Reply with JSON only, with these keys:\n` +
-        `"reply": your answer in character, max 70 words, plain text, no emoji.\n` +
-        `"remember": 0 to 2 short, durable facts about ${youN()} worth knowing for months, third person (e.g. "${youN()} has a concert at the end of October"); [] if nothing new or already remembered. Never store passwords, ID or account numbers, or health details unless ${youN()} explicitly asks you to remember them.\n` +
-        `"followup": if ${youN()} mentions something coming up, {"text": what you will say about it afterwards, "on": "YYYY-MM-DD" the day to say it}; otherwise null. Today is ${dayKey()}.\n` +
-        `"tasks": things ${youN()} said they need to do, as [{"title": "...", "size": "small|medium|big", "area": "work|life"}]; [] if none.\n` +
-        `"lines": up to 2 new lines for your offline library, as {"pool": "line"} with pools from: ${pools.join(", ")}. They must stay true for months; they may refer to lasting things ${youN()} told you; they may start with conditions in square brackets from: ${CONDS}; they may use {you} and {pet}. {} if nothing good.\n` +
-        `"note": one sentence for your notebook about this conversation, in your voice, or null.\n` +
-        `"action": one of ${TALK_ACTIONS.join(", ")} that fits, or null.\n\n` +
-        `If ${youN()} seems to be having a hard time, be kind and plain, don't lecture, and if it sounds serious gently suggest talking to someone they trust.`;
-}
-async function sendChat(text, useAI) {
+function sendChat(text) {
     text = String(text || "").trim().slice(0, 600);
-    if (!text)
-        return;
-    if (!useAI || !aiOn() || schedParse(text)) // (days off and holidays are read here, never sent off)
-        return offlineChat(text);
-    if (chatBusy) {
-        toast(`${S.settings.pet} is still thinking`);
-        return;
-    }
-    chatBusy = true;
-    S.chat.push({ r: "u", t: text, at: Date.now() });
-    renderTalk();
-    speak("…", { ms: 60000, thinking: true });
-    pet.start("listen");
-    try {
-        const r = await aiCall("chat", chatPrompt(text), { json: true, tier: "default" });
-        const reply = String(r && r.reply || "").trim() || "…";
-        const msg = { r: "m", t: reply, at: Date.now(), tok: lastAI ? lastAI.i + lastAI.o : 0 };
-        let nm = 0;
-        for (const m0 of (Array.isArray(r.remember) ? r.remember : []).slice(0, 3)) {
-            if (typeof m0 !== "string" || unsafe(m0))
-                continue;
-            const t = m0.trim().slice(0, 220);
-            if (t && !S.memories.some(x => x.t.toLowerCase() === t.toLowerCase())) {
-                S.memories.unshift({ t, at: Date.now() });
-                nm++;
-            }
-        }
-        if (S.memories.length > 150)
-            S.memories.length = 150;
-        msg.mem = nm;
-        const fu = r.followup;
-        if (fu && typeof fu.text === "string" && !unsafe(fu.text) && /^\d{4}-\d{2}-\d{2}$/.test(fu.on || "") && fu.on > dayKey()) {
-            S.followups.push({ t: fu.text.trim().slice(0, 220), on: fu.on, said: 0 });
-            msg.fu = fu.on;
-        }
-        msg.tasks = (Array.isArray(r.tasks) ? r.tasks : []).slice(0, 4).filter(x => x && !unsafe(x.title)).map(x => ({ t: String(x && x.title || "").trim().slice(0, 140), s: x && x.size === "big" ? 8 : x && x.size === "medium" ? 3 : 1, tag: x && (x.area === "work" || x.area === "life") ? x.area : "" })).filter(x => x.t);
-        let nl = 0;
-        const pools = CHAT_POOLS.concat(strangeness() > 0 ? ["uncanny"] : []);
-        if (r.lines && typeof r.lines === "object" && !Array.isArray(r.lines))
-            for (const k of Object.keys(r.lines).slice(0, 3)) {
-                if (pools.includes(k))
-                    nl += addLines(k, [].concat(r.lines[k]), "chat").length;
-            }
-        msg.lines = nl;
-        if (typeof r.note === "string" && r.note.trim() && !unsafe(r.note))
-            note(r.note.trim().slice(0, 260));
-        S.chat.push(msg);
-        if (S.chat.length > 80)
-            S.chat.splice(0, S.chat.length - 80);
-        speak(reply, { ms: clamp(reply.length * 65, 4000, 16000) });
-        if (typeof r.action === "string" && TALK_ACTIONS.includes(r.action))
-            pet.start(r.action);
-        else
-            pet.start("idle");
-        S.flags.chat = 1;
-        afterChange();
-    }
-    catch (e) {
-        if (e && e.code === "not_granted") {
-            toast("AI wasn't allowed this time. Mite answered on its own.");
-            chatBusy = false;
-            S.chat.pop();
-            renderTalk();
-            return offlineChat(text);
-        }
-        else if (e && e.code === "rate_limited")
-            speak("My head is full. Try again in a bit.");
-        else
-            speak("I lost my train of thought. Say that again?");
-    }
-    chatBusy = false;
-    renderTalk();
+    if (text)
+        offlineChat(text);
 }
 function renderTalk() {
-    const pn = S.settings.pet, info = S.ai && S.ai.tot && S.ai.tot.chat;
-    const avg = info && info.n ? Math.round((info.i + info.o) / info.n) : 0;
-    $("talkInfo").textContent = `Send: ${pn} answers from its own lines, on this device. Try "remember …", "I need to …", "I have a concert on Saturday", "how am I doing", "what's next". ✦ Send with AI: Claude answers with ${pn}'s memories and your open tasks, and new lines go into the library${avg ? ` (about ${fmt(avg)} tokens per message so far)` : ""}.`;
+    const pn = S.settings.pet;
+    $("talkInfo").textContent = `${pn} answers from its own lines, on this device. Try "remember …", "I need to …", "I have a concert on Saturday", "how am I doing", "what's next", "friday off".`;
     const log = S.chat.slice(-40), off = S.chat.length - log.length;
     $("chatLog").innerHTML = log.map((m, i) => {
         const idx = off + i;
         if (m.r === "u")
             return `<li class="msg u">${esc(m.t)}</li>`;
-        const meta = [m.mem ? `remembered ${m.mem}` : "", m.lines ? `${m.lines} line${m.lines > 1 ? "s" : ""} filed` : "", m.fu ? `will ask on ${dmy(m.fu)}` : "", m.tok ? `≈${fmt(m.tok)} tokens` : ""].filter(Boolean).join(" · ");
+        const meta = [m.mem ? `remembered ${m.mem}` : "", m.lines ? `${m.lines} line${m.lines > 1 ? "s" : ""} filed` : "", m.fu ? `will ask on ${dmy(m.fu)}` : ""].filter(Boolean).join(" · ");
         const ts = (m.tasks || []).length ? `<span class="tsug">${m.tasks.map((x, j) => `<button class="chip ${x.added ? "" : "amber"}" data-ci="${idx}" data-ti="${j}" ${x.added ? "disabled" : ""}>${x.added ? "added: " : "+ task: "}${esc(x.t)}</button>`).join("")}</span>` : "";
         return `<li class="msg m">${esc(m.t)}${meta ? `<span class="meta">${meta}</span>` : ""}${ts}</li>`;
     }).join("") + (chatBusy ? `<li class="msg m"><em>…</em></li>` : "") || `<li class="sub">Say hello. Tell ${esc(pn)} about your day, your plans, whatever's on your mind.</li>`;
@@ -28665,17 +28472,8 @@ $("chatForm").addEventListener("submit", e => {
     e.preventDefault();
     const v = $("chatIn").value;
     $("chatIn").value = "";
-    sendChat(v, false);
+    sendChat(v);
 });
-$("chatAI").onclick = () => {
-    const v = $("chatIn").value;
-    if (!v.trim()) {
-        $("chatIn").focus();
-        return;
-    }
-    $("chatIn").value = "";
-    sendChat(v, true);
-};
 $("chatLog").addEventListener("click", e => {
     const b = e.target.closest("button[data-ci]");
     if (!b)
@@ -28716,34 +28514,9 @@ $("fuList").addEventListener("click", e => {
 <script>/* js/ai/offline.js */
 "use strict";
 /*
- * offline.js - The offline versions of everything the AI can do: suggestions, splitting a task, replies,
- * and spreadsheet import/export of lines.
+ * offline.js - Mite's own (offline) suggestions, splitting a task, replies in Talk, days off, and spreadsheet
+ * import/export of lines. (AI was taken out, 24-10-2026; only ✦ new lines for the pools still uses it.)
  */
-const AI_DEFAULT = { ask: 1600, chatter: 1500, split: 700, chat: 2400, lines: 2000 };
-function aiCostLabel(kind) {
-    const t = S.ai && S.ai.tot && S.ai.tot[kind];
-    const avg = t && t.n ? Math.round((t.i + t.o) / t.n) : AI_DEFAULT[kind];
-    return "≈" + fmt(Math.round(avg / 100) * 100);
-}
-function updAiUI() {
-    const on = aiOn(), why = on ? "" : " (AI isn't available in this view)";
-    const set = (id, label, kind) => {
-        const b = $(id);
-        if (!b)
-            return;
-        b.disabled = !on;
-        b.innerHTML = `${label}<span class="cost">${aiCostLabel(kind)}</span>`;
-        b.title = on ? `Uses Claude, about ${aiCostLabel(kind).slice(1)} tokens, and adds new lines to the library` : "AI isn't available in this view";
-    };
-    set("chatAI", "✦ Send with AI", "chat");
-    set("poolGen", "✦ Write 8 more with AI", "lines");
-    const tb = $("talkAI");
-    tb.disabled = !on;
-    tb.title = on ? `Send with AI, about ${aiCostLabel("chat").slice(1)} tokens` : "AI isn't available in this view";
-    if (curTab === "talk")
-        renderTalk();
-    renderTasks();
-}
 function nextUpPick(skipIds = []) {
     const open = openTasks();
     const c = ctx(), late = isLate(c.h), workHours = isWorkHours(c);
@@ -29284,7 +29057,7 @@ function autoFileOld() {
 "use strict";
 /*
  * desk.js - The Desk: everything behind the scenes, on its own full screen, away from the game.
- * An index of rows grouped by what they're for; a row opens that page (Settings, Lines, AI usage,
+ * An index of rows grouped by what they're for; a row opens that page (Settings, Lines,
  * Backup, Fix-it list), with a way back. The pages are the same panes as before, moved in here at load.
  *   openDesk()        the index
  *   openDesk("lines") straight to a page (showPane() sends Desk pages here too)
@@ -29300,20 +29073,18 @@ const CREDITS_HTML = `<div><h2>Credits and inspiration</h2><p class="sub">Small 
 <li><b>New things it read</b>, like code files and test results: 60–120 million tokens, about 2–6 kWh</li>
 <li><b>The conversation re-read</b> at every step, from a cache: about a billion tokens, about 5 kWh</li></ul>
 <p class="sub">Together that's roughly 10–70 kWh, or 4–25 kg of CO₂, most likely around 10 kg: about as much as driving a petrol car 60 km.</p>
-<p class="sub" style="margin-top:8px">How it was worked out: published measurements of large models use about 1 Wh for every 1,000 word pieces (tokens) they write, and far less for text they only read again from a cache. That energy times a typical data centre's electricity (about 0.35 kg CO₂ per kWh). Not included: training the model, making the hardware, and your own device. Using the app now costs almost nothing: it runs on your device, and its AI help is optional.</p></div>
+<p class="sub" style="margin-top:8px">How it was worked out: published measurements of large models use about 1 Wh for every 1,000 word pieces (tokens) they write, and far less for text they only read again from a cache. That energy times a typical data centre's electricity (about 0.35 kg CO₂ per kWh). Not included: training the model, making the hardware, and your own device. Using the app now costs almost nothing: it runs on your device, and it doesn't use AI.</p></div>
 <div><h3>Feedback</h3><p class="sub">Feedback is welcome. Reach me where you got this app.</p></div>`;
 const DESK_PAGES = {
     content: { pane: "tab-content", title: "Preferences" },
     lines: { pane: "tab-lines", title: "Lines" },
     review: { pane: "tab-lines", title: "Lines", anchor: "aiLogHead" },
-    usage: { pane: "tab-data", title: "AI usage", only: "usageSec" },
     data: { pane: "tab-data", title: "Backup and import", only: "dataSec" },
     credits: { pane: "deskCredits", title: "Credits and inspiration" }
 };
 const DESK_GROUPS = () => [
     { title: "You and " + S.settings.pet, rows: [["content", "Preferences", "Names, work days, bedtime, home, Strangeness, talk speed, weather"]] },
     ...(linesOpen() ? [{ title: "Lines", rows: [["lines", "Lines editor", `${Object.keys(POOL_INFO).length} pools: what ${S.settings.pet} says, books, bakes, visitors`], ["review", "New from " + S.settings.pet, "Lines written with AI help, to keep or remove", (S.aiLog || []).length || ""]] }] : []),
-    { title: "AI", rows: [["usage", "AI usage", "Every call, with estimated tokens"]] },
     { title: "Data", rows: [["data", "Backup and import", "Copy your save, import lines, start over"]] },
     { title: "About", rows: [["credits", "Credits and inspiration", "What the wagon is made of, and what it was inspired by"]] }
 ];
@@ -29384,9 +29155,6 @@ function openDesk(page) {
     }
     const pg = DESK_PAGES[deskPage];
     $("deskTitle").textContent = pg.title;
-    for (const id of ["usageSec", "dataSec"]) // (AI usage and the backup share a pane: each page shows only its own part)
-        if ($(id))
-            $(id).hidden = !!pg.only && pg.only !== id;
     curTab = pg.pane === "tab-content" ? "content" : pg.pane === "tab-lines" ? "lines" : pg.pane === "tab-data" ? "data" : curTab;
     renderContent();
     $("desk").scrollTop = 0;
@@ -29859,6 +29627,11 @@ function boot() {
                 S.b.chair = Math.max(1, num(S.b.chair));
         }
     }
+    if (!S.flags.m_rugs) { // the three rugs were always there; now they're in the shop (24-10-2026): a save from before keeps them
+        S.flags.m_rugs = 1;
+        if (!isNew)
+            S.b.rug = S.b.grug = S.b.arug = Math.max(1, num(S.b.arug));
+    }
     if (!S.flags.m_devjots) { // the owner's jotted notes about building this app, done and written up elsewhere (her yes, 24-10-2026): let go, once
         S.flags.m_devjots = 1;
         const gone = new Set(DEV_JOTS);
@@ -29893,7 +29666,6 @@ function boot() {
     foldSections(); // (the Cabinet's, Crafts', Notebook's and Archive's sections: collection.js)
     updSndUI();
     sndUnlock(); // (some places let it start straight away: the Android app, a browser that knows you)
-    updAiUI();
     if (!S.settings.app || S.settings.app === "Mossling")
         S.settings.app = "Small Things";
     document.title = S.settings.app;
@@ -29919,10 +29691,8 @@ async function connect(prevSeen) {
     }
     try {
         const [d, u, s] = await Promise.all([claude.use("db"), claude.use("user"), claude.use("sample")]);
-        if (s) {
-            sample = s;
-            updAiUI();
-        }
+        if (s)
+            sample = s; // (only for ✦ new lines in the Lines editor)
         if (u && u.isOwner)
             try {
                 isOwnerNow = !!(await u.isOwner()); // the artifact's owner sees the line pools (desk.js)
