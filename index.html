@@ -14903,9 +14903,9 @@ function runConvo(line, onEnd) {
     const next = () => {
         if (id !== convoId)
             return;
-        if (i < beats.length && talkHeld()) { // a menu or card is open: the conversation waits for it (a quarter of an hour at most; owner 25-10-2026)
+        if (i < beats.length && talkHeld()) { // a menu or card is open: the conversation waits for it, a minute at most, then ends quietly (owner 25-10-2026: was a quarter of an hour, too long)
             heldSince = heldSince || performance.now();
-            if (performance.now() - heldSince < 15 * 60e3) {
+            if (performance.now() - heldSince < 60e3) {
                 setTimeout(next, 600);
                 return;
             }
