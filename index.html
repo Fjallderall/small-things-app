@@ -4310,7 +4310,9 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 16 (24-10-2026, night)
     "mvmo8m1386jw8", "mvmoc10de47be", "mvmozozs9xrb6", "mvmpflb08yv1a",
     // group 17 (25-10-2026)
-    "mvnp2kcftue10", "mvnp3fingxo3a", "mvnpbhpm0a0tx", "mvnpc03jfzcpf", "mvnpgdi1urlwk"
+    "mvnp2kcftue10", "mvnp3fingxo3a", "mvnpbhpm0a0tx", "mvnpc03jfzcpf", "mvnpgdi1urlwk",
+    // group 19 (25-10-2026)
+    "mvo4yk74ryhaf", "mvo51bqtk3fpr"
 ];
 
 </script>
@@ -7576,9 +7578,9 @@ function nearestHit(p, list) {
  */
 /* behaviours Mite may do while up on the balcony; starting any other one up there walks Mite down first (see pet.start) */
 /* in the sleeping nook; anything else walks Mite back to the wagon first. GARDEN_ONLY: things that only happen there */
-const GARDEN_OK = new Set(["answerphone", "opendrawer", "armread", "readletter", "possumchat", "write", "snailchat", "idle", "wander", "curious", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "stare", "bow", "dizzy", "gwater", "catvisit", "fromGarden", "eat", "drink", "admire", "descend", "nookup", "gpin", "gpossum", "chairSit", "gsmell", "gfread", "fbookchair", "ghang", "ggramo", "ndoorlisten"]);
+const GARDEN_OK = new Set(["answerphone", "opendrawer", "armread", "readletter", "possumchat", "write", "snailchat", "idle", "wander", "curious", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "stare", "bow", "dizzy", "gwater", "catvisit", "fromGarden", "eat", "drink", "admire", "descend", "nookup", "gpin", "gpossum", "chairSit", "gsmell", "gfread", "fbookchair", "ghang", "ggramo", "ndoorlisten", "gbasket"]);
 const GARDEN_ONLY = new Set(["gwater", "write", "armread", "readletter", "opendrawer", "gsmell", "gfread", "fbookchair", "ggramo"]);
-const LOFT_OK = new Set(["ndoorlisten", "ghang", "ggramo", "gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow"]);
+const LOFT_OK = new Set(["ndoorlisten", "ghang", "ggramo", "gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow", "gbasket"]);
 /*
  * Mite's live state.
  *   x, dir       where Mite is and which way it faces
@@ -9339,6 +9341,12 @@ Object.assign(BEH, {
                     speak(line[0].toUpperCase() + line.slice(1) + ".", { ms: 3500 });
             }
         } }),
+    /* the possum's basket, from up on the platform: Mite stands beside it and looks in (a tap on it while Mite's up there) */
+    gbasket: nookUp({ act: () => rnd(5, 7), at: () => basketGeo().right + R * .95, face: -1, fn(b, p, ta, po) {
+            po.lookOverride = { x: -.8, y: .6 };
+            po.mouth = "o";
+            po.eyes = ta > 1 && ta < 1.4 ? "happy" : "open";
+        } }),
     gpin: nookUp({ act: () => 6, at: () => gardenPin ? gardenPin.cx : W * .7, face: 0, fn(b, p, ta, po) {
             po.lookOverride = { x: 0, y: -1 }; // up at the snapshot
             po.mouth = "o";
@@ -9860,16 +9868,16 @@ function drawPet(po) {
     cx.ellipse(x, GY - (po.ground || 0) + 2, r * 1.0 * sh, r * .18 * sh, 0, 0, 7);
     cx.fill();
     if (po.ward) {
-        const k = po.ward;
+        const k = po.ward, wy = GY - (po.ground || 0) + 2; // (at Mite's feet: when it steps into the chalk circle, the ring comes along; jot mvo4yk74ryhaf)
         cx.strokeStyle = "rgba(240,236,220,.75)";
         cx.lineWidth = 2;
         cx.beginPath();
-        cx.ellipse(x, GY + 2, r * 1.6, r * .42, 0, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * k);
+        cx.ellipse(x, wy, r * 1.6, r * .42, 0, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * k);
         cx.stroke();
         if (k >= 1) {
             for (let i = 0; i < 5; i++) {
                 const a = i / 5 * Math.PI * 2 + performance.now() / 2500;
-                const gx = x + Math.cos(a) * r * 1.6, gy = GY + 2 + Math.sin(a) * r * .42;
+                const gx = x + Math.cos(a) * r * 1.6, gy = wy + Math.sin(a) * r * .42;
                 cx.fillStyle = "#efe6cf";
                 cx.fillRect(gx - 1.5, gy - 7, 3, 7);
                 glow(gx, gy - 8, 1.8, "rgba(255,200,110,.7)");
@@ -11418,7 +11426,9 @@ function startObj(kind) {
             const lx = archGeo().deskX1 - R * .55, right = lx + R * 1.45 <= W - R * 1.05;
             extra = { tx: right ? lx + R * 1.45 : lx - R * 1.45, face: right ? -1 : 1 };
         }
-        a = { beh: "admire", revealAt: .5, room: sp.room, extra, show: () => {
+        if (sp.id === "basket" && pet.ground > 0 && view === "garden") // up on the platform already: Mite goes along to it, not down the stairs (jot mvo51bqtk3fpr)
+            extra = {};
+        a = { beh: sp.id === "basket" && pet.ground > 0 && view === "garden" ? "gbasket" : "admire", revealAt: .5, room: sp.room, extra, show: () => {
                 if (sp.id === "closet") { // the closet is the paternoster: every filed week (paternoster.js)
                     showPaternoster(0);
                     return 1.5;
@@ -11496,7 +11506,7 @@ function startObj(kind) {
         };
         return;
     }
-    const stayUp = view === "garden" ? ["gplants", "gpin", "gpossum", "ghang", "ggramo"].includes(kind) : ["sill", "scope"].includes(kind) && own("loft"); // (things up on the platform or balcony: Mite stays up there)
+    const stayUp = view === "garden" ? (["gplants", "gpin", "gpossum", "ghang", "ggramo"].includes(kind) || kind === "look:basket") : ["sill", "scope"].includes(kind) && own("loft"); // (things up on the platform or balcony: Mite stays up there)
     if (pet.ground > 0 && (view === "room" || view === "garden") && !stayUp) {
         pet.start("descend");
         const cur0 = { kind, shown: false, b: pet.b };
