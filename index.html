@@ -193,6 +193,16 @@ ul.drawers{list-style:none;padding:0;margin:6px 0}
 .heard p{margin:2px 0;font-size:14px;line-height:1.45}
 .heard p b{font-weight:700;margin-right:6px}
 .heard p.o{font-style:italic}
+.heard p.n{color:var(--muted);font-size:13px}
+#logList{max-height:none}
+.cardart{image-rendering:pixelated;image-rendering:crisp-edges;flex:none}
+.cardread{display:flex;gap:14px;align-items:flex-start;margin:6px 0 10px}
+.cardread h3{margin:0 0 6px}
+.cards{display:flex;flex-direction:column;gap:8px}
+.cardrow{display:flex;gap:10px;align-items:flex-start}
+.cardrow p{margin:0;font-size:14px;line-height:1.45}
+.daysoff{display:flex;flex-direction:column;gap:10px;margin:8px 0}
+.daysoff .field input{width:100%}
 body.pixel .heard section{border:2px solid var(--line)}
 body.pixel .heard p{font-family:var(--f-read);font-size:15px;line-height:22px}
 .word{background:var(--sunk);border-radius:8px;padding:5px 9px;font-size:13px}
@@ -825,18 +835,6 @@ body.editing #addForm{display:none}
 
     <div class="pane" id="tab-care" role="tabpanel" hidden><div id="careBody" class="pane" style="padding:0"></div></div>
 
-    <div class="pane" id="tab-talk" role="tabpanel" hidden>
-      <div><h2>Talk to <span class="pn">Mite</span></h2><p class="sub" id="talkInfo"></p></div>
-      <ul class="chatlog" id="chatLog"></ul>
-      <form class="row" id="chatForm" autocomplete="off"><input type="text" class="inline-in" id="chatIn" maxlength="600" placeholder="Tell Mite something" aria-label="Message"><button class="btn primary" type="submit">Send</button></form>
-      <div><h3><span class="pn">Mite</span> remembers</h3><p class="sub">Things <span class="pn">Mite</span> picked up from your conversations, used in later chats and suggestions. Remove anything you don't want kept.</p></div>
-      <ul class="memlist" id="memList"></ul>
-      <div><h3>Said recently</h3><p class="sub">Tap a speech bubble to keep it on screen; tap again to let it go.</p></div>
-      <ul class="memlist" id="saidList"></ul>
-      <div><h3>Coming up</h3><p class="sub">Things <span class="pn">Mite</span> plans to ask you about on a later day.</p></div>
-      <ul class="memlist" id="fuList"></ul>
-    </div>
-
     <div class="pane" id="tab-grow" role="tabpanel" hidden>
       <div>
         <h2>The wagon</h2>
@@ -885,6 +883,8 @@ body.editing #addForm{display:none}
         <div class="drawers" id="altered"></div></details>
       <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
         <div class="glimpses" id="glimpseList"></div></details>
+      <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>Midnightcat's cards</h3><span class="seccount" id="cnt-cab-cards"></span></summary><p class="sub">The cards she's laid out, and the ones she drew for you. While her cards are out on the floor, tap her for a reading (three a day).</p>
+        <div class="cards" id="cardList"></div></details>
       <details class="shopsec colsec" data-sec="cab-origami" open><summary><h3>Adorbigami</h3><span class="seccount" id="cnt-cab-origami"></span></summary><p class="sub">Folded by the ghost at the window. They hang above it on a string.</p>
         <div class="words" id="origamiList"></div></details>
       <details class="shopsec colsec" data-sec="cab-fest" open><summary><h3>Festivals</h3><span class="seccount" id="cnt-cab-fest"></span></summary><p class="sub">What <span class="pn">Mite</span> has learned about the festivals that came by. Tap one to read it again.</p>
@@ -909,13 +909,16 @@ body.editing #addForm{display:none}
 
     <div class="pane" id="tab-notebook" role="tabpanel" hidden>
       <div><h2><span class="pn">Mite</span>'s notebook</h2><p class="sub">What <span class="pn">Mite</span> noticed today, written down on its own. A fresh page every day, at the hour set under Settings (0500 to start with).</p></div>
-      <details class="shopsec colsec" data-sec="nb-heard" open><summary><h3>Overheard</h3></summary><p class="sub">The last 50 things said: <span class="pn">Mite</span> on its own, and conversations with the snail, the cat, the possum and visitors.</p>
-        <div class="heard" id="heard"></div></details>
       <details class="shopsec colsec" data-sec="nb-words" open><summary><h3>Words <span class="pn">Mite</span> invented</h3></summary>
         <div class="words" id="words"></div></details>
       <details class="shopsec colsec" data-sec="nb-terms" open><summary><h3>Archival terms</h3><span class="seccount" id="cnt-nb-terms"></span></summary><p class="sub">Explained by <span class="pn">Mite</span> while it works in the archive, one now and then.</p>
         <dl class="terms" id="termList"></dl></details>
       <ul class="notes" id="notes"></ul>
+    </div>
+
+    <div class="pane" id="tab-log" role="tabpanel" hidden>
+      <div><h2>Log</h2><p class="sub">The last 50 things that were on screen: what <span class="pn">Mite</span> and the others said, and the little notes that popped up. Newest first.</p></div>
+      <div class="heard" id="logList"></div>
     </div>
 
     <div class="pane" id="tab-files" role="tabpanel" hidden>
@@ -944,7 +947,7 @@ body.editing #addForm{display:none}
       </div>
       <div class="field">Workdays<div class="days" id="setWork"></div></div>
       <div class="field">Office days<div class="days" id="setOffice"></div></div>
-      <div class="field"><span>Days you told <span class="pn">Mite</span></span><ul class="schedlist" id="schedList"></ul><small class="sub">Tell <span class="pn">Mite</span> in Talk: "friday off", "holiday 28-10-2026 to 01-11-2026", "working saturday". Only those days change.</small></div>
+      <div class="field"><span>Days you told <span class="pn">Mite</span></span><ul class="schedlist" id="schedList"></ul><button class="btn" type="button" id="schedAdd">Add days off…</button><small class="sub">A day off, a holiday or an extra working day. Only those days change. (Also under <span class="pn">Mite</span>, Talk, Days off.)</small></div>
       <p class="sub" id="setSaved" aria-live="polite">Changes save by themselves.</p>
 
     </div>
@@ -1014,7 +1017,6 @@ body.editing #addForm{display:none}
 <div class="scrim" id="scrim"></div>
 <div class="nextup" id="nextUp" hidden><button class="check" id="nuCheck" aria-label="Done"></button><div class="nu-text"><small id="nuMeta">next up</small><span id="nuTitle"></span></div><button class="nu-skip" id="nuSkip">Not now</button><button class="nu-skip" id="nuClose" aria-label="Close">✕</button></div>
 <div class="tray" id="tray" hidden></div>
-<form class="talkbar" id="talkBar" hidden autocomplete="off"><input id="talkIn" maxlength="600" placeholder="Tell Mite something" aria-label="Message"><button class="btn primary" type="submit">Send</button><button type="button" class="btn" id="talkHist">History</button></form>
 <nav class="dock" aria-label="Game controls">
   <button type="button" class="dockbtn arrow" id="lookGarden" aria-label="Look left" hidden><svg viewBox="0 0 7 9" width="21" height="27" shape-rendering="crispEdges" aria-hidden="true"><path d="M5 0h1v9H5zM4 1h1v7H4zM3 2h1v5H3zM2 3h1v3H2zM1 4h1v1H1z" fill="currentColor"/></svg></button>
   <button class="dockbtn" id="dMite" aria-label="Mite: care, talk, ask">♡<span class="lbl pn">Mite</span></button>
@@ -1091,6 +1093,7 @@ const POOL_INFO = {
     late: "After bedtime", after_work: "After work hours on a workday", day_off: "On non-workdays",
     buy: "Bought something ({item})", buy_rugcol: "Bought a new rug colour ({col})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
+    catcards: "Midnightcat's cards (like tarot cards, with names of their own): Name | sign (moon eye key door candle moth bell hand spiral star bird cup lantern thread mask crown tree blade wave) | #colour | what it means",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumhello: "The possum's first visit: it comes in for the first cookies, introduces itself politely and asks to stay (M: / P:, {possum} is its name)", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum something from the tray ({possum} is its name, {bake}: what it gets, e.g. cookie, slice of pie)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double / sheet / coat / lantern)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
     observe: "A resident sits looking at something, then talks about it ({thing}): who | A: ... / B: ... (who: cat, possum, snail or any; A is the one looking, B whoever answers: Mite or another resident)",
     observe_solo: "A resident looking at something, to itself ({thing}): who | text",
@@ -1598,6 +1601,64 @@ const DEF = {
             "{you} had finished everything on the list. Then you made a new list that just said: rest. And did it.",
             "We were in a rowing boat on the canal. You did the rowing, {you}. I did the pointing.",
             "{you} found a door in the wagon I'd never seen. Behind it was a room with a very comfortable chair. You let me have it."
+        ],
+        catcards: [
+            "Awakening | eye | #e8d06b | Something in you is sitting up and stretching. Let it. It's been asleep long enough.",
+            "Boundaries | eye | #ece6d4 | A circle drawn kindly is still a circle. Keep one line today, and keep it gently.",
+            "Nature | tree | #5b8a4a | Go outside, or at least open a window. You're an animal too, mostly.",
+            "Patience | door | #8a6a4a | What you're waiting on is nearly ready. Don't knock twice.",
+            "The Professor | key | #3f6fa8 | There's someone who knows. Ask them. Asking is a skill, not a weakness.",
+            "Release | bird | #a8c8e0 | Open your paw. Whatever you're gripping is tired too.",
+            "Sacrifice | candle | #b6543c | Something small given up now makes room for something you'll want later.",
+            "Surrender | wave | #3f6fa8 | Stop rowing for a moment. The current knows where it's going.",
+            "Higher Perspective | star | #e8d06b | Climb onto the bookshelf, so to speak. From up there it's smaller.",
+            "Truth | eye | #f4ecd8 | You already know. You just haven't said it out loud yet.",
+            "Shadow | hand | #6b4a84 | The part of you you'd rather not look at is only hungry. Feed it something kind.",
+            "Dreams | moon | #a77cb8 | Write down what you dreamt before it leaves. It came a long way to tell you.",
+            "Transmute | cup | #c99a3a | Lead into something better. Not gold, maybe. Something useful will do.",
+            "Collaboration | hand | #5b8a4a | Two paws on the same jar lid. It opens faster that way.",
+            "Versatility | spiral | #5b8a4a | Bend. The willow does, and it's still here.",
+            "Power | crown | #b6543c | You have more of it than you're using. Use a little more, carefully.",
+            "Fury | blade | #b6543c | Your anger is information. Read it, then put it somewhere safe.",
+            "Labour | hand | #a8743f | The work is the work. Do one piece of it, then sit down.",
+            "The Apex | star | #e8b04a | You're nearer the top than it feels. Look down once, then keep going.",
+            "Destruction | blade | #2a1d3a | Something has to come down so the next thing can stand. Let it fall where it won't hurt anyone.",
+            "Movement | bird | #a8743f | Stuck things move when you do. A walk counts.",
+            "Curiosity | eye | #5b8a4a | Open the drawer. Not the dangerous one. That one, there.",
+            "Wealth | cup | #e8b04a | Count what you have, not just the coins. The list is longer than you'd think.",
+            "Wisdom | bird | #7a5a32 | An old crow knows: don't answer straight away. Sleep on it.",
+            "Companion | hand | #e3a0b2 | Someone walks beside you, even on the quiet days. Look left.",
+            "Status | crown | #a77cb8 | Titles are hats. Nice hats. Still hats.",
+            "Compassion | cup | #e3a0b2 | Be as kind to yourself as you would be to a damp kitten.",
+            "Storyteller | lantern | #e8b04a | Tell it the way it happened to you. Someone needs to hear it like that.",
+            "Creativity | spiral | #e8d06b | Make something useless today. It's not useless.",
+            "Trust | key | #5b8a4a | Lean a little. The floor is stronger than you think.",
+            "Reflect | moon | #c8c8e0 | Look back, but don't stay there. The past is a library, not a house.",
+            "The Alchemist | cup | #a77cb8 | You're turning one thing into another. It's messy in the middle. That's allowed.",
+            "Ancestors | tree | #7a5a32 | Someone long ago got through worse with less. They'd be glad of you.",
+            "Ascension | star | #f4ecd8 | One stair at a time, and suddenly you're on the landing.",
+            "Masks | mask | #6b4a84 | You're allowed to take it off at home. Nobody here minds your real face.",
+            "Death | moth | #2a1d3a | An ending, not a disaster. The old leaf falls so the new one has room.",
+            "Exploration | door | #3f6fa8 | Take the other turning, just once. Come home and tell me about it.",
+            "Fate | thread | #b6543c | Some threads are already tied. You still choose what you knit with them.",
+            "Love | cup | #e3a0b2 | It's here, in small ways. The warm cup, the saved seat. Notice it.",
+            "The Creator | hand | #e8d06b | Start it. The first try is supposed to be bad. That's how it knows it's first.",
+            "The Observer | eye | #3f6fa8 | Watch a little longer before you act. The pattern's nearly showing.",
+            "The Outlaw | mask | #b6543c | Break one small silly rule today. The kind that hurts nobody.",
+            "Paradox | spiral | #6b4a84 | Both things are true. You don't have to choose which one tonight.",
+            "The Pillar | door | #ece6d4 | You hold more up than you know. Lean on something yourself, for once.",
+            "Revolution | wave | #b6543c | A big change, coming slowly. Pack a small bag of good habits.",
+            "Expertise | key | #c99a3a | You know more about this than you're admitting. Say it like you know it.",
+            "The Collector | cup | #7a5a32 | Keep the good small things. Let the rest go out with the tide.",
+            "The Sovereign | crown | #e8b04a | Your day, your rules. Make one decision just because you can.",
+            "Underworld | moon | #2a1d3a | Go down into it if you have to. Bring a lantern and a snack, and come back up.",
+            "The Universe | star | #a77cb8 | Everything's connected, which is a lot. Start with the bit in front of you.",
+            "Void | moon | #10142a | Empty isn't nothing. It's room.",
+            "The Warrior | blade | #a8743f | Stand up for the small thing. It doesn't need a sword, just a firm voice.",
+            "The Weaver | thread | #5b8a4a | Pull the loose threads together. It'll look like something soon.",
+            "Conflict | blade | #6b4a84 | Two things want different things. Hear both out before you pick.",
+            "Strength | hand | #b6543c | Soft strength counts. Getting up again is the whole trick.",
+            "Cooperation | bird | #5b8a4a | Many small birds move a big flock. Do your bit and trust theirs."
         ],
         catconvo: [
             "M: Hello, Midnightcat. / C: Mrrp. / M: Did you sleep well? / C: I slept in three places at once. Mrow. / M: That sounds tiring. / C: It was very efficient.",
@@ -3757,7 +3818,7 @@ const DEF = {
             "The Velvet Society: Rules and Customs | Rule one is a secret. So is rule two. I'm on rule nine. Rule nine is lovely.",
             "Fog, and What It Hides | Mostly lampposts. Not always lampposts.",
             "The Lusty Argonian Maid, Volume 1 | Borrowed from a very cold province. I'm only reading it for the plot.",
-            "The Real Barenziah | Five volumes. The unofficial edition. I've hidden it behind the dictionary.",
+            "The Real Countess Underhill | Five volumes. The unofficial edition. I've hidden it behind the dictionary.",
             "36 Lessons of Vivec | I've read lesson one thirty-six times. Still on lesson one.",
             "Oghma Infinium | It says reading it changes you. I skimmed. I feel slightly taller.",
             "The Black Arrow | A mystery. I guessed the ending. I'm still proud of it.",
@@ -4284,7 +4345,7 @@ const ACH = [
     ["declass", "Declassified", "Reveal 10 redactions", s => Object.keys(S.revealed).length >= 10], ["moon", "Full moon witness", "Be here on a full-moon night", s => S.flags.moon],
     ["fed10", "Snack enjoyer", "Feed 10 snacks", s => S.care.fed >= 10], ["hydrated", "Hydrated", "Log water 6 times in one day", s => S.flags.hydrated],
     ["swept50", "Spotless", "Sweep 50 bits of mess", s => S.care.swept >= 50], ["games10", "Player one", "Play 10 games", s => S.care.games >= 10],
-    ["talk1", "We talked", "Talk to your pet", s => S.flags.chat], ["mem10", "Memory palace", "Keep 10 memories", s => S.memories.length >= 10],
+    ["talk1", "We talked", "Talk to your pet", s => S.flags.chat],
     ["rested", "Well rested", "Lights out near bedtime, back in the morning", s => S.flags.rested],
     ["fx1", "Root cause", "Finish a task from the fix-it list", s => (S.flags.fixes || 0) >= 1], ["fx5", "Quietly better", "Finish 5 fix-it tasks", s => (S.flags.fixes || 0) >= 5],
     ["fn10", "Field notes", "Jot down 10 things", s => S.tasks.filter(t => t.jot).length >= 10]
@@ -4312,7 +4373,9 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 17 (25-10-2026)
     "mvnp2kcftue10", "mvnp3fingxo3a", "mvnpbhpm0a0tx", "mvnpc03jfzcpf", "mvnpgdi1urlwk",
     // group 19 (25-10-2026)
-    "mvo4yk74ryhaf", "mvo51bqtk3fpr"
+    "mvo4yk74ryhaf", "mvo51bqtk3fpr",
+    // group 20 (25-10-2026)
+    "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
 ];
 
 </script>
@@ -4324,7 +4387,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -4533,6 +4596,7 @@ function sanitizeState(raw) {
         if (!BAD_KEYS.has(k))
             o.eyesGone[sid(k).slice(0, 12)] = num(s.eyesGone[k]);
     o.eyes = arr(s.eyes, 24).map(e => ({ k: sid(e.k).slice(0, 12), at: num(e.at), from: str(e.from, 20) })).filter(e => e.k); // the eye jars (eyes.js)
+    o.cards = arr(s.cards, 300).map(c => ({ k: str(c && c.k, 60), at: num(c && c.at), you: c && c.you ? 1 : 0 })).filter(c => c.k); // Midnightcat's cards that came up (cards.js)
     o.glimpses = arr(s.glimpses, 300).map(g => ({ k: str(g && g.k, 80), at: num(g && g.at) })).filter(g => g.k); // what the chalk circle has shown (circle.js)
     o.mice = arr(s.mice, 20).map(m => ({ n: str(m && m.n, 30).trim(), at: num(m && m.at), kin: m && m.kin ? 1 : 0, told: m && m.told ? 1 : 0 })).filter(m => m.n); // mice who've visited; kin: the circle has shown its found family, told: it knows Mite saw (visitors.js, circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
@@ -4846,6 +4910,13 @@ function mergeStates(a, b) {
             if (g && g.k && (!m.has(g.k) || num(g.at) < m.get(g.k).at))
                 m.set(g.k, { k: g.k, at: num(g.at) });
         o.glimpses = [...m.values()].sort((x, y) => x.at - y.at).slice(-300);
+    }
+    { // Midnightcat's cards: every draw on either side, once
+        const m = new Map();
+        for (const c of [...(a.cards || []), ...(b.cards || [])])
+            if (c && c.k)
+                m.set(c.k + "|" + num(c.at), { k: c.k, at: num(c.at), you: c.you ? 1 : 0 });
+        o.cards = [...m.values()].sort((x, y) => x.at - y.at).slice(-300);
     }
     { // the mice who've visited: everyone either side met, with what the circle showed and what was said
         const m = new Map();
@@ -5644,6 +5715,50 @@ function parseLine(raw) {
     return m ? { conds: m[1].trim().split(/\s+/).filter(Boolean).map(s => s.toLowerCase()), text: raw.slice(m[0].length) } : { conds: [], text: raw.trim() };
 }
 const recent = [];
+/* a conversation line from a pool ("M: … / S: …"), weighted like compose: [rare] and other conditions count, and one
+   heard lately (in the Log, S.heard, which is saved) or picked lately is much less likely. A plain choice() let a rare
+   line come round as often as any other (owner, 25-10-2026: the heron one) */
+function convoPick(key, keep) {
+    const c = ctx(), heardT = new Set((S.heard || []).map(h => String(h.t).trim()));
+    const cands = [];
+    for (const raw of pool(key)) {
+        const { conds, text } = parseLine(raw);
+        if (!text.trim() || (keep && !keep(text)))
+            continue;
+        let w = 1, ok = true;
+        for (const k of conds) {
+            const r = condOk(k, c);
+            if (r === false) {
+                ok = false;
+                break;
+            }
+            if (typeof r === "number")
+                w *= r;
+        }
+        if (!ok)
+            continue;
+        const first = text.split(" / ").map(x => x.replace(/^\s*[A-Z]:\s*/, "").trim());
+        if (first.some(x => x.length > 12 && [...heardT].some(h => h.includes(x.replace(/\{\w+\}/g, "").slice(0, 24)))))
+            w *= .05; // (said on screen not long ago)
+        if (recent.includes(raw))
+            w *= .06;
+        cands.push({ raw, text, w });
+    }
+    if (!cands.length)
+        return null;
+    let t = cands.reduce((a, b) => a + b.w, 0) * Math.random(), pick = cands[0];
+    for (const x of cands) {
+        t -= x.w;
+        if (t <= 0) {
+            pick = x;
+            break;
+        }
+    }
+    recent.push(pick.raw);
+    if (recent.length > 40)
+        recent.shift();
+    return pick.text;
+}
 function compose(key, extra = {}) {
     const c = Object.assign(ctx(), extra);
     const cands = [];
@@ -5970,14 +6085,9 @@ function speak(text, opts = {}) {
     speakWhole = !!opts.whole && !thinking;
     if (speakWhole)
         speakReadUntil = performance.now() + typeMs + readMs(text) * .8;
-    if (!thinking && text !== "…" && S && Array.isArray(S.said) && (!S.said[0] || S.said[0].t !== text)) {
-        S.said.unshift({ t: text, at: Date.now() });
-        if (S.said.length > 40)
-            S.said.length = 40;
-        if (curTab === "talk" && typeof renderSaid === "function")
-            renderSaid();
+    if (!thinking && text !== "…" && S) {
         if (!emote && typeof heard === "function")
-            heard(S.settings.pet, text, Date.now()); // (Overheard keeps everything said, not only conversations)
+            heard(S.settings.pet, text, Date.now()); // (the Log, in the Satchel: the last 50 things on screen)
     }
 }
 function hint(key, text, ms = 7500) {
@@ -5989,12 +6099,6 @@ function hint(key, text, ms = 7500) {
     speak(text, { ms });
     saveSoon();
     return true;
-}
-function renderSaid() {
-    const el = $("saidList");
-    if (!el)
-        return;
-    el.innerHTML = (S.said || []).slice(0, 25).map(x => `<li><span>${esc(x.t)}</span><span class="sync">${hhmm(new Date(x.at))}</span></li>`).join("") || `<li><span class="sub">Nothing yet.</span></li>`;
 }
 
 </script>
@@ -7111,6 +7215,8 @@ function note(text) {
         renderNotebook();
 }
 function toast(text, { undo, cls, act, stay, who } = {}) {
+    if (typeof heard === "function")
+        heard(who || "", text); // (the Log keeps what popped up too)
     const el = document.createElement("div");
     el.className = "toast" + (cls ? " " + cls : "");
     const sp = document.createElement("span");
@@ -8439,8 +8545,7 @@ const BEH = {
                 }
                 if (ta > 2) {
                     b.petted = 1;
-                    const c = ctx(), lines = pool("catconvo").map(parseLine).filter(x => x.conds.every(k => condOk(k, c) !== false));
-                    const secs = runConvo(lines.length ? choice(lines).text : "M: Hello, Midnightcat. / C: Mrrp.", () => {
+                    const secs = runConvo(convoPick("catconvo") || "M: Hello, Midnightcat. / C: Mrrp.", () => {
                         p.bt = p.dur;
                     });
                     if (b.onReveal && !b.revealed) {
@@ -8479,8 +8584,7 @@ const BEH = {
             if (!b.started) {
                 b.started = 1;
                 const c = ctx();
-                const lines = pool("snailtalk").map(parseLine).filter(x => x.conds.every(k => condOk(k, c) !== false));
-                const l = lines.length ? choice(lines).text : "M: Hello, {snail}. / S: …Hello.";
+                const l = convoPick("snailtalk") || "M: Hello, {snail}. / S: …Hello.";
                 const secs = b.line ? runConvo(b.line, () => {
                     snailPause = false;
                     p.bt = p.dur;
@@ -14705,14 +14809,20 @@ function snailSay(text, ms, who, emote, fromQ) {
 function b2Name(who) {
     return who === "cat" ? CAT_NAME : who === "possum" ? possumName() : who === "guest" ? (guest ? guest.name : "Visitor") : who === "snail" ? snailName() : String(who || "");
 }
+/* the Log (Satchel): the last 50 things that were on screen, whoever said them (w), or a note that popped up (w "").
+   c groups a conversation's lines. The same thing again within a few seconds is the same thing on screen */
 function heard(w, t, c) {
     S.heard = (S.heard || []);
-    S.heard.push({ at: Date.now(), c, w, t: String(t).slice(0, 400) });
+    t = String(t).slice(0, 400);
+    const last = S.heard[S.heard.length - 1];
+    if (!t.trim() || (last && last.t === t && last.w === (w || "") && Date.now() - last.at < 15e3))
+        return;
+    S.heard.push({ at: Date.now(), c, w: w || "", t });
     if (S.heard.length > 50)
         S.heard.splice(0, S.heard.length - 50);
     saveSoon();
-    if (curTab === "notebook")
-        renderHeard();
+    if (curTab === "log")
+        renderLog();
 }
 /* who's speaking in a conversation line: M Mite, S the snail, V a visitor, C Midnightcat, P the possum */
 const WHO_KIND = { S: "snail", V: "guest", C: "cat", P: "possum" };
@@ -15435,9 +15545,7 @@ function drawRaccoon(g, now) {
     }
 }
 function pickVisitorLine() {
-    const c = ctx();
-    const lines = pool(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk").map(parseLine).filter(x => x.conds.every(k => condOk(k, c) !== false) && (own("snail") || !/\{snail\}/.test(x.text)));
-    return lines.length ? choice(lines).text : "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
+    return convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
 }
 
 </script>
@@ -19019,6 +19127,10 @@ function catTap() {
         heard(CAT_NAME, line, Date.now());
         return;
     }
+    if (catCardsOut()) { // her cards are out: she reads one for you (cards.js)
+        catReading();
+        return;
+    }
     if (!objQ.cur && pet.beh !== "sleep" && pet.beh !== "catvisit" && !S.lightsOut && !(cat.room === "room" && cat.g > 0 && cat.ph === "jump")) { // Mite comes over for a chat
         if (!S.flags.tap_cat) {
             S.flags.tap_cat = 1;
@@ -19422,7 +19534,7 @@ function drawAnimals(now) {
     if (guestOut()) // a visitor out on the floor (visitors.js)
         withRoomLight("room", () => drawLayered(() => drawGuest(guest, now)));
     if (catOut())
-        withRoomLight(cat.room, () => drawCat(k, now)); // Midnightcat, out on the floor in front of Mite
+        withRoomLight(cat.room, () => (drawCat(k, now), drawCatCards(k))); // Midnightcat, out on the floor in front of Mite
 }
 /* is the possum up on the nook's platform (or its stairs)? Then it walks behind the railing: drawn before it (loop.js) */
 function possumUp() {
@@ -19445,7 +19557,7 @@ function drawScene(now, dt) {
     drawWallNotes(); // Mite's sticky notes on the walls (pastimes.js)
     withRoom("room", () => drawYarnBall(sceneDark())); // the wool she plays with, on the wagon floor (cat.js), behind Mite
     if (!catOut())
-        withRoomLight(cat.room, () => drawCat(sceneDark(), now)); // Midnightcat walks behind Mite (not clipped: she crosses between rooms)
+        withRoomLight(cat.room, () => (drawCat(sceneDark(), now), drawCatCards(sceneDark()))); // Midnightcat walks behind Mite (not clipped: she crosses between rooms)
     return sky || other;
 }
 /* the screen changed size (full screen, a dragged window edge): positions are in pixels, so the view, Mite and the
@@ -21075,8 +21187,8 @@ const POSSUM_SPRITES = { // small: about the size of Midnightcat's head and shou
         "p.gggggggggwwp",
         ".pp..........."]
 };
-function possumU() {
-    return Math.max(1, Math.round(R * .75 / 10 / PX)) * PX;
+function possumU() { // the same art pixel as Midnightcat's: rounded on its own it came out twice as big at some sizes (owner, 25-10-2026)
+    return catU();
 }
 function possumSprite() {
     const p = possum;
@@ -23855,6 +23967,211 @@ function renderGlimpses() {
 }
 
 </script>
+<script>/* js/scene/cards.js */
+"use strict";
+/*
+ * cards.js - Midnightcat's cards (owner, 25-10-2026): a deck like a tarot deck, with names of its own (lines:
+ * catcards, "Name | sign | #colour | meaning"). Now and then, sitting on the floor, she lays one out and says what
+ * it means; while her cards are out, a tap on her (or on them) and she turns one over for you (a card: three a day).
+ * Every card that came up is kept in S.cards and listed in the Cabinet.
+ *   catCards           the cards on the floor beside her just now { k, room, x, z, until } (not saved)
+ *   cardList()         the deck, from the lines
+ *   catCardTick(now)   every frame (loop.js): when she lays one out by herself
+ *   drawCatCards(dk)   with Midnightcat (camera.js), and the cards join her tap area
+ *   catCardsOut()      are they out (a tap on her is a reading)
+ *   catReading()       she reads one for you
+ */
+const CARD_DAY = 3; // readings for you a day
+/* the signs, 7×9 (made up, after the chalk circle's: a moon, an eye, a key, a door, a candle, a moth, a bell, a hand,
+   a spiral, a star, a bird, a cup, a lantern, a thread) */
+const CARD_SIGNS = {
+    moon: ["..###..", ".##....", "##.....", "##.....", "##.....", "##.....", ".##....", "..###..", "......."],
+    eye: [".......", ".......", "..###..", ".#...#.", "#..#..#", ".#...#.", "..###..", ".......", "......."],
+    key: ["..###..", ".#...#.", "..###..", "...#...", "...#...", "...##..", "...#...", "...##..", "......."],
+    door: [".#####.", ".#...#.", ".#...#.", ".#...#.", ".#..##.", ".#...#.", ".#...#.", ".#...#.", "#######"],
+    candle: ["...#...", "..#.#..", "...#...", "..###..", "..###..", "..###..", "..###..", "..###..", ".#####."],
+    moth: [".......", "##...##", "###.###", "#######", ".##.##.", "##...##", "#.....#", ".......", "......."],
+    bell: ["...#...", "..###..", ".#####.", ".#####.", ".#####.", "#######", "...#...", ".......", "......."],
+    hand: ["..#.#..", ".##.##.", ".#####.", ".#####.", "######.", ".#####.", "..####.", "..###..", "......."],
+    spiral: [".#####.", "#.....#", "#.###.#", "#.#.#.#", "#.#...#", "#.####.", "#......", ".######", "......."],
+    star: ["...#...", "...#...", "..###..", "#######", "..###..", ".##.##.", ".#...#.", ".......", "......."],
+    bird: [".......", ".##....", "####...", ".####..", "..#####", "...####", "....#..", "...#.#.", "......."],
+    cup: [".......", "#######", "#.....#", ".#...#.", "..###..", "...#...", "...#...", "..###..", "......."],
+    lantern: ["...#...", "..###..", ".#####.", ".#.#.#.", ".#####.", ".#.#.#.", ".#####.", "..###..", "......."],
+    thread: ["......#", ".....#.", "....#..", "..##...", ".#..#..", "#....#.", ".#....#", "..##.#.", "....#.."],
+    mask: [".......", "#######", "#.###.#", "#######", "#######", ".#####.", "..#.#..", "...#...", "......."],
+    crown: [".......", "#..#..#", "#.###.#", "#######", "#######", "#.#.#.#", "#######", ".......", "......."],
+    tree: ["..###..", ".#####.", "#######", ".#####.", "..###..", "...#...", "...#...", ".#.#.#.", "#..#..#"],
+    blade: ["...#...", "...#...", "...#...", "...#...", "...#...", ".#####.", "...#...", "...#...", "..###.."],
+    wave: [".......", ".......", ".##..##", "#..##..", ".......", ".##..##", "#..##..", ".......", "......."]
+};
+let catCards = null, catCardNext = 0, cardsHit = null;
+function cardList() {
+    return pool("catcards").map(l => String(l).split("|").map(x => x.trim())).filter(x => x[0] && x[3]).map(([n, sg, c, m]) => ({ k: n, n, sign: CARD_SIGNS[sg] ? sg : "star", col: /^#[0-9a-f]{6}$/i.test(c) ? c : "#a77cb8", m }));
+}
+const cardOf = k => cardList().find(c => c.k === k);
+function cardsToday() {
+    const t = actDay();
+    return (S.cards || []).filter(c => c.you && actDay(c.at) === t).length;
+}
+/* a card: one that hasn't come up yet if there is one, and not the one on the floor */
+function pickCard(not) {
+    const all = cardList().filter(c => c.k !== not), seen = new Set((S.cards || []).map(c => c.k));
+    const fresh = all.filter(c => !seen.has(c.k));
+    return fresh.length && Math.random() < .7 ? choice(fresh) : choice(all);
+}
+function cardKeep(k, you) {
+    S.cards = (S.cards || []).concat([{ k, at: Date.now(), you: you ? 1 : 0 }]).slice(-300);
+    saveSoon();
+}
+/* where she could lay them out: sitting on the floor, in a room you're looking at, not in the middle of a ritual */
+function catCardsCan() {
+    return cat.ready && cat.ph === "sit" && cat.g === 0 && cat.tg === 0 && !catInCircle() && !catNight() && !S.lightsOut && roomVisible(cat.room) && cardList().length > 0;
+}
+function catCardsOut() {
+    return !!catCards && cat.room === catCards.room && Math.abs(cat.x - catCards.x) < catSize() * 2.2;
+}
+function catCardTick(now) {
+    if (catCards && (now > catCards.until || !catCardsOut() || cat.ph === "walk" || cat.ph === "jump")) // she's picked them up again
+        catCards = null;
+    if (!catCardNext)
+        catCardNext = now + rnd(3, 6) * 60e3; // (the first a little while after opening)
+    if (now < catCardNext || catCards || talkHeld() || pet.beh === "sleep")
+        return;
+    if (!catCardsCan()) {
+        catCardNext = now + 30e3; // (not now: soon)
+        return;
+    }
+    catCardNext = now + rnd(14, 24) * 60e3 * paceK();
+    const c = pickCard();
+    if (!c)
+        return;
+    cardsOut(c, now);
+    cardKeep(c.k, 0);
+    const line = `${c.n}. ${c.m}`;
+    snailSay(line, clamp(3500 + line.length * 45, 5000, 11000), "cat");
+    heard(CAT_NAME, line, Date.now());
+}
+/* her cards on the floor beside her, the top one face up: they stay out a few minutes while she sits */
+function cardsOut(c, now) {
+    const side = cat.x > W * .55 ? -1 : 1, w = 7 * catU(); // (x: the middle of the pair, deck and card, clear of her)
+    catCards = { k: c.k, room: cat.room, x: clamp(cat.x + side * (catSize() * .75 + w * 1.25), R, W - R), z: cat.z, until: now + 4 * 60e3 };
+    cat.until = Math.max(cat.until, now + 3 * 60e3); // she stays with them
+}
+/* a tap on her while her cards are out: she turns one over for you */
+function catReading() {
+    if (cardsToday() >= CARD_DAY) {
+        const line = choice(["The deck's tired. Cards need sleep too. Tomorrow.", "Three is plenty for one day. More than that and they start gossiping.", "No more today. Ask again tomorrow, and mean it."]);
+        snailSay(line, clamp(3500 + line.length * 45, 4500, 8000), "cat");
+        heard(CAT_NAME, line, Date.now());
+        return;
+    }
+    const c = pickCard(catCards && catCards.k);
+    if (!c)
+        return;
+    cardsOut(c, performance.now());
+    cardKeep(c.k, 1);
+    sfx("low");
+    const left = CARD_DAY - cardsToday();
+    heard(CAT_NAME, `(for you) ${c.n}. ${c.m}`, Date.now());
+    openRitual(`${CAT_NAME}'s cards`, choice(["She turns one over for you.", "She taps the deck twice, then turns the top card.", "She looks at you a long moment, then turns one over."]),
+        `<div class="cardread"><img class="cardart" src="${cardArt(c)}" alt="" width="84" height="120"><div><h3>${esc(c.n)}</h3><p class="glimpse">${esc(c.m)}</p></div></div><p class="ritmeta">${left ? `She'll read ${left} more today.` : "That's the last one today."} Every card that's come up is in the Cabinet.</p>`,
+        [["Close", "primary", closeRitual]]);
+}
+/* ---------- the pictures ---------- */
+/* the card, 14×20 art pixels: a dark frame, cream inside, the sign in the card's colour, a dot in each corner */
+function cardPixels(c) {
+    const W0 = 14, H0 = 20, px = [];
+    for (let y = 0; y < H0; y++) {
+        const row = [];
+        for (let x = 0; x < W0; x++)
+            row.push(x === 0 || y === 0 || x === W0 - 1 || y === H0 - 1 ? "#2a1d3a" : x === 1 || y === 1 || x === W0 - 2 || y === H0 - 2 ? "#a77cb8" : "#f4ecd8");
+        px.push(row);
+    }
+    for (const [x, y] of [[3, 3], [10, 3], [3, 16], [10, 16]])
+        px[y][x] = c.col;
+    const g = CARD_SIGNS[c.sign];
+    for (let y = 0; y < 9; y++)
+        for (let x = 0; x < 7; x++)
+            if (g[y][x] === "#")
+                px[y + 5][x + 3] = c.col;
+    for (let x = 4; x < 10; x++) // a line under the sign, where the name would be written
+        px[16][x] = "#8a7a6a";
+    return px;
+}
+const cardArtCache = {};
+function cardArt(c) {
+    if (cardArtCache[c.k])
+        return cardArtCache[c.k];
+    const px = cardPixels(c), cv = document.createElement("canvas");
+    cv.width = px[0].length;
+    cv.height = px.length;
+    const g = cv.getContext("2d");
+    px.forEach((row, y) => row.forEach((col, x) => {
+        g.fillStyle = col;
+        g.fillRect(x, y, 1, 1);
+    }));
+    return cardArtCache[c.k] = cv.toDataURL();
+}
+/* on the floor: the deck (two backs) and the top card face up, small (7×10 art pixels each) */
+function drawCatCards(dk) {
+    cardsHit = null;
+    if (!catCards || catCards.room !== drawingRoom || cat.ph === "through")
+        return;
+    const c = cardOf(catCards.k);
+    if (!c)
+        return;
+    const u = catU(), w = 7 * u, h = 10 * u, by = Math.round((GY + catCards.z) / PX) * PX, x0 = Math.round((catCards.x - w * 1.15) / PX) * PX; // (x0: the deck's left edge)
+    drawLayered(() => {
+        for (let i = 1; i >= 0; i--) { // the deck: backs, a little offset
+            const dx = x0 + i * u, dy = by - h - i * u;
+            cx.fillStyle = "#2a1d3a";
+            cx.fillRect(dx, dy, w, h);
+            cx.fillStyle = mix("#5a3a72", "#2a1d3a", dk * .5);
+            cx.fillRect(dx + u, dy + u, w - 2 * u, h - 2 * u);
+            cx.fillStyle = "#a77cb8";
+            cx.fillRect(dx + 3 * u, dy + 4 * u, u, 2 * u);
+        }
+        const fx = x0 + Math.round(w * 1.3 / PX) * PX, fy = by - h; // the card, face up
+        cx.fillStyle = "#2a1d3a";
+        cx.fillRect(fx, fy, w, h);
+        cx.fillStyle = mix("#f4ecd8", "#8a8478", dk * .5);
+        cx.fillRect(fx + u, fy + u, w - 2 * u, h - 2 * u);
+        cx.fillStyle = c.col;
+        cx.fillRect(fx + 2 * u, fy + 3 * u, 3 * u, 3 * u);
+        cx.fillStyle = "#2a1d3a";
+        cx.fillRect(fx + 3 * u, fy + 4 * u, u, u);
+        cx.fillStyle = "#8a7a6a";
+        cx.fillRect(fx + 2 * u, fy + 7 * u, 3 * u, u);
+    });
+    if (dk > .5)
+        glow(x0 + w, by - h * .5, u * 3, "rgba(167,124,184,.25)");
+    cardsHit = { x: x0 - 4, y: by - h - u - 4, w: w * 2.3 + 8, h: h + u + 8 };
+    if (catHit && catHit.room === catCards.room) { // her cards are part of her, for a tap
+        const x1 = Math.min(catHit.x, cardsHit.x), y1 = Math.min(catHit.y, cardsHit.y);
+        catHit = Object.assign({}, catHit, { x: x1, y: y1, w: Math.max(catHit.x + catHit.w, cardsHit.x + cardsHit.w) - x1, h: Math.max(catHit.y + catHit.h, cardsHit.y + cardsHit.h) - y1 });
+    }
+}
+/* the Cabinet: every card that's come up, newest first, and how often she drew it for you */
+function renderCards() {
+    const el = $("cardList");
+    if (!el)
+        return;
+    const by = new Map();
+    for (const s of (S.cards || []).slice().sort((a, b) => b.at - a.at)) {
+        const c = cardOf(s.k);
+        if (!c)
+            continue;
+        const e = by.get(c.k) || { c, n: 0, you: 0 };
+        e.n++;
+        e.you += s.you ? 1 : 0;
+        by.set(c.k, e);
+    }
+    el.innerHTML = [...by.values()].map(({ c, n, you }) => `<div class="cardrow"><img class="cardart" src="${cardArt(c)}" alt="" width="28" height="40"><p><b>${esc(c.n)}</b> ${esc(c.m)} <span class="sync">${n}× drawn${you ? `, ${you} for you` : ""}</span></p></div>`).join("")
+        || `<p class="sub">Nothing yet. Now and then ${CAT_NAME} lays out a card; while her cards are out, tap her and she'll read one for you.</p>`;
+}
+
+</script>
 <script>/* js/scene/pastimes.js */
 "use strict";
 /*
@@ -26080,6 +26397,7 @@ function frame(now) {
     if (W > 0) {
         cx = pcx;
         cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        catCardTick(now); // her cards (cards.js)
         catTick(dt, now); // Midnightcat moves between the rooms whichever one is on screen (cat.js)
         possumTick(dt, now); // and so does the possum (possum.js)
         guestTick(dt, now); // and a visitor (visitors.js; drawn with the wagon or by drawAnimals)
@@ -26268,16 +26586,6 @@ function ambientTalk() {
         return;
     const c = ctx();
     const r = Math.random();
-    if (!S.lightsOut) {
-        const due = (S.followups || []).find(f => !f.said && f.on <= dayKey());
-        if (due && c.h >= 8 && c.h < 23) {
-            due.said = Date.now();
-            speak(due.t);
-            note(`Followed up: ${due.t}`);
-            saveSoon();
-            return;
-        }
-    }
     if (pet.beh === "sleep") {
         if (r < .6)
             say("dream");
@@ -27621,6 +27929,7 @@ function renderCabinet() {
         $("origamiList").innerHTML = ORIGAMI.map(o => n[o.id] ? `<span class="word"><i>${esc(o.name)}</i>${n[o.id] > 1 ? " ×" + n[o.id] : ""}</span>` : `<span class="word" style="opacity:.45"><i>?</i></span>`).join("");
     }
     renderGlimpses(); // what the chalk circle has shown (circle.js)
+    renderCards(); // Midnightcat's cards (cards.js)
     {
         const fl = $("festList");
         if (fl) {
@@ -27658,6 +27967,7 @@ function renderCabinet() {
         set("cab-origami", `${ORIGAMI.filter(o => oc.has(o.id)).length}/${ORIGAMI.length}`);
         set("cab-fest", `${FESTIVALS.filter(f => S.fest[f.id]).length}`);
         set("cab-glimpses", `${(S.glimpses || []).length}`);
+        set("cab-cards", `${new Set((S.cards || []).map(c => c.k)).size} of ${cardList().length}`);
         set("cab-dreams", `${(S.dreams || []).length}`);
         set("cab-hats", `${HATS.filter(h => h.id && L >= h.lvl).length}/${HATS.length - 1}`);
         set("cab-achs", `${ACH.filter(a => S.ach[a[0]]).length}/${ACH.length}`);
@@ -27681,34 +27991,33 @@ function foldSections() {
         });
     });
 }
-function renderHeard() {
-    const el = $("heard");
+/* the Log: the last 50 things that were on screen, newest first; a conversation's lines stay together */
+function renderLog() {
+    const el = $("logList");
     if (!el)
         return;
     const groups = [];
-    for (const h of (S.heard || [])) { // the last 50 lines, whoever said them
+    for (const h of (S.heard || [])) {
         const g = groups[groups.length - 1];
-        if (g && g.c === h.c)
+        if (g && h.c && g.c === h.c)
             g.l.push(h);
         else
             groups.push({ c: h.c, at: h.at, l: [h] });
     }
     el.innerHTML = groups.reverse().map(g => {
         const d = new Date(g.at);
-        return `<section><time>${wdmy(d)} ${hhmm(d)}</time>${g.l.map(h => `<p class="${h.w === S.settings.pet ? "" : "o"}"><b>${esc(h.w)}</b>${esc(h.t)}</p>`).join("")}</section>`;
+        return `<section><time>${wdmy(d)} ${hhmm(d)}</time>${g.l.map(h => h.w ? `<p class="${h.w === S.settings.pet ? "" : "o"}"><b>${esc(h.w)}</b>${esc(h.t)}</p>` : `<p class="n">${esc(h.t)}</p>`).join("")}</section>`;
     }).join("") || `<span class="sub">Nothing yet. Whatever ${esc(S.settings.pet)} and the others say is written down here.</span>`;
 }
-/* a new day (at the hour set in Settings): the notebook and what was overheard start on a fresh page. The incident
-   reports are kept in their own log (S.inc), so they're not lost with it */
+/* a new day (at the hour set in Settings): the notebook starts on a fresh page (the Log keeps its last 50 across days).
+   The incident reports are kept in their own log (S.inc), so they're not lost with it */
 function notebookNewDay() {
-    const t = dayStartTs(), n0 = S.notes.length, h0 = (S.heard || []).length;
+    const t = dayStartTs(), n0 = S.notes.length;
     S.notes = S.notes.filter(n => n.at >= t);
-    S.heard = (S.heard || []).filter(h => h.at >= t);
-    if (S.notes.length !== n0 || S.heard.length !== h0)
+    if (S.notes.length !== n0)
         saveSoon();
 }
 function renderNotebook() {
-    renderHeard();
     notebookNewDay();
     $("notes").innerHTML = S.notes.filter(n => n.at >= dayStartTs()).map(n => {
         const d = new Date(n.at);
@@ -28011,6 +28320,8 @@ function renderSched() {
     const el = $("schedList");
     if (!el)
         return;
+    if ($("schedAdd"))
+        $("schedAdd").onclick = showDaysOff; // (talk.js)
     const list = schedStretches();
     el.innerHTML = list.map((r, i) => `<li><span>${r.k === "off" ? "Off" : "Working"}: ${esc(r.from === r.to ? schedName(r.from) : schedName(r.from) + " to " + schedName(r.to))}</span> <button type="button" class="linkbtn" data-sched="${i}" aria-label="Take back: ${esc(r.k === "off" ? "off" : "working")} ${esc(dmy(new Date(r.from + "T12:00")))}">take back</button></li>`).join("") || `<li class="sub">Nothing yet.</li>`;
     el.querySelectorAll("[data-sched]").forEach(b => b.onclick = () => {
@@ -28055,7 +28366,7 @@ function afterChange() {
 }
 /* tabs */
 /* the sheet's sections: what you use while playing. Upkeep (preferences, lines, backup) is in Settings (desk.js). */
-const GROUPS = { tasks: [["tasks", "Tasks"]], mite: [["care", "Care"], ["talk", "Talk"]], journal: [["cabinet", "Cabinet"], ["gallery", "Crafts"], ["notebook", "Notebook"], ["archive", "Archive"], ["files", "Files"], ["grow", "Shop"]] };
+const GROUPS = { tasks: [["tasks", "Tasks"]], mite: [["care", "Care"]], journal: [["cabinet", "Cabinet"], ["gallery", "Crafts"], ["notebook", "Notebook"], ["log", "Log"], ["archive", "Archive"], ["files", "Files"], ["grow", "Shop"]] };
 const GROUP_OF = {};
 for (const g in GROUPS)
     GROUPS[g].forEach(([p]) => GROUP_OF[p] = g);
@@ -28092,10 +28403,8 @@ function showPane(name) {
         renderCare();
     if (curTab === "archive")
         renderArchive();
-    if (curTab === "talk") {
-        renderTalk();
-        renderSaid();
-    }
+    if (curTab === "log")
+        renderLog();
 }
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => showPane(b.dataset.group));
 $("subtabs").addEventListener("click", e => {
@@ -29584,11 +29893,6 @@ function playChatter(text, { action } = {}) {
         return;
     const id = ++chatterSeq;
     let i = 0;
-    S.chat.push({ r: "m", t: beats.join(" "), at: Date.now(), chatter: 1 });
-    if (S.chat.length > 80)
-        S.chat.splice(0, S.chat.length - 80);
-    if (curTab === "talk")
-        renderTalk();
     pet.start(action && BEH[action] ? action : choice(["wave", "sit", "lookAround", "hop", "listen"]));
     const next = () => {
         if (id !== chatterSeq)
@@ -30199,10 +30503,9 @@ function renderTray(level) {
         t.appendChild(b);
     };
     if (level !== "root")
-        add("‹ Back", () => renderTray("root"), undefined, "back");
+        add("‹ Back", () => renderTray(level === "feel" ? "talk" : "root"), undefined, "back");
     if (level === "root") {
-        add("Talk", openTalk);
-        add("Ask", () => renderTray("ask"));
+        add("Talk", () => renderTray("talk"));
         add("Feed", () => renderTray("feed"));
         add("Play", () => {
             playBall();
@@ -30250,128 +30553,98 @@ function renderTray(level) {
     }
     if (level === "games")
         GAMES.forEach(g => add(g.name, () => startGame(g.id)));
-    if (level === "ask") {
-        add("What's next?", () => {
-            closeTray();
-            offlineSuggest();
-        });
-        add("Chat", () => {
-            closeTray();
-            offlineChatter();
-        });
-    }
+    if (level === "talk") // what you can say to Mite (talk.js)
+        talkTray(add);
+    if (level === "feel")
+        talkFeelTray(add);
     add("✕", closeTray, undefined, "back");
 }
 function openTray() {
-    closeTalk();
     $("tray").hidden = false;
     document.body.classList.add("traying");
     renderTray("root");
 }
 function closeTray() {
     $("tray").hidden = true;
-    if ($("talkBar").hidden)
-        document.body.classList.remove("traying");
-}
-function openTalk() {
-    closeTray();
-    $("talkBar").hidden = false;
-    document.body.classList.add("traying");
-    setTimeout(() => $("talkIn").focus(), 40);
-}
-function closeTalk() {
-    $("talkBar").hidden = true;
-    if ($("tray").hidden)
-        document.body.classList.remove("traying");
+    document.body.classList.remove("traying");
 }
 /* the Mite button: one tray for looking after Mite, talking and asking */
 $("dMite").onclick = () => {
     $("tray").hidden ? openTray() : closeTray();
 };
-$("talkHist").onclick = () => {
-    closeTalk();
-    openSheet("talk");
-};
-$("talkBar").addEventListener("submit", e => {
-    e.preventDefault();
-    const v = $("talkIn").value;
-    $("talkIn").value = "";
-    sendChat(v);
-});
 
 </script>
 <script>/* js/ui/talk.js */
 "use strict";
 /*
- * talk.js - Talking with Mite: it answers from its own lines, on this device (offline.js: offlineChat).
+ * talk.js - Talking with Mite, by picking (owner, 25-10-2026: free text without AI didn't work well). The Mite
+ * button's tray has Talk: what's next, how am I doing, tell me something, I'm feeling…, hello / good night, and
+ * Days off… (a card with dates, offline.js: schedTalk). Mite answers from its own lines (the talk pool's keywords,
+ * offlineReply). What was said is in the Log (Satchel).
  */
-/* (AI was taken out entirely, 24-10-2026: Talk, Chat, What's next and Split all run on Mite's own lines) */
-let chatBusy = false;
-function sendChat(text) {
-    text = String(text || "").trim().slice(0, 600);
-    if (text)
-        offlineChat(text);
+/* what you can say: label, and the words offlineReply hears (the talk pool's keywords) */
+const TALK_FEEL = [["Tired", "tired"], ["Stressed", "stressed"], ["Worried", "worried"], ["Sad", "sad"], ["Bored", "bored"], ["Lonely", "lonely"], ["Hungry", "hungry"], ["Happy", "happy"], ["Proud", "proud"]];
+/* one pick: Mite answers out loud, and does something that fits */
+function talkSay(words) {
+    const r = offlineReply(words);
+    pet.start(r.action && BEH[r.action] ? r.action : "listen");
+    setTimeout(() => speak(r.reply), reduced ? 0 : 450);
+    S.flags.chat = 1;
+    saveSoon();
 }
-function renderTalk() {
-    const pn = S.settings.pet;
-    $("talkInfo").textContent = `${pn} answers from its own lines, on this device. Try "remember …", "I need to …", "I have a concert on Saturday", "how am I doing", "what's next", "friday off".`;
-    const log = S.chat.slice(-40), off = S.chat.length - log.length;
-    $("chatLog").innerHTML = log.map((m, i) => {
-        const idx = off + i;
-        if (m.r === "u")
-            return `<li class="msg u">${esc(m.t)}</li>`;
-        const meta = [m.mem ? `remembered ${m.mem}` : "", m.lines ? `${m.lines} line${m.lines > 1 ? "s" : ""} filed` : "", m.fu ? `will ask on ${dmy(m.fu)}` : ""].filter(Boolean).join(" · ");
-        const ts = (m.tasks || []).length ? `<span class="tsug">${m.tasks.map((x, j) => `<button class="chip ${x.added ? "" : "amber"}" data-ci="${idx}" data-ti="${j}" ${x.added ? "disabled" : ""}>${x.added ? "added: " : "+ task: "}${esc(x.t)}</button>`).join("")}</span>` : "";
-        return `<li class="msg m">${esc(m.t)}${meta ? `<span class="meta">${meta}</span>` : ""}${ts}</li>`;
-    }).join("") + (chatBusy ? `<li class="msg m"><em>…</em></li>` : "") || `<li class="sub">Say hello. Tell ${esc(pn)} about your day, your plans, whatever's on your mind.</li>`;
-    const cl = $("chatLog");
-    cl.scrollTop = cl.scrollHeight;
-    $("memList").innerHTML = S.memories.map((m, i) => `<li><span>${esc(m.t)}</span><button class="mini" data-mi="${i}" aria-label="Forget this">Forget</button></li>`).join("") || `<li><span class="sub">Nothing yet.</span></li>`;
-    const fus = S.followups.map((f, i) => ({ f, i })).filter(x => !x.f.said);
-    $("fuList").innerHTML = fus.map(({ f, i }) => `<li><span><b class="sync">${esc(dmy(f.on))}</b> ${esc(f.t)}</span><button class="mini" data-fi="${i}" aria-label="Cancel">Cancel</button></li>`).join("") || `<li><span class="sub">Nothing planned.</span></li>`;
-    renderSaid();
+/* the tray's Talk level (care.js: renderTray) */
+function talkTray(add) {
+    const close = fn => () => {
+        closeTray();
+        fn();
+    };
+    add("What's next?", close(offlineSuggest));
+    add("How am I doing?", close(() => talkSay("how am i doing")));
+    add("Tell me something", close(offlineChatter));
+    add("I'm feeling…", () => renderTray("feel"));
+    add(ctx().h >= 20 || ctx().h < 5 ? "Good night" : "Hello", close(() => talkSay(ctx().h >= 20 || ctx().h < 5 ? "good night" : "hello")));
+    add("Thank you", close(() => talkSay("thanks")));
+    add("Days off…", close(showDaysOff));
 }
-$("chatForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const v = $("chatIn").value;
-    $("chatIn").value = "";
-    sendChat(v);
-});
-$("chatLog").addEventListener("click", e => {
-    const b = e.target.closest("button[data-ci]");
-    if (!b)
+function talkFeelTray(add) {
+    TALK_FEEL.forEach(([label, w]) => add(label, () => {
+        closeTray();
+        talkSay(w);
+    }));
+}
+/* ---------- days off, holidays, a working day: a card with dates (instead of telling Mite in words) ---------- */
+function showDaysOff() {
+    const today = dayKey();
+    openRitual("Days off", `Tell ${S.settings.pet} about days that aren't like your usual week. Only those days change.`,
+        `<div class="daysoff"><div class="seg" id="doKind" role="group" aria-label="What kind of day">
+<button type="button" data-v="off" aria-pressed="true">Day off</button><button type="button" data-v="holiday" aria-pressed="false">Holiday</button><button type="button" data-v="work" aria-pressed="false">Working day</button></div>
+<label class="field">From<input type="date" id="doFrom" min="${today}" value="${today}"></label>
+<label class="field">To (optional)<input type="date" id="doTo" min="${today}"></label>
+<p class="sub" id="doMsg" aria-live="polite"></p></div>`,
+        [["Tell Mite", "primary", daysOffSave], ["Close", "", closeRitual]]);
+    $("doKind").onclick = e => {
+        const b = e.target.closest("button[data-v]");
+        if (b)
+            $("doKind").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    };
+}
+const isoDmy = v => v ? v.split("-").reverse().join("-") : ""; // 2026-10-30 → 30-10-2026
+function daysOffSave() {
+    const k = ($("doKind").querySelector("[aria-pressed=true]") || {}).dataset?.v || "off", a = $("doFrom").value, b = $("doTo").value;
+    if (!a) {
+        $("doMsg").textContent = "Pick a day first.";
         return;
-    const m = S.chat[+b.dataset.ci];
-    const x = m && m.tasks && m.tasks[+b.dataset.ti];
-    if (!x || x.added)
-        return;
-    addTask(x.t, x.s, x.tag, false, "");
-    x.added = 1;
-    say("task_added", { task: x.t });
-    afterChange();
-    renderTalk();
-});
-$("memList").addEventListener("click", e => {
-    const b = e.target.closest("button[data-mi]");
-    if (!b)
-        return;
-    {
-        const gone = S.memories.splice(+b.dataset.mi, 1)[0];
-        if (gone)
-            tomb("m:" + gone.t.toLowerCase());
     }
-    renderTalk();
-    saveSoon();
-});
-$("fuList").addEventListener("click", e => {
-    const b = e.target.closest("button[data-fi]");
-    if (!b)
-        return;
-    S.followups.splice(+b.dataset.fi, 1);
-    renderTalk();
-    saveSoon();
-});
-/* (the field to add a memory by hand is gone: the journal, the pinboard and the time capsules are for that) */
+    const span = isoDmy(a) + (b && b !== a ? " to " + isoDmy(b) : "");
+    const reply = schedTalk(k === "holiday" ? `holiday ${span}${b && b !== a ? "" : " to " + isoDmy(a)}` : k === "work" ? `working ${span}` : `off ${span}`);
+    closeRitual();
+    if (reply) {
+        pet.start("tidy");
+        setTimeout(() => speak(reply, { ms: 6000 }), reduced ? 0 : 450);
+    }
+    if (typeof renderSched === "function")
+        renderSched();
+}
 
 </script>
 <script>/* js/ai/offline.js */
@@ -30700,29 +30973,6 @@ function offlineReply(text) {
         if (sr)
             return { reply: sr, action: "tidy" };
     }
-    if (m = t.match(/^(?:please\s+)?(?:remember|onthoud)\s*(?:that|dat)?[:\s]+(.+)/i)) {
-        const mem = toSecond(m[1]);
-        if (mem && !S.memories.some(x => x.t.toLowerCase() === mem.toLowerCase())) {
-            S.memories.unshift({ t: mem, at: Date.now() });
-            if (S.memories.length > 150)
-                S.memories.length = 150;
-        }
-        return { reply: choice([`Filed: ${mem}.`, `Noted. ${mem[0].toUpperCase() + mem.slice(1)}. I won't lose it.`, `Into the good drawer: ${mem}.`]), mem: 1, action: "tidy" };
-    }
-    if (m = t.match(/^(?:please\s+)?forget\s+(?:that\s+|about\s+)?(.+)/i)) {
-        const w = m[1].toLowerCase().split(/\s+/).filter(x => x.length > 3);
-        const i = S.memories.findIndex(x => w.some(k => x.t.toLowerCase().includes(k)));
-        if (i >= 0) {
-            const gone = S.memories.splice(i, 1)[0];
-            tomb("m:" + gone.t.toLowerCase());
-            return { reply: `Forgotten: ${gone.t}. The drawer is empty again.` };
-        }
-        return { reply: "I couldn't find that in my drawers. Check the list under Talk." };
-    }
-    if (/what do you (remember|know)|wat weet je/.test(low)) {
-        const ms = S.memories.slice(0, 3).map(x => x.t);
-        return { reply: ms.length ? `I remember that ${ms.join("; that ")}.` : "Not much yet. Tell me things, and say remember… for the important ones." };
-    }
     if (m = t.match(/^(?:fix|friction|fix-it|note|todo|to do|to-do)[:\s]+(.+)/i)) { // (todo …: jotted down too, like a note)
         const text = m[1].trim().replace(/[.!]+$/, "").slice(0, 160);
         if (text) { // (the fix-it list is gone: a note like this is jotted down)
@@ -30740,27 +30990,6 @@ function offlineReply(text) {
             return { reply: `${P.nt.t}. Because ${why}.`, action: "lookAround" };
         }
         return { reply: "Nothing needs you right now. Rest counts." };
-    }
-    const tm = t.match(/^(?:add|task)[:\s]+(.+)/i) || t.match(/\b(?:i need to|i have to|i should|i must|i've got to|i still need to|ik moet)\s+(.+?)(?:[.!?]|$)/i);
-    const day = findDay(low);
-    const ev = day && t.match(/\b(?:i have|i've got|i got|i'm going to|i am going to|we have|we're going to|there's|there is|going to|heb|ga naar)\s+(?:a |an |the |my |our |een |de |het |mijn )?(.+?)(?=\s+(?:on|this|tomorrow|today|tonight|next|morgen|vandaag|op|this weekend)\b|[.,!?]|$)/i);
-    if (ev && !tm) {
-        const raw = ev[0].match(/\b(a|an|the|my|our|een|de|het|mijn)\s/i);
-        const art = raw ? raw[1].toLowerCase() : "";
-        const thing = (art === "my" || art === "mijn" ? "your " : art === "our" ? "your " : "the ") + ev[1].trim();
-        const after = new Date(day.d + "T12:00");
-        after.setDate(after.getDate() + 1);
-        const q = fillText(choice(pool("followup").length ? pool("followup") : ["How was {thing}?"]), Object.assign(ctx(), { thing, Thing: thing[0].toUpperCase() + thing.slice(1) }));
-        S.followups.push({ t: q, on: dayKey(after), said: 0 });
-        return { reply: choice([`Oh, ${thing} ${day.w}. I'll ask you about it after.`, `${thing[0].toUpperCase() + thing.slice(1)}, ${day.w}. Noted. I'll want to hear how it went.`]), fu: dayKey(after), action: "tidy" };
-    }
-    if (tm) {
-        const p = parseShort(tm[1]);
-        const title = p.text.replace(/\s*\b(?:on\s+)?(?:today|tonight|tomorrow|this weekend|next week|vandaag|vanavond|morgen|volgende week|(?:mon|tues|wednes|thurs|fri|satur|sun)day|(?:maan|dins|woens|donder|vrij|zater|zon)dag)\b/gi, "").replace(/[.!?]+$/, "").trim();
-        if (title.length > 2) {
-            const due = p.due || (day && day.w !== "this weekend" && day.w !== "next week" ? day.d : "");
-            return { reply: choice([`Want that on the list? Tap it below.`, `That sounds like a task. Tap below and I'll file it.`]), tasks: [{ t: title[0].toUpperCase() + title.slice(1), s: p.s || 1, tag: p.tag || ctxTag(), due }], action: "lookAround" };
-        }
     }
     const lowp = " " + low.replace(/[^\p{L}\p{N}' ]+/gu, " ").replace(/\s+/g, " ") + " ";
     let best = null, bw = 0;
@@ -30795,25 +31024,6 @@ function offlineReply(text) {
         return { reply: fillText(rest.slice(rest.indexOf("|") + 1).trim(), c) };
     }
     return { reply: compose("talk_fallback") || "Hm. I'm writing that down." };
-}
-function offlineChat(text) {
-    S.chat.push({ r: "u", t: text, at: Date.now() });
-    const r = offlineReply(text);
-    const msg = { r: "m", t: r.reply, at: Date.now(), off: 1 };
-    if (r.mem)
-        msg.mem = 1;
-    if (r.fu)
-        msg.fu = r.fu;
-    if (r.tasks)
-        msg.tasks = r.tasks;
-    S.chat.push(msg);
-    if (S.chat.length > 80)
-        S.chat.splice(0, S.chat.length - 80);
-    pet.start(r.action && BEH[r.action] ? r.action : "listen");
-    setTimeout(() => speak(r.reply), reduced ? 0 : 450);
-    S.flags.chat = 1;
-    afterChange();
-    renderTalk();
 }
 /* lines as spreadsheet rows: pool <tab> when <tab> text */
 function linesTSV() {
@@ -31391,8 +31601,6 @@ document.addEventListener("keydown", e => {
         closeSheet();
     else if (!$("tray").hidden)
         closeTray();
-    else if (!$("talkBar").hidden)
-        closeTalk();
     else if (game)
         closeGame();
 });
@@ -31416,7 +31624,7 @@ function appBack() {
             return true;
         }
     }
-    const open = pinOpen || (typeof cabOpen !== "undefined" && cabOpen) || !$("ritual").hidden || !$("desk").hidden || document.body.classList.contains("sheet") || !$("tray").hidden || !$("talkBar").hidden || !!game;
+    const open = pinOpen || (typeof cabOpen !== "undefined" && cabOpen) || !$("ritual").hidden || !$("desk").hidden || document.body.classList.contains("sheet") || !$("tray").hidden || !!game;
     if (open) { // everything else closes with Escape (game-view.js, pinboard.js, crystals.js)
         document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
         return true;
