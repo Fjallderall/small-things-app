@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 24-10-2026 -->
+<!-- Small Things, shared build of 25-10-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -726,6 +726,10 @@ body.pixel .wxicon{width:18px;height:18px}
 body.editing #addForm{display:none}
 .tedit-when{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;flex:1 1 100%}
 .tedit-acts{display:flex;gap:8px;flex:1 1 100%}
+.albumlist{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:52vh;overflow:auto}
+.albumcard{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:4px;color:inherit;font:inherit;cursor:pointer;border-radius:6px}
+.albumcard:hover,.albumcard:focus-visible{background:rgba(0,0,0,.06)}
+.albumcard canvas{width:72px;height:48px;image-rendering:pixelated;flex:none;box-shadow:1px 1px 0 rgba(0,0,0,.25)}
 
 </style>
 <div class="app">
@@ -743,6 +747,7 @@ body.editing #addForm{display:none}
       <div id="pinView" class="cabview" hidden role="dialog" aria-modal="true" aria-label="Pinboard">
         <div class="cabbox pinbox" id="pinBox"><canvas id="pinCv" width="96" height="60" aria-hidden="true"></canvas><div class="cabhits" id="pinHits"></div><button type="button" class="cabclose" id="pinClose" aria-label="Close">✕</button></div>
         <button type="button" class="cabglim pinadd" id="pinAdd">＋ Pin a note</button>
+        <button type="button" class="cabglim pinadd" id="pinAlbum" hidden>Postcard album</button>
         <div class="pinpager" id="pinPager" hidden><button type="button" class="cabglim" id="pinPrev" aria-label="Older notes">‹ Older</button><span id="pinPageTxt" aria-live="polite"></span><button type="button" class="cabglim" id="pinNext" aria-label="Newer notes">Newer ›</button></div>
         <div id="pinDlg" class="dlg pin" hidden aria-live="polite"><b id="pinDlgName"></b><span id="pinDlgText"></span>
           <div id="pinForm" class="pinform" hidden><input id="pinInput" type="text" maxlength="120" placeholder="Something worth remembering" aria-label="The note" enterkeyhint="done"><button type="button" id="pinSave">Pin it</button></div>
@@ -3935,10 +3940,11 @@ const DEF = {
 /*
  * festivals.js - Festivals through the year, and what Mite learns about them. Edit freely.
  *   id, name     key and display name
- *   kind         "home": something appears in the wagon (Mite joins in, the Dutch and wider European ones)
- *                "card": a postcard from a friend who celebrates it is pinned on the wall (Mite learns)
+ *   kind         "home": something appears in the wagon (Mite joins in, the Dutch and wider European ones), and a
+ *                         friend sends a postcard too (owner, 25-10-2026: a postcard for every festival)
+ *                "card": a postcard from a friend who celebrates it is pinned on the board (Mite learns)
  *   when(y)      [first day, last day] as Dates for year y, or null when the date isn't known
- *   from         where the postcard comes from (cards only); one is picked each year
+ *   from         where the postcard comes from; one is picked each year
  *   info         what the card says when you tap it: short, factual paragraphs
  *   lines        what Mite says when it notices the day (one of them, once a day)
  * Festivals on a lunar or lunisolar calendar move every year. Their dates are in MOVING below, for 2026–2030;
@@ -3989,21 +3995,21 @@ const FESTIVALS = [
             "The day starts with a special prayer. Before it, everyone who can gives zakat al-fitr, food or money for people in need. Then it's new clothes, visiting family and friends, and a great many sweets.",
             "The date depends on seeing the new crescent moon, so it can fall a day apart in different countries."],
         lines: ["A postcard for Eid al-Fitr, the end of Ramadan. A month of fasting in daylight, then sweets with everyone. That's a good ending.", "Eid Mubarak, says the card. It means “blessed festival”. I'm passing it on."] },
-    { id: "easter", name: "Easter", kind: "home", when: y => {
+    { id: "easter", name: "Easter", kind: "home", from: ["Kraków", "Seville", "Graz", "Ljubljana"], when: y => {
             const e = easterSunday(y);
             return [festAdd(e, -2), festAdd(e, 1)];
         },
         info: () => ["Easter is the most important Christian feast: it celebrates the resurrection of Jesus. Its date moves: the first Sunday after the first full moon on or after 21 March.",
             "Eggs, a sign of new life, are painted and hidden. In the Netherlands and Germany it's the Easter hare that brings them. The Netherlands also has a second day off, Tweede Paasdag."],
         lines: ["Easter. I painted an egg. It was already a bit egg-coloured, so I mostly signed it.", "There are eggs in the basket. I didn't hide them. Hiding them felt rude to the eggs."] },
-    { id: "kingsday", name: "King's Day", kind: "home", when: y => {
+    { id: "kingsday", name: "King's Day", kind: "home", from: ["Utrecht", "Haarlem", "Groningen", "Deventer"], when: y => {
             const d = new Date(y, 3, 27, 12);
             return d.getDay() === 0 ? [festAdd(d, -1), festAdd(d, -1)] : [d, d];
         },
         info: () => ["Koningsdag celebrates the Dutch king's birthday on 27 April (on the 26th when the 27th is a Sunday). The country dresses in orange, the colour of the royal House of Orange-Nassau.",
             "Streets and parks turn into one big flea market, the vrijmarkt, where anyone may sell their old things without a permit. There's music, oranjebitter and a lot of orange hats."],
         lines: ["King's Day. I've put up orange bunting. I'm also selling one spoon, if anyone's interested.", "Everything's orange today. I'm green. I'm doing my best."] },
-    { id: "midsummer", name: "Midsummer", kind: "home", when: y => [new Date(y, 5, 20, 12), new Date(y, 5, 24, 12)],
+    { id: "midsummer", name: "Midsummer", kind: "home", from: ["Uppsala", "Turku", "Riga", "Bergen"], when: y => [new Date(y, 5, 20, 12), new Date(y, 5, 24, 12)],
         info: () => ["Around the June solstice, the shortest night of the year, much of Northern Europe celebrates midsummer.",
             "In Sweden, Midsommar means flower crowns, dancing round a maypole, and new potatoes with herring. Finland and Latvia (where it's called Jāņi) light bonfires and stay up through the light night, and in Spain bonfires are lit on the Night of San Juan."],
         lines: ["Midsummer. The shortest night. I'm going to stay up for all of it. All four hours.", "I made a flower crown for the window. The window looks lovely. Very festive window."] },
@@ -4019,7 +4025,7 @@ const FESTIVALS = [
         info: () => ["The Mid-Autumn Festival falls on the 15th day of the 8th lunar month, when the harvest moon is thought to be at its fullest. It's celebrated in China and across East and Southeast Asia; in Korea, Chuseok falls on the same day.",
             "Families gather to look at the moon, share round mooncakes and carry lanterns. A well-known story is about Chang'e, who drank an elixir and floated up to the moon, where she lives with a jade rabbit."],
         lines: ["A Mid-Autumn card with a mooncake on it. Tonight you look at the moon with people you like. I'll look at it with you, if that's alright.", "There's a rabbit on the moon, the card says. I've looked. I think I see an ear."] },
-    { id: "halloween", name: "Halloween", kind: "home", when: y => [new Date(y, 9, 24, 12), new Date(y, 9, 31, 12)],
+    { id: "halloween", name: "Halloween", kind: "home", from: ["Derry", "Edinburgh", "Galway", "Salem"], when: y => [new Date(y, 9, 24, 12), new Date(y, 9, 31, 12)],
         info: () => ["Halloween grew from Samhain, a Celtic festival at the end of the harvest and the start of winter, when the border with the other world was thought to be thin. Its name comes from All Hallows' Eve, the evening before All Saints' Day.",
             "Lanterns were once carved from turnips in Ireland and Scotland; in North America pumpkins took over, being bigger and much easier to carve."],
         lines: ["I carved a pumpkin. It's meant to be scary. It came out looking pleased to see you.", "Halloween's coming. The wagon is already a bit haunted, so we're ahead.", "[strange] The pumpkin winked. I didn't carve it to wink."] },
@@ -4032,11 +4038,11 @@ const FESTIVALS = [
             "Homes are lit with rows of small clay oil lamps (diyas), doorsteps are decorated with colourful rangoli patterns, and families share sweets, new clothes and fireworks. For many it celebrates light winning over darkness; a well-known story is Rama's return home to Ayodhya, lit by lamps all along the way.",
             "In the Netherlands it's celebrated too, especially in the Hindustani-Surinamese community."],
         lines: ["A Diwali card: rows of little lamps on every step. I've lit the lamp. One lamp. It's doing its best.", "Diwali, the festival of lights. The card says you clean the house and light it up. The wagon's never been so tidy."] },
-    { id: "sintmaarten", name: "Sint-Maarten", kind: "home", when: y => [new Date(y, 10, 10, 12), new Date(y, 10, 11, 12)],
+    { id: "sintmaarten", name: "Sint-Maarten", kind: "home", from: ["Maastricht", "Ghent", "Cologne", "Venlo"], when: y => [new Date(y, 10, 10, 12), new Date(y, 10, 11, 12)],
         info: () => ["On 11 November, children in the Netherlands, Flanders and parts of Germany walk the streets after dark with home-made lanterns, singing at doors for sweets or fruit.",
             "It honours Saint Martin of Tours, remembered for cutting his cloak in half to share with a freezing beggar. The day falls at the old end of the harvest and the start of winter."],
         lines: ["I made a lantern for Sint-Maarten. If anyone knocks, I've got three raisins. Ready.", "Sint-Maarten tonight. Lanterns and songs at the door. I've been practising. Quietly."] },
-    { id: "sinterklaas", name: "Sinterklaas", kind: "home", when: y => [new Date(y, 10, 15, 12), new Date(y, 11, 5, 12)],
+    { id: "sinterklaas", name: "Sinterklaas", kind: "home", from: ["Leiden", "Zwolle", "Bruges", "Dordrecht"], when: y => [new Date(y, 10, 15, 12), new Date(y, 11, 5, 12)],
         info: () => ["In the weeks before 5 December, Dutch children put a shoe by the fireplace in the evening, with a carrot or some hay for Sinterklaas's horse, hoping for a little treat in the morning.",
             "On pakjesavond, the evening of 5 December, families give each other presents, often with a teasing rhyme and a “surprise”: a gift hidden inside something homemade. There are chocolate letters, pepernoten and kruidnoten.",
             "The figure goes back to Saint Nicholas of Myra, the patron saint of children."],
@@ -4045,15 +4051,15 @@ const FESTIVALS = [
         info: () => ["Hanukkah is an eight-night Jewish festival of lights. It remembers the rededication of the Temple in Jerusalem in the 2nd century BCE, and the story of a little oil that should have lasted one day but burned for eight.",
             "Each evening one more candle is lit on the hanukkiah, an eight-branched candlestick with a helper candle, the shamash. People eat food fried in oil, like latkes and sufganiyot (doughnuts), and play with a spinning top, the dreidel."],
         lines: ["A Hanukkah card: one more candle every night, for eight nights. Slowly more light. I like that.", "Hanukkah. Doughnuts are traditional, the card says. I'm taking that very seriously."] },
-    { id: "solstice", name: "The longest night", kind: "home", when: y => [new Date(y, 11, 21, 12), new Date(y, 11, 22, 12)],
+    { id: "solstice", name: "The longest night", kind: "home", from: ["Tromsø", "Reykjavík", "Rovaniemi", "Kiruna"], when: y => [new Date(y, 11, 21, 12), new Date(y, 11, 22, 12)],
         info: () => ["Around 21 December the northern half of the world has its longest night. After it, the days slowly get longer again, so many cultures mark it.",
             "Old Northern Europe had Yule. In China it's Dongzhi, with tangyuan, sweet sticky rice balls. In Iran families stay up late on Yalda Night with pomegranates, watermelon and the poetry of Hafez."],
         lines: ["The longest night. I've lit a candle so it knows we noticed.", "From tomorrow the days get longer. A minute at a time. I'll keep count."] },
-    { id: "christmas", name: "Christmas", kind: "home", when: y => [new Date(y, 11, 18, 12), new Date(y, 11, 26, 12)],
+    { id: "christmas", name: "Christmas", kind: "home", from: ["Nuremberg", "Strasbourg", "Vienna", "Tallinn"], when: y => [new Date(y, 11, 18, 12), new Date(y, 11, 26, 12)],
         info: () => ["For Christians, Christmas celebrates the birth of Jesus: on 25 December in most Western churches, and on 7 January in Orthodox churches that keep the old Julian calendar.",
             "Many customs are older or newer than the feast itself: evergreen branches and lights echo midwinter traditions, and the decorated tree spread from Germany in the 1800s. The Netherlands has two days of it, Eerste and Tweede Kerstdag."],
         lines: ["I've got a tree. It's small. It's a tree that has made peace with being small.", "The lights on the tree blink in a pattern. I think it's morse. I think it says “hello”.", "Christmas. I wrapped a present for you. It's a leaf. I wrapped it very well."] },
-    { id: "newyear", name: "New Year's Eve", kind: "home", when: y => [new Date(y, 11, 31, 12), new Date(y + 1, 0, 1, 12)],
+    { id: "newyear", name: "New Year's Eve", kind: "home", from: ["Edinburgh", "Madrid", "Copenhagen", "Lisbon"], when: y => [new Date(y, 11, 31, 12), new Date(y + 1, 0, 1, 12)],
         info: () => ["In the Netherlands, Oud en Nieuw means oliebollen (deep-fried dough balls under a snow of powdered sugar) and fireworks at midnight.",
             "Elsewhere: in Spain people eat twelve grapes, one at each chime of midnight; in Japan temple bells ring 108 times (joya no kane), one for each worldly desire."],
         lines: ["Oliebollen. I've eaten one. My face is now mostly powdered sugar.", "The year's nearly done. You did a lot of small things in it. I counted."] }
@@ -4237,7 +4243,9 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // groups 10–14 (24-10-2026): finished jots, let go with her yes. Add each batch's finished jot ids here.
     "mvm90k4dqhplg", "mvm929q48c270", "mvm93kr39hyi5", "mvm94889k2eqg", "mvm955q9877rv", "mvm99lf4mzzyl", "mvm9cqdnmj3bx", "mvm9ei2vicr31", "mvm9hkn7nxpsc", "mvm9ixx1qyd9t", "mvma7ruzv0wn5", "mvma91rm728vw", "mvmccxu92ek34", "mvmcd5ec86ory", "mvmcehsltzpqp", "mvmcflvdl8516", "mvmciprekwc0r", "mvmcj5ha9neno", "mvmf29ioxaqz5", "mvmf4xv7bwwcg", "mvmf65keepu4t", "mvmfd05pu4dtk", "mvmfnzznk80k8", "mvmfor9nt72js", "mvmfpzaxyfo5i", "mvmm75kdvxdab", "mvmm8y68bg492", "mvmmcxslzxl4v", "mvmmer955ae70", "mvmmfa23wrutl", "mvmmgff6qx0u0", "mvmmgze4fr38a", "mvmmqstv6f8wc", "mvmn9o396cg56",
     // group 16 (24-10-2026, night)
-    "mvmo8m1386jw8", "mvmoc10de47be", "mvmozozs9xrb6", "mvmpflb08yv1a"
+    "mvmo8m1386jw8", "mvmoc10de47be", "mvmozozs9xrb6", "mvmpflb08yv1a",
+    // group 17 (25-10-2026)
+    "mvnp2kcftue10", "mvnp3fingxo3a", "mvnpbhpm0a0tx", "mvnpc03jfzcpf", "mvnpgdi1urlwk"
 ];
 
 </script>
@@ -5732,7 +5740,26 @@ function cardOpen() {
    it's closed (owner, 24-10) */
 function talkHeld() {
     const r = $("ritual");
-    return cardOpen() || document.body.classList.contains("sheet") && !matchMedia("(min-width: 960px)").matches || !!r && !r.hidden; // (on a wide screen the menu sits beside the scene)
+    return cardOpen() || [...document.querySelectorAll(".cabview")].some(e => !e.hidden) || document.body.classList.contains("sheet") && !matchMedia("(min-width: 960px)").matches || !!r && !r.hidden; // (on a wide screen the menu sits beside the scene)
+}
+/* while speech is held (talkHeld), the lines on screen don't run out: their time stands still, and once the menu or
+   card closes they stay up a little longer, so nothing said is missed under it (owner, 25-10-2026) */
+let speechHeldWas = false;
+function speechHoldTick(now, dt) {
+    const h = talkHeld(), ms = dt * 1000;
+    if (h) {
+        bubbleUntil += ms;
+        speakReadUntil += ms;
+        snail2Until += ms;
+        b2ReadUntil += ms;
+    }
+    else if (speechHeldWas) {
+        if (!$("bubble").hidden)
+            bubbleUntil = Math.max(bubbleUntil, now + 2500);
+        if (!$("bubble2").hidden)
+            snail2Until = Math.max(snail2Until, now + 2500);
+    }
+    speechHeldWas = h;
 }
 function typeFinish() {
     const st = bubbleType;
@@ -5975,17 +6002,40 @@ function sndInit() {
         const wb = a.createBuffer(1, len, a.sampleRate), wc = wb.getChannelData(0);
         for (let i = 0; i < len; i++)
             wc[i] = Math.random() * 2 - 1;
+        // the rain (25-10-2026: it was a band of white noise): a soft, dark wash of pink noise that swells and eases
+        // like gusts, under the patter of single drops on the roof (ambTick)
+        const pb = a.createBuffer(1, len, a.sampleRate), pc = pb.getChannelData(0);
+        let p0 = 0, p1 = 0, p2 = 0;
+        for (let i = 0; i < len; i++) {
+            const w = Math.random() * 2 - 1;
+            p0 = .99765 * p0 + w * .099;
+            p1 = .963 * p1 + w * .2965;
+            p2 = .57 * p2 + w * 1.0526;
+            pc[i] = (p0 + p1 + p2 + w * .1848) * .2;
+        }
         const ws = a.createBufferSource();
-        ws.buffer = wb;
+        ws.buffer = pb;
         ws.loop = true;
         const bf = a.createBiquadFilter();
-        bf.type = "bandpass";
-        bf.frequency.value = 1300;
-        bf.Q.value = .45;
+        bf.type = "lowpass";
+        bf.frequency.value = 1100;
+        bf.Q.value = .3;
+        const hf = a.createBiquadFilter();
+        hf.type = "highpass";
+        hf.frequency.value = 180;
+        const gust = a.createGain(), lfo = a.createOscillator(), lfoG = a.createGain();
+        gust.gain.value = 1;
+        lfo.frequency.value = .07;
+        lfoG.gain.value = .35;
+        lfo.connect(lfoG);
+        lfoG.connect(gust.gain);
+        lfo.start();
         const wg = a.createGain();
         wg.gain.value = 0;
         ws.connect(bf);
-        bf.connect(wg);
+        bf.connect(hf);
+        hf.connect(gust);
+        gust.connect(wg);
         wg.connect(amb);
         ws.start();
         Snd.rain = wg;
@@ -6364,7 +6414,7 @@ function ambTick() {
     if (!on)
         return;
     const d = new Date(), dk = skyAt(d.getHours() + d.getMinutes() / 60).dark, now = performance.now();
-    Snd.rain.gain.setTargetAtTime(raining() ? .05 : 0, t, 2);
+    Snd.rain.gain.setTargetAtTime(raining() ? .045 : 0, t, 2);
     Snd.hum.gain.setTargetAtTime(anom ? .035 : 0, t, 1.2);
     if (dk < .35 && now > Snd.nextBird) {
         Snd.nextBird = now + rnd(5e3, 14e3);
@@ -6383,9 +6433,15 @@ function ambTick() {
         if (Math.random() < .1)
             nburst(t + .05, .25, { f: 300, type: "lowpass", vol: .02 });
     }
-    if (raining() && now > Snd.nextDrip) {
-        Snd.nextDrip = now + rnd(300, 1400);
-        tone(rnd(1400, 2400), t, .05, { vol: .008, glide: .6, bus: Snd.amb });
+    if (raining()) { // the patter: many tiny drops on the roof, a few fatter ones, now and then one dripping off the edge
+        for (let k = ri(14, 24); k > 0; k--)
+            nburst(t + Math.random() * .5, rnd(.004, .012), { f: rnd(2500, 7000), q: rnd(3, 8), vol: rnd(.002, .006) });
+        for (let k = ri(0, 3); k > 0; k--)
+            nburst(t + Math.random() * .5, rnd(.02, .05), { f: rnd(700, 1400), q: 2, vol: rnd(.004, .009) });
+        if (now > Snd.nextDrip) {
+            Snd.nextDrip = now + rnd(1500, 5000);
+            tone(rnd(1400, 2400), t, .05, { vol: .006, glide: .6, bus: Snd.amb });
+        }
     }
     if (homeKind() === "wagon" && now > Snd.nextCreak) {
         Snd.nextCreak = now + rnd(25e3, 70e3);
@@ -12853,8 +12909,8 @@ function showCalendarCard() {
 let easelHit = null, sillHit = null;
 /* between the balcony (or the window) and the right wall, with room for its legs */
 function easelX() {
-    const rm = room(), right = rm.wx + rm.wr * 1.3;
-    return clamp((right + W) / 2 + R * .15, R * 2.6, W - R * 1.1);
+    const rm = room(), right = rm.wx + rm.wr * 1.3, x = clamp((right + W) / 2 + R * .15, R * 2.6, W - R * 1.1);
+    return typeof festFloorOn === "function" && festFloorOn() ? Math.max(R * 2.6, Math.min(x, W - R * (.475 + .1 + PED_W + .1))) : x; // (room for a festival's pedestal on its right)
 }
 const PAINT_KINDS = ["moon", "flowers", "sea", "portrait", "teapot", "forest", "abstract", "fireflies", "window", "mountain"];
 /* what each painting is made with: the museum label says it, and Mite talks about it (and its smell) while it's on
@@ -14619,9 +14675,9 @@ function runConvo(line, onEnd) {
     const next = () => {
         if (id !== convoId)
             return;
-        if (i < beats.length && talkHeld()) { // a menu or card is open: the conversation waits for it (a minute at most)
+        if (i < beats.length && talkHeld()) { // a menu or card is open: the conversation waits for it (a quarter of an hour at most; owner 25-10-2026)
             heldSince = heldSince || performance.now();
-            if (performance.now() - heldSince < 60e3) {
+            if (performance.now() - heldSince < 15 * 60e3) {
                 setTimeout(next, 600);
                 return;
             }
@@ -14682,10 +14738,23 @@ function dlgShow(name, txt, kind, id, next) {
         st.done = true;
         el.classList.add("done");
         $("dlgText").textContent = txt;
-        st.timer = setTimeout(() => {
-            if (dlgState === st && convoId === id)
-                next();
-        }, clamp(1400 + txt.length * 35, 2200, 5500) / talkF());
+        const read = clamp(1400 + txt.length * 35, 2200, 5500) / talkF();
+        const after = () => { // (covered by a menu or card: the line waits, and gets its reading time again once it's visible)
+            if (dlgState !== st || convoId !== id)
+                return;
+            if (talkHeld()) {
+                st.held = 1;
+                st.timer = setTimeout(after, 500);
+                return;
+            }
+            if (st.held) {
+                st.held = 0;
+                st.timer = setTimeout(after, read);
+                return;
+            }
+            next();
+        };
+        st.timer = setTimeout(after, read);
     };
     if (reduced) {
         hold();
@@ -16616,7 +16685,9 @@ OBJ_ACT.vault = { beh: "dreamfile", revealAt: 1.3, show: dreamReveal };
 /*
  * festivals.js (scene) - Festivals showing up in the wagon (the list and texts are in content/festivals.js).
  *   home festivals   something appears: a pumpkin, a lantern, a shoe with a carrot, a small tree...
- *   card festivals   a postcard from a friend who celebrates it is pinned on the left wall
+ *   card festivals   a postcard from a friend who celebrates it is pinned on the board in the nook
+ *   every festival sends a postcard (home ones too, owner 25-10-2026); the board holds the newest three, the rest are
+ *   kept in the postcard album (open it from the board up close)
  * Tap either and a card tells you about the festival. Mite mentions each one once a day. What you've read is
  * kept in S.fest (first seen, years) and listed in the Cabinet, with what's coming up next.
  */
@@ -16643,7 +16714,7 @@ function activeFestivals(d = new Date()) {
 /* the postcards on the pinboard: any that have come for a festival that's on now, then the ones kept from before
    (a postcard stays once it has come: S.postcards, newest first). Each as { f, y, start, end } like activeFestivals */
 function boardCards(n) {
-    const act = activeFestivals().filter(a => a.f.kind === "card");
+    const act = activeFestivals().filter(a => (a.f.from || []).length);
     S.postcards = S.postcards || [];
     for (const a of act)
         if (!S.postcards.some(p => p.id === a.f.id && p.y === a.y)) {
@@ -16660,6 +16731,37 @@ function boardCards(n) {
             out.push({ f, y: p.y, start: r[0], end: r[1] });
     }
     return out.slice(0, n);
+}
+/* the postcard album: every postcard that has come, newest first (the board shows the newest three). Each with its
+   little picture, drawn by POSTCARD_ART into its own canvas; tap one for its festival card */
+function postcardList() {
+    return (S.postcards || []).slice().sort((a, b) => b.at - a.at).map(p => {
+        const f = FESTIVALS.find(x => x.id === p.id), r = f && f.when(p.y);
+        return f && r ? { f, y: p.y, start: r[0], end: r[1] } : null;
+    }).filter(Boolean);
+}
+function showPostcardAlbum() {
+    const fresh = $("ritual").hidden, list = postcardList();
+    const rows = list.map((a, i) => `<li><button type="button" class="albumcard" data-alb="${i}" aria-label="${esc(a.f.name)} ${a.y}, from a friend in ${esc(festFrom(a))}"><canvas width="48" height="32" data-albcv="${i}" aria-hidden="true"></canvas><span><b>${esc(a.f.name)}</b> <small>${esc(dmy(a.start))}</small><br><span class="sub">From a friend in ${esc(festFrom(a))}</span></span></button></li>`).join("");
+    openRitual("Postcard album", list.length ? `${list.length} postcard${list.length === 1 ? "" : "s"} from friends, newest first. The newest three are on the board.` : "Empty so far. Every festival, a friend sends a postcard.",
+        `<ul class="albumlist">${rows}</ul>`, [["Back to the board", "", () => { closeRitual(); openPinboard(); }], ["Close", "primary", closeRitual]]);
+    const body = $("ritBody");
+    body.querySelectorAll("[data-albcv]").forEach(cv => {
+        const a = list[+cv.dataset.albcv], art = POSTCARD_ART[a.f.id], keep = cx;
+        cx = cv.getContext("2d");
+        try {
+            cx.fillStyle = "#f4ecd8";
+            cx.fillRect(0, 0, 48, 32);
+            if (art)
+                art(0, 0, 48, 32, a);
+        }
+        finally {
+            cx = keep;
+        }
+    });
+    body.querySelectorAll("[data-alb]").forEach(b => b.onclick = () => { const a = list[+b.dataset.alb]; showFestival(a.f.id, a.y, showPostcardAlbum); });
+    if (fresh)
+        sfx("card");
 }
 /* the next festivals from today, soonest first */
 function upcomingFestivals(n = 3, d = new Date()) {
@@ -16689,16 +16791,16 @@ function festDates(a) {
     return s === e ? s : `${s} to ${e}`;
 }
 /* the card about one festival */
-function showFestival(id, y) {
+function showFestival(id, y, back) {
     const f = FESTIVALS.find(x => x.id === id);
     if (!f)
         return;
     const act = activeFestivals().find(a => a.f.id === id), kept = (S.postcards || []).find(p => p.id === id), yr = y || (act ? act.y : kept ? kept.y : new Date().getFullYear());
     const r = f.when(yr), a = act || (r ? { f, y: yr, start: r[0], end: r[1] } : null);
-    const sub = f.kind === "card" && a ? `A postcard from a friend in ${festFrom(a)} · ${festDates(a)}` : a ? `Kept here in the wagon (no postcard) · ${festDates(a)}` : "";
+    const sub = a && festFrom(a) ? `A postcard from a friend in ${festFrom(a)} · ${festDates(a)}` : a ? festDates(a) : "";
     const moves = /lunar|holi|nowruz|eid|diwali|hanukkah|midautumn/.test(id);
     const body = f.info(yr).map(p => `<p>${esc(p)}</p>`).join("") + (moves ? `<p class="ritmeta">This one follows the moon, so its date moves every year and can differ by a day from place to place.</p>` : "");
-    openRitual(f.name, sub, `<div class="festcard">${body}</div>`, [["Close", "primary", closeRitual]]);
+    openRitual(f.name, sub, `<div class="festcard">${body}</div>`, (back ? [["Back to the album", "", back]] : []).concat([["Close", "primary", closeRitual]]));
     sfx("card");
     const rec = S.fest[id] || (S.fest[id] = { first: Date.now(), years: [] });
     if (!rec.years.includes(yr))
@@ -16716,7 +16818,7 @@ function festTick() {
         S.festSaid[a.f.id] = today;
         const ok = a.f.lines.map(parseLine).filter(l => l.conds.every(k => condOk(k, c) !== false));
         const l = choice(ok.length ? ok : [{ text: a.f.lines[0] }]);
-        if (a.f.kind === "card") {
+        if ((a.f.from || []).length) {
             sfx("soft");
             floatText("post!", W * .1, GY - R * 3.9, "#fff6e0");
         }
@@ -16816,6 +16918,114 @@ const POSTCARD_ART = {
         cx.fillStyle = "#e8457a";
         cx.fillRect(x + w * .4, y + h * .2, w * .2, h * .12);
     },
+    halloween: (x, y, w, h) => {
+        cx.fillStyle = "#2a2440";
+        cx.fillRect(x + w * .06, y + h * .08, w * .88, h * .84);
+        cx.fillStyle = "#f2e6b0";
+        cx.fillRect(x + w * .7, y + h * .16, w * .12, h * .16);
+        cx.fillStyle = "#e07a22";
+        cx.fillRect(x + w * .28, y + h * .5, w * .3, h * .32);
+        cx.fillStyle = "#ffcf4a";
+        cx.fillRect(x + w * .33, y + h * .58, w * .06, h * .07);
+        cx.fillRect(x + w * .47, y + h * .58, w * .06, h * .07);
+        cx.fillRect(x + w * .35, y + h * .7, w * .16, h * .04);
+        cx.fillStyle = "#4f7a3a";
+        cx.fillRect(x + w * .42, y + h * .42, w * .04, h * .08);
+    },
+    easter: (x, y, w, h) => {
+        cx.fillStyle = "#cfe6b0";
+        cx.fillRect(x + w * .06, y + h * .62, w * .88, h * .3);
+        ["#9fd3e6", "#f2b8cf", "#f3d36a"].forEach((c, i) => {
+            cx.fillStyle = c;
+            cx.beginPath();
+            cx.ellipse(x + w * (.3 + i * .2), y + h * .58, w * .07, h * .16, 0, 0, 7);
+            cx.fill();
+        });
+    },
+    kingsday: (x, y, w, h) => {
+        for (let i = 0; i < 6; i++) {
+            cx.fillStyle = i % 2 ? "#f28c28" : "#ffb04a";
+            cx.beginPath();
+            cx.moveTo(x + w * (.1 + i * .14), y + h * .2);
+            cx.lineTo(x + w * (.24 + i * .14), y + h * .2);
+            cx.lineTo(x + w * (.17 + i * .14), y + h * .46);
+            cx.fill();
+        }
+        cx.fillStyle = "#f28c28";
+        cx.fillRect(x + w * .36, y + h * .6, w * .28, h * .2);
+    },
+    midsummer: (x, y, w, h) => {
+        cx.fillStyle = "#4f8a3c";
+        cx.fillRect(x + w * .48, y + h * .18, 2, h * .64);
+        cx.fillRect(x + w * .3, y + h * .3, w * .4, 2);
+        ["#f2b8cf", "#f3d36a", "#ffffff", "#9fd3e6", "#9fcf8a"].forEach((c, i) => {
+            cx.fillStyle = c;
+            cx.fillRect(x + w * (.2 + i * .14), y + h * (.7 + (i % 2) * .08), w * .08, h * .1);
+        });
+    },
+    sintmaarten: (x, y, w, h) => {
+        cx.fillStyle = "#2a2440";
+        cx.fillRect(x + w * .06, y + h * .08, w * .88, h * .84);
+        for (const k of [.28, .52, .76]) {
+            cx.fillStyle = "#c8642a";
+            cx.fillRect(x + w * k - 1, y + h * .18, 1.5, h * .2);
+            cx.fillStyle = "#f29a3e";
+            cx.beginPath();
+            cx.ellipse(x + w * k, y + h * .5, w * .08, h * .14, 0, 0, 7);
+            cx.fill();
+        }
+    },
+    sinterklaas: (x, y, w, h) => {
+        cx.fillStyle = "#6a3c22";
+        cx.fillRect(x + w * .25, y + h * .58, w * .4, h * .18);
+        cx.fillRect(x + w * .5, y + h * .4, w * .15, h * .2);
+        cx.fillStyle = "#e8742c";
+        cx.beginPath();
+        cx.moveTo(x + w * .4, y + h * .6);
+        cx.lineTo(x + w * .66, y + h * .22);
+        cx.lineTo(x + w * .48, y + h * .6);
+        cx.fill();
+        cx.fillStyle = "#b07a3a";
+        for (let i = 0; i < 4; i++)
+            cx.fillRect(x + w * (.72 + (i % 2) * .08), y + h * (.6 + (i >> 1) * .1), w * .06, h * .07);
+    },
+    solstice: (x, y, w, h) => {
+        cx.fillStyle = "#1a2040";
+        cx.fillRect(x + w * .06, y + h * .08, w * .88, h * .84);
+        cx.fillStyle = "#fffaf0";
+        for (const [a, b] of [[.15, .2], [.3, .35], [.75, .18], [.85, .4], [.6, .25]])
+            cx.fillRect(x + w * a, y + h * b, 1, 1);
+        cx.fillStyle = "#f1ead8";
+        cx.fillRect(x + w * .46, y + h * .5, w * .08, h * .3);
+        cx.fillStyle = "#ffcf3a";
+        cx.fillRect(x + w * .47, y + h * .38, w * .06, h * .1);
+    },
+    christmas: (x, y, w, h) => {
+        cx.fillStyle = "#2f6b3a";
+        for (let k = 0; k < 3; k++) {
+            const by = y + h * (.82 - k * .2), hw = w * (.24 - k * .05);
+            cx.beginPath();
+            cx.moveTo(x + w * .5 - hw, by);
+            cx.lineTo(x + w * .5, by - h * .3);
+            cx.lineTo(x + w * .5 + hw, by);
+            cx.fill();
+        }
+        cx.fillStyle = "#f2d36a";
+        cx.fillRect(x + w * .47, y + h * .16, w * .06, h * .08);
+        cx.fillStyle = "#e8457a";
+        cx.fillRect(x + w * .4, y + h * .62, 2, 2);
+        cx.fillStyle = "#7fd0ff";
+        cx.fillRect(x + w * .56, y + h * .48, 2, 2);
+    },
+    newyear: (x, y, w, h) => {
+        cx.fillStyle = "#1a2040";
+        cx.fillRect(x + w * .06, y + h * .08, w * .88, h * .84);
+        [["#ffcf3a", .3, .35], ["#e8457a", .62, .3], ["#7fd0ff", .48, .58]].forEach(([c, a, b]) => {
+            cx.fillStyle = c;
+            for (let i = 0; i < 8; i++)
+                cx.fillRect(x + w * a + Math.cos(i * .785) * w * .1, y + h * b + Math.sin(i * .785) * h * .14, 1.5, 1.5);
+        });
+    },
     hanukkah: (x, y, w, h, a) => {
         const night = a ? clamp(Math.floor((Date.now() - a.start.getTime()) / 864e5) + 1, 1, 8) : 8;
         cx.fillStyle = "#c9a85a";
@@ -16833,7 +17043,14 @@ const POSTCARD_ART = {
     }
 };
 /* the pumpkin, tree, eggs... on the floor; the lantern, bunting and wreath up high */
+/* the festivals that put something on the floor stand it on a pedestal right of the easel */
+const FLOOR_FEST = ["halloween", "sinterklaas", "christmas", "easter", "newyear"], PED_W = .9, PED_H = .3;
+function festFloorOn() {
+    return activeFestivals().some(a => FLOOR_FEST.includes(a.f.id));
+}
 function festFloorX() {
+    if (typeof easelX === "function")
+        return Math.min(W - R * (PED_W / 2 + .1), easelX() + R * (.475 + .1 + PED_W / 2));
     if (!own("loft"))
         return W * .64;
     const g = loftGeo("room"); // (clear of the balcony's right-hand post)
@@ -16865,42 +17082,53 @@ function drawFestivals(dk, tsec) {
         festHits.push({ x, y, w, h, cx: x + w / 2, id: a.f.id });
     });
     for (const a of acts.filter(a => a.f.kind === "home")) {
-        const id = a.f.id, fx = festFloorX(), s = R;
+        const id = a.f.id, fx = festFloorX(), s = R * (id === "christmas" ? .62 : .8), FY = GY - R * PED_H;
+        if (FLOOR_FEST.includes(id)) // the pedestal right of the easel (owner, 25-10-2026: the pumpkin was behind the easel)
+            drawLayered(() => {
+                const pw = R * PED_W;
+                cx.fillStyle = mix("#5a3c26", "#1e140c", dk * .5);
+                cx.fillRect(fx - pw / 2, FY, pw, R * PED_H);
+                cx.fillStyle = mix("#c49a6c", "#4a3626", dk * .5);
+                cx.fillRect(fx - pw / 2 - R * .04, FY - R * .04, pw + R * .08, R * .07);
+                cx.fillRect(fx - pw / 2 - R * .02, GY - R * .05, pw + R * .04, R * .05);
+                cx.fillStyle = mix("#6e4a2e", "#24180e", dk * .5);
+                cx.fillRect(fx - pw / 2 + R * .08, FY + R * .08, pw - R * .16, R * (PED_H - .16));
+            });
         if (id === "halloween") drawLayered(() => {
             cx.fillStyle = mix("#e07a22", "#4a2a10", dk * .6);
             for (const k of [-.28, 0, .28]) {
                 cx.beginPath();
-                cx.ellipse(fx + k * s, GY - s * .32, s * .26, s * .32, 0, 0, 7);
+                cx.ellipse(fx + k * s, FY - s * .32, s * .26, s * .32, 0, 0, 7);
                 cx.fill();
             }
             cx.fillStyle = mix("#4f7a3a", "#1a2a14", dk * .6);
-            cx.fillRect(fx - s * .04, GY - s * .72, s * .08, s * .12);
+            cx.fillRect(fx - s * .04, FY - s * .72, s * .08, s * .12);
             cx.fillStyle = night ? "#ffcf4a" : mix("#5a2c10", "#1a0c04", dk);
-            cx.fillRect(fx - s * .26, GY - s * .44, s * .12, s * .08);
-            cx.fillRect(fx + s * .14, GY - s * .44, s * .12, s * .08);
-            cx.fillRect(fx - s * .22, GY - s * .24, s * .44, s * .06);
+            cx.fillRect(fx - s * .26, FY - s * .44, s * .12, s * .08);
+            cx.fillRect(fx + s * .14, FY - s * .44, s * .12, s * .08);
+            cx.fillRect(fx - s * .22, FY - s * .24, s * .44, s * .06);
         });
         if (id === "halloween" && night)
-            softGlow(fx, GY - s * .35, s * .9, "rgba(255,170,60,.22)");
+            softGlow(fx, FY - s * .35, s * .9, "rgba(255,170,60,.22)");
         if (id === "sinterklaas") drawLayered(() => {
             cx.fillStyle = mix("#6a3c22", "#22140a", dk * .6);
-            cx.fillRect(fx - s * .4, GY - s * .22, s * .7, s * .22);
-            cx.fillRect(fx + s * .1, GY - s * .42, s * .22, s * .24);
+            cx.fillRect(fx - s * .4, FY - s * .22, s * .7, s * .22);
+            cx.fillRect(fx + s * .1, FY - s * .42, s * .22, s * .24);
             cx.fillStyle = mix("#e8742c", "#4a2410", dk * .5);
             cx.beginPath();
-            cx.moveTo(fx - s * .1, GY - s * .2);
-            cx.lineTo(fx + s * .3, GY - s * .62);
-            cx.lineTo(fx + s * .08, GY - s * .2);
+            cx.moveTo(fx - s * .1, FY - s * .2);
+            cx.lineTo(fx + s * .3, FY - s * .62);
+            cx.lineTo(fx + s * .08, FY - s * .2);
             cx.fill();
             cx.fillStyle = mix("#59a33c", "#1a3010", dk * .5);
-            cx.fillRect(fx + s * .26, GY - s * .74, s * .06, s * .14);
+            cx.fillRect(fx + s * .26, FY - s * .74, s * .06, s * .14);
         });
         if (id === "christmas") drawLayered(() => {
             cx.fillStyle = mix("#8a4a2a", "#2a160a", dk * .6);
-            cx.fillRect(fx - s * .22, GY - s * .3, s * .44, s * .3);
+            cx.fillRect(fx - s * .22, FY - s * .3, s * .44, s * .3);
             cx.fillStyle = mix("#2f6b3a", "#0e2414", dk * .5);
             for (let k = 0; k < 3; k++) {
-                const by = GY - s * (.3 + k * .42), hw = s * (.6 - k * .14);
+                const by = FY - s * (.3 + k * .42), hw = s * (.6 - k * .14);
                 cx.beginPath();
                 cx.moveTo(fx - hw, by);
                 cx.lineTo(fx, by - s * .62);
@@ -16911,34 +17139,34 @@ function drawFestivals(dk, tsec) {
             for (let i = 0; i < 9; i++) {
                 const on = Math.floor(tsec * 1.5 + i) % 3 !== 0;
                 cx.fillStyle = on ? cols[i % 4] : mix(cols[i % 4], "#000", .55);
-                const k = i / 9, ly = GY - s * (.45 + k * 1.05), lx = fx + Math.sin(i * 2.3) * s * (.4 - k * .3);
+                const k = i / 9, ly = FY - s * (.45 + k * 1.05), lx = fx + Math.sin(i * 2.3) * s * (.4 - k * .3);
                 cx.fillRect(lx - 1.5, ly - 1.5, 3, 3);
             }
             cx.fillStyle = "#f2d36a";
-            cx.fillRect(fx - s * .06, GY - s * 1.62, s * .12, s * .12);
+            cx.fillRect(fx - s * .06, FY - s * 1.62, s * .12, s * .12);
         });
         if (id === "easter") drawLayered(() => {
             cx.fillStyle = mix("#a8743a", "#2e1f10", dk * .6);
-            cx.fillRect(fx - s * .5, GY - s * .28, s, s * .28);
+            cx.fillRect(fx - s * .5, FY - s * .28, s, s * .28);
             ["#9fd3e6", "#f2b8cf", "#f3d36a", "#9fcf8a"].forEach((c, i) => {
                 cx.fillStyle = mix(c, "#2a2420", dk * .5);
                 cx.beginPath();
-                cx.ellipse(fx - s * .33 + i * s * .22, GY - s * .32, s * .1, s * .14, 0, 0, 7);
+                cx.ellipse(fx - s * .33 + i * s * .22, FY - s * .32, s * .1, s * .14, 0, 0, 7);
                 cx.fill();
             });
         });
         if (id === "newyear") drawLayered(() => {
             cx.fillStyle = mix("#f1ead8", "#4a463c", dk * .6);
-            cx.fillRect(fx - s * .5, GY - s * .08, s, s * .08);
+            cx.fillRect(fx - s * .5, FY - s * .08, s, s * .08);
             cx.fillStyle = mix("#b07a3a", "#3a2410", dk * .6);
             for (const [ox, oy] of [[-.25, 0], [0, 0], [.25, 0], [-.12, -.2], [.12, -.2]]) {
                 cx.beginPath();
-                cx.arc(fx + ox * s, GY - s * .16 + oy * s, s * .12, 0, 7);
+                cx.arc(fx + ox * s, FY - s * .16 + oy * s, s * .12, 0, 7);
                 cx.fill();
             }
             cx.fillStyle = "#fffaf0";
             for (let i = 0; i < 8; i++)
-                cx.fillRect(fx + Math.sin(i * 3.1) * s * .35, GY - s * (.2 + (i % 3) * .1), 1.5, 1.5);
+                cx.fillRect(fx + Math.sin(i * 3.1) * s * .35, FY - s * (.2 + (i % 3) * .1), 1.5, 1.5);
         });
         if (id === "newyear" && night && Math.random() < .03) {
             const rm = room();
@@ -17008,7 +17236,7 @@ function drawFestivals(dk, tsec) {
             festHits.push({ x: rm.wx - rm.wr * 1.1, y: rm.wy - rm.wr * 1.2, w: rm.wr * 2.2, h: rm.wr * .4, cx: rm.wx, id });
             continue;
         }
-        festHits.push({ x: fx - s * .6, y: GY - s * (id === "christmas" ? 1.7 : .8), w: s * 1.2, h: s * (id === "christmas" ? 1.7 : .8), cx: fx, id });
+        festHits.push({ x: fx - R * .55, y: GY - R * PED_H - s * (id === "christmas" ? 1.7 : .8), w: R * 1.1, h: R * PED_H + s * (id === "christmas" ? 1.7 : .8), cx: fx, id });
     }
 }
 function festTap(p) {
@@ -22131,10 +22359,10 @@ function pinTurn(d) {
 }
 /* what's on the board, and where, in close-up pixels: photos along the top, postcards top right, notes below */
 function pinItems() {
-    const out = [], cards = boardCards(2);
+    const out = [], cards = boardCards(3); // (the newest three; the rest are in the postcard album, festivals.js)
     const ph = pinPhotos(), step = ph.length > 4 ? 14 : 17, pw = ph.length > 4 ? 13 : 15;
     ph.forEach((k, i) => out.push({ kind: "photo", photo: k, x: (ph.length > 4 ? 3 : 6) + i * step, y: 6 + (i % 2) * 3, w: pw, h: 11, rot: (i % 3) - 1 }));
-    cards.forEach((a, i) => out.push({ kind: "card", fest: a, x: 74, y: 5 + i * 13, w: 16, h: 11 }));
+    cards.forEach((a, i) => out.push({ kind: "card", fest: a, x: 79, y: 4 + i * 12, w: 15, h: 10 }));
     pinNotes().forEach((q, i) => out.push({ kind: "note", q, x: 6 + (i % 4) * 17 + (i >= 4 ? 8 : 0), y: 25 + Math.floor(i / 4) * 15 + (i % 2) * 2, w: 13, h: 12, col: noteCol(q) }));
     return out;
 }
@@ -22197,6 +22425,9 @@ function openPinboard() {
     sfx("soft");
     $("bubble").hidden = true;
     pinBuildHits();
+    const nCards = postcardList().length;
+    $("pinAlbum").hidden = !nCards;
+    $("pinAlbum").textContent = `Postcard album (${nCards})`;
     $("pinDlg").hidden = true;
     $("pinView").hidden = false;
     $("pinClose").focus({ preventScroll: true });
@@ -22413,6 +22644,11 @@ document.addEventListener("keydown", e => {
         e.preventDefault();
         closePinboard();
     }
+});
+$("pinAlbum").addEventListener("click", e => {
+    e.stopPropagation();
+    closePinboard();
+    showPostcardAlbum();
 });
 
 </script>
@@ -25479,6 +25715,7 @@ function frame(now) {
     }
     const dt = Math.min(.1, (now - last) / 1000);
     last = now;
+    speechHoldTick(now, dt); // (a menu or card open: the lines on screen wait for it, speech.js)
     // economy
     decayMom(dt * 1000);
     // pet logic
@@ -26512,12 +26749,12 @@ const SHOP_SECS = {
     wall: { ids: () => WALL.map(b => b.id), has: id => (S.b[id] || 0) > 0 },
     season: { ids: () => seasItems().map(b => b.id), has: id => (S.b[id] || 0) > 0 } // (this season's: not counted for everything bought)
 };
-/* everything in the shop bought (furniture, plants, crystals, kettles, the wall): then Something special and the
-   raccoon's barter open up, and stay open */
+/* one of everything in the shop (furniture, plants, crystals, the wall; not the kettles, owner 25-10-2026, nor the
+   season's things): then Something special and the raccoon's barter open up, and stay open */
 function shopComplete() {
     if (num(S.flags.shopAll))
         return true;
-    if (!Object.entries(SHOP_SECS).every(([k, c]) => k === "season" || c.ids().every(c.has)))
+    if (!Object.entries(SHOP_SECS).every(([k, c]) => k === "season" || k === "kettles" || c.ids().every(c.has)))
         return false;
     S.flags.shopAll = 1;
     saveSoon();
