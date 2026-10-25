@@ -1852,9 +1852,9 @@ const DEF = {
             "They pulled back like a cat's tail when you reach for it."
         ],
         catyarn: [
-            "That's not even the right wool. She took a ball from the basket. A different colour entirely.",
-            "Midnightcat's playing with the wrong ball. It's not in this project. It's not in any project.",
-            "She's chosen her own colour. She always does. Never the one I'm using.",
+            "That's the ball I'm knitting from. She knows. She always picks the one that's attached.",
+            "Midnightcat's got my wool. Every row now comes with a tug-of-war.",
+            "She doesn't want the spare balls in the basket. Only the one that's in use.",
             "Midnightcat. That's the scarf. That was the scarf.",
             "She's helping. In her own way.",
             "Every stitch I make, she unmakes a bit. It's a partnership.",
@@ -18893,8 +18893,7 @@ function catYarnTick(dt, now) {
     yarnBall.x = pet.x + yarnBall.side * R * 1.05;
     yarnBall.vx = yarnBall.side * R * 1.2;
     yarnBall.on = true;
-    const kn = S.knit || {}, other = YARNS.filter(y => y.id !== kn.c1 && y.id !== kn.c2); // she's got the wrong ball: a colour that isn't in the project
-    yarnBall.col = (other.length ? choice(other) : YARNS[0]).c;
+    yarnBall.col = yarnOf((S.knit || {}).c1).c; // the ball Mite is knitting from: the project's main colour (owner, 25-10-2026)
     Object.assign(cat, { ph: "play", until: now + 1500, paw: 0 });
     if (Math.random() < .6)
         setTimeout(() => {
@@ -18907,7 +18906,7 @@ function catYarnTick(dt, now) {
 function drawYarnBall(dk) {
     if (!yarnBall.on || drawingRoom !== "room")
         return;
-    const col = yarnBall.col || "#c25b4a", r = R * .17; // (not the project's colour: she took a ball from the basket)
+    const col = yarnBall.col || yarnOf((S.knit || {}).c1).c, r = R * .17; // (the project's main colour, like the ball beside Mite)
     const bx = Math.round(yarnBall.x / PX) * PX, by = GY + R * .12 - r, roll = yarnBall.x / r;
     cx.strokeStyle = col;
     cx.lineWidth = Math.max(PX * .6, R * .03);
