@@ -883,7 +883,7 @@ body.editing #addForm{display:none}
         <div class="drawers" id="altered"></div></details>
       <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
         <div class="glimpses" id="glimpseList"></div></details>
-      <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>Midnightcat's cards</h3><span class="seccount" id="cnt-cab-cards"></span></summary><p class="sub">The cards she's laid out, and the ones she drew for you. While her cards are out on the floor, tap her for a reading (three a day).</p>
+      <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>The Deck</h3><span class="seccount" id="cnt-cab-cards"></span></summary><p class="sub"><span class="pn">Midnightcat</span>'s cards. They come one at a time, in strange mail, and not often.</p>
         <div class="cards" id="cardList"></div></details>
       <details class="shopsec colsec" data-sec="cab-origami" open><summary><h3>Adorbigami</h3><span class="seccount" id="cnt-cab-origami"></span></summary><p class="sub">Folded by the ghost at the window. They hang above it on a string.</p>
         <div class="words" id="origamiList"></div></details>
@@ -891,6 +891,10 @@ body.editing #addForm{display:none}
         <div class="words" id="festList"></div></details>
       <details class="shopsec colsec" data-sec="cab-dreams" open><summary><h3>Dream log</h3><span class="seccount" id="cnt-cab-dreams"></span></summary><p class="sub">Read from the dream archive. Newest first.</p>
         <ul class="inclog" id="dreamLog"></ul></details>
+      <details class="shopsec colsec" data-sec="cab-words" open><summary><h3>Words <span class="pn">Mite</span> invented</h3><span class="seccount" id="cnt-cab-words"></span></summary>
+        <div class="words" id="words"></div></details>
+      <details class="shopsec colsec" data-sec="cab-terms" open><summary><h3>Archival terms</h3><span class="seccount" id="cnt-cab-terms"></span></summary><p class="sub">Explained by <span class="pn">Mite</span> while it works in the archive, one now and then.</p>
+        <dl class="terms" id="termList"></dl></details>
       <details class="shopsec colsec" data-sec="cab-hats" open><summary><h3>Hats</h3><span class="seccount" id="cnt-cab-hats"></span></summary>
         <div class="hats" id="hats"></div></details>
       <details class="shopsec colsec" data-sec="cab-achs" open><summary><h3>Achievements</h3><span class="seccount" id="cnt-cab-achs"></span></summary>
@@ -909,10 +913,6 @@ body.editing #addForm{display:none}
 
     <div class="pane" id="tab-notebook" role="tabpanel" hidden>
       <div><h2><span class="pn">Mite</span>'s notebook</h2><p class="sub">What <span class="pn">Mite</span> noticed today, written down on its own. A fresh page every day, at the hour set under Settings (0500 to start with).</p></div>
-      <details class="shopsec colsec" data-sec="nb-words" open><summary><h3>Words <span class="pn">Mite</span> invented</h3></summary>
-        <div class="words" id="words"></div></details>
-      <details class="shopsec colsec" data-sec="nb-terms" open><summary><h3>Archival terms</h3><span class="seccount" id="cnt-nb-terms"></span></summary><p class="sub">Explained by <span class="pn">Mite</span> while it works in the archive, one now and then.</p>
-        <dl class="terms" id="termList"></dl></details>
       <ul class="notes" id="notes"></ul>
     </div>
 
@@ -1092,7 +1092,7 @@ const POOL_INFO = {
     late: "After bedtime", after_work: "After work hours on a workday", day_off: "On non-workdays",
     buy: "Bought something ({item})", buy_rugcol: "Bought a new rug colour ({col})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
-    catcards: "Midnightcat's cards (like tarot cards, with names of their own): Name | sign (moon eye key door candle moth bell hand spiral star bird cup lantern thread mask crown tree blade wave) | #colour | what it means",
+    catcards: "The Deck: Midnightcat's cards, which come one at a time in strange mail: Name | sign (moon eye key door candle moth bell hand spiral star bird cup lantern thread mask crown tree blade wave) | #colour (not drawn: the cards are dark with a white sign) | what's written on it", deckmail: "Mite, when strange mail comes (a card for the Deck) and there's a desk: it's in the rack", deckmail_nodesk: "Mite, when strange mail comes and there's no desk yet",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumhello: "The possum's first visit: it comes in for the first cookies, introduces itself politely and asks to stay (M: / P:, {possum} is its name)", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum something from the tray ({possum} is its name, {bake}: what it gets, e.g. cookie, slice of pie)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double / sheet / coat / lantern)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
     observe: "A resident sits looking at something, then talks about it ({thing}): who | A: ... / B: ... (who: cat, possum, snail or any; A is the one looking, B whoever answers: Mite or another resident)",
     observe_solo: "A resident looking at something, to itself ({thing}): who | text",
@@ -1660,6 +1660,9 @@ const DEF = {
             "Cooperation | bird | #5b8a4a | Many small birds move a big flock. Do your bit and trust theirs."
         ],
         catconvo: [
+            "M: Midnightcat, where do the cards come from? / C: From the deck. / M: Where's the deck? / C: Coming. Slowly. {card} got here first. / M: Is that good? / C: It's punctual.",
+            "M: I looked at {card} again. / C: Mrrp. And did it look back? / M: …A little. / C: Then it's settled in.",
+            "M: Did you used to read the cards? / C: I used to. Now they read the post. {card} came, didn't it? / M: It did. / C: Mrow. Good.",
             "M: Hello, Midnightcat. / C: Mrrp. / M: Did you sleep well? / C: I slept in three places at once. Mrow. / M: That sounds tiring. / C: It was very efficient.",
             "M: Can I pet you? / C: …Mew. / M: Is that a yes? / C: It is a door that is not locked.",
             "M: What have you been reading, in the archive? / C: Mrow. Box forty-one. / M: What was in it? / C: You. Being brave. Mrrp.",
@@ -1974,6 +1977,17 @@ const DEF = {
             "[spring] Dear you, / Something is coming up through the ground near the wagon. I won't spoil what it is. Things grow when you aren't watching, and that includes you. / The world",
             "[summer] Dear you, / The evenings are long, so there's time. Not for everything: for something. Pick a small one. / Brightly, the world",
             "[strange] Dear you, / Some of the doors around here open onto other places. I don't mind. I'm bigger than I look, on the inside. Like the wagon. Like you. / Fondly, the world",
+        ],
+        deckmail: [
+            "Strange mail. A black envelope, no stamp, no sender. It was in the rack before the post came. It's yours, I think.",
+            "There's an envelope in the rack that nobody brought. Dark, and a bit cold. Your name isn't on it, but it's for you.",
+            "Something came that the post didn't bring. It's in the rack. I didn't open it. It looked at me first.",
+            "[night] An envelope slid into the rack just now. No footsteps. No stamp. It's waiting for you.",
+            "Midnightcat sat by the rack all morning, and now there's a dark envelope in it. I'm not saying those are connected.",
+        ],
+        deckmail_nodesk: [
+            "Strange mail. A dark envelope, under the door. No stamp. It's for you.",
+            "An envelope turned up on the floor. Nobody brought it. I think it's for you.",
         ],
         letterarrived: [
             "Post! A letter from {penpal}. It's in the rack on the desk.",
@@ -3300,6 +3314,11 @@ const DEF = {
             "[strange] One of the seedlings leans away from the window, towards me. I've said hello.",
         ],
         midnightcat: [
+            "{card}. That one found you, didn't it. They always know the address.",
+            "Mrrp. {card} came for you. It was in my deck once. It still is, in a way.",
+            "I dreamt about {card} again. In the dream it was the only card left, and it was very smug about it.",
+            "[night] Mrow. Keep {card} face down tonight. Not for any reason. Just do.",
+            "[rare] The deck is coming back to you one card at a time. {card} was early. They're never early.",
             "I have been to the bottom of the stairs that aren't there. The tea is terrible.",
             "Every cat keeps one secret from every other cat. Mine is about the moon.",
             "Bargains are like yarn. Pull the wrong end and you're tangled for a hundred years.",
@@ -4379,7 +4398,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvo4yk74ryhaf", "mvo51bqtk3fpr",
     // group 20 (25-10-2026)
     "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
-, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab"];
+, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov"];
 
 </script>
 <script>/* js/core/state.js */
@@ -4599,7 +4618,10 @@ function sanitizeState(raw) {
         if (!BAD_KEYS.has(k))
             o.eyesGone[sid(k).slice(0, 12)] = num(s.eyesGone[k]);
     o.eyes = arr(s.eyes, 24).map(e => ({ k: sid(e.k).slice(0, 12), at: num(e.at), from: str(e.from, 20) })).filter(e => e.k); // the eye jars (eyes.js)
-    o.cards = arr(s.cards, 300).map(c => ({ k: str(c && c.k, 60), at: num(c && c.at), you: c && c.you ? 1 : 0 })).filter(c => c.k); // Midnightcat's cards that came up (cards.js)
+    { // the Deck: Midnightcat's cards that have come in strange mail, once each (cards.js; older saves kept every reading)
+        const seen = new Set();
+        o.cards = arr(s.cards, 300).map(c => ({ k: str(c && c.k, 60), at: num(c && c.at) })).filter(c => c.k).sort((a, b) => a.at - b.at).filter(c => !seen.has(c.k) && seen.add(c.k)).slice(0, 120);
+    }
     o.glimpses = arr(s.glimpses, 300).map(g => ({ k: str(g && g.k, 80), at: num(g && g.at) })).filter(g => g.k); // what the chalk circle has shown (circle.js)
     o.mice = arr(s.mice, 20).map(m => ({ n: str(m && m.n, 30).trim(), at: num(m && m.at), kin: m && m.kin ? 1 : 0, told: m && m.told ? 1 : 0 })).filter(m => m.n); // mice who've visited; kin: the circle has shown its found family, told: it knows Mite saw (visitors.js, circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
@@ -4914,12 +4936,12 @@ function mergeStates(a, b) {
                 m.set(g.k, { k: g.k, at: num(g.at) });
         o.glimpses = [...m.values()].sort((x, y) => x.at - y.at).slice(-300);
     }
-    { // Midnightcat's cards: every draw on either side, once
+    { // the Deck: every card that came on either side, once, with the day it first came
         const m = new Map();
         for (const c of [...(a.cards || []), ...(b.cards || [])])
-            if (c && c.k)
-                m.set(c.k + "|" + num(c.at), { k: c.k, at: num(c.at), you: c.you ? 1 : 0 });
-        o.cards = [...m.values()].sort((x, y) => x.at - y.at).slice(-300);
+            if (c && c.k && (!m.has(c.k) || num(c.at) < m.get(c.k).at))
+                m.set(c.k, { k: c.k, at: num(c.at) });
+        o.cards = [...m.values()].sort((x, y) => x.at - y.at).slice(0, 120);
     }
     { // the mice who've visited: everyone either side met, with what the circle showed and what was said
         const m = new Map();
@@ -5630,7 +5652,7 @@ function ctx() {
     }
     const mp = moonPhase(now);
     return { now, h, dow, month: now.getMonth(), workday: isWorkDay(now), office: schedOf(dayKey(now)) !== "off" && st.office.includes(dow), dayNote: schedOf(dayKey(now)),
-        you: st.you || null, pet: st.pet, open: open.length, oldest: oldest ? oldest.t : null, oldestAge: oldest ? fmtAge(Date.now() - oldest.c) : null,
+        you: st.you || null, card: typeof deckCard === "function" ? deckCard() : null, pet: st.pet, open: open.length, oldest: oldest ? oldest.t : null, oldestAge: oldest ? fmtAge(Date.now() - oldest.c) : null,
         smallest: smallest ? smallest.t : null, doneToday: doneOn(actDay()), week: allDone().filter(t => t.d > weekAgo).length, total: doneCount(),
         streak: S.streak.n, level: level(), favHour: fav, daysTogether: Math.max(1, Math.round((Date.now() - S.created) / 864e5)),
         doneBy: st.doneBy, bed: st.bed, pats: S.pats, n: ri(3, 42),
@@ -5743,7 +5765,7 @@ function convoPick(key, keep) {
             if (typeof r === "number")
                 w *= r;
         }
-        if (!ok)
+        if (!ok || [...text.matchAll(/\{(\w+)\}/g)].some(m => m[1] === "card" && varVal(c, "card") == null)) // ({card}: only once a card has come)
             continue;
         const first = text.split(" / ").map(x => x.replace(/^\s*[A-Z]:\s*/, "").trim());
         if (first.some(x => x.length > 12 && [...heardT].some(h => h.includes(x.replace(/\{\w+\}/g, "").slice(0, 24)))))
@@ -19292,10 +19314,6 @@ function catTap() {
         heard(CAT_NAME, line, Date.now());
         return;
     }
-    if (catCardsOut()) { // her cards are out: she reads one for you (cards.js)
-        catReading();
-        return;
-    }
     if (!objQ.cur && pet.beh !== "sleep" && pet.beh !== "catvisit" && !S.lightsOut && !(cat.room === "room" && cat.g > 0 && cat.ph === "jump")) { // Mite comes over for a chat
         if (!S.flags.tap_cat) {
             S.flags.tap_cat = 1;
@@ -19699,7 +19717,7 @@ function drawAnimals(now) {
     if (guestOut()) // a visitor out on the floor (visitors.js)
         withRoomLight("room", () => drawLayered(() => drawGuest(guest, now)));
     if (catOut())
-        withRoomLight(cat.room, () => (drawCat(k, now), drawCatCards(k))); // Midnightcat, out on the floor in front of Mite
+        withRoomLight(cat.room, () => drawCat(k, now)); // Midnightcat, out on the floor in front of Mite
 }
 /* is the possum up on the nook's platform (or its stairs)? Then it walks behind the railing: drawn before it (loop.js) */
 function possumUp() {
@@ -19722,7 +19740,7 @@ function drawScene(now, dt) {
     drawWallNotes(); // Mite's sticky notes on the walls (pastimes.js)
     withRoom("room", () => drawYarnBall(sceneDark())); // the wool she plays with, on the wagon floor (cat.js), behind Mite
     if (!catOut())
-        withRoomLight(cat.room, () => (drawCat(sceneDark(), now), drawCatCards(sceneDark()))); // Midnightcat walks behind Mite (not clipped: she crosses between rooms)
+        withRoomLight(cat.room, () => drawCat(sceneDark(), now)); // Midnightcat walks behind Mite (not clipped: she crosses between rooms)
     return sky || other;
 }
 /* the screen changed size (full screen, a dragged window edge): positions are in pixels, so the view, Mite and the
@@ -20940,6 +20958,8 @@ function yourLetterCard() {
 }
 /* a letter for you, opened: on a card, as written */
 function showYourLetter(l) {
+    if (l.card) // strange mail: a card for the Deck (cards.js)
+        return showDeckCard(l);
     const first = l.text === WELCOME_LETTER, desk = hasDesk();
     openRitual(first ? "A letter, for you" : "Another letter from the world", first ? `It came when we got here. It's addressed to you, not me.` : `It came in the post. For you again.`,
         `<div class="letter">${esc(homeTxt(l.text)).replace(/\n/g, "<br>")}</div>`, [[desk ? "Put it back in the rack" : "Keep it (it goes in the rack once there's a desk)", "primary", closeRitual]]);
@@ -20991,6 +21011,8 @@ function postTick(now) {
     if (keyThanksTick(t)) // (the brass key's owner writes: anomalies.js)
         return;
     if (anomPostTick(t)) // (and the anomalies Mite has met: anomalies.js)
+        return;
+    if (deckTick(t)) // (strange mail: a card for the Deck, cards.js)
         return;
     serialTick(t);
     for (const s of S.post.sent) {
@@ -24156,20 +24178,21 @@ function renderGlimpses() {
 <script>/* js/scene/cards.js */
 "use strict";
 /*
- * cards.js - Midnightcat's cards (owner, 25-10-2026): a deck like a tarot deck, with names of its own (lines:
- * catcards, "Name | sign | #colour | meaning"). Now and then, sitting on the floor, she lays one out and says what
- * it means; while her cards are out, a tap on her (or on them) and she turns one over for you (a card: three a day).
- * Every card that came up is kept in S.cards and listed in the Cabinet.
- *   catCards           the cards on the floor beside her just now { k, room, x, z, until } (not saved)
- *   cardList()         the deck, from the lines
- *   catCardTick(now)   every frame (loop.js): when she lays one out by herself
- *   drawCatCards(dk)   with Midnightcat (camera.js), and the cards join her tap area
- *   catCardsOut()      are they out (a tap on her is a reading)
- *   catReading()       she reads one for you
+ * cards.js - The Deck: Midnightcat's cards (owner, 25-10-2026). She doesn't read them any more. The cards come by
+ * themselves, one at a time and very slowly, in strange mail: a dark envelope with no stamp and no sender, in the
+ * letter rack (or, before there's a desk, handed over as a card). Each card that has come is kept in S.cards and shown
+ * in Collections, under the Deck; once a card has come, it can come up in what Midnightcat says ({card} in her lines
+ * and in her conversations with Mite).
+ * The cards are dark with a white sign (lines: catcards, "Name | sign | #colour | what's on it"; the colour is kept in
+ * the lines for older edits but not drawn).
+ *   cardList()        the deck, from the lines
+ *   deckHas()         the cards that have come, oldest first
+ *   deckCard()        one of them, for {card} in a line (the same one for a minute, so a conversation keeps it)
+ *   deckTick(t)       from postTick (post.js): is the next card due?
+ *   showDeckCard(l)   the envelope, opened (a card)
+ *   renderCards()     the Deck in Collections
  */
-const CARD_DAY = 3; // readings for you a day
-/* the signs, 7×9 (made up, after the chalk circle's: a moon, an eye, a key, a door, a candle, a moth, a bell, a hand,
-   a spiral, a star, a bird, a cup, a lantern, a thread) */
+/* the signs, 7×9 (made up, after the chalk circle's) */
 const CARD_SIGNS = {
     moon: ["..###..", ".##....", "##.....", "##.....", "##.....", "##.....", ".##....", "..###..", "......."],
     eye: [".......", ".......", "..###..", ".#...#.", "#..#..#", ".#...#.", "..###..", ".......", "......."],
@@ -24191,98 +24214,79 @@ const CARD_SIGNS = {
     blade: ["...#...", "...#...", "...#...", "...#...", "...#...", ".#####.", "...#...", "...#...", "..###.."],
     wave: [".......", ".......", ".##..##", "#..##..", ".......", ".##..##", "#..##..", ".......", "......."]
 };
-let catCards = null, catCardNext = 0, cardsHit = null;
+const DECK_FIRST = 5 * 864e5, DECK_GAP = [6, 11]; // the first card after five days of a game; then one every 6–11 days
 function cardList() {
-    return pool("catcards").map(l => String(l).split("|").map(x => x.trim())).filter(x => x[0] && x[3]).map(([n, sg, c, m]) => ({ k: n, n, sign: CARD_SIGNS[sg] ? sg : "star", col: /^#[0-9a-f]{6}$/i.test(c) ? c : "#a77cb8", m }));
+    return pool("catcards").map(l => String(l).split("|").map(x => x.trim())).filter(x => x[0] && x[3]).map(([n, sg, c, m]) => ({ k: n, n, sign: CARD_SIGNS[sg] ? sg : "star", m }));
 }
 const cardOf = k => cardList().find(c => c.k === k);
-function cardsToday() {
-    const t = actDay();
-    return (S.cards || []).filter(c => c.you && actDay(c.at) === t).length;
+function deckHas() {
+    return (S.cards || []).slice().sort((a, b) => a.at - b.at);
 }
-/* a card: one that hasn't come up yet if there is one, and not the one on the floor */
-function pickCard(not) {
-    const all = cardList().filter(c => c.k !== not), seen = new Set((S.cards || []).map(c => c.k));
-    const fresh = all.filter(c => !seen.has(c.k));
-    return fresh.length && Math.random() < .7 ? choice(fresh) : choice(all);
+function deckCard() {
+    const got = deckHas().map(c => cardOf(c.k)).filter(Boolean);
+    return got.length ? got[Math.floor(hash01("deck" + Math.floor(Date.now() / 60e3)) * got.length) % got.length].n : null;
 }
-function cardKeep(k, you) {
-    S.cards = (S.cards || []).concat([{ k, at: Date.now(), you: you ? 1 : 0 }]).slice(-300);
+/* when the next card is due: a while after the last one (or after the game began) */
+function deckDue() {
+    const got = deckHas(), last = got.length ? got[got.length - 1].at : num(S.created);
+    if (!got.length)
+        return last + DECK_FIRST;
+    return last + (DECK_GAP[0] + hash01("deckgap" + got.length) * (DECK_GAP[1] - DECK_GAP[0])) * 864e5;
+}
+function deckTick(t) {
+    if (t < deckDue() || num(S.flags.letterInDay) === dayNum())
+        return false;
+    const seen = new Set((S.cards || []).map(c => c.k)), fresh = cardList().filter(c => !seen.has(c.k));
+    if (!fresh.length) // the whole deck has come
+        return false;
+    const c = choice(fresh);
+    S.cards = (S.cards || []).concat([{ k: c.k, at: t }]);
+    S.flags.letterInDay = dayNum();
+    S.post.inbox.push({ from: "no one", text: `A card: ${c.n}.`, at: t, read: 0, you: 1, card: c.k });
+    corrRegister("in", "no sender", `A dark envelope, no stamp. Inside, a card: ${c.n}.`, t, true);
+    if (S.post.inbox.length > 40)
+        S.post.inbox.splice(0, S.post.inbox.length - 40);
+    note(`Strange mail: a dark envelope, no stamp, no sender.${hasDesk() ? " It's in the rack in the nook." : ""}`);
+    say(hasDesk() ? "deckmail" : "deckmail_nodesk");
+    if (!hasDesk())
+        yourLetterCard();
     saveSoon();
+    return true;
 }
-/* where she could lay them out: sitting on the floor, in a room you're looking at, not in the middle of a ritual */
-function catCardsCan() {
-    return cat.ready && cat.ph === "sit" && cat.g === 0 && cat.tg === 0 && !catInCircle() && !catNight() && !S.lightsOut && roomVisible(cat.room) && cardList().length > 0;
-}
-function catCardsOut() {
-    return !!catCards && cat.room === catCards.room && Math.abs(cat.x - catCards.x) < catSize() * 2.2;
-}
-function catCardTick(now) {
-    if (catCards && (now > catCards.until || !catCardsOut() || cat.ph === "walk" || cat.ph === "jump")) // she's picked them up again
-        catCards = null;
-    if (!catCardNext)
-        catCardNext = now + rnd(3, 6) * 60e3; // (the first a little while after opening)
-    if (now < catCardNext || catCards || talkHeld() || pet.beh === "sleep")
-        return;
-    if (!catCardsCan()) {
-        catCardNext = now + 30e3; // (not now: soon)
-        return;
+/* the envelope, opened */
+function showDeckCard(l) {
+    const c = cardOf(l.card);
+    if (!c) {
+        openRitual("Strange mail", "The envelope is empty. Whatever was in it got out.", "", [["Close", "primary", closeRitual]]);
+        return 3;
     }
-    catCardNext = now + rnd(14, 24) * 60e3 * paceK();
-    const c = pickCard();
-    if (!c)
-        return;
-    cardsOut(c, now);
-    cardKeep(c.k, 0);
-    const line = `${c.n}. ${c.m}`;
-    snailSay(line, clamp(3500 + line.length * 45, 5000, 11000), "cat");
-    heard(CAT_NAME, line, Date.now());
-}
-/* her cards on the floor beside her, the top one face up: they stay out a few minutes while she sits */
-function cardsOut(c, now) {
-    const side = cat.x > W * .55 ? -1 : 1, w = 7 * catU(); // (x: the middle of the pair, deck and card, clear of her)
-    catCards = { k: c.k, room: cat.room, x: clamp(cat.x + side * (catSize() * .75 + w * 1.25), R, W - R), z: cat.z, until: now + 4 * 60e3 };
-    cat.until = Math.max(cat.until, now + 3 * 60e3); // she stays with them
-}
-/* a tap on her while her cards are out: she turns one over for you */
-function catReading() {
-    if (cardsToday() >= CARD_DAY) {
-        const line = choice(["The deck's tired. Cards need sleep too. Tomorrow.", "Three is plenty for one day. More than that and they start gossiping.", "No more today. Ask again tomorrow, and mean it."]);
-        snailSay(line, clamp(3500 + line.length * 45, 4500, 8000), "cat");
-        heard(CAT_NAME, line, Date.now());
-        return;
-    }
-    const c = pickCard(catCards && catCards.k);
-    if (!c)
-        return;
-    cardsOut(c, performance.now());
-    cardKeep(c.k, 1);
+    const n = new Set((S.cards || []).map(x => x.k)).size;
+    openRitual("Strange mail", choice(["A dark envelope. No stamp, no sender. Inside, one card.", "It was in with the post, though nobody brought it. One card.", "The envelope is cold, as if it came a long way. One card."]),
+        `<div class="cardread"><img class="cardart" src="${cardArt(c)}" alt="" width="84" height="120"><div><h3>${esc(c.n)}</h3><p class="glimpse">${esc(c.m)}</p></div></div><p class="ritmeta">${n === 1 ? `The first card of ${esc(CAT_NAME)}'s deck.` : `${n} of ${cardList().length} cards.`} It's kept with the others in Collections, under the Deck.</p>`,
+        [[hasDesk() ? "Put it with the Deck" : "Keep it", "primary", closeRitual]]);
     sfx("low");
-    const left = CARD_DAY - cardsToday();
-    heard(CAT_NAME, `(for you) ${c.n}. ${c.m}`, Date.now());
-    openRitual(`${CAT_NAME}'s cards`, choice(["She turns one over for you.", "She taps the deck twice, then turns the top card.", "She looks at you a long moment, then turns one over."]),
-        `<div class="cardread"><img class="cardart" src="${cardArt(c)}" alt="" width="84" height="120"><div><h3>${esc(c.n)}</h3><p class="glimpse">${esc(c.m)}</p></div></div><p class="ritmeta">${left ? `She'll read ${left} more today.` : "That's the last one today."} Every card that's come up is in the Cabinet.</p>`,
-        [["Close", "primary", closeRitual]]);
+    return 3;
 }
 /* ---------- the pictures ---------- */
-/* the card, 14×20 art pixels: a dark frame, cream inside, the sign in the card's colour, a dot in each corner */
+/* the card, 14×20 art pixels: dark, a fine light border inside, the sign in white, a dot in each corner */
+const CARD_EDGE = "#0e0b14", CARD_FACE = "#1f1a2a", CARD_LINE = "#4a4258", CARD_INK = "#f2eee6";
 function cardPixels(c) {
     const W0 = 14, H0 = 20, px = [];
     for (let y = 0; y < H0; y++) {
         const row = [];
         for (let x = 0; x < W0; x++)
-            row.push(x === 0 || y === 0 || x === W0 - 1 || y === H0 - 1 ? "#2a1d3a" : x === 1 || y === 1 || x === W0 - 2 || y === H0 - 2 ? "#a77cb8" : "#f4ecd8");
+            row.push(x === 0 || y === 0 || x === W0 - 1 || y === H0 - 1 ? CARD_EDGE : x === 1 || y === 1 || x === W0 - 2 || y === H0 - 2 ? CARD_LINE : CARD_FACE);
         px.push(row);
     }
     for (const [x, y] of [[3, 3], [10, 3], [3, 16], [10, 16]])
-        px[y][x] = c.col;
+        px[y][x] = CARD_INK;
     const g = CARD_SIGNS[c.sign];
     for (let y = 0; y < 9; y++)
         for (let x = 0; x < 7; x++)
             if (g[y][x] === "#")
-                px[y + 5][x + 3] = c.col;
-    for (let x = 4; x < 10; x++) // a line under the sign, where the name would be written
-        px[16][x] = "#8a7a6a";
+                px[y + 5][x + 3] = CARD_INK;
+    for (let x = 5; x < 9; x++) // a line under the sign, where the name would be written
+        px[16][x] = CARD_LINE;
     return px;
 }
 const cardArtCache = {};
@@ -24299,62 +24303,15 @@ function cardArt(c) {
     }));
     return cardArtCache[c.k] = cv.toDataURL();
 }
-/* on the floor: the deck (two backs) and the top card face up, small (7×10 art pixels each) */
-function drawCatCards(dk) {
-    cardsHit = null;
-    if (!catCards || catCards.room !== drawingRoom || cat.ph === "through")
-        return;
-    const c = cardOf(catCards.k);
-    if (!c)
-        return;
-    const u = catU(), w = 7 * u, h = 10 * u, by = Math.round((GY + catCards.z) / PX) * PX, x0 = Math.round((catCards.x - w * 1.15) / PX) * PX; // (x0: the deck's left edge)
-    drawLayered(() => {
-        for (let i = 1; i >= 0; i--) { // the deck: backs, a little offset
-            const dx = x0 + i * u, dy = by - h - i * u;
-            cx.fillStyle = "#2a1d3a";
-            cx.fillRect(dx, dy, w, h);
-            cx.fillStyle = mix("#5a3a72", "#2a1d3a", dk * .5);
-            cx.fillRect(dx + u, dy + u, w - 2 * u, h - 2 * u);
-            cx.fillStyle = "#a77cb8";
-            cx.fillRect(dx + 3 * u, dy + 4 * u, u, 2 * u);
-        }
-        const fx = x0 + Math.round(w * 1.3 / PX) * PX, fy = by - h; // the card, face up
-        cx.fillStyle = "#2a1d3a";
-        cx.fillRect(fx, fy, w, h);
-        cx.fillStyle = mix("#f4ecd8", "#8a8478", dk * .5);
-        cx.fillRect(fx + u, fy + u, w - 2 * u, h - 2 * u);
-        cx.fillStyle = c.col;
-        cx.fillRect(fx + 2 * u, fy + 3 * u, 3 * u, 3 * u);
-        cx.fillStyle = "#2a1d3a";
-        cx.fillRect(fx + 3 * u, fy + 4 * u, u, u);
-        cx.fillStyle = "#8a7a6a";
-        cx.fillRect(fx + 2 * u, fy + 7 * u, 3 * u, u);
-    });
-    if (dk > .5)
-        glow(x0 + w, by - h * .5, u * 3, "rgba(167,124,184,.25)");
-    cardsHit = { x: x0 - 4, y: by - h - u - 4, w: w * 2.3 + 8, h: h + u + 8 };
-    if (catHit && catHit.room === catCards.room) { // her cards are part of her, for a tap
-        const x1 = Math.min(catHit.x, cardsHit.x), y1 = Math.min(catHit.y, cardsHit.y);
-        catHit = Object.assign({}, catHit, { x: x1, y: y1, w: Math.max(catHit.x + catHit.w, cardsHit.x + cardsHit.w) - x1, h: Math.max(catHit.y + catHit.h, cardsHit.y + cardsHit.h) - y1 });
-    }
-}
-/* the Cabinet: every card that's come up, newest first, and how often she drew it for you */
+/* the Deck, in Collections: every card that has come, in the order they came */
 function renderCards() {
     const el = $("cardList");
     if (!el)
         return;
-    const by = new Map();
-    for (const s of (S.cards || []).slice().sort((a, b) => b.at - a.at)) {
+    el.innerHTML = deckHas().map(s => {
         const c = cardOf(s.k);
-        if (!c)
-            continue;
-        const e = by.get(c.k) || { c, n: 0, you: 0 };
-        e.n++;
-        e.you += s.you ? 1 : 0;
-        by.set(c.k, e);
-    }
-    el.innerHTML = [...by.values()].map(({ c, n, you }) => `<div class="cardrow"><img class="cardart" src="${cardArt(c)}" alt="" width="28" height="40"><p><b>${esc(c.n)}</b> ${esc(c.m)} <span class="sync">${n}× drawn${you ? `, ${you} for you` : ""}</span></p></div>`).join("")
-        || `<p class="sub">Nothing yet. Now and then ${CAT_NAME} lays out a card; while her cards are out, tap her and she'll read one for you.</p>`;
+        return c ? `<div class="cardrow"><img class="cardart" src="${cardArt(c)}" alt="" width="28" height="40"><p><b>${esc(c.n)}</b> ${esc(c.m)} <span class="sync">came ${esc(dmy(new Date(s.at)))}</span></p></div>` : "";
+    }).join("") || `<p class="sub">None yet. The cards come by themselves, in strange mail, and not often.</p>`;
 }
 
 </script>
@@ -26583,7 +26540,6 @@ function frame(now) {
     if (W > 0) {
         cx = pcx;
         cx.setTransform(DPR, 0, 0, DPR, 0, 0);
-        catCardTick(now); // her cards (cards.js)
         catTick(dt, now); // Midnightcat moves between the rooms whichever one is on screen (cat.js)
         possumTick(dt, now); // and so does the possum (possum.js)
         guestTick(dt, now); // and a visitor (visitors.js; drawn with the wagon or by drawAnimals)
@@ -28097,7 +28053,7 @@ function renderPantry() {
 <script>/* js/ui/collection.js */
 "use strict";
 /*
- * collection.js - The collection tabs: cabinet of small things, notebook (Overheard, invented words, notes),
+ * collection.js - The collection tabs: Collections (small things, the Deck, invented words, archival terms...), the notebook (notes),
  * bureau files, the AI review list, and the lines editor.
  */
 function renderCabinet() {
@@ -28115,7 +28071,8 @@ function renderCabinet() {
         $("origamiList").innerHTML = ORIGAMI.map(o => n[o.id] ? `<span class="word"><i>${esc(o.name)}</i>${n[o.id] > 1 ? " ×" + n[o.id] : ""}</span>` : `<span class="word" style="opacity:.45"><i>?</i></span>`).join("");
     }
     renderGlimpses(); // what the chalk circle has shown (circle.js)
-    renderCards(); // Midnightcat's cards (cards.js)
+    renderCards(); // the Deck: Midnightcat's cards (cards.js)
+    renderWordsTerms();
     {
         const fl = $("festList");
         if (fl) {
@@ -28203,20 +28160,26 @@ function notebookNewDay() {
     if (S.notes.length !== n0)
         saveSoon();
 }
+/* Collections: the archival terms Mite has explained (archive-room.js) and the words it invented */
+function renderWordsTerms() {
+    { // the archival terms Mite has explained (archive-room.js), in alphabetical order
+        const all = archTerms(), got = (S.terms || []).map(x => all.find(t => t.k.toLowerCase() === x.k.toLowerCase())).filter(Boolean).sort((a, b) => a.k.localeCompare(b.k));
+        $("termList").innerHTML = got.map(t => `<dt>${esc(t.k)}</dt><dd>${esc(t.m)}</dd>`).join("") || `<dd class="sub">None yet. ${esc(S.settings.pet)} explains one now and then while it works in the archive.</dd>`;
+        const c = $("cnt-cab-terms");
+        if (c)
+            c.textContent = `${got.length}/${all.length}`;
+    }
+    $("words").innerHTML = S.words.map(w => `<span class="word"><i>${esc(w.w)}</i> ${esc(w.m)}</span>`).join("") || `<span class="sub">None yet. Mite invents them now and then.</span>`;
+    const wc = $("cnt-cab-words");
+    if (wc)
+        wc.textContent = `${S.words.length}`;
+}
 function renderNotebook() {
     notebookNewDay();
     $("notes").innerHTML = S.notes.filter(n => n.at >= dayStartTs()).map(n => {
         const d = new Date(n.at);
         return `<li><time>${dmy(d)} ${hhmm(d)}</time><span>${esc(n.text)}</span></li>`;
     }).join("") || `<li><time></time><span>A fresh page. Nothing yet today.</span></li>`;
-    { // the archival terms Mite has explained (archive-room.js), in alphabetical order
-        const all = archTerms(), got = (S.terms || []).map(x => all.find(t => t.k.toLowerCase() === x.k.toLowerCase())).filter(Boolean).sort((a, b) => a.k.localeCompare(b.k));
-        $("termList").innerHTML = got.map(t => `<dt>${esc(t.k)}</dt><dd>${esc(t.m)}</dd>`).join("") || `<dd class="sub">None yet. ${esc(S.settings.pet)} explains one now and then while it works in the archive.</dd>`;
-        const c = $("cnt-nb-terms");
-        if (c)
-            c.textContent = `${got.length}/${all.length}`;
-    }
-    $("words").innerHTML = S.words.map(w => `<span class="word"><i>${esc(w.w)}</i> ${esc(w.m)}</span>`).join("") || `<span class="sub">None yet. Mite invents them now and then.</span>`;
 }
 function renderFiles() {
     const cl = clearance(), n = doneCount(), next = CLEAR[cl + 1];
