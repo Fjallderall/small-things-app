@@ -6060,14 +6060,13 @@ function typeFinish() {
 function readMs(text) {
     return clamp(2000 + text.length * 55, 2800, 12000) / readF();
 }
-/* reading time follows talk speed a little: fast typing shouldn't mean too little time to read (jot, 25-10-2026), but
-   fast should still feel fast (jot mvofqnik2z25n, 26-10-2026: lines stayed up nearly as long as at normal) */
+/* talk speed only changes how fast the letters type: every line stays up the same time at slow, normal and fast
+   (owner's jot, 26-10-2026). readF and talkF stay as hooks, at 1 */
 function readF() {
-    return [.8, 1, 1.35][S && S.settings ? S.settings.talk ?? 1 : 1] || 1;
+    return 1;
 }
-/* talk speed (Settings): how much faster than normal speech types and moves on */
 function talkF() {
-    return [.7, 1, 1.8][S && S.settings ? S.settings.talk ?? 1 : 1] || 1;
+    return 1;
 }
 /* how fast the letters type: fast is a lot faster (the line then still stays up long enough to read, talkF) */
 function typeF() {
