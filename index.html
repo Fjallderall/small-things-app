@@ -2095,9 +2095,9 @@ const DEF = {
             "[night] Somewhere it's night and that lighthouse is on. Nice thought.",
         ],
         possumhello: [
-            "P: Good evening. Forgive the intrusion: I followed the smell. / M: Hello! Have a cookie. / P: Most kind. I'm {possum}. I tidy, in my way. Crumbs, dust, the odd sock. / M: There's a beam in the nook nobody's using. / P: A beam. How very generous. Then I'll hang about, if I may.",
-            "P: I do beg your pardon. The door was ajar and the cookies were very loud. / M: Loud? / P: To a possum. I'm {possum}, by the way. Thank you for this. / M: Do you have somewhere to sleep? / P: Anywhere with a beam. I'm not fussy, only upside down. / M: The nook has a beam. / P: Then, with your permission, I'll stay. I'll keep the floor tidy.",
-            "P: Hello. Please don't be alarmed, I'm only a possum. {possum}, at your service. / M: You came for the cookies. / P: I did. It seemed rude not to knock, so: knock knock. / M: Come in. You're already in. / P: Thank you. If there's ever a beam going spare, I'm very good at hanging from them. / M: There's one in the nook. It's yours."
+            "P: Good evening. Forgive the intrusion: I followed the smell. / M: Hello! Have a cookie. / P: Most kind. I'm {possum}. I tidy, in my way. Crumbs, dust, the odd sock. / P: If there's ever a spot for a new resident, I'd love to apply. / M: (points) There's a beam in the nook nobody's using. / P: A beam. How very generous. Then I'll hang about, if I may.",
+            "P: I do beg your pardon. The door was ajar and the cookies were very loud. / M: Loud? / P: To a possum. I'm {possum}, by the way. Thank you for this. / P: It's very cosy here. If you're taking new residents, I'd like to apply. / M: (points) There's a beam in the nook. Would that do? / P: A beam would do beautifully. I'll keep the floor tidy.",
+            "P: Hello. Please don't be alarmed, I'm only a possum. {possum}, at your service. / M: You came for the cookies. / P: I did. It seemed rude not to knock, so: knock knock. / M: Come in. You're already in. / P: Thank you. While I'm here: if there's a spot for a new resident, I'd love to apply. / M: (points) There's a beam in the nook. Nobody hangs from it. / P: Nobody? What a waste. I'll take it."
         ],
         possumtalk: [
             "M: Hello, {possum}. / P: Hhh. Hello. / M: Find anything good today? / P: A bottle cap. And a crumb shaped like a moon. / M: Lucky. / P: Very.",
@@ -4450,7 +4450,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvo4yk74ryhaf", "mvo51bqtk3fpr",
     // group 20 (25-10-2026)
     "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
-, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n"];
+, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep"];
 
 </script>
 <script>/* js/core/state.js */
@@ -9707,6 +9707,71 @@ Object.assign(BEH, {
                 floatText(w ? choice([`week ${w.n}`, "so many", "hm", "dusty"]) : "hm", p.x, GY - R * 2.3, "#fff");
             }
         } },
+    // filing the day by paw, now and then, instead of the tube (fileDay, rituals.js): over to the pile, pick it up, out
+    // through the door into the archive, along to the shelves, and up onto one. The boxes are filed already; pileCarry
+    // (room.js) only says where they're drawn
+    carryPile: { d: [80, 80], w: c => 0, init(b) {
+            b.ph = "pick";
+        }, step(b, p, t, po, dt) {
+            const c = pileCarry;
+            if (b.ph === "pick") {
+                if (!c) { // (nothing to carry after all)
+                    p.bt = p.dur;
+                    return;
+                }
+                if (!walkTo(p, po, clamp(c.x - R * .8, R * 1.05, W - R * 1.05), R * 1.8, dt))
+                    return;
+                p.dir = 1;
+                po.lookOverride = { x: .6, y: .8 };
+                po.arms = [.7, .7];
+                b.t0 = b.t0 || t;
+                if (t - b.t0 < .7)
+                    return;
+                c.held = 1;
+                sfx("tock");
+                b.ph = "out";
+                b.door = true; // the view follows (camera.js)
+                return;
+            }
+            if (!b.done) {
+                po.prop = "pile";
+                po.pileN = c ? Math.min(3, c.ids.length) : 2;
+            }
+            if (b.ph === "out") {
+                if (!walkTo(p, po, W + R * .1, R * 1.4, dt))
+                    return;
+                enterRoom("archive");
+                p.x -= W;
+                const g = archGeo();
+                b.tx = clamp(rnd(g.x0 + R, g.x1 - R), R * 1.05, W - R * 1.05);
+                b.ph = "in";
+                return;
+            }
+            if (b.ph === "in") {
+                if (!walkTo(p, po, b.tx, R * 1.4, dt))
+                    return;
+                b.ph = "shelve";
+                b.t1 = t;
+                return;
+            }
+            const ta = t - b.t1; // up onto the shelf, and a last pat
+            p.dir = 1;
+            po.lookOverride = { x: .5, y: -.7 };
+            if (ta < 1.4)
+                po.reach = { x: p.x + R * .7, y: GY - R * 1.9 };
+            if (ta > 1.2 && !b.done) {
+                b.done = 1;
+                pileCarry = null;
+                sfx("tock");
+                floatText("filed", p.x, GY - R * 2.3, "#e7f1d2", "archive");
+            }
+            if (b.done) {
+                po.eyes = "happy";
+                po.mouth = "smile";
+            }
+            if (ta > 2.6)
+                p.bt = p.dur;
+        } },
     // fetch a box from the shelves: walk over, use the ladder for high ones, read the label
     fetchBox: { d: [60, 60], w: c => 0, init(b, p) {
             const g = archGeo();
@@ -10485,6 +10550,18 @@ function drawPet(po) {
         cx.fillStyle = "#6b5a48";
         cx.fillRect(-r * .11, by + r * .25, r * .22, Math.max(1, r * .03));
     }
+    if (po.prop === "pile") { // the day's pile, carried over to the archive by paw: two or three boxes, stacked
+        const cols = ["#b98b5a", "#8fae7a", "#c4b48e"], n = po.pileN || 2, bh = r * .3;
+        for (let i = 0; i < n; i++) {
+            const w0 = r * (.78 - i * .08), y0 = by + r * .5 - (i + 1) * bh, x0 = -w0 / 2 + (i % 2 ? r * .04 : 0);
+            cx.fillStyle = cols[i % 3];
+            cx.fillRect(x0, y0, w0, bh);
+            cx.fillStyle = "rgba(0,0,0,.16)";
+            cx.fillRect(x0, y0, w0, bh * .2);
+            cx.fillStyle = "#f4ecd7";
+            cx.fillRect(x0 + w0 * .3, y0 + bh * .45, w0 * .4, bh * .28);
+        }
+    }
     if (po.prop === "ledger") {
         cx.fillStyle = "#6b4a30";
         cx.fillRect(-r * .3, by + r * .12, r * .6, r * .4);
@@ -11078,7 +11155,7 @@ function drawMugMark(mg, x, y, w, h) {
  * room.js - The room itself: its proportions (room()), the round window and what's outside it,
  * and the archive shelf with the week's boxes.
  */
-let wparts = [], boxHits = [], pileHit = null, lastPile = {}, fileAnim = null;
+let wparts = [], boxHits = [], pileHit = null, lastPile = {}, fileAnim = null, pileCarry = null; // (pileCarry: Mite carrying the day's pile over itself, behaviours-archive.js carryPile)
 function room() {
     const wr = Math.min(W, H) * .15;
     return { wx: W * .5, wy: Math.max(wr + H * .06, Math.min(GY * .4, GY - R * 3.4 - wr)), wr, sx0: W * .71, sx1: W * .975, rowH: Math.max(R * .62, 15), bw: clamp(R * .3, 9, 24), lx: W * .27 };
@@ -14324,7 +14401,7 @@ function routeDown(p) {
 let view = "room", archHits = [], archiveSince = 0;
 const archLadder = { x: -1, tx: -1 };
 /* behaviours that may run in the archive; anything else walks Mite back to the wagon first */
-const ARCHIVE_OK = new Set(["scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "archivework", "chairSit", "journalsit", "stare", "bow", "dizzy"]);
+const ARCHIVE_OK = new Set(["carryPile", "scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "archivework", "chairSit", "journalsit", "stare", "bow", "dizzy"]);
 /* interactions that live in the archive; asking for one from the wagon walks Mite there first */
 function isArchiveKind(kind) {
     return kind === "capsule" || kind === "journal" || kind.startsWith("refl:") || kind.startsWith("box:");
@@ -14976,10 +15053,16 @@ function introBeat(who) {
     }[k];
     return t ? { who: "M", t } : null;
 }
+let pointAt = { until: 0, dir: -1 }; // Mite pointing, for a line in a conversation (loop.js)
 function runConvo(line, onEnd) {
     let beats = String(line).split(/\s+\/\s+/).map(x => x.trim()).filter(Boolean).map(x => {
-        const m = x.match(/^([MSVCPFA]):\s*(.*)$/);
-        return m ? { who: m[1], t: m[2] } : { who: "M", t: x };
+        const m = x.match(/^([MSVCPFA]):\s*(.*)$/), b = m ? { who: m[1], t: m[2] } : { who: "M", t: x };
+        const pt = b.t.match(/^\(points\)\s*/); // "M: (points) …": Mite points towards the nook while it says it (the possum's beam)
+        if (pt) {
+            b.t = b.t.slice(pt[0].length);
+            b.point = b.who === "M";
+        }
+        return b;
     });
     if (beats.some(b => b.who === "M")) // (Mite's in it: it introduces whoever you haven't met yet)
         beats = [...new Set(beats.map(b => b.who))].filter(w => w !== "M").map(introBeat).filter(Boolean).concat(beats);
@@ -15012,8 +15095,11 @@ function runConvo(line, onEnd) {
         dlgShow(name, txt, bt.who === "F" || bt.who === "A" ? "circle" : WHO_KIND[bt.who] || "", id, next); // (first: from now on the conversation has the floor)
         if (bt.who === "F" || bt.who === "A") // (a voice through the chalk circle: nobody here to show a little look)
             ;
-        else if (bt.who === "M")
+        else if (bt.who === "M") {
             speak(em, { emote: true, ms: dlgTime(txt) * 1000 });
+            if (bt.point)
+                pointAt = { until: performance.now() + Math.min(4000, dlgTime(txt) * 1000), dir: Math.sign(ROOM_X.garden - ROOM_X[view]) || -1 };
+        }
         else
             snailSay(em, dlgTime(txt) * 1000, WHO_KIND[bt.who], true);
     };
@@ -15166,13 +15252,16 @@ function animalTalkTick(now) {
         here.push({ k: "P", room: possum.room, x: possum.x });
     if (own("snail") && !snailAsleep && !snailPause && !snailCarry)
         here.push({ k: "S", room: snailRoom, x: snailX * W - R * .2 });
-    const pairs = [];
+    const pairs = [], elsewhere = [];
     for (let i = 0; i < here.length; i++)
         for (let j = i + 1; j < here.length; j++)
-            if (here[i].room === here[j].room && roomVisible(here[i].room))
-                pairs.push([here[i], here[j]]);
-    if (!pairs.length)
+            if (here[i].room === here[j].room)
+                (roomOnScreen(here[i].room) ? pairs : elsewhere).push([here[i], here[j]]);
+    if (!pairs.length) { // only in the room you're looking at; the others wait till you look (owner, jot mvoegc6hph6gy)
+        if (elsewhere.length)
+            animalTalkAt = now + rnd(5e3, 10e3);
         return;
+    }
     const pr = choice(pairs), key = pr.map(a => a.k).sort().join("");
     const line = compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
     if (!line)
@@ -19366,12 +19455,27 @@ function drawCat(dk, now) {
                 cx.fillRect(px(c), y0 + r * u, u, u);
             }
     });
-    // in the dark the eyes still glow a little
-    if (dk > .5 && cat.ph !== "nap" && !blink)
+    // her eyes: kept for catEyeGlow, which lights them up over the dark (loop.js; jot mvoftg831yuyo)
+    if (cat.ph !== "nap" && !blink)
         sp.forEach((row, r) => [...row].forEach((ch, c) => {
             if (ch === "y")
-                glow(px(c) + u / 2, y0 + r * u + u / 2, u * .5, `rgba(160,200,106,${(dk - .5) * .7})`);
+                catEyes.push({ room: drawingRoom, x: px(c), y: y0 + r * u, u });
         }));
+}
+/* Midnightcat's eyes glow in the dark: drawn after the night's darkness (and the night light, and lights out) has gone
+   over the rooms, so it doesn't dim them. k: how dark it is, 0 to 1 */
+let catEyes = [];
+function catEyeGlow(k, now) {
+    if (k < .2)
+        return;
+    const a = clamp((k - .2) / .5, 0, 1), fl = .9 + .1 * Math.sin(now / 700);
+    for (const e of catEyes)
+        if (catOut() || !behindMite(e.room, e.x, e.y)) // (not through Mite when she's behind it)
+            withRoomLight(e.room, () => {
+            softGlow(e.x + e.u / 2, e.y + e.u / 2, e.u * 3.2, `rgba(170,230,110,${.35 * a * fl})`);
+            cx.fillStyle = `rgba(200,250,140,${.9 * a})`;
+            cx.fillRect(e.x, e.y, e.u, e.u);
+        });
 }
 /* a tap: it says something (and stops for a moment if it was walking past) */
 function catTap() {
@@ -19609,6 +19713,10 @@ function roomOff(room) {
 function roomVisible(room) {
     return Math.abs(ROOM_X[room] * W - camX) < W - .5;
 }
+/* the room you're looking at: the one in the middle of the screen (roomVisible: any part of it) */
+function roomOnScreen(room) {
+    return Math.abs(ROOM_X[room] * W - camX) < W * .5;
+}
 /* the room under a point on the screen, and the point in that room's coordinates */
 function roomAt(sx) {
     for (const r of ROOMS) {
@@ -19797,6 +19905,7 @@ function catOut() {
 /* the whole scene: each room that's (partly) on screen */
 function drawScene(now, dt) {
     catHit = possumHit = null; // set again by whichever room they're drawn in
+    catEyes = []; // (and her eyes, for catEyeGlow)
     camTick(dt);
     let sky = null, other = null;
     withRoom("garden", () => other = drawGarden(now, dt));
@@ -20766,7 +20875,7 @@ function snailTick(dt) {
         snailTZ = Math.random() < .5 ? floorDepth() : 0;
     }
     if (snailZ !== snailTZ)
-        snailZ += Math.sign(snailTZ - snailZ) * Math.min(Math.abs(snailTZ - snailZ), (bed ? R * .6 : R * .08) * dt);
+        snailZ += Math.sign(snailTZ - snailZ) * Math.min(Math.abs(snailTZ - snailZ), (bed ? R * .2 : R * .08) * dt);
     if (now > snailGoalUntil) { // its home is the wagon's skirting; now and then it sets off to visit
         snailGoal = pickRoom({ room: .6, garden: .25, archive: .15 });
         snailGoalUntil = now + rnd(180e3, 360e3);
@@ -20774,7 +20883,7 @@ function snailTick(dt) {
     let goal = snailGoal, speed = .012; // a fraction of a room a second: unhurried
     if (bed) {
         goal = bed.room;
-        speed = Math.max(.05, R * 1.2 / W);
+        speed = .02; // (unhurried: it takes its time going to bed, jot mvofsguy7e6dx; it was .05 or more)
     }
     else if (pic) {
         goal = pic.room;
@@ -21459,6 +21568,17 @@ const POSSUM_SPRITES = { // small: about the size of Midnightcat's head and shou
         "..gggg..",
         ".pp..pp.",
         "pp......"],
+    nibble: [ // sitting up, the bake held in both paws under its chin (drawn on top: drawPossum; jot mvoe2rdh3lb1v)
+        "..kk.kk.",
+        "..wwwww.",
+        ".wkwwkw.",
+        "..wwpw..",
+        "..gppg..",
+        "..gllg..",
+        "..gllg..",
+        "..gggg..",
+        ".pp..pp.",
+        "pp......"],
     dead: [ // flat on its back, paws up, tongue out. Very convincing
         "..p.p.p.p.....",
         "..g.g.g.g.....",
@@ -21479,7 +21599,7 @@ function possumSprite() {
     if (p.ph === "beg" || p.ph === "summon") // (summoning: up on its hind legs, paws raised over the circle)
         return POSSUM_SPRITES.beg;
     if (p.ph === "eat")
-        return POSSUM_SPRITES.eat;
+        return p.cookie && performance.now() < p.cookie ? POSSUM_SPRITES.nibble : POSSUM_SPRITES.eat; // (a bake: sitting up with it; the mess and the basket: nose down)
     if (p.ph === "curl")
         return POSSUM_SPRITES.curl;
     if (p.ph === "walk")
@@ -21530,7 +21650,7 @@ function possumMoveIn(p, now) {
     saveSoon();
     p.chat = true;
     Object.assign(p, { ph: "sit", until: now + 120e3, dir: 1 });
-    const line = compose("possumhello") || "P: Good evening. Forgive the intrusion: I followed the smell. / M: Hello! Have a cookie. / P: Most kind. I'm {possum}. I tidy, in my way. Crumbs, dust, the odd sock. / M: There's a beam in the nook nobody's using. / P: A beam. How very generous. Then I'll hang about, if I may.";
+    const line = compose("possumhello") || "P: Good evening. Forgive the intrusion: I followed the smell. / M: Hello! Have a cookie. / P: Most kind. I'm {possum}. I tidy, in my way. Crumbs, dust, the odd sock. / P: If there's ever a spot for a new resident, I'd love to apply. / M: (points) There's a beam in the nook nobody's using. / P: A beam. How very generous. Then I'll hang about, if I may.";
     runConvo(line, () => {
         const t = performance.now();
         possum.chat = false;
@@ -22016,9 +22136,9 @@ function drawPossum(dk, now) {
         });
     }
     if (p.carry || (p.cookie && now < p.cookie)) { // a cookie in its paws (or in its mouth, upside down)
-        const hang = p.ph === "hang" || p.ph === "raise" || p.ph === "lower", left = p.cookie ? clamp((p.cookie - now) / 7000, .3, 1) : 1;
+        const hang = p.ph === "hang" || p.ph === "raise" || p.ph === "lower", sit = sp === POSSUM_SPRITES.nibble, left = p.cookie ? clamp((p.cookie - now) / 7000, .3, 1) : 1;
         const lift = chew ? (hang ? u : -u) : 0; // (each bite: up to its mouth and back)
-        const cxp = hang ? p.x : p.x + (flip ? -1 : 1) * w * .42, cyp = (hang ? y0 + h + u : y0 + u * 2.5) - lift, s = Math.max(u * 2, Math.round(u * 3 * left / u) * u);
+        const cxp = hang || sit ? x0 + w / 2 : p.x + (flip ? -1 : 1) * w * .42, cyp = (hang ? y0 + h + u : sit ? y0 + u * 4 : y0 + u * 2.5) - lift, s = Math.max(u * 2, Math.round(u * 3 * left / u) * u);
         drawLayered(() => {
             const bx = Math.round((cxp - s / 2) / u) * u, by = Math.round(cyp / u) * u;
             cx.fillStyle = "#c98a4a";
@@ -22027,6 +22147,11 @@ function drawPossum(dk, now) {
                 cx.clearRect(flip ? bx + s - u : bx, by, u, u);
             cx.fillStyle = "#5a3418"; // chocolate chips
             cx.fillRect(bx + u, by + u, u, u);
+            if (sit) { // its paws, round the sides of it
+                cx.fillStyle = col.p;
+                cx.fillRect(bx - u, by + Math.round(s / 2 / u) * u - u, u, u);
+                cx.fillRect(bx + s, by + Math.round(s / 2 / u) * u - u, u, u);
+            }
         });
         if (eating && chew && Math.random() < .2) // crumbs, falling the right way down
             addP({ type: "spark", x: cxp, y: cyp + s, vx: rnd(-8, 8), vy: rnd(10, 30), g: 200, max: .8, col: "#c98a4a", size: 2, room: p.room });
@@ -22918,7 +23043,7 @@ function obsStep(now) {
         return;
     }
     if (o.stage === "look" && now - o.t0 > 3500) {
-        if (obsBusy() || !roomVisible(o.room))
+        if (obsBusy() || !roomOnScreen(o.room)) // (a conversation only in the room you're looking at)
             return obsEnd();
         o.stage = "talk";
         obsTalk(now);
@@ -25681,9 +25806,9 @@ function drawWorld(now, dt) {
     boxHits = [];
     drawCalendar(sx0 + R * .5, GY - rowH * 3 - R * .85, dk);
     pileDk = dk; // (today's pile is drawn later, in front of Mite and the treats: drawPile)
-    guestDraw(performance.now()); // (it moves in loop.js)
     drawMess(dk, "room"); // mess on the floor (any room: drawMess)
     drawSplurge(dk, now / 1000); // the day's treat, if there is one (splurge.js)
+    guestDraw(performance.now()); // (it moves in loop.js; after the treat, so a visitor walks in front of the cake: jot mvofo9a2m0mep)
     // ball
     if (ball) {
         ball.vy += 700 * dt;
@@ -26297,6 +26422,15 @@ function drawPile(now) {
     const dk = pileDk, rm = room();
     const { sx0, bw } = rm;
     drawFilingFlight(now, dk);
+    // the pile Mite is about to carry over itself (filed already): where it was, until Mite picks it up
+    if (pileCarry && pet.beh !== "carryPile")
+        pileCarry = null;
+    if (pileCarry && !pileCarry.held)
+        pileCarry.ids.forEach(id => {
+            const t = S.tasks.find(x => x.id === id), f = pileCarry.from[id];
+            if (t && f)
+                drawBox(t, f.x, f.y, bw, dk);
+        });
     // today's pile, waiting to be filed
     const pb = pileBoxes();
     lastPile = {};
@@ -26564,6 +26698,11 @@ function frame(now) {
     const po = {};
     resetOA();
     BEH[pet.beh].step(pet.b, pet, pet.bt, po, dt);
+    if (performance.now() < pointAt.until && !po.reach && !po.walk && !po.prop && !(pet.ground > 0)) { // pointing, for a line in a conversation (conversations.js)
+        pet.dir = pointAt.dir;
+        po.reach = { x: pet.x + pointAt.dir * R * 1.7, y: GY - R * 1.2 };
+        po.lookOverride = { x: pointAt.dir * .8, y: -.2 };
+    }
     if (po.ground === undefined)
         po.ground = LOFT_OK.has(pet.beh) ? pet.ground : 0;
     pet.ground = po.ground;
@@ -26710,6 +26849,7 @@ function frame(now) {
             cx.fillRect(-W, 0, W * 3, H);
             cx.restore();
         });
+        catEyeGlow(S.lightsOut ? 1 : Math.max(sky.dark * .8, nl), now); // Midnightcat's eyes, over the dark (cat.js)
         if (anom && anom.type === "eyes" && !anom.resolved && (sky.dark > .15 || S.lightsOut || nl > 0)) // the eyes shine through the dark (anomalies.js)
             withRoom(anom.room, () => drawEyePairs(anom, .7));
         if (eerie > .01) {
@@ -27927,7 +28067,7 @@ function buy(b) {
     }
     else if (S.b[b.id] === 1 && b.id === "snail") { // it introduces itself once it's here and there's nothing in the way (snail.js)
         S.flags.snailNew = 1;
-        buySpeak("A courier's on the way. It'll want to introduce itself: snails are formal.", { ms: 5000 });
+        buySpeak("A snail courier's on the way. I hope its house fits in my house. It'll want to introduce itself: snails are formal.", { ms: 6000 }); // (jot mvoeccnmrd878)
         note("Hired a snail courier.");
     }
     else if (S.b[b.id] === 1 && b.id === "gramo") {
@@ -30531,7 +30671,10 @@ function toggleLights() {
         pet.start("sleep");
         say("goodnight");
         if (own("snail"))
-            setTimeout(() => snailSay(choice(["Coming. Save me a spot.", "Bedtime? I'm on my way. Give me a minute. Or ten.", "Night night. Scooch over.", "I'll be there by the time you're dreaming."]), 4000), 2200);
+            setTimeout(() => { // (already right there by the bed: no "on my way", jot mvoevetau8z9k)
+                const near = snailAsleep || (snailRoom === view && Math.abs(snailX * W - R * .2 - pet.x) < R * 2.2);
+                snailSay(choice(near ? ["Already here. Scooch over.", "No need to wait for me. I'm right here.", "Good. I was here first. Night night.", "I didn't even have to travel. Night night."] : ["Coming. Save me a spot.", "Bedtime? I'm on my way. Give me a minute. Or ten.", "Night night. Scooch over.", "I'll be there by the time you're dreaming."]), 4000);
+            }, 2200);
         S.goodnight = "";
         if (bedOnTime()) { // on time: the bonus comes when the next day starts, if the lights stay out till then
             const t = new Date(actDay() + "T12:00");
@@ -31715,9 +31858,16 @@ $("ritual").addEventListener("click", e => {
             f();
     }
 });
-function fileDay(lights) {
+/* filing the day: by the tube, as a rule; now and then (CARRY_P, and only in the wagon, Mite on the floor, lights on)
+   Mite carries the pile over to the archive itself instead (carryPile, behaviours-archive.js; owner, jots
+   mvod7jxf9465p, mvod8dcgfczor). carry: true/false forces it (tests) */
+const CARRY_P = .25;
+function fileDay(lights, carry) {
     const pile = pileBoxes();
     const n = pile.length;
+    if (carry === undefined)
+        carry = view === "room" && !(pet.ground > 0) && !lights && !S.lightsOut && Math.random() < CARRY_P;
+    carry = !!(carry && n && view === "room");
     if (n) {
         const from = {};
         pile.forEach(t => from[t.id] = lastPile[t.id] || { x: pet.x, y: GY });
@@ -31725,13 +31875,19 @@ function fileDay(lights) {
             t.f = Date.now();
             t.u = t.f;
         });
-        fileAnim = { t0: performance.now(), ids: pile.map(t => t.id), from, landed: {} };
-        tubeSend(n); // and capsules through the filing tube in the archive (archive-wall.js)
-        pet.start("tidy");
+        if (carry) { // (filed straight away, so nothing's lost if Mite gets distracted; the boxes stay drawn until it picks them up)
+            pileCarry = { ids: pile.map(t => t.id), from, x: Math.min(...pile.map(t => from[t.id].x)), held: 0 };
+            pet.start("carryPile");
+        }
+        else {
+            fileAnim = { t0: performance.now(), ids: pile.map(t => t.id), from, landed: {} };
+            tubeSend(n); // and capsules through the filing tube in the archive (archive-wall.js)
+            pet.start("tidy");
+        }
         addG(PAY.file * Math.min(n, 5));
     }
     S.rit.evening = actDay();
-    const line = n ? choice([`Filed ${n} box${n > 1 ? "es" : ""}. Labels straight.`, `${n} on the shelf. Neat.`, `All filed. Week ${weekNo(Date.now())} is coming along.`]) : "Nothing to file. The shelf will wait.";
+    const line = carry ? choice([`I'll take ${n > 1 ? "these " + n : "this one"} over myself today. The tube can have a rest.`, "I'll carry the pile over. I like the walk.", "No tube today. I want to put them on the shelf with my own paws."]) : n ? choice([`Filed ${n} box${n > 1 ? "es" : ""}. Labels straight.`, `${n} on the shelf. Neat.`, `All filed. Week ${weekNo(Date.now())} is coming along.`]) : "Nothing to file. The shelf will wait.";
     setTimeout(() => speak(line), n ? 700 + n * 140 : 0);
     note(n ? `Filed the day: ${n} box${n > 1 ? "es" : ""}.` : "Closed a quiet day.");
     if (lights)
