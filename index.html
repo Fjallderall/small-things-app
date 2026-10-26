@@ -205,6 +205,9 @@ ul.drawers{list-style:none;padding:0;margin:6px 0}
 .cardrow p{margin:0;font-size:14px;line-height:1.45}
 .daysoff{display:flex;flex-direction:column;gap:10px;margin:8px 0}
 .daysoff .field input{width:100%}
+.daysoff .seg3{display:grid;grid-template-columns:repeat(3,1fr)}
+.daysoff .seg3 button{min-height:44px;padding:6px 4px;line-height:1.15}
+.daysoff .seg3 button:nth-child(-n+3){border-bottom:1px solid var(--line)}
 body.pixel .heard section{border:2px solid var(--line)}
 body.pixel .heard p{font-family:var(--f-read);font-size:15px;line-height:22px}
 .word{background:var(--sunk);border-radius:8px;padding:5px 9px;font-size:13px}
@@ -744,6 +747,8 @@ body.editing #addForm{display:none}
 .albumcard:hover,.albumcard:focus-visible{background:rgba(0,0,0,.06)}
 .albumcard canvas{width:72px;height:48px;image-rendering:pixelated;flex:none;box-shadow:1px 1px 0 rgba(0,0,0,.25)}
 
+.wk-pause{color:var(--muted);font-style:italic}
+
 </style>
 <div class="app">
   <section class="world" aria-label="Pet">
@@ -940,7 +945,7 @@ body.editing #addForm{display:none}
       </div>
       <div class="field">Workdays<div class="days" id="setWork"></div></div>
       <div class="field">Office days<div class="days" id="setOffice"></div></div>
-      <div class="field"><span>Days you told <span class="pn">Mite</span></span><ul class="schedlist" id="schedList"></ul><button class="btn" type="button" id="schedAdd">Add days off…</button><small class="sub">A day off, a holiday or an extra working day. Only those days change. (Also under <span class="pn">Mite</span>, Talk, Days off.)</small></div>
+      <div class="field"><span>Days you told <span class="pn">Mite</span></span><ul class="schedlist" id="schedList"></ul><button class="btn" type="button" id="schedAdd">Add a different day…</button><small class="sub">A day off, a holiday, a paused streak, or a working day from home or at the office. Only those days change. (Also under <span class="pn">Mite</span>, Talk, A different day.)</small></div>
       <p class="sub" id="setSaved" aria-live="polite">Changes save by themselves.</p>
 
     </div>
@@ -4477,7 +4482,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvo4yk74ryhaf", "mvo51bqtk3fpr",
     // group 20 (25-10-2026)
     "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
-, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe"];
+, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir"];
 
 </script>
 <script>/* js/core/state.js */
@@ -4488,7 +4493,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -4690,7 +4695,12 @@ function sanitizeState(raw) {
     o.sched = {}; // days you told Mite about in Talk: { day: { k: "off" | "work" | "" (taken back), at } } (speech.js, offline.js)
     for (const d of Object.keys(s.sched && typeof s.sched === "object" ? s.sched : {}).filter(d => dkey(d)).sort().slice(-400)) {
         const e = s.sched[d] || {};
-        o.sched[d] = { k: ["off", "work"].includes(e.k) ? e.k : "", at: num(e.at) };
+        o.sched[d] = { k: ["off", "work", "home", "office"].includes(e.k) ? e.k : "", at: num(e.at) };
+    }
+    o.pause = {}; // days the streak is paused: { day: { on, why, at } } (speech.js, offline.js)
+    for (const d of Object.keys(s.pause && typeof s.pause === "object" ? s.pause : {}).filter(d => dkey(d)).sort().slice(-400)) {
+        const e = s.pause[d] || {};
+        o.pause[d] = { on: e.on ? 1 : 0, why: str(e.why, 40).replace(/\s+/g, " ").trim(), at: num(e.at) };
     }
     o.seasonal = { s: /^\d{4}-[1-4]$/.test(s.seasonal && s.seasonal.s) ? s.seasonal.s : "", got: numMap(s.seasonal && s.seasonal.got) }; // this season's own small things (catalogue.js)
     if (o.kettleStyle.at && o.kettleStyle.k !== "copper" && !o.b["kt_" + o.kettleStyle.k]) // (picked for free before the kettles were sold: it's yours)
@@ -5004,6 +5014,13 @@ function mergeStates(a, b) {
             for (const d in src)
                 if (!o.sched[d] || num(src[d].at) > num(o.sched[d].at))
                     o.sched[d] = Object.assign({}, src[d]);
+    }
+    { // the streak's paused days: the same, per day
+        o.pause = {};
+        for (const src of [a.pause || {}, b.pause || {}])
+            for (const d in src)
+                if (!o.pause[d] || num(src[d].at) > num(o.pause[d].at))
+                    o.pause[d] = Object.assign({}, src[d]);
     }
     { // this season's small things: the same season from both sides, or the later one
         const sa = a.seasonal || { s: "", got: {} }, sb = b.seasonal || { s: "", got: {} };
@@ -5769,7 +5786,8 @@ function isLate(h) {
     return b < 6 ? (h >= b && h < 6) : (h >= b || h < 5);
 }
 /* Days you told Mite about in Talk ("friday off", "holiday 28-10-2026 to 01-11-2026", "working saturday"): they change
-   the schedule for that day only. S.sched: { day: { k: "off" | "work" | "" (taken back), at } } */
+   the schedule for that day only. S.sched: { day: { k: "off" | "work" | "home" | "office" | "" (taken back), at } }
+   (home and office are working days, from home or at the office: jot mvozhr913hxr7) */
 function schedOf(day) {
     const e = S.sched && S.sched[day];
     return e && e.k ? e.k : "";
@@ -5777,7 +5795,25 @@ function schedOf(day) {
 /* is that date a workday: what you told Mite for it, otherwise the workdays in Settings */
 function isWorkDay(d) {
     const k = schedOf(dayKey(d));
-    return k ? k === "work" : S.settings.work.includes(d.getDay());
+    return k ? k !== "off" : S.settings.work.includes(d.getDay());
+}
+/* is that day's streak paused (holidays, events: jot mvozjfc84jmir). S.pause: { day: { on: 1 | 0 (taken back), why, at } } */
+function pausedOn(day) {
+    const e = S.pause && S.pause[day];
+    return !!(e && e.on);
+}
+/* the paused stretch that day is in (or the next one from it), as { from, to, why }, or null */
+function pauseStretch(day) {
+    let d0 = Object.keys(S.pause || {}).filter(k => k >= day && pausedOn(k)).sort()[0];
+    if (!d0)
+        return null;
+    const step = (k, n) => { const d = new Date(k + "T12:00"); d.setDate(d.getDate() + n); return dayKey(d); };
+    let a = d0, b = d0;
+    while (pausedOn(step(a, -1)))
+        a = step(a, -1);
+    while (pausedOn(step(b, 1)))
+        b = step(b, 1);
+    return { from: a, to: b, why: S.pause[d0].why || "" };
 }
 function ctx() {
     const now = new Date(), h = now.getHours(), dow = now.getDay(), st = S.settings;
@@ -5791,7 +5827,7 @@ function ctx() {
         fav = S.hours.indexOf(Math.max(...S.hours));
     }
     const mp = moonPhase(now);
-    return { now, h, dow, month: now.getMonth(), workday: isWorkDay(now), office: schedOf(dayKey(now)) !== "off" && st.office.includes(dow), dayNote: schedOf(dayKey(now)),
+    return { now, h, dow, month: now.getMonth(), workday: isWorkDay(now), office: schedOf(dayKey(now)) === "office" || !["off", "home"].includes(schedOf(dayKey(now))) && st.office.includes(dow), dayNote: schedOf(dayKey(now)),
         you: st.you || null, snack: S.lastSnack && S.lastSnack.n && Date.now() - S.lastSnack.at < 12 * 36e5 ? S.lastSnack.n : null, card: typeof deckCard === "function" ? deckCard() : null, pet: st.pet, open: open.length, oldest: oldest ? oldest.t : null, oldestAge: oldest ? fmtAge(Date.now() - oldest.c) : null,
         smallest: smallest ? smallest.t : null, doneToday: doneOn(actDay()), week: allDone().filter(t => t.d > weekAgo).length, total: doneCount(),
         streak: S.streak.n, level: level(), favHour: fav, daysTogether: Math.max(1, Math.round((Date.now() - S.created) / 864e5)),
@@ -7197,7 +7233,7 @@ function completeTask(id, src) {
             const d = new Date(S.streak.last + "T12:00");
             d.setDate(d.getDate() + 1);
             while (dayKey(d) < today) {
-                if (isWorkDay(d)) { // (a day off you told Mite about doesn't break it)
+                if (isWorkDay(d) && !pausedOn(dayKey(d))) { // (a day off you told Mite about, or a paused day, doesn't break it)
                     broken = true;
                     break;
                 }
@@ -13332,6 +13368,12 @@ function drawCalendar(x, y, dk) {
                 if (f[k] === "1")
                     cx.fillRect(Math.round((sx + n * gw + (k % 3) * u) / u) * u, Math.round((sy + Math.floor(k / 3) * u) / u) * u, u, u);
         });
+        if (pausedOn(actDay())) { // the streak's paused today: a small pause mark in the red band
+            cx.fillStyle = mix("#f6efdc", "#d8ccb8", dk * .5);
+            const bx = Math.round((x + w * .22) / u) * u, by = Math.round((y - h / 2 + h * .05) / u) * u;
+            cx.fillRect(bx, by, u, u * 3);
+            cx.fillRect(bx + u * 2, by, u, u * 3);
+        }
         cx.fillStyle = mix("#8a7a6a", "#5a5048", dk * .5);
         for (let k = 0; k < 3; k++)
             cx.fillRect(x - w * .3 + k * w * .22, y + h * .33, u, u);
@@ -13356,6 +13398,13 @@ function showCalendarCard() {
         (() => { const fs = activeFestivals(); return fs.length ? row("Today", fs.map(a => `<button class="mini" data-fest="${esc(a.f.id)}">${esc(a.f.name)}</button>`).join(" ")) : ""; })(),
         row("Planned", plan),
         row("Done today", `${td}${S.streak.n ? ` · streak ${S.streak.n} day${S.streak.n > 1 ? "s" : ""}` : ""}`),
+        (() => { // a paused streak: today's stretch, or the next one coming (jot mvozjfc84jmir)
+            const p = pauseStretch(actDay());
+            if (!p)
+                return "";
+            const span = p.from === p.to ? wdmy(new Date(p.from + "T12:00")) : `${dmy(new Date(p.from + "T12:00"))} to ${dmy(new Date(p.to + "T12:00"))}`;
+            return row(p.from <= actDay() ? "Streak paused" : "Streak pauses", esc(span + (p.why ? ` · ${p.why}` : "")));
+        })(),
         row("Level", `${L} · ${b - S.xp} xp to next`),
         row("Weather", (() => { const w = weather(); return esc(`${wxName(w)}, ${Math.round(w.temp)}°${w.src === "live" ? "" : " (estimated)"}`); })()),
         row("Moon", esc(moonName(moonPhase(d)))),
@@ -28937,11 +28986,13 @@ document.addEventListener("click", e => {
         closeRitual();
     showFestival(b.dataset.fest);
 });
-/* Settings: the days you told Mite about, still to come, a stretch per line (the same kind on days in a row) */
-function schedStretches() {
-    const today = dayKey(), out = [];
-    for (const d of Object.keys(S.sched || {}).filter(d => d >= today && schedOf(d)).sort()) {
-        const k = schedOf(d), last = out[out.length - 1], prev = last && new Date(last.to + "T12:00");
+/* Settings: the days you told Mite about, still to come, a stretch per line (the same kind on days in a row);
+   paused streak days as their own lines (kind "pause") */
+const SCHED_LABEL = { off: "Off", work: "Working", home: "From home", office: "At the office", pause: "Streak paused" };
+function schedStretches(pause) {
+    const today = dayKey(), out = [], kindOf = d => pause ? (pausedOn(d) ? "pause" : "") : schedOf(d);
+    for (const d of Object.keys((pause ? S.pause : S.sched) || {}).filter(d => d >= today && kindOf(d)).sort()) {
+        const k = kindOf(d), last = out[out.length - 1], prev = last && new Date(last.to + "T12:00");
         if (prev)
             prev.setDate(prev.getDate() + 1);
         if (last && last.k === k && dayKey(prev) === d)
@@ -28957,13 +29008,17 @@ function renderSched() {
         return;
     if ($("schedAdd"))
         $("schedAdd").onclick = showDaysOff; // (talk.js)
-    const list = schedStretches();
-    el.innerHTML = list.map((r, i) => `<li><span>${r.k === "off" ? "Off" : "Working"}: ${esc(r.from === r.to ? schedName(r.from) : schedName(r.from) + " to " + schedName(r.to))}</span> <button type="button" class="linkbtn" data-sched="${i}" aria-label="Take back: ${esc(r.k === "off" ? "off" : "working")} ${esc(dmy(new Date(r.from + "T12:00")))}">take back</button></li>`).join("") || `<li class="sub">Nothing yet.</li>`;
+    const list = [...schedStretches(), ...schedStretches(true)].sort((x, y) => x.from < y.from ? -1 : x.from > y.from ? 1 : 0);
+    const whyOf = r => r.k === "pause" && S.pause[r.from] && S.pause[r.from].why ? ` (${S.pause[r.from].why})` : "";
+    el.innerHTML = list.map((r, i) => `<li><span>${SCHED_LABEL[r.k] || "Working"}: ${esc(r.from === r.to ? schedName(r.from) : schedName(r.from) + " to " + schedName(r.to))}${esc(whyOf(r))}</span> <button type="button" class="linkbtn" data-sched="${i}" aria-label="Take back: ${esc((SCHED_LABEL[r.k] || "Working").toLowerCase())} ${esc(dmy(new Date(r.from + "T12:00")))}">take back</button></li>`).join("") || `<li class="sub">Nothing yet.</li>`;
     el.querySelectorAll("[data-sched]").forEach(b => b.onclick = () => {
         const r = list[+b.dataset.sched], at = Date.now();
         for (const d = new Date(r.from + "T12:00"); dayKey(d) <= r.to; d.setDate(d.getDate() + 1))
-            S.sched[dayKey(d)] = { k: "", at };
-        note(`Took back: ${r.k === "off" ? "off" : "working"}, ${r.from === r.to ? schedName(r.from) : schedName(r.from) + " to " + schedName(r.to)}.`);
+            if (r.k === "pause")
+                S.pause[dayKey(d)] = { on: 0, why: "", at };
+            else
+                S.sched[dayKey(d)] = { k: "", at };
+        note(`Took back: ${(SCHED_LABEL[r.k] || "Working").toLowerCase()}, ${r.from === r.to ? schedName(r.from) : schedName(r.from) + " to " + schedName(r.to)}.`);
         afterChange();
         renderSched();
     });
@@ -31227,7 +31282,7 @@ $("dMite").onclick = () => {
 /*
  * talk.js - Talking with Mite, by picking (owner, 25-10-2026: free text without AI didn't work well). The Mite
  * button's tray has Talk: what's next, how am I doing, tell me something, I'm feeling…, hello / good night, and
- * Days off… (a card with dates, offline.js: schedTalk). Mite answers from its own lines (the talk pool's keywords,
+ * A different day… (a card with dates, offline.js: schedTalk). Mite answers from its own lines (the talk pool's keywords,
  * offlineReply). What was said is in the Log (Satchel).
  */
 /* what you can say: label, and the words offlineReply hears (the talk pool's keywords) */
@@ -31252,7 +31307,7 @@ function talkTray(add) {
     add("I'm feeling…", () => renderTray("feel"));
     add(ctx().h >= 20 || ctx().h < 5 ? "Good night" : "Hello", close(() => talkSay(ctx().h >= 20 || ctx().h < 5 ? "good night" : "hello")));
     add("Thank you", close(() => talkSay("thanks")));
-    add("Days off…", close(showDaysOff));
+    add("A different day…", close(showDaysOff));
 }
 function talkFeelTray(add) {
     TALK_FEEL.forEach(([label, w]) => add(label, () => {
@@ -31260,20 +31315,30 @@ function talkFeelTray(add) {
         talkSay(w);
     }));
 }
-/* ---------- days off, holidays, a working day: a card with dates (instead of telling Mite in words) ---------- */
+/* ---------- a different day: a day off, a holiday, a paused streak, a working day (from home, at the office): a card
+   with dates (instead of telling Mite in words). Top row: days without work, or the streak waiting; bottom row: working ---------- */
 function showDaysOff() {
     const today = dayKey();
-    openRitual("Days off", `Tell ${S.settings.pet} about days that aren't like your usual week. Only those days change.`,
-        `<div class="daysoff"><div class="seg" id="doKind" role="group" aria-label="What kind of day">
-<button type="button" data-v="off" aria-pressed="true">Day off</button><button type="button" data-v="holiday" aria-pressed="false">Holiday</button><button type="button" data-v="work" aria-pressed="false">Working day</button></div>
+    openRitual("A different day", `Tell ${S.settings.pet} about days that aren't like your usual week. Only those days change.`,
+        `<div class="daysoff"><div class="seg seg3" id="doKind" role="group" aria-label="What kind of day">
+<button type="button" data-v="off" aria-pressed="true">Day off</button><button type="button" data-v="holiday" aria-pressed="false">Holiday</button><button type="button" data-v="pause" aria-pressed="false">Pause streak</button><button type="button" data-v="work" aria-pressed="false">Working day</button><button type="button" data-v="home" aria-pressed="false">From home</button><button type="button" data-v="office" aria-pressed="false">At the office</button></div>
+<p class="sub" id="doHint"></p>
 <label class="field">From<input type="date" id="doFrom" min="${today}" value="${today}"></label>
 <label class="field">To (optional)<input type="date" id="doTo" min="${today}"></label>
+<label class="field" id="doWhyF" hidden>What for (optional)<input type="text" id="doWhy" maxlength="40" placeholder="a festival, a trip, a big week"></label>
 <p class="sub" id="doMsg" aria-live="polite"></p></div>`,
         [["Tell Mite", "primary", daysOffSave], ["Close", "", closeRitual]]);
+    const HINT = { off: "No work talk, and the streak waits.", holiday: "Days off in a row; the streak waits, and the calendar and the archive show it.", pause: "Whatever kind of day it is, the streak waits. For events, trips, a big week.", work: "A working day, where your week says.", home: "A working day from home.", office: "A working day at the office." };
+    const pick = b => {
+        $("doKind").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+        $("doHint").textContent = HINT[b.dataset.v] || "";
+        $("doWhyF").hidden = !["holiday", "pause"].includes(b.dataset.v);
+    };
+    pick($("doKind").querySelector("button"));
     $("doKind").onclick = e => {
         const b = e.target.closest("button[data-v]");
         if (b)
-            $("doKind").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+            pick(b);
     };
 }
 const isoDmy = v => v ? v.split("-").reverse().join("-") : ""; // 2026-10-30 → 30-10-2026
@@ -31284,7 +31349,10 @@ function daysOffSave() {
         return;
     }
     const span = isoDmy(a) + (b && b !== a ? " to " + isoDmy(b) : "");
-    const reply = schedTalk(k === "holiday" ? `holiday ${span}${b && b !== a ? "" : " to " + isoDmy(a)}` : k === "work" ? `working ${span}` : `off ${span}`);
+    const why = (($("doWhy") || {}).value || "").trim(), whole = `${span}${b && b !== a ? "" : " to " + isoDmy(a)}`;
+    let reply = schedTalk(k === "holiday" ? `holiday ${whole}` : k === "pause" ? `pause the streak ${whole}` : k === "work" ? `working ${span}` : k === "home" ? `working from home ${span}` : k === "office" ? `at the office ${span}` : `off ${span}`, why);
+    if (k === "holiday" && reply && /^On holiday|a day off/.test(reply)) // (a holiday pauses the streak too, so the calendar and the archive show it)
+        schedTalk(`pause the streak ${whole}`, why || "holiday");
     closeRitual();
     if (reply) {
         pet.start("tidy");
@@ -31541,22 +31609,30 @@ function schedDay(w) {
     }
     return null;
 }
-/* what the message says about the schedule: { k: "off" | "work" | "", days: [day keys], hol } or { every: 1 }, or null */
+/* what the message says about the schedule: { k: "off" | "work" | "home" | "office" | "pause" | "", days: [day keys],
+   hol } or { every: 1 }, or null. home and office: a working day from home or at the office; pause: the streak waits
+   those days (an event, a holiday), whatever kind of day they are */
 function schedParse(text) {
     const low = " " + String(text).toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ").trim() + " ";
     const D = SCHED_DAY, re = x => new RegExp(x, "i");
+    const pause = /\b(?:pause|paused|pausing|hold|freeze|unpause|resume|restart)\b[^.!?]*\bstreak\b|\bstreak\b[^.!?]*\b(?:pause|paused|on hold|frozen|back on)\b|\bpauzeer\w*\b[^.!?]*\bstreak\b/.test(low);
+    const home = !pause && re(`\\b(?:from home|at home|wfh|thuis(?:werken|werkdag)?|thuiswerk\\w*)\\b`).test(low) && re(D).test(low);
+    const office = !pause && !home && re(`\\b(?:(?:at|in|to) the office|office day|kantoordag|op kantoor|naar kantoor)\\b`).test(low) && re(D).test(low);
     const hol = /\b(holiday|holidays|vacation|vakantie|on leave|verlof|time off)\b(?!\s+(?:party|parties|card|cards|shopping|plans|gifts?|presents?|season|songs?|movie|film|lights|dinner|feest|kaart))/.test(low);
-    const off = hol || re(`\\b${D}\\s+(?:is\\s+|isn't\\s+|is not\\s+|won't be\\s+)?(?:a\\s+)?(?:(?:day|dag)\\s+)?(?:off|free|vrij)\\b`).test(low) || re(`\\b(?:(?:a\\s+)?day\\s+off|off|vrij|free)\\s+(?:on\\s+|op\\s+)?${D}`).test(low) || re(`\\bvrije dag\\b`).test(low) && re(D).test(low);
-    const work = !off && (re(`\\b(?:i'm |i am |i |ik )?(?:working|work|werk)\\s+(?:on\\s+|op\\s+)?${D}(?=[\\s.,!?])`).test(low) || re(`\\b${D}\\s+(?:is\\s+|isn't\\s+|is not\\s+)?(?:a\\s+)?(?:working day|workday|werkdag)\\b`).test(low) || re(`\\b(?:working day|workday|werkdag)\\s+(?:on\\s+|op\\s+)?${D}`).test(low));
+    const off = !pause && !home && !office && (hol || re(`\\b${D}\\s+(?:is\\s+|isn't\\s+|is not\\s+|won't be\\s+)?(?:a\\s+)?(?:(?:day|dag)\\s+)?(?:off|free|vrij)\\b`).test(low) || re(`\\b(?:(?:a\\s+)?day\\s+off|off|vrij|free)\\s+(?:on\\s+|op\\s+)?${D}`).test(low) || re(`\\bvrije dag\\b`).test(low) && re(D).test(low));
+    const work = !off && !pause && !home && !office && (re(`\\b(?:i'm |i am |i |ik )?(?:working|work|werk)\\s+(?:on\\s+|op\\s+)?${D}(?=[\\s.,!?])`).test(low) || re(`\\b${D}\\s+(?:is\\s+|isn't\\s+|is not\\s+)?(?:a\\s+)?(?:working day|workday|werkdag)\\b`).test(low) || re(`\\b(?:working day|workday|werkdag)\\s+(?:on\\s+|op\\s+)?${D}`).test(low));
     if (/\b(every|each|elke|iedere)\s+(?:(?:mon|tues|wednes|thurs|fri|satur|sun)day|(?:maan|dins|woens|donder|vrij|zater|zon)dag|week)\b|\b(mon|tues|wednes|thurs|fri|satur|sun)days\s+(?:off|free)\b|\b(?:off|free|work|working)\s+(?:on\s+)?(mon|tues|wednes|thurs|fri|satur|sun)days\b/.test(low))
         return { every: 1 };
-    if (!off && !work)
+    if (!off && !work && !pause && !home && !office)
         return null;
-    const undo = /\b(cancel|cancelled|canceled|after all|toch niet|niet meer|no longer)\b/.test(low) || /\b(not|isn't|isnt|niet|geen)\s+(?:a\s+|on\s+|op\s+)?(?:day\s+off|off|free|vrij|vrije dag|working|work|werk|holiday|on holiday)\b/.test(low);
+    const kind = pause ? "pause" : home ? "home" : office ? "office" : off ? "off" : "work";
+    const undo = /\b(cancel|cancelled|canceled|after all|toch niet|niet meer|no longer|unpause|resume|restart|back on)\b/.test(low) || /\b(not|isn't|isnt|niet|geen)\s+(?:a\s+|on\s+|op\s+)?(?:day\s+off|off|free|vrij|vrije dag|working|work|werk|holiday|on holiday)\b/.test(low);
     const words = [...low.matchAll(new RegExp(`(?<![\\w-])${D}(?![\\w-])`, "gi"))].map(m => m[1]);
     const dates = words.map(schedDay).filter(Boolean);
     if (!dates.length)
-        return { k: off ? "off" : "work", days: [], hol };
+        return { k: kind, was: kind, days: [], hol };
+    if (dates.length === 1 && /\b(until|till|through|thru|tot|t\/m)\b/.test(low) && dayKey(dates[0]) > dayKey(schedDay("today"))) // "until friday": from today
+        dates.unshift(schedDay("today"));
     let days = [dates[0]];
     if (dates.length >= 2 && /\b(to|until|till|through|thru|tot|t\/m|tm)\b|\s[-–]\s|\d\s?[–]\s?\d/.test(low)) { // a stretch: from the first to the last (at most two months)
         const a = dates[0] <= dates[1] ? dates[0] : dates[1], b = dates[0] <= dates[1] ? dates[1] : dates[0];
@@ -31566,30 +31642,44 @@ function schedParse(text) {
     }
     else if (dates.length > 1)
         days = dates;
-    return { k: undo ? "" : off ? "off" : "work", was: off ? "off" : "work", days: days.map(d => dayKey(d)), hol };
+    return { k: undo ? "" : kind, was: kind, days: days.map(d => dayKey(d)), hol };
 }
 /* how a day is put in a reply: Friday 30-10-2026 */
 const schedName = k => { const d = new Date(k + "T12:00"); return d.toLocaleDateString("en-GB", { weekday: "long" }) + " " + dmy(d); };
 /* the message, acted on: the reply, or null when it isn't about the schedule */
-function schedTalk(text) {
+const SCHED_SAY = { off: "off", work: "working", home: "working from home", office: "at the office" };
+function schedTalk(text, why) {
     const P = schedParse(text);
     if (!P)
         return null;
     if (P.every)
         return "Every week is a Settings thing: Preferences, Workdays. I keep single days and stretches, like \"friday off\" or \"holiday 28-10-2026 to 01-11-2026\".";
     if (!P.days.length)
-        return P.k === "work" ? "A working day when? Tell me the day, like \"working saturday\" or \"working 31-10-2026\"." : "Which days? Tell me like \"friday off\", or \"holiday 28-10-2026 to 01-11-2026\".";
+        return P.was === "pause" ? "Pause the streak when? Tell me like \"pause the streak friday to sunday\", or \"pause the streak until 01-11-2026\"."
+            : P.was === "home" || P.was === "office" ? `Which day? Like "${P.was === "home" ? "from home" : "at the office"} friday".`
+            : P.k === "work" ? "A working day when? Tell me the day, like \"working saturday\" or \"working 31-10-2026\"." : "Which days? Tell me like \"friday off\", or \"holiday 28-10-2026 to 01-11-2026\".";
     const today = dayKey(), days = P.days.filter(d => d >= today);
     if (!days.length)
         return "That's already been. I can only change days that are still coming.";
+    const at = Date.now(), one = days.length === 1, span = one ? schedName(days[0]) : `${schedName(days[0])} to ${schedName(days[days.length - 1])}`;
+    if (P.was === "pause") { // the streak waits those days; the kind of day stays as it was
+        S.pause = S.pause || {};
+        for (const d of Object.keys(S.pause)) // (old ones go after a year: the archive shows them)
+            if (d < dayKey(new Date(at - 366 * 864e5)))
+                delete S.pause[d];
+        const w = String(why || "").replace(/\s+/g, " ").trim().slice(0, 40);
+        for (const d of days)
+            S.pause[d] = { on: P.k ? 1 : 0, why: P.k ? w : "", at };
+        note(P.k ? `Paused the streak: ${span}${w ? ` (${w})` : ""}.` : `Streak back on: ${span}.`);
+        saveSoon();
+        return P.k ? `The streak's paused ${one ? "on " + span : "from " + span}${w ? `, for ${w}` : ""}. It'll be right where you left it.` : `The streak's back on ${one ? "for " + span : "from " + span}.`;
+    }
     S.sched = S.sched || {};
-    const at = Date.now();
     for (const d of Object.keys(S.sched)) // (old ones go after a month)
         if (d < dayKey(new Date(at - 31 * 864e5)))
             delete S.sched[d];
     for (const d of days)
         S.sched[d] = { k: P.k, at };
-    const one = days.length === 1, span = one ? schedName(days[0]) : `${schedName(days[0])} to ${schedName(days[days.length - 1])}`;
     const usual = d => S.settings.work.includes(new Date(d + "T12:00").getDay());
     let reply;
     if (!P.k) {
@@ -31602,6 +31692,11 @@ function schedTalk(text) {
             : one ? `${span}: a day off. Noted.${usual(days[0]) ? " I'll keep the work talk out of it." : " It was one already by your week, but now it's written down."}`
             : `Days off from ${span}. Noted. I'll keep the work talk out of them.`;
         note(`Told ${S.settings.pet}: ${P.hol ? "holiday" : "day off"}, ${span}.`);
+    }
+    else if (P.k === "home" || P.k === "office") {
+        const where = P.k === "home" ? "from home" : "at the office";
+        reply = one ? `${span}: working ${where}. Noted.${P.k === "home" ? " No commute. I'll put the kettle on." : " I'll keep the wagon tidy while you're out."}` : `Working ${where} from ${span}. Noted.`;
+        note(`Told ${S.settings.pet}: working ${where}, ${span}.`);
     }
     else {
         reply = one ? `${span} is a working day, then. I'll treat it like one.${usual(days[0]) ? " It was already, by your week." : ""}` : `Working days from ${span}. I'll treat them like workdays.`;
@@ -31746,12 +31841,35 @@ function renderArchive() {
             weeks.set(k, []);
         weeks.get(k).push(t);
     });
-    $("archive").innerHTML = [...weeks.entries()].map(([k, ts], i) => {
+    const today = actDay();
+    for (const d of Object.keys(S.pause || {}).filter(d => d <= today && pausedOn(d))) { // weeks with a paused streak show it, even without boxes
+        const k = weekKey(new Date(d + "T12:00").getTime());
+        if (!weeks.has(k))
+            weeks.set(k, []);
+    }
+    const order = [...weeks.entries()].sort((x, y) => x[0] < y[0] ? 1 : -1);
+    $("archive").innerHTML = order.map(([k, ts], i) => {
         const a = new Date(k + "T12:00"), b = new Date(a);
         b.setDate(b.getDate() + 6);
+        const pd = []; // this week's paused days (until today), in stretches, with what for
+        for (const d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) {
+            const key = dayKey(d);
+            if (key > today || !pausedOn(key))
+                continue;
+            const last = pd[pd.length - 1], why = S.pause[key].why || "", prev = last && new Date(last.to + "T12:00");
+            if (prev)
+                prev.setDate(prev.getDate() + 1);
+            if (last && last.why === why && dayKey(prev) === key)
+                last.to = key;
+            else
+                pd.push({ from: key, to: key, why });
+        }
+        const np = pd.reduce((n, p) => n + Math.round((new Date(p.to + "T12:00") - new Date(p.from + "T12:00")) / 864e5) + 1, 0);
+        const wd = k2 => new Date(k2 + "T12:00").toLocaleDateString("en-GB", { weekday: "short" });
+        const pauseLi = pd.map(p => `<li class="wk-pause"><span>Streak paused${p.why ? `: ${esc(p.why)}` : ""}</span><span class="sync">${p.from === p.to ? wd(p.from) : wd(p.from) + "–" + wd(p.to)}</span></li>`).join("");
         const boxes = ts.slice().sort((x, y) => x.d - y.d).map(t => `<i class="bx ${t.tag === "life" ? "life" : t.tag ? "" : "none"} s${t.s}" title="${esc(t.t)}"></i>`).join("");
-        return `<details class="wk"${i === 0 ? " open" : ""}><summary><span class="wk-h">Week ${weekNo(a)}${i === 0 ? " · this week" : ""}</span><span class="sync">${dmy(a)} – ${dmy(b)} · ${ts.length} box${ts.length === 1 ? "" : "es"}</span><span class="wk-shelf" aria-hidden="true">${boxes}</span></summary>
-      <ul>${ts.map(t => `<li><span>${esc(t.t)}</span><span class="sync">${new Date(t.d).toLocaleDateString("en-GB", { weekday: "short" })} ${hhmm(new Date(t.d))}</span></li>`).join("")}</ul></details>`;
+        return `<details class="wk"${i === 0 ? " open" : ""}><summary><span class="wk-h">Week ${weekNo(a)}${i === 0 ? " · this week" : ""}</span><span class="sync">${dmy(a)} – ${dmy(b)} · ${ts.length} box${ts.length === 1 ? "" : "es"}${np ? ` · streak paused ${np} day${np > 1 ? "s" : ""}` : ""}</span><span class="wk-shelf" aria-hidden="true">${boxes}</span></summary>
+      <ul>${pauseLi}${ts.map(t => `<li><span>${esc(t.t)}</span><span class="sync">${new Date(t.d).toLocaleDateString("en-GB", { weekday: "short" })} ${hhmm(new Date(t.d))}</span></li>`).join("")}</ul></details>`;
     }).join("") || `<p class="sub">No boxes yet. Finish something and it'll be the first one on the shelf.</p>`;
 }
 function migrateCounts() {
