@@ -1155,6 +1155,10 @@ const DEF = {
             "had a long chat with a {#creature} about {#topic}"
         ],
         idle: [
+            "That {snack} earlier. I'm still thinking about it.",
+            "[rare] I could have another {snack}. I won't. Probably.",
+            "Thank you for the {snack}. I meant to say so properly.",
+            "The {snack} was good. I've made a note of it. Somewhere.",
             "[travelling] We're on the road. The kettle doesn't mind. The kettle never minds.",
             "[travelling] Don't worry, the wagon knows the way. I asked.",
             "[travelling] Everything rattles a little. It's a friendly rattle.",
@@ -4450,7 +4454,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvo4yk74ryhaf", "mvo51bqtk3fpr",
     // group 20 (25-10-2026)
     "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
-, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep"];
+, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6"];
 
 </script>
 <script>/* js/core/state.js */
@@ -4461,7 +4465,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -4675,6 +4679,11 @@ function sanitizeState(raw) {
         o.barter = { wk: dkey(b.wk) || "", stock: arr(b.stock, 4).map(x => ({ k: ["tea", "bake", "flower", "curio", "eye"].includes(x.k) ? x.k : "", id: str(x.id, 80), price: clamp(Math.round(num(x.price, 20)), 1, 999) })).filter(x => x.id && x.k), got: (Array.isArray(b.got) ? b.got : []).slice(0, 4).map(x => str(x, 80)).filter(Boolean) };
     }
     o.colSeen = { ids: (Array.isArray(s.colSeen && s.colSeen.ids) ? s.colSeen.ids : []).map(x => str(x, 40)).filter(Boolean).slice(-60), at: num(s.colSeen && s.colSeen.at) }; // the Collections sections you've seen (collection.js)
+    o.lastSnack = { n: str(s.lastSnack && s.lastSnack.n, 40), at: num(s.lastSnack && s.lastSnack.at) }; // the last snack Mite had ({snack} in lines, for 12 hours)
+    o.fold = {}; // which foldable sections you opened or closed (shop, Collections, Log, Archive), in the save so it keeps and syncs (jot mvoyeagumgay6)
+    for (const [k, v] of Object.entries(s.fold && typeof s.fold === "object" ? s.fold : {}).slice(0, 120))
+        if (/^[a-z0-9-]{1,40}$/.test(k))
+            o.fold[k] = v ? 1 : 0;
     o.shopSeen = { ids: (Array.isArray(s.shopSeen && s.shopSeen.ids) ? s.shopSeen.ids : []).map(x => str(x, 40)).filter(Boolean).slice(-600), at: num(s.shopSeen && s.shopSeen.at) }; // what the shop has shown you (shop.js)
     o.barterOwn = arr(s.barterOwn, 400).map(x => ({ k: ["tea", "bake", "flower", "curio"].includes(x.k) ? x.k : "", n: str(x.n, 80).trim(), at: num(x.at) })).filter(x => x.k && x.n); // what the raccoon brought, for good (barter.js)
     o.eyesGone = {}; // eyes taken out of the jars on purpose: { kind: when it had been found } (eyes.js)
@@ -4975,6 +4984,8 @@ function mergeStates(a, b) {
     o.pantry = Object.assign({}, nw.pantry || {}); // (the newer save's stock: what was used up stays used up)
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
     o.colSeen = { ids: [...new Set([...((a.colSeen || {}).ids || []), ...((b.colSeen || {}).ids || [])])].slice(-60), at: Math.max(num((a.colSeen || {}).at), num((b.colSeen || {}).at)) };
+    o.fold = Object.assign({}, od.fold || {}, nw.fold || {});
+    o.lastSnack = num((a.lastSnack || {}).at) > num((b.lastSnack || {}).at) ? a.lastSnack : b.lastSnack || a.lastSnack;
     o.shopSeen = { ids: [...new Set([...((a.shopSeen || {}).ids || []), ...((b.shopSeen || {}).ids || [])])].slice(-600), at: Math.max(num((a.shopSeen || {}).at), num((b.shopSeen || {}).at)) };
     o.barterOwn = uniq([...(a.barterOwn || []), ...(b.barterOwn || [])], x => x.k + "|" + String(x.n).toLowerCase()).slice(0, 400); // everything traded, from either side
     { // the barter: the newer week wins; the same week keeps one stock and everything traded on either side
@@ -5392,14 +5403,37 @@ function loadLocal() {
     }
     return null;
 }
-let saveTimer = null;
+let saveTimer = null, saveDirty = false, lastPut = 0;
 function saveSoon(ms = 1500) {
+    saveDirty = true;
     clearTimeout(saveTimer);
     saveTimer = setTimeout(save, ms);
 }
+/* another device saved since we last did (phone and computer both open): take its changes in before writing, so
+   neither copy overwrites the other (jots mvp1p2tb1wwgx, mvoztft2lpzr0). savedAt is the time of the last real
+   change (saveSoon), not of the 45-second heartbeat, so a device that only sat open doesn't win the newest-wins
+   fields (the hat, settings) */
+async function pullBeforeSave() {
+    const r = await getDoc("mossling");
+    if (!r || num(r.savedAt) === lastPut || num(r.savedAt) === num(S.savedAt))
+        return false;
+    S = merge(defaultState(), mergeStates(JSON.parse(JSON.stringify(S)), merge(defaultState(), r)));
+    return true;
+}
 async function save() {
-    S.savedAt = Date.now();
+    let merged = false;
+    if (saveDirty || !S.savedAt)
+        S.savedAt = Date.now();
+    saveDirty = false;
+    if (db && uid)
+        try {
+            merged = await pullBeforeSave();
+        }
+        catch (e) {
+        }
     S.lastSeen = Date.now();
+    if (merged && typeof renderAll === "function")
+        renderAll();
     const j = fitSave();
     try {
         localStorage.setItem(LS_KEY, j);
@@ -5412,6 +5446,7 @@ async function save() {
     if (db && uid) {
         try {
             await putDoc("mossling", JSON.parse(j));
+            lastPut = num(S.savedAt);
             await pushArch();
             await pushKeep();
             setSync("Saved " + hhmm() + ((S.archPending || []).length ? " · archive pending" : ""));
@@ -5719,7 +5754,7 @@ function ctx() {
     }
     const mp = moonPhase(now);
     return { now, h, dow, month: now.getMonth(), workday: isWorkDay(now), office: schedOf(dayKey(now)) !== "off" && st.office.includes(dow), dayNote: schedOf(dayKey(now)),
-        you: st.you || null, card: typeof deckCard === "function" ? deckCard() : null, pet: st.pet, open: open.length, oldest: oldest ? oldest.t : null, oldestAge: oldest ? fmtAge(Date.now() - oldest.c) : null,
+        you: st.you || null, snack: S.lastSnack && S.lastSnack.n && Date.now() - S.lastSnack.at < 12 * 36e5 ? S.lastSnack.n : null, card: typeof deckCard === "function" ? deckCard() : null, pet: st.pet, open: open.length, oldest: oldest ? oldest.t : null, oldestAge: oldest ? fmtAge(Date.now() - oldest.c) : null,
         smallest: smallest ? smallest.t : null, doneToday: doneOn(actDay()), week: allDone().filter(t => t.d > weekAgo).length, total: doneCount(),
         streak: S.streak.n, level: level(), favHour: fav, daysTogether: Math.max(1, Math.round((Date.now() - S.created) / 864e5)),
         doneBy: st.doneBy, bed: st.bed, pats: S.pats, n: ri(3, 42),
@@ -5832,7 +5867,7 @@ function convoPick(key, keep) {
             if (typeof r === "number")
                 w *= r;
         }
-        if (!ok || [...text.matchAll(/\{(\w+)\}/g)].some(m => m[1] === "card" && varVal(c, "card") == null)) // ({card}: only once a card has come)
+        if (!ok || [...text.matchAll(/\{(\w+)\}/g)].some(m => (m[1] === "card" || m[1] === "snack") && varVal(c, m[1]) == null)) // ({card}: only once a card has come; {snack}: only within 12 h of one)
             continue;
         const first = text.split(" / ").map(x => x.replace(/^\s*[A-Z]:\s*/, "").trim());
         if (first.some(x => x.length > 12 && [...heardT].some(h => h.includes(x.replace(/\{\w+\}/g, "").slice(0, 24)))))
@@ -8610,6 +8645,8 @@ const BEH = {
             po.lookOverride = { x: p.dir * .7, y: .4 };
             po.sy = -.04;
             po.feet = ta < .5;
+            if (!b.started && ta < 8 && ((b2Who === "guest" && !$("bubble2").hidden && performance.now() < b2ReadUntil) || speakQ.some(q => q.who === "guest")))
+                return; // (its hello first: the conversation waits till that's been read, jot mvp1q2yngsaff)
             if (!b.started) {
                 b.started = 1;
                 const g = guest;
@@ -27726,7 +27763,8 @@ function shopComplete() {
     return true;
 }
 let shopFurnShown = new Set(), shopSeenTimer = 0, shopSecSetting = false;
-const shopOpenPref = (() => { try { return JSON.parse(localStorage.getItem("st-shopsec") || "{}") || {}; } catch (e) { return {}; } })(); // (which ones you opened or closed: this browser only)
+const shopOpenPrefOld = (() => { try { return JSON.parse(localStorage.getItem("st-shopsec") || "{}") || {}; } catch (e) { return {}; } })(); // (before 26-10-2026 this browser kept it: read once, S.fold keeps it now)
+const shopOpenPref = new Proxy({}, { get: (_, k) => S.fold && S.fold[k] !== undefined ? !!S.fold[k] : shopOpenPrefOld[k], set: (_, k, v) => { S.fold = S.fold || {}; S.fold[k] = v ? 1 : 0; saveSoon(); return true; } });
 function shopIsNew(id) {
     return !!S.shopSeen && S.shopSeen.at > 0 && !S.shopSeen.ids.includes(id);
 }
@@ -27771,7 +27809,7 @@ function shopSections() {
         if (d.open !== want) {
             shopSecSetting = true;
             d.open = want;
-            shopSecSetting = false;
+            setTimeout(() => shopSecSetting = false, 0); // (the toggle event comes after this, as its own task: not a choice of yours)
         }
         if (d.open && d.dataset.news) // (only what's in an open section counts as seen)
             fresh.push(...d.dataset.news.split(" "));
@@ -27780,8 +27818,7 @@ function shopSections() {
             d.addEventListener("toggle", () => {
                 if (shopSecSetting)
                     return;
-                shopOpenPref[k] = d.open;
-                try { localStorage.setItem("st-shopsec", JSON.stringify(shopOpenPref)); } catch (e) { }
+                shopOpenPref[k] = d.open; // (into the save: S.fold)
                 if (d.open)
                     renderShop(); // (what's new in it gets seen)
             });
@@ -28414,18 +28451,25 @@ function colSections() {
 }
 /* the foldable sections in Collections, the Log and the Archive: open to start with; what you open or close is
    remembered in this browser */
-const foldPref = (() => { try { return JSON.parse(localStorage.getItem("st-fold") || "{}") || {}; } catch (e) { return {}; } })();
+const foldOld = (() => { try { return JSON.parse(localStorage.getItem("st-fold") || "{}") || {}; } catch (e) { return {}; } })(); // (before 26-10-2026: this browser only; S.fold now)
+let foldSetting = false;
 function foldSections() {
     document.querySelectorAll("details.colsec").forEach(d => {
-        const k = d.dataset.sec;
+        const k = d.dataset.sec, want = S.fold && S.fold[k] !== undefined ? !!S.fold[k] : foldOld[k];
+        if (want !== undefined && d.open !== want) { // (every time: another device may have changed it)
+            foldSetting = true;
+            d.open = want;
+            setTimeout(() => foldSetting = false, 0);
+        }
         if (d.dataset.wired)
             return;
         d.dataset.wired = 1;
-        if (foldPref[k] !== undefined)
-            d.open = foldPref[k];
         d.addEventListener("toggle", () => {
-            foldPref[k] = d.open;
-            try { localStorage.setItem("st-fold", JSON.stringify(foldPref)); } catch (e) { }
+            if (foldSetting)
+                return;
+            S.fold = S.fold || {};
+            S.fold[k] = d.open ? 1 : 0;
+            saveSoon();
         });
     });
 }
@@ -30626,6 +30670,7 @@ function feed(id) {
     }
     S.g -= c;
     S.care.fed++;
+    S.lastSnack = { n: s.name.toLowerCase(), at: Date.now() }; // (Mite can mention it for 12 hours: {snack}, jot mvozwa0az0gkw)
     sfx("munch");
     pet.start("eat", { food: s.id, next: s.next });
     setTimeout(() => {
