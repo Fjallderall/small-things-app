@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 25-10-2026 -->
+<!-- Small Things, shared build of 26-10-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -1092,7 +1092,7 @@ const POOL_INFO = {
     late: "After bedtime", after_work: "After work hours on a workday", day_off: "On non-workdays",
     buy: "Bought something ({item})", buy_rugcol: "Bought a new rug colour ({col})", trinket: "Found a trinket ({item})", level: "Level up ({level})", lesson: "Learned something ({item})",
     firefly: "Golden firefly appears", dream: "Sleep-talk", story: "Tiny stories (after lesson 8)", chatter: "Chat: a little bit of dialogue, 1–4 speech bubbles separated by ' / '",
-    catcards: "The Deck: Midnightcat's cards, which come one at a time in strange mail: Name | sign (moon eye key door candle moth bell hand spiral star bird cup lantern thread mask crown tree blade wave) | #colour (not drawn: the cards are dark with a white sign) | what's written on it", deckmail: "Mite, when strange mail comes (a card for the Deck) and there's a desk: it's in the rack", deckmail_nodesk: "Mite, when strange mail comes and there's no desk yet",
+    catcards: "The Deck: Midnightcat's cards, which come one at a time in strange mail: Name | sign (moon eye key door candle moth bell hand spiral star bird cup lantern thread mask crown tree blade wave) | #colour (not drawn: the cards are dark with a white sign) | what's written on it", snailhello: "The snail courier's first arrival: it introduces itself (S: the snail, M: Mite, {snail} is its name)", deckmail: "Mite, when strange mail comes (a card for the Deck) and there's a desk: it's in the rack", deckmail_nodesk: "Mite, when strange mail comes and there's no desk yet",
     uncanny: "Strange remarks (Strangeness on)", ghosthi: "What the ghost at the window says (short, kind)", drift_seed: "Tapping a dandelion seed drifting through", drift_motes: "Tapping dust motes in a sunbeam", drift_spore: "Tapping a glowing moss spore", drift_wisp: "Catching a will-o'-wisp (Strangeness on)", drift_page: "Catching a page fluttering off the bookshelf", drift_steam: "Tapping a shape in the kettle's steam", drift_snow: "Tapping an indoor snowflake", catyarn: "Mite, when Midnightcat comes to play with the wool", drawers: "Tenants of the chest of drawers for rent: LABEL | what Mite says when it opens their drawer", drawermovein: "Mite, when someone moves into a drawer ({label})", drawermoveout: "Mite, when a tenant moves out of a drawer ({label})", replies: "Letters back from Mite's pen pals ({penpal} is who wrote)", letterarrived: "Mite, when a reply arrives ({penpal})", pinboard: "Tapping a snapshot on the pinboard", pin_sea: "The snapshot of the sea", pin_hills: "The snapshot of the hills", pin_forest: "The snapshot of the forest", pin_lighthouse: "The snapshot of the lighthouse", pin_space: "The postcard Mite made of the space detour", pin_deep: "The postcard Mite made of the bottom of the sea", possumhello: "The possum's first visit: it comes in for the first cookies, introduces itself politely and asks to stay (M: / P:, {possum} is its name)", possumtalk: "Conversations with the possum (M: Mite, P: the possum)", catpossum: "Midnightcat and the possum, among themselves (C: / P:)", catsnail: "Midnightcat and the snail, among themselves (C: / S:)", possumsnail: "The possum and the snail, among themselves (P: / S:)", possumnames: "Names the possum might have (it picks one, once)", possumcookie: "Mite, giving the possum something from the tray ({possum} is its name, {bake}: what it gets, e.g. cookie, slice of pie)", letters: "A line from a letter Mite writes at the desk ({penpal} is who it's to)", possum: "What the possum says when tapped", possumsleep: "The possum, asleep upside down from the beam, when tapped", possumtrash: "Mite, when the possum comes to eat the mess", possumdead: "Mite, when the possum plays dead", greenhouse: "Tapping the plants in the nook (Mite waters them)", midnightcat: "Midnightcat, the archive cat, when you tap it: meows and occult wisdom", catconvo: "Mite visiting Midnightcat: M: Mite says / C: the cat says / …", catarrive: "Mite, when Midnightcat wanders into the wagon", origami_tap: "Tapping a hanging adorbigami ({item}: frog, crane..., {when}: the day the ghost left it)", dream_sky: "Dream archive, drawer 1: flying and falling", dream_tea: "Dream archive, drawer 2: tea and biscuits", dream_nowhere: "Dream archive, drawer 3: places that aren't", dream_dark: "Dream archive, drawer 4: do not open after dark (only opens by day)", dream_misfiled: "Dream archive: things filed in the wrong drawer", dream_yours: "Dream archive: a dream labelled with your name ({you})", bureaumemo: "Bureau memos that slide under the archive door (redact with ████)", suggest: "Offline 'what's next' ({task}, {reason}, {Reason})", steps: "Split library: keywords | step; step; step ({task})", talk: "Talk replies: keywords | reply", talk_fallback: "Talk: when nothing matches", followup: "Asking about something you mentioned ({thing}, {Thing})", grammar: "Building blocks: name: option | option (use as {#name})", fixed: "A fix-it task finished ({task})", batch: "A batch of a big queue finished ({task})", morning: "Morning planning card", evening: "End-of-day card", picks_done: "All of today's picks done", selfcare: "Self-care logged (tag lines water / ate / cooked / outside / stretch / break / rest)", snack: "Eating a snack ({item})", goodnight: "Lights out", rested: "Morning after an on-time lights-out", omen: "Anomaly appears (tag lines door / phone / eyes / figure / hand / drips / double / sheet / coat / lantern)", phone: "What's on the phone", clearance: "Clearance raised ({clearance})",
     observe: "A resident sits looking at something, then talks about it ({thing}): who | A: ... / B: ... (who: cat, possum, snail or any; A is the one looking, B whoever answers: Mite or another resident)",
     observe_solo: "A resident looking at something, to itself ({thing}): who | text",
@@ -1977,6 +1977,11 @@ const DEF = {
             "[spring] Dear you, / Something is coming up through the ground near the wagon. I won't spoil what it is. Things grow when you aren't watching, and that includes you. / The world",
             "[summer] Dear you, / The evenings are long, so there's time. Not for everything: for something. Pick a small one. / Brightly, the world",
             "[strange] Dear you, / Some of the doors around here open onto other places. I don't mind. I'm bigger than I look, on the inside. Like the wagon. Like you. / Fondly, the world",
+        ],
+        snailhello: [
+            "S: Good day. Is this the wagon? / M: It is! / S: Then I'm in the right place, eventually. I'm {snail}. Your courier. / M: Welcome, {snail}. / S: Thank you. I carry the post, and I don't lose it. I'm not fast. I'm thorough.",
+            "S: Ahem. Courier. / M: Oh! Hello! / S: {snail}. I deliver. Letters, parcels, the odd postcard. I came as soon as I could. / M: When did you set off? / S: Tuesday. / M: Which Tuesday? / S: We needn't go into it.",
+            "S: Hello. You sent for a courier. / M: We did. You're the courier? / S: {snail}, at your service. I bring the post, I check the rack, and I don't hurry. Hurrying is how letters get lost.",
         ],
         deckmail: [
             "Strange mail. A black envelope, no stamp, no sender. It was in the rack before the post came. It's yours, I think.",
@@ -4229,8 +4234,8 @@ const BUILDINGS = [
     { id: "snail", name: "Snail courier", price: 30, max: 1, note: "Brings the post. Slowly. Reliably." },
     { id: "scope", name: "Observatory", price: 45, max: 1, lesson: "stargaze", note: "A brass telescope for very distant things." },
     { id: "vault", name: "Dream archive", price: 60, max: 1, note: "Drawers full of carefully filed dreams." },
-    { id: "desk", name: "Writing desk", price: 12, max: 1, note: "For the nook, under the round window: a drawer, an inkpot, a quill, a stub of candle. Mite writes a letter a day at it, and the snail checks the post there." },
-    { id: "chair", name: "Chesterfield & side table", price: 14, max: 1, note: "For the nook: a buttoned leather chair to read in, and a little table for the candle and the tea." },
+    { id: "desk", name: "Writing desk", price: 12, max: 1, needs: "snail", note: "For the nook, under the round window: a drawer, an inkpot, a quill, a stub of candle. Mite writes a letter a day at it, and the snail checks the post there." },
+    { id: "chair", name: "Chesterfield & side table", price: 14, max: 1, needs: "books", note: "For the nook: a buttoned leather chair to read in, and a little table for the candle and the tea." },
     { id: "gramo", name: "Gramophone", price: 40, max: 1, note: "Up on the nook's platform, by the pinboard. Tap it and Mite winds it up: one record, then it stops. Plays with the music off too (not with the sound off)." },
     { id: "rental", name: "Renter's chest", price: 16, max: 1, note: "For the nook: a chest of drawers whose drawers are let out to tenants. Brass labels, a list of who's in." },
     { id: "vase", name: "Vase & pressed flowers", price: 10, max: 1, needs: "rental", note: "A vase for the top of the renter's chest, with a book for drying what's been in it. Visitors bring flowers; Mite picks some on walks." },
@@ -4398,7 +4403,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvo4yk74ryhaf", "mvo51bqtk3fpr",
     // group 20 (25-10-2026)
     "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
-, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov"];
+, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0"];
 
 </script>
 <script>/* js/core/state.js */
@@ -5401,6 +5406,8 @@ function dayStartTs(now = Date.now()) {
 const dayKey = (d = new Date()) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 const actDay = (ts = Date.now()) => dayKey(new Date(dayStartTs(+ts)));
 /* the activity day as a whole number of days (for "once a day" counters kept in S.flags, which merge by the highest) */
+/* a new game still settling in: less than ms since it began (S.created). The first hours are spread out (jot, 25-10-2026) */
+const settling = ms => Date.now() - num(S.created) < ms;
 const dayNum = () => {
     const t = dayStartTs();
     return Math.floor((t - new Date(t).getTimezoneOffset() * 60e3) / 864e5);
@@ -11952,6 +11959,8 @@ function capsuleReminder() {
         return;
     S.flags.capMonth = mk;
     saveSoon();
+    if (settling(3 * 864e5)) // (not in a game's first days: the month it starts in passes quietly)
+        return;
     speak(compose("capsule_remind") || "A new month. Want to seal a time capsule? It's on the plank in the archive, or from the journal.", { ms: 7000 });
 }
 
@@ -13708,6 +13717,7 @@ function showSendoff(day, prog = 1) {
 let bake = null;
 let lastBakeKind = "cookies"; // (what came out last: the possum's line names it, possum.js)
 const recentBakes = [];
+const ovenPipe = () => R * .95; // the stovepipe's height above the oven
 function ovenH() {
     return R * .78;
 }
@@ -13722,8 +13732,8 @@ function drawOven(dk, t) {
     cx.fillRect(x - w / 2, y0, w, h - R * .1);
     cx.fillStyle = mix("#4a4542", "#1e1c1a", dk * .6);
     cx.fillRect(x - w / 2 - R * .04, y0 - R * .05, w + R * .08, R * .07);
-    cx.fillRect(x + w * .28, y0 - R * 1.6, R * .1, R * 1.55);
-    cx.fillRect(x + w * .28 - R * .03, y0 - R * 1.62, R * .16, R * .05); // stovepipe up the wall
+    cx.fillRect(x + w * .28, y0 - ovenPipe(), R * .1, ovenPipe() - R * .05);
+    cx.fillRect(x + w * .28 - R * .03, y0 - ovenPipe() - R * .02, R * .16, R * .05); // stovepipe up the wall (short: on its own it stood too tall, jot 25-10-2026)
     const dw = w * .62, dh = h * .5, dx = x - dw / 2 - w * .08, dy = y0 + h * .18;
     cx.fillStyle = mix("#3a3532", "#181614", dk * .6);
     cx.fillRect(dx, dy, dw, dh);
@@ -13739,7 +13749,7 @@ function drawOven(dk, t) {
     if (glowK > 0) {
         softGlow(dx + dw / 2, dy + dh * .45, R * .9, `rgba(255,150,60,${.25 * glowK})`);
         if (Math.random() < .05)
-            addP({ type: "steam", x: x + w * .33, y: y0 - R * 1.62, vy: -14, vx: rnd(-3, 3), max: 2, size: R * .08, bg: 1 });
+            addP({ type: "steam", x: x + w * .33, y: y0 - ovenPipe() - R * .02, vy: -14, vx: rnd(-3, 3), max: 2, size: R * .08, bg: 1 });
     }
 }
 function parseBake(text) {
@@ -15234,9 +15244,9 @@ function guestTick(dt, now) {
             return;
         guestNext = now + 60000;
         const c = ctx(), dark = skyAt(c.h + c.now.getMinutes() / 60).dark;
-        if (document.visibilityState !== "visible" || pet.beh === "sleep" || view !== "room")
+        if (document.visibilityState !== "visible" || pet.beh === "sleep" || view !== "room" || settling(2 * 36e5)) // (no visitors in a game's first two hours)
             return;
-        if (dark > .45 && Date.now() - (S.raccoonAt || 0) > 20 * 36e5 && Date.now() - (S.guestAt || 0) > 36e5 && Math.random() < .15)
+        if (dark > .45 && !settling(864e5) && Date.now() - (S.raccoonAt || 0) > 20 * 36e5 && Date.now() - (S.guestAt || 0) > 36e5 && Math.random() < .15)
             spawnRaccoon(); // evenings and nights, about once a day
         else if (Date.now() - (S.guestAt || 0) > (foulOut() ? 1 : 2.5) * 36e5 && !c.late && Math.random() < (foulOut() ? .25 : .12)) {
             spawnGuest(); // (more often in bad weather: they come in out of it)
@@ -20666,7 +20676,18 @@ function snailDeskX() {
 function snailNext(room, dir) { // the room next door that way, or null at the end of the wagon
     return ROOMS[ROOMS.indexOf(room) + dir] || null;
 }
+/* the first time it's here (bought after 26-10-2026: S.flags.snailNew), it introduces itself (pool snailhello) */
+function snailHelloTick() {
+    if (!S.flags.snailNew || S.flags.met_snail || snailAsleep || pet.beh === "sleep" || S.lightsOut || talkHeld() || floorTaken() || !roomVisible(snailRoom))
+        return;
+    S.flags.met_snail = 1; // (it says who it is: Mite doesn't need to)
+    delete S.flags.snailNew;
+    saveSoon();
+    runConvo(compose("snailhello") || "S: Good day. I'm {snail}, your courier. I carry the post. / M: Welcome! / S: Thank you. I'll be quick. By my standards.", () => note(`${snailName()} the snail courier arrived and introduced itself.`));
+}
 function snailTick(dt) {
+    if (own("snail"))
+        snailHelloTick();
     if (!own("snail") || snailPause || snailTalkUntil > performance.now()) // (talking: it stays put)
         return;
     // bedtime: next to Mite, once it's asleep (where the futon is, a little to its right)
@@ -20936,12 +20957,12 @@ function postWelcome() {
     corrRegister("in", "the world", WELCOME_LETTER, Date.now(), true);
     S.post.worldAt = Date.now();
     saveSoon();
-    yourLetterCard();
+    yourLetterCard(settling(36e5) ? 25000 : 7000); // (a new game: after the hello has been read)
 }
 /* no desk yet, so no rack: a letter for you opens as a card when it comes (once nothing else is open), and waits
    for the rack. Mite puts it in when the desk comes (buy, shop.js) */
 let yourCardTimer = 0;
-function yourLetterCard() {
+function yourLetterCard(delay) {
     clearTimeout(yourCardTimer);
     yourCardTimer = setTimeout(function tryCard() {
         const l = ((S.post && S.post.inbox) || []).find(x => x.you && !x.read);
@@ -20954,7 +20975,7 @@ function yourLetterCard() {
         l.read = 1;
         saveSoon();
         showYourLetter(l);
-    }, 7000);
+    }, delay || 7000);
 }
 /* a letter for you, opened: on a card, as written */
 function showYourLetter(l) {
@@ -20987,6 +21008,7 @@ function postTick(now) {
     postCheckAt = now + 60e3;
     drawerTick(); // (and the drawers in the nook: has one decided? garden.js)
     flowerTick(); // (and the vase: flowers from the night door, or a walk: flowers.js)
+    easelArrive(); // (and the easel, a day into a game: welcome.js)
     const t = Date.now();
     if (S.post.worldAt && t - S.post.worldAt > WORLD_EVERY) { // the world keeps its promise
         S.post.worldAt = t;
@@ -21012,8 +21034,6 @@ function postTick(now) {
         return;
     if (anomPostTick(t)) // (and the anomalies Mite has met: anomalies.js)
         return;
-    if (deckTick(t)) // (strange mail: a card for the Deck, cards.js)
-        return;
     serialTick(t);
     for (const s of S.post.sent) {
         if (s.r)
@@ -21037,6 +21057,7 @@ function postTick(now) {
         say("letterarrived", { penpal: s.to });
         saveSoon();
     }
+    deckTick(t); // (strange mail, on a day no other letter came: a card for the Deck, cards.js)
 }
 /* ---------- stories by post. Some pen pals have something going on, told a bit per letter, in order (lines:
    serials, "Who | the letter", the chapters in the order they come; Who is a word from the pen pal's name). The next
@@ -24782,6 +24803,8 @@ function raccEyeCleanup() {
 /* where each eye comes from (some are only found one way) */
 const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door", glassdoll: "raccoon", heron: "raccoon", lighthouse: "raccoon", bureau: "raccoon" };
 function findEye(from) {
+    if (Date.now() - num(S.created) < 864e5) // (no eyes in the first day of a game, jot 25-10-2026)
+        return null;
     if (from !== "raccoon" && num(S.flags.eyeDay) === dayNum()) // (one eye a day at most)
         return null;
     const have = new Set((S.eyes || []).map(e => e.k));
@@ -26703,7 +26726,7 @@ function frame(now) {
     }
     // ambient talk
     if (now > talkAt) {
-        talkAt = now + rnd(40e3, 95e3) * paceK();
+        talkAt = now + rnd(40e3, 95e3) * paceK() * (settling(36e5) ? 1.6 : 1); // (a new game's first hour: quieter)
         ambientTalk();
     }
     uiAcc += dt;
@@ -27569,6 +27592,8 @@ function renderShop() {
     shopFurnShown = new Set();
     byPrice(BUILDINGS).forEach((b, i) => { // all of it on show from the start: you can see what there is to save up for
         const own = S.b[b.id] || 0;
+        if (b.id === "easel" && !own) // (Mite's own: it unpacks it a day into a game, welcome.js)
+            return;
         const el = document.createElement("div");
         el.className = "bld";
         shopFurnShown.add(b.id);
@@ -27830,6 +27855,11 @@ function buy(b) {
         if (((S.post && S.post.inbox) || []).some(l => l.you))
             setTimeout(() => speak("And your letter from the world goes in the rack on the desk. I'd been keeping it safe.", { ms: 5000 }), 8000);
     }
+    else if (S.b[b.id] === 1 && b.id === "snail") { // it introduces itself once it's here and there's nothing in the way (snail.js)
+        S.flags.snailNew = 1;
+        buySpeak("A courier's on the way. It'll want to introduce itself: snails are formal.", { ms: 5000 });
+        note("Hired a snail courier.");
+    }
     else if (S.b[b.id] === 1 && b.id === "gramo") {
         buySpeak("A gramophone, up by the pinboard. It came with one record. Or the record came with it. Tap it and I'll wind it up.", { ms: 7000 });
         note("Got a gramophone.");
@@ -27882,7 +27912,7 @@ function barterCandidates() {
     for (const k of ["tea", "bake", "flower", "curio"])
         out[k] = pool(BARTER_POOL[k]).map(barterName).filter(n => n && !barterOwned(k, n)).map(id => ({ k, id }));
     const have = new Set((S.eyes || []).map(e => e.k));
-    out.eye = EYES.filter(e => isRaccEye(e.id) && !have.has(e.id)).map(e => ({ k: "eye", id: e.id })); // (they have their own jar: always room)
+    out.eye = Date.now() - num(S.created) < 864e5 ? [] : EYES.filter(e => isRaccEye(e.id) && !have.has(e.id)).map(e => ({ k: "eye", id: e.id })); // (they have their own jar: always room; none in a game's first day)
     return out;
 }
 /* the week's stock: three things of three different kinds where it can (more of one kind when the others run out) */
@@ -30125,14 +30155,13 @@ function welcome(prevSeen, isNew) {
         }
         if (ch)
             S.contentAt = Date.now();
-        if (!isNew)
-            setTimeout(() => speak("Did you notice? We're in a wagon now. If you miss the burrow, it's in Settings, under Preferences. I kept the key."), 3500);
+        if (!isNew && doneCount() > 0) // (a save from before the wagon; a new game just starts in it)
+            setTimeout(() => speak("Did you notice? We're in a wagon now. Settings, under Preferences, can change that."), 3500);
         saveSoon();
     }
     fetchWeather();
     nameFireflies(false);
-    if (!S.b.easel)
-        S.b.easel = 1;
+    easelArrive(true);
     paintDayCheck();
     if (own("hearth") && Math.abs(pet.x - hearthX()) < R * 1.2)
         pet.x = clamp(hearthX() + R * 1.8, W * .12, W * .88);
@@ -30172,6 +30201,12 @@ function welcome(prevSeen, isNew) {
             S.lightsOut = false;
     }
     setTimeout(checkRested, 4500);
+    if (settling(36e5)) { // a new game: its first hour comes a bit at a time (jot, 25-10-2026)
+        const now = performance.now();
+        nextAnom = Math.max(nextAnom, now + rnd(25, 35) * 60e3);
+        nextGold = Math.max(nextGold, now + rnd(12, 18) * 60e3);
+        talkAt = Math.max(talkAt, now + rnd(90e3, 120e3));
+    }
     if (isNew) {
         const t0 = Date.now();
         const wait = () => {
@@ -30188,8 +30223,8 @@ function welcome(prevSeen, isNew) {
         setTimeout(() => {
             if (!S.pats)
                 hint("pat", "You can pat me, by the way. Just tap. And if you tap the ground, I'll go and look.");
-        }, 16000);
-        setTimeout(soundHint, 32000);
+        }, 50000);
+        setTimeout(soundHint, 180000);
         return;
     }
     setTimeout(soundHint, 25000); // (a save from before this hint existed hears it once too, if the sound's still off)
@@ -30213,6 +30248,18 @@ function welcome(prevSeen, isNew) {
     }, 1100);
 }
 
+/* the easel isn't there from the start (jot, 25-10-2026): Mite unpacks it a day into a game. Old saves have it */
+function easelArrive(quiet) {
+    if (S.b.easel || Date.now() - num(S.created) < 864e5)
+        return;
+    S.b.easel = 1;
+    saveSoon();
+    note("Unpacked the easel.");
+    if (!quiet)
+        speak("I found my easel at the bottom of a box. I'd forgotten I had one. I think I'll paint something a day. Small things.", { ms: 7000 });
+    else
+        setTimeout(() => speak("I found my easel at the bottom of a box. I think I'll paint something a day. Small things.", { ms: 7000 }), 20000);
+}
 /* once: there's sound, and where the button is. The notes in the corner light up while Mite says it. Waits until
    nothing else is on screen (the name, a card); skipped if the sound's already on */
 function soundHint() {
@@ -31613,7 +31660,7 @@ function ritualTick() {
         return;
     const c = ctx(), today = actDay();
     const eveH = c.workday ? S.settings.doneBy : 20;
-    if (S.rit.evening !== today && (c.h >= eveH || isLate(c.h)) && c.h >= 12 && doneTasks().some(t => actDay(t.d) === today || !t.f)) {
+    if (S.rit.evening !== today && !settling(30 * 60e3) && (c.h >= eveH || isLate(c.h)) && c.h >= 12 && doneTasks().some(t => actDay(t.d) === today || !t.f)) { // (not in a new game's first half hour)
         openEvening(false);
         return;
     }
@@ -31816,7 +31863,7 @@ function starterGift() {
     note("A starting gift: 100 glimmers, for the shop.");
     postWelcome(); // and a letter on the desk in the nook (post.js)
     setTimeout(() => note(hasDesk() ? "There's a letter for you in the rack on the writing desk, in the nook." : "A letter came for you, from the world."), 0);
-    setTimeout(() => toast("100 glimmers to start with. The shop is in the Satchel → Shop."), 9000);
+    setTimeout(() => toast("100 glimmers to start with. The shop is in the Satchel → Shop."), 90000); // (after the hello and the letter: the first minutes are spread out)
     afterChange();
 }
 function boot() {
