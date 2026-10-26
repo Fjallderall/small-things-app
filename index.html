@@ -194,6 +194,8 @@ ul.drawers{list-style:none;padding:0;margin:6px 0}
 .heard p b{font-weight:700;margin-right:6px}
 .heard p.o{font-style:italic}
 .heard p.n{color:var(--muted);font-size:13px}
+#notes p.n{color:inherit;font-size:14px}
+#notes p.n b{font-family:var(--f-mono);font-weight:400;font-size:12px;color:var(--muted)}
 #logList{max-height:none}
 .cardart{image-rendering:pixelated;image-rendering:crisp-edges;flex:none}
 .cardread{display:flex;gap:14px;align-items:flex-start;margin:6px 0 10px}
@@ -335,6 +337,7 @@ body.game .toasts.stay,body.game.sheet .toasts.stay{top:calc(env(safe-area-inset
 .tray button:disabled{opacity:.45}
 .tray button small{font-family:var(--f-mono);font-weight:400;font-size:11.5px;color:#5f6857;margin-left:6px}
 .tray button.back{background:transparent}
+.tray .trayinfo{flex-basis:100%;margin:0 2px 2px;font-size:13px;line-height:1.35;color:#4a5242;text-align:center}
 .talkbar{width:min(calc(100vw - 24px),540px);flex-wrap:nowrap}
 .talkbar input{flex:1;min-width:0;border:1px solid #cdd3bf;border-radius:10px;padding:9px 11px;background:#fff;color:#22281f}
 .talkbar .btn{background:#fff;color:#22281f;border-color:#cdd3bf}
@@ -781,7 +784,6 @@ body.editing #addForm{display:none}
     <div class="sheethead"><button class="btn ghost" id="deskBtn" title="Settings, lines, backup" aria-label="Settings: preferences, lines, backup"><svg class="gear" viewBox="0 0 11 11" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges" fill="currentColor"><rect x="4" y="0" width="1" height="1"/><rect x="5" y="0" width="1" height="1"/><rect x="6" y="0" width="1" height="1"/><rect x="1" y="1" width="1" height="1"/><rect x="2" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="8" y="1" width="1" height="1"/><rect x="9" y="1" width="1" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/><rect x="8" y="2" width="1" height="1"/><rect x="9" y="2" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="7" y="3" width="1" height="1"/><rect x="8" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="8" y="4" width="1" height="1"/><rect x="9" y="4" width="1" height="1"/><rect x="10" y="4" width="1" height="1"/><rect x="0" y="5" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="8" y="5" width="1" height="1"/><rect x="9" y="5" width="1" height="1"/><rect x="10" y="5" width="1" height="1"/><rect x="0" y="6" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="8" y="6" width="1" height="1"/><rect x="9" y="6" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/><rect x="8" y="7" width="1" height="1"/><rect x="1" y="8" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="3" y="8" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="6" y="8" width="1" height="1"/><rect x="7" y="8" width="1" height="1"/><rect x="8" y="8" width="1" height="1"/><rect x="9" y="8" width="1" height="1"/><rect x="1" y="9" width="1" height="1"/><rect x="2" y="9" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="5" y="9" width="1" height="1"/><rect x="6" y="9" width="1" height="1"/><rect x="8" y="9" width="1" height="1"/><rect x="9" y="9" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="5" y="10" width="1" height="1"/><rect x="6" y="10" width="1" height="1"/></svg>Settings</button><span class="grab" aria-hidden="true"></span><button class="btn ghost" id="sheetClose">Close</button></div>
     <nav class="tabs" role="tablist" aria-label="Sections">
       <button role="tab" data-group="tasks" aria-selected="true">Tasks<span class="count" id="openCount"></span></button>
-      <button role="tab" data-group="mite" aria-selected="false"><span class="pn">Mite</span></button>
       <button role="tab" data-group="journal" aria-selected="false">Satchel</button>
     </nav>
     <div class="subtabs" id="subtabs" hidden></div>
@@ -833,8 +835,6 @@ body.editing #addForm{display:none}
       </form>
     </div>
 
-    <div class="pane" id="tab-care" role="tabpanel" hidden><div id="careBody" class="pane" style="padding:0"></div></div>
-
     <div class="pane" id="tab-grow" role="tabpanel" hidden>
       <div>
         <h2>The wagon</h2>
@@ -869,56 +869,50 @@ body.editing #addForm{display:none}
         <div id="reflList" class="agenda"></div></details>
       <details class="shopsec colsec" data-sec="arch-tcat" open><summary><h3>Small things, by season</h3><span class="seccount" id="cnt-arch-tcat"></span></summary><p class="sub">Each season's own small things from the Cabinet, filed when the season ended.</p>
         <div id="tcatList"></div></details>
+      <details class="shopsec colsec" data-sec="arch-cat" open><summary><h3>Catalogue</h3><span class="seccount" id="cnt-arch-cat"></span></summary><p class="sub">Every season's paintings and knits, filed when the next season begins. Tap one to see it. The season's folder is in the closet in the archive too.</p>
+        <div id="catList"></div></details>
       <details class="shopsec colsec" data-sec="arch-caps" open><summary><h3>Time capsules</h3></summary><p class="sub">Sealed until their day. The tin on the plank glows when one is ready.</p>
         <div id="capList" class="agenda"></div></details>
     </div>
 
     <div class="pane" id="tab-cabinet" role="tabpanel" hidden>
-      <div><h2>Collections</h2><p class="sub">Everything kept, found, sent or seen, each in its own drawer.</p></div>
-      <details class="shopsec colsec" data-sec="cab-small" open><summary><h3>Small things</h3><span class="seccount" id="cnt-cab-small"></span></summary><p class="sub">Your pet finds these after tasks, inside golden fireflies, and sometimes just on the floor.</p>
+      <div><h2>Collections</h2><p class="sub">Everything kept, found, sent or seen, each in its own drawer.</p><p class="sub" id="colEmpty" hidden>Nothing here yet. A drawer opens for each kind of thing once <span class="pn">Mite</span> has one.</p></div>
+      <details class="shopsec colsec" data-sec="cab-small" open><summary><h3>Small things</h3><span class="seccount" id="cnt-cab-small"></span><span class="secnew" id="new-cab-small" hidden>new</span></summary><p class="sub">Your pet finds these after tasks, inside golden fireflies, and sometimes just on the floor.</p>
         <div class="drawers" id="drawers"></div></details>
-      <details class="shopsec colsec" data-sec="cab-season" open><summary><h3>This season: <span id="seasonHead"></span></h3><span class="seccount" id="cnt-cab-season"></span></summary><p class="sub" id="seasonSub"></p>
+      <details class="shopsec colsec" data-sec="cab-season" open><summary><h3>This season: <span id="seasonHead"></span></h3><span class="seccount" id="cnt-cab-season"></span><span class="secnew" id="new-cab-season" hidden>new</span></summary><p class="sub" id="seasonSub"></p>
         <div class="drawers" id="seasonDrawers"></div></details>
-      <details class="shopsec colsec" data-sec="cab-altered" open><summary><h3>Altered items</h3><span class="seccount" id="cnt-cab-altered"></span></summary><p class="sub">Recovered from anomalies. Contained, mostly.</p>
+      <details class="shopsec colsec" data-sec="cab-altered" open><summary><h3>Altered items</h3><span class="seccount" id="cnt-cab-altered"></span><span class="secnew" id="new-cab-altered" hidden>new</span></summary><p class="sub">Recovered from anomalies. Contained, mostly.</p>
         <div class="drawers" id="altered"></div></details>
-      <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
+      <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span><span class="secnew" id="new-cab-glimpses" hidden>new</span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
         <div class="glimpses" id="glimpseList"></div></details>
-      <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>The Deck</h3><span class="seccount" id="cnt-cab-cards"></span></summary><p class="sub"><span class="pn">Midnightcat</span>'s cards. They come one at a time, in strange mail, and not often.</p>
+      <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>The Deck</h3><span class="seccount" id="cnt-cab-cards"></span><span class="secnew" id="new-cab-cards" hidden>new</span></summary><p class="sub"><span class="pn">Midnightcat</span>'s cards. They come one at a time, in strange mail, and not often.</p>
         <div class="cards" id="cardList"></div></details>
-      <details class="shopsec colsec" data-sec="cab-origami" open><summary><h3>Adorbigami</h3><span class="seccount" id="cnt-cab-origami"></span></summary><p class="sub">Folded by the ghost at the window. They hang above it on a string.</p>
+      <details class="shopsec colsec" data-sec="cab-origami" open><summary><h3>Adorbigami</h3><span class="seccount" id="cnt-cab-origami"></span><span class="secnew" id="new-cab-origami" hidden>new</span></summary><p class="sub">Folded by the ghost at the window. They hang above it on a string.</p>
         <div class="words" id="origamiList"></div></details>
-      <details class="shopsec colsec" data-sec="cab-fest" open><summary><h3>Festivals</h3><span class="seccount" id="cnt-cab-fest"></span></summary><p class="sub">What <span class="pn">Mite</span> has learned about the festivals that came by. Tap one to read it again.</p>
+      <details class="shopsec colsec" data-sec="cab-fest" open><summary><h3>Festivals</h3><span class="seccount" id="cnt-cab-fest"></span><span class="secnew" id="new-cab-fest" hidden>new</span></summary><p class="sub">What <span class="pn">Mite</span> has learned about the festivals that came by. Tap one to read it again.</p>
         <div class="words" id="festList"></div></details>
-      <details class="shopsec colsec" data-sec="cab-dreams" open><summary><h3>Dream log</h3><span class="seccount" id="cnt-cab-dreams"></span></summary><p class="sub">Read from the dream archive. Newest first.</p>
+      <details class="shopsec colsec" data-sec="cab-dreams" open><summary><h3>Dream log</h3><span class="seccount" id="cnt-cab-dreams"></span><span class="secnew" id="new-cab-dreams" hidden>new</span></summary><p class="sub">Read from the dream archive. Newest first.</p>
         <ul class="inclog" id="dreamLog"></ul></details>
-      <details class="shopsec colsec" data-sec="cab-words" open><summary><h3>Words <span class="pn">Mite</span> invented</h3><span class="seccount" id="cnt-cab-words"></span></summary>
+      <details class="shopsec colsec" data-sec="cab-words" open><summary><h3>Words <span class="pn">Mite</span> invented</h3><span class="seccount" id="cnt-cab-words"></span><span class="secnew" id="new-cab-words" hidden>new</span></summary>
         <div class="words" id="words"></div></details>
-      <details class="shopsec colsec" data-sec="cab-terms" open><summary><h3>Archival terms</h3><span class="seccount" id="cnt-cab-terms"></span></summary><p class="sub">Explained by <span class="pn">Mite</span> while it works in the archive, one now and then.</p>
+      <details class="shopsec colsec" data-sec="cab-terms" open><summary><h3>Archival terms</h3><span class="seccount" id="cnt-cab-terms"></span><span class="secnew" id="new-cab-terms" hidden>new</span></summary><p class="sub">Explained by <span class="pn">Mite</span> while it works in the archive, one now and then.</p>
         <dl class="terms" id="termList"></dl></details>
-      <details class="shopsec colsec" data-sec="cab-hats" open><summary><h3>Hats</h3><span class="seccount" id="cnt-cab-hats"></span></summary>
+      <details class="shopsec colsec" data-sec="cab-paint" open><summary><h3>Paintings</h3><span class="seccount" id="cnt-cab-paint"></span><span class="secnew" id="new-cab-paint" hidden>new</span></summary><p class="sub"><span class="pn">Mite</span> finishes one painting a day. The next morning it goes off to a friend; this is where each one went. <span id="craftSeason"></span></p>
+        <div class="gallery" id="gallery"></div></details>
+      <details class="shopsec colsec" data-sec="cab-knit" open><summary><h3>Knitted things</h3><span class="seccount" id="cnt-cab-knit"></span><span class="secnew" id="new-cab-knit" hidden>new</span></summary><p class="sub">One project at a time, a few evenings each.</p>
+        <div class="knits" id="knitList"></div></details>
+      <details class="shopsec colsec" data-sec="cab-hats" open><summary><h3>Hats</h3><span class="seccount" id="cnt-cab-hats"></span><span class="secnew" id="new-cab-hats" hidden>new</span></summary>
         <div class="hats" id="hats"></div></details>
-      <details class="shopsec colsec" data-sec="cab-achs" open><summary><h3>Achievements</h3><span class="seccount" id="cnt-cab-achs"></span></summary>
+      <details class="shopsec colsec" data-sec="cab-achs" open><summary><h3>Achievements</h3><span class="seccount" id="cnt-cab-achs"></span><span class="secnew" id="new-cab-achs" hidden>new</span></summary>
         <ul class="achs" id="achs"></ul></details>
     </div>
 
-    <div class="pane" id="tab-gallery" role="tabpanel" hidden>
-      <div><h2>Crafts</h2><p class="sub">Everything <span class="pn">Mite</span> has made. <span id="craftSeason"></span></p></div>
-      <details class="shopsec colsec" data-sec="craft-paint" open><summary><h3>Paintings</h3><span class="seccount" id="cnt-craft-paint"></span></summary><p class="sub"><span class="pn">Mite</span> finishes one painting a day. The next morning it goes off to a friend; this is where each one went.</p>
-        <div class="gallery" id="gallery"></div></details>
-      <details class="shopsec colsec" data-sec="craft-knit" open><summary><h3>Knitted things</h3><span class="seccount" id="cnt-craft-knit"></span></summary><p class="sub">One project at a time, a few evenings each.</p>
-        <div class="knits" id="knitList"></div></details>
-      <details class="shopsec colsec" data-sec="craft-cat" open><summary><h3>Catalogue</h3><span class="seccount" id="cnt-craft-cat"></span></summary><p class="sub">Every season's crafts, filed when the next season begins. Tap one to see it. The season's folder is in the closet in the archive too.</p>
-        <div id="catList"></div></details>
-    </div>
-
-    <div class="pane" id="tab-notebook" role="tabpanel" hidden>
-      <div><h2><span class="pn">Mite</span>'s notebook</h2><p class="sub">What <span class="pn">Mite</span> noticed today, written down on its own. A fresh page every day, at the hour set under Settings (0500 to start with).</p></div>
-      <ul class="notes" id="notes"></ul>
-    </div>
-
     <div class="pane" id="tab-log" role="tabpanel" hidden>
-      <div><h2>Log</h2><p class="sub">The last 50 things that were on screen: what <span class="pn">Mite</span> and the others said, and the little notes that popped up. Newest first.</p></div>
-      <div class="heard" id="logList"></div>
+      <div><h2>Log</h2><p class="sub">The last 50 things said and the last 50 things that happened, newest first.</p></div>
+      <details class="shopsec colsec" data-sec="log-said" open><summary><h3>Said</h3><span class="seccount" id="cnt-log-said"></span></summary><p class="sub">What <span class="pn">Mite</span> and the others said. A conversation's lines stay together.</p>
+        <div class="heard" id="logList"></div></details>
+      <details class="shopsec colsec" data-sec="log-did" open><summary><h3>Happened</h3><span class="seccount" id="cnt-log-did"></span></summary><p class="sub">What <span class="pn">Mite</span> wrote down in its notebook, and the little notes that popped up.</p>
+        <div class="heard" id="notes"></div></details>
     </div>
 
     <div class="pane" id="tab-files" role="tabpanel" hidden>
@@ -1020,7 +1014,7 @@ body.editing #addForm{display:none}
   <button type="button" class="dockbtn arrow" id="lookGarden" aria-label="Look left" hidden><svg viewBox="0 0 7 9" width="21" height="27" shape-rendering="crispEdges" aria-hidden="true"><path d="M5 0h1v9H5zM4 1h1v7H4zM3 2h1v5H3zM2 3h1v3H2zM1 4h1v1H1z" fill="currentColor"/></svg></button>
   <button class="dockbtn" id="dMite" aria-label="Mite: care, talk, ask">♡<span class="lbl pn">Mite</span></button>
   <button class="dockbtn main" id="dTasks" aria-label="Tasks">✓<span class="lbl">Tasks</span><b class="badge" id="dBadge" hidden></b></button>
-  <button class="dockbtn" id="dJournal" aria-label="Satchel: shop, collections, crafts, notebook, archive">❦<span class="lbl">Satchel</span></button>
+  <button class="dockbtn" id="dJournal" aria-label="Satchel: collections, log, archive, files, shop">❦<span class="lbl">Satchel</span></button>
   <button type="button" class="dockbtn arrow" id="lookWagon" aria-label="Look right" hidden><svg viewBox="0 0 7 9" width="21" height="27" shape-rendering="crispEdges" aria-hidden="true" style="transform:scaleX(-1)"><path d="M5 0h1v9H5zM4 1h1v7H4zM3 2h1v5H3zM2 3h1v3H2zM1 4h1v1H1z" fill="currentColor"/></svg></button>
 </nav>
 <section class="desk" id="desk" hidden aria-labelledby="deskTitle">
@@ -4403,7 +4397,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvo4yk74ryhaf", "mvo51bqtk3fpr",
     // group 20 (25-10-2026)
     "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
-, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0"];
+, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg"];
 
 </script>
 <script>/* js/core/state.js */
@@ -4414,12 +4408,23 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
 }
 let S = defaultState();
+/* the Log keeps the last 50 things said and the last 50 that popped up (S.heard, oldest first) */
+function heardTrim(list) {
+    let said = 0, pop = 0;
+    const out = [];
+    for (let i = list.length - 1; i >= 0; i--) {
+        const h = list[i];
+        if (h.w ? said++ < 50 : pop++ < 50)
+            out.push(h);
+    }
+    return out.reverse();
+}
 let db = null, uid = null, sample = null;
 const LS_KEY = "mossling.v1";
 /* Loaded data (browser, Claude account, pasted import) is untrusted: rebuild it field by field with known types. */
@@ -4538,7 +4543,7 @@ function sanitizeState(raw) {
         return x;
     });
     o.notes = arr(s.notes, 250).map(n => ({ at: num(n.at), text: str(n.text, 400) }));
-    o.heard = arr(s.heard, 50).map(h => ({ at: num(h.at), c: num(h.c), w: str(h.w, 40), t: str(h.t, 400) })).filter(h => h.t);
+    o.heard = heardTrim(arr(Array.isArray(s.heard) ? s.heard.slice(-200) : [], 200).map(h => ({ at: num(h.at), c: num(h.c), w: str(h.w, 40), t: str(h.t, 400) })).filter(h => h.t));
     // the gallery: one entry per painting sent off (the picture itself is redrawn from its day)
     o.origami = arr(s.origami, 120).map(x => ({ k: sid(x.k).slice(0, 12), at: num(x.at) })).filter(x => x.k);
     o.dreams = arr(s.dreams, 80).map(x => ({ at: num(x.at), d: clamp(Math.round(num(x.d)), 0, 3), k: ["dream", "escape", "yours", "misfiled", "empty"].includes(x.k) ? x.k : "dream", s: str(x.s, 30), t: str(x.t, 400) })).filter(x => x.t);
@@ -4616,6 +4621,7 @@ function sanitizeState(raw) {
         const b = s.barter && typeof s.barter === "object" ? s.barter : {};
         o.barter = { wk: dkey(b.wk) || "", stock: arr(b.stock, 4).map(x => ({ k: ["tea", "bake", "flower", "curio", "eye"].includes(x.k) ? x.k : "", id: str(x.id, 80), price: clamp(Math.round(num(x.price, 20)), 1, 999) })).filter(x => x.id && x.k), got: (Array.isArray(b.got) ? b.got : []).slice(0, 4).map(x => str(x, 80)).filter(Boolean) };
     }
+    o.colSeen = { ids: (Array.isArray(s.colSeen && s.colSeen.ids) ? s.colSeen.ids : []).map(x => str(x, 40)).filter(Boolean).slice(-60), at: num(s.colSeen && s.colSeen.at) }; // the Collections sections you've seen (collection.js)
     o.shopSeen = { ids: (Array.isArray(s.shopSeen && s.shopSeen.ids) ? s.shopSeen.ids : []).map(x => str(x, 40)).filter(Boolean).slice(-600), at: num(s.shopSeen && s.shopSeen.at) }; // what the shop has shown you (shop.js)
     o.barterOwn = arr(s.barterOwn, 400).map(x => ({ k: ["tea", "bake", "flower", "curio"].includes(x.k) ? x.k : "", n: str(x.n, 80).trim(), at: num(x.at) })).filter(x => x.k && x.n); // what the raccoon brought, for good (barter.js)
     o.eyesGone = {}; // eyes taken out of the jars on purpose: { kind: when it had been found } (eyes.js)
@@ -4803,7 +4809,7 @@ function mergeStates(a, b) {
         return [...m.values()];
     };
     o.notes = uniq([...(nw.notes || []), ...(od.notes || [])], n => n.at + "|" + n.text).sort((x, y) => y.at - x.at).slice(0, 250);
-    o.heard = uniq([...(nw.heard || []), ...(od.heard || [])], h => h.at + "|" + h.t).sort((x, y) => x.at - y.at).slice(-50);
+    o.heard = heardTrim(uniq([...(nw.heard || []), ...(od.heard || [])], h => h.at + "|" + h.t).sort((x, y) => x.at - y.at));
     o.origami = uniq([...(od.origami || []), ...(nw.origami || [])], x => x.k + "|" + x.at).sort((x, y) => x.at - y.at).slice(-120);
     o.dreams = uniq([...(od.dreams || []), ...(nw.dreams || [])], x => x.at + "|" + x.t).sort((x, y) => x.at - y.at).slice(-80);
     o.dreamDay = [od.dreamDay || "", nw.dreamDay || ""].sort().pop();
@@ -4915,6 +4921,7 @@ function mergeStates(a, b) {
     }
     o.pantry = Object.assign({}, nw.pantry || {}); // (the newer save's stock: what was used up stays used up)
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
+    o.colSeen = { ids: [...new Set([...((a.colSeen || {}).ids || []), ...((b.colSeen || {}).ids || [])])].slice(-60), at: Math.max(num((a.colSeen || {}).at), num((b.colSeen || {}).at)) };
     o.shopSeen = { ids: [...new Set([...((a.shopSeen || {}).ids || []), ...((b.shopSeen || {}).ids || [])])].slice(-600), at: Math.max(num((a.shopSeen || {}).at), num((b.shopSeen || {}).at)) };
     o.barterOwn = uniq([...(a.barterOwn || []), ...(b.barterOwn || [])], x => x.k + "|" + String(x.n).toLowerCase()).slice(0, 400); // everything traded, from either side
     { // the barter: the newer week wins; the same week keeps one stock and everything traded on either side
@@ -7278,8 +7285,8 @@ function note(text) {
     S.notes.unshift({ at: Date.now(), text });
     if (S.notes.length > 250)
         S.notes.length = 250;
-    if (curTab === "notebook")
-        renderNotebook();
+    if (curTab === "log")
+        renderLog();
 }
 function toast(text, { undo, cls, act, stay, who } = {}) {
     if (typeof heard === "function")
@@ -14893,8 +14900,7 @@ function heard(w, t, c) {
     if (!t.trim() || (last && last.t === t && last.w === (w || "") && Date.now() - last.at < 15e3))
         return;
     S.heard.push({ at: Date.now(), c, w: w || "", t });
-    if (S.heard.length > 50)
-        S.heard.splice(0, S.heard.length - 50);
+    S.heard = heardTrim(S.heard);
     saveSoon();
     if (curTab === "log")
         renderLog();
@@ -21660,8 +21666,6 @@ function possumTick(dt, now) {
                     S.mess.splice(i, 1);
                     for (let j = 0; j < 5; j++)
                         addP({ type: "spark", x: m.x, y: m.y, vx: rnd(-40, 40), vy: rnd(-60, -10), g: 160, max: .6, col: "#d8d2c0", size: 2.5 });
-                    if (curTab === "care")
-                        renderCare();
                     saveSoon();
                 }
                 p.meal = null;
@@ -28083,7 +28087,7 @@ function renderPantry() {
 <script>/* js/ui/collection.js */
 "use strict";
 /*
- * collection.js - The collection tabs: Collections (small things, the Deck, invented words, archival terms...), the notebook (notes),
+ * collection.js - The collection tabs: Collections (small things, the Deck, paintings, knits, invented words...), the Log (said and happened),
  * bureau files, the AI review list, and the lines editor.
  */
 function renderCabinet() {
@@ -28145,9 +28149,64 @@ function renderCabinet() {
         set("cab-hats", `${HATS.filter(h => h.id && L >= h.lvl).length}/${HATS.length - 1}`);
         set("cab-achs", `${ACH.filter(a => S.ach[a[0]]).length}/${ACH.length}`);
     }
+    renderGallery(); // the paintings and knits (Mite's crafts) are here too
+    colSections();
     foldSections();
 }
-/* the foldable sections in the Cabinet, Crafts, Notebook and Archive: open to start with; what you open or close is
+/* Collections shows a section only once you have its thing; one that's newly there says "new" until it has been on
+   screen a moment, like new things in the shop (owner, 26-10-2026). S.colSeen: { ids, at }; at 0 = never looked, then
+   every section there is counts as seen (so an older game isn't all "new") */
+const COL_HAS = {
+    "cab-small": () => trinketList().some(t => S.trinkets[t.name]) || (typeof barterOwned === "function" && pool("barter_curio").some(l => barterOwned("curio", barterName(l)))),
+    "cab-season": () => Object.values((S.seasonal && S.seasonal.got) || {}).some(Boolean),
+    "cab-altered": () => alteredList().some(t => S.altered[t.name]),
+    "cab-glimpses": () => (S.glimpses || []).length > 0,
+    "cab-cards": () => (S.cards || []).length > 0,
+    "cab-origami": () => (S.origami || []).length > 0,
+    "cab-fest": () => FESTIVALS.some(f => S.fest[f.id]),
+    "cab-dreams": () => (S.dreams || []).length > 0,
+    "cab-paint": () => (S.gallery || []).length > 0 || (!!(S.paint && S.paint.day) && (S.b.easel || 0) > 0),
+    "cab-knit": () => (S.knits || []).length > 0 || !!S.knit,
+    "cab-words": () => (S.words || []).length > 0,
+    "cab-terms": () => (S.terms || []).length > 0,
+    "cab-hats": () => HATS.some(h => h.id && level() >= h.lvl),
+    "cab-achs": () => ACH.some(a => S.ach[a[0]])
+};
+const colShown = () => Object.keys(COL_HAS).filter(k => { try { return COL_HAS[k](); } catch (e) { return false; } });
+/* the sections there now that you haven't seen yet */
+function colNews() {
+    if (!S.colSeen || !S.colSeen.at)
+        return [];
+    return colShown().filter(k => !S.colSeen.ids.includes(k));
+}
+let colSeenTimer = 0;
+function colSections() {
+    const shown = colShown();
+    if (!S.colSeen || !S.colSeen.at) { // the first look: what's there now is known
+        S.colSeen = { ids: shown.slice(), at: Date.now() };
+        saveSoon();
+    }
+    const news = colNews();
+    document.querySelectorAll("#tab-cabinet details.colsec").forEach(d => {
+        const k = d.dataset.sec;
+        if (!COL_HAS[k])
+            return;
+        d.hidden = !shown.includes(k);
+        const nw = $("new-" + k);
+        if (nw)
+            nw.hidden = !news.includes(k);
+    });
+    $("colEmpty").hidden = shown.length > 0;
+    clearTimeout(colSeenTimer);
+    if (news.length) // seen once it's been on screen a moment; the word stays until the next time you look
+        colSeenTimer = setTimeout(() => {
+            if ($("tab-cabinet").hidden || !document.body.classList.contains("sheet"))
+                return;
+            S.colSeen.ids = [...new Set(S.colSeen.ids.concat(news))].slice(-60);
+            saveSoon();
+        }, 3000);
+}
+/* the foldable sections in Collections, the Log and the Archive: open to start with; what you open or close is
    remembered in this browser */
 const foldPref = (() => { try { return JSON.parse(localStorage.getItem("st-fold") || "{}") || {}; } catch (e) { return {}; } })();
 function foldSections() {
@@ -28164,13 +28223,21 @@ function foldSections() {
         });
     });
 }
-/* the Log: the last 50 things that were on screen, newest first; a conversation's lines stay together */
+/* the Log: the last 50 things said (a conversation's lines stay together), and the last 50 that happened: Mite's
+   notebook and the notes that popped up (owner, 26-10-2026: the Notebook's day notes moved here). Newest first */
+const LOG_N = 50;
+function logHappened() {
+    const pop = (S.heard || []).filter(h => !h.w).map(h => ({ at: h.at, t: h.t }));
+    const nb = (S.notes || []).map(n => ({ at: n.at, t: n.text }));
+    const all = nb.concat(pop.filter(h => !nb.some(n => n.t === h.t && Math.abs(n.at - h.at) < 15e3))); // (a note that also popped up: once)
+    return all.sort((x, y) => y.at - x.at).slice(0, LOG_N);
+}
 function renderLog() {
     const el = $("logList");
     if (!el)
         return;
-    const groups = [];
-    for (const h of (S.heard || [])) {
+    const groups = [], said = (S.heard || []).filter(h => h.w);
+    for (const h of said) {
         const g = groups[groups.length - 1];
         if (g && h.c && g.c === h.c)
             g.l.push(h);
@@ -28179,16 +28246,24 @@ function renderLog() {
     }
     el.innerHTML = groups.reverse().map(g => {
         const d = new Date(g.at);
-        return `<section><time>${wdmy(d)} ${hhmm(d)}</time>${g.l.map(h => h.w ? `<p class="${h.w === S.settings.pet ? "" : "o"}"><b>${esc(h.w)}</b>${esc(h.t)}</p>` : `<p class="n">${esc(h.t)}</p>`).join("")}</section>`;
+        return `<section><time>${wdmy(d)} ${hhmm(d)}</time>${g.l.map(h => `<p class="${h.w === S.settings.pet ? "" : "o"}"><b>${esc(h.w)}</b>${esc(h.t)}</p>`).join("")}</section>`;
     }).join("") || `<span class="sub">Nothing yet. Whatever ${esc(S.settings.pet)} and the others say is written down here.</span>`;
-}
-/* a new day (at the hour set in Settings): the notebook starts on a fresh page (the Log keeps its last 50 across days).
-   The incident reports are kept in their own log (S.inc), so they're not lost with it */
-function notebookNewDay() {
-    const t = dayStartTs(), n0 = S.notes.length;
-    S.notes = S.notes.filter(n => n.at >= t);
-    if (S.notes.length !== n0)
-        saveSoon();
+    const did = logHappened();
+    const days = []; // (a box per day, a line per thing with its time)
+    for (const h of did) {
+        const k = dayKey(new Date(h.at)), g = days[days.length - 1];
+        if (g && g.k === k)
+            g.l.push(h);
+        else
+            days.push({ k, at: h.at, l: [h] });
+    }
+    $("notes").innerHTML = days.map(g => `<section><time>${wdmy(new Date(g.at))}</time>${g.l.map(h => `<p class="n"><b>${hhmm(new Date(h.at))}</b>${esc(h.t)}</p>`).join("")}</section>`).join("") || `<span class="sub">Nothing yet. ${esc(S.settings.pet)} writes down what it notices, on its own.</span>`;
+    const c1 = $("cnt-log-said"), c2 = $("cnt-log-did");
+    if (c1)
+        c1.textContent = String(said.length);
+    if (c2)
+        c2.textContent = String(did.length);
+    foldSections();
 }
 /* Collections: the archival terms Mite has explained (archive-room.js) and the words it invented */
 function renderWordsTerms() {
@@ -28203,13 +28278,6 @@ function renderWordsTerms() {
     const wc = $("cnt-cab-words");
     if (wc)
         wc.textContent = `${S.words.length}`;
-}
-function renderNotebook() {
-    notebookNewDay();
-    $("notes").innerHTML = S.notes.filter(n => n.at >= dayStartTs()).map(n => {
-        const d = new Date(n.at);
-        return `<li><time>${dmy(d)} ${hhmm(d)}</time><span>${esc(n.text)}</span></li>`;
-    }).join("") || `<li><time></time><span>A fresh page. Nothing yet today.</span></li>`;
 }
 function renderFiles() {
     const cl = clearance(), n = doneCount(), next = CLEAR[cl + 1];
@@ -28447,7 +28515,7 @@ function poolShowHit(focus) {
     ta.scrollTop = Math.max(0, i * (parseFloat(getComputedStyle(ta).lineHeight) || 19) - ta.clientHeight / 3);
     return true;
 }
-/* the gallery: today's painting on the easel, then every painting sent off, newest first */
+/* Collections' paintings: today's painting on the easel, then every painting sent off, newest first */
 function renderGallery() {
     const el = $("gallery");
     if (!el)
@@ -28463,8 +28531,8 @@ function renderGallery() {
         drawPainting(g, 0, 0, c.width, c.height, c.dataset.day, +c.dataset.prog);
     });
     renderKnits(); // (the knitting is one of Mite's crafts too)
-    renderCatalogue(); // (earlier seasons: catalogue.js)
-    const cp = $("cnt-craft-paint"), ck = $("cnt-craft-knit");
+    renderCatalogue(); // (this season's line; earlier seasons are in the Archive tab: catalogue.js)
+    const cp = $("cnt-cab-paint"), ck = $("cnt-cab-knit");
     if (cp)
         cp.textContent = `${(S.gallery || []).length}`;
     if (ck)
@@ -28525,14 +28593,10 @@ function renderAll() {
         renderShop();
     if (curTab === "cabinet")
         renderCabinet();
-    if (curTab === "notebook")
-        renderNotebook();
-    if (curTab === "gallery")
-        renderGallery();
     if (curTab === "files")
         renderFiles();
-    if (curTab === "care")
-        renderCare();
+    if (curTab === "log")
+        renderLog();
     $("hudName").textContent = S.settings.pet;
     document.querySelectorAll(".pn").forEach(e => e.textContent = S.settings.pet);
     $("poolGen").textContent = `Ask ${S.settings.pet} for 8 more`;
@@ -28544,7 +28608,10 @@ function afterChange() {
 }
 /* tabs */
 /* the sheet's sections: what you use while playing. Upkeep (preferences, lines, backup) is in Settings (desk.js). */
-const GROUPS = { tasks: [["tasks", "Tasks"]], mite: [["care", "Care"]], journal: [["cabinet", "Collections"], ["gallery", "Crafts"], ["notebook", "Notebook"], ["log", "Log"], ["archive", "Archive"], ["files", "Files"], ["grow", "Shop"]] };
+/* (Mite's own menu is the tray from the Mite button, care.js; the crafts are in Collections and the notebook's notes in
+   the Log, owner 26-10-2026: the old names still lead there) */
+const GROUPS = { tasks: [["tasks", "Tasks"]], journal: [["cabinet", "Collections"], ["log", "Log"], ["archive", "Archive"], ["files", "Files"], ["grow", "Shop"]] };
+const PANE_WAS = { gallery: "cabinet", notebook: "log", care: "tasks", mite: "tasks" };
 const GROUP_OF = {};
 for (const g in GROUPS)
     GROUPS[g].forEach(([p]) => GROUP_OF[p] = g);
@@ -28552,6 +28619,7 @@ const lastSub = {};
 function showPane(name) {
     if (typeof DESK_PAGES !== "undefined" && DESK_PAGES[name])
         return openDesk(name);
+    name = PANE_WAS[name] || name;
     if (GROUPS[name])
         name = lastSub[name] || GROUPS[name][0][0];
     const g = GROUP_OF[name];
@@ -28563,22 +28631,16 @@ function showPane(name) {
     const st = $("subtabs");
     const subs = GROUPS[g];
     st.hidden = subs.length < 2;
-    st.innerHTML = subs.length < 2 ? "" : subs.map(([p, l]) => `<button class="chipbtn" data-pane="${p}" aria-pressed="${p === name}">${l}</button>`).join("");
+    st.innerHTML = subs.length < 2 ? "" : subs.map(([p, l]) => `<button class="chipbtn" data-pane="${p}" aria-pressed="${p === name}">${l}${p === "cabinet" && p !== name && colNews().length ? ` <span class="itemnew">new</span>` : ""}</button>`).join("");
     document.querySelectorAll(".pane[role=tabpanel]").forEach(p => p.hidden = p.id !== "tab-" + curTab);
     if (curTab === "grow")
         renderShop();
     if (curTab === "cabinet")
         renderCabinet();
-    if (curTab === "notebook")
-        renderNotebook();
-    if (curTab === "gallery")
-        renderGallery();
     if (curTab === "content" || curTab === "lines" || curTab === "data")
         renderContent();
     if (curTab === "files")
         renderFiles();
-    if (curTab === "care")
-        renderCare();
     if (curTab === "archive")
         renderArchive();
     if (curTab === "log")
@@ -28900,7 +28962,6 @@ function saveSettings() {
         st.nightLight = 0;
     if (!Number.isFinite(st.dayStart))
         st.dayStart = 5;
-    notebookNewDay();
     st.work = [...document.querySelectorAll("#setWork input:checked")].map(i => +i.dataset.d);
     st.office = [...document.querySelectorAll("#setOffice input:checked")].map(i => +i.dataset.d);
     if (st.pet !== oldPet) {
@@ -30462,8 +30523,6 @@ function addMess(n) {
         const rr = Math.random(), room = rr < .5 ? "room" : rr < .75 ? "garden" : "archive"; // the whole wagon gets messy, the middle most
         S.mess.push({ room, x: rnd(.06, .94), y: rnd(.05, MESS_MAXY), t: sea === "autumn" && r < .5 ? "leaf" : r < .7 ? "dust" : r < .88 ? "paper" : "crumb", r: rnd(.8, 1.25), rot: rnd(0, 6) });
     }
-    if (curTab === "care")
-        renderCare();
     saveSoon();
     if (S.mess.length && !(S.hints && S.hints.mess) && !messHintQueued) {
         messHintQueued = true;
@@ -30497,8 +30556,6 @@ function sweepAt(x, y, room = "room") {
         }
         else if (!S.mess.length)
             speak(choice(["Spotless.", "Clean floor. I'm going to lie on it.", "Swept. The wagon approves."]));
-        if (curTab === "care")
-            renderCare();
         saveSoon();
     }
     return any;
@@ -30646,48 +30703,17 @@ function closeGame() {
             p.life = p.max;
     });
 }
-/* care tab */
-function renderCare() {
-    const pn = esc(S.settings.pet), today = S.selfcare[actDay()] || {};
-    const played = S.gamesDay.d === actDay() ? S.gamesDay.n : 0;
-    const n = (S.mess || []).length;
-    $("careBody").innerHTML = `<div><h2>Look after <span class="pn">${pn}</span></h2><p class="sub">Nothing runs down here. Each snack makes ${pn} well fed for a while. You have ${S.g} glimmer${S.g === 1 ? "" : "s"}.</p></div>
-  <div class="care-grid">${snacks().map(s => {
-        const c = snackCost(s);
-        return `<button class="btn" data-feed="${s.id}" ${S.g < c ? "disabled" : ""}>${s.name}<span class="sync">${fmt(c)}</span></button>`;
-    }).join("")}</div>
-  <div class="care-grid"><button class="btn" data-act="play">Play ball</button><button class="btn" data-act="wash">Bath</button><button class="btn" data-act="lamp">${LAMP_NAMES[num(S.settings.lamp)] || LAMP_NAMES[0]}</button><button class="btn" data-act="lights">${S.lightsOut ? "Lights on" : "Lights out"}</button></div>
-  <div><h2>Look after yourself</h2><p class="sub">Log it and ${pn} does the same. The first ${PAY.selfcareMax} of each kind per day earn a glimmer.</p></div>
-  <div class="care-grid">${SELF.map(x => `<button class="btn" data-self="${x.id}">${x.label}<span class="sync">${today[x.id] || 0}</span></button>`).join("")}</div>
-  <div><h2>Games</h2><p class="sub">${played} of 3 full-reward games played today. After that they pay a quarter, so they stay a break and not a hiding place.</p></div>
-  <div class="care-grid">${GAMES.map(g => `<button class="btn" data-game="${g.id}">${g.name}</button>`).join("")}</div>
-  <div><h2>Wagon</h2><p class="sub">${n ? `${n} bit${n === 1 ? "" : "s"} of mess on the floor. Tap them, or drag across them, in the scene.` : "The floor is clean."}</p></div>`;
-}
-$("careBody").addEventListener("click", e => {
-    const b = e.target.closest("button");
-    if (!b)
-        return;
-    if (b.dataset.feed)
-        feed(b.dataset.feed);
-    else if (b.dataset.self)
-        selfCare(b.dataset.self);
-    else if (b.dataset.game)
-        startGame(b.dataset.game);
-    else if (b.dataset.act === "play")
-        playBall();
-    else if (b.dataset.act === "wash")
-        wash();
-    else if (b.dataset.act === "lights")
-        toggleLights();
-    else if (b.dataset.act === "lamp")
-        cycleLamp();
-    if (!b.dataset.game)
-        closeSheet();
-});
-/* tray (game view) */
+/* the tray (the Mite button): Mite's one menu, for looking after it, talking and asking (owner, 26-10-2026: the sheet's
+   Mite tab went; what only it said is a line at the top of each level) */
 function renderTray(level) {
     const t = $("tray");
     t.innerHTML = "";
+    const info = txt => {
+        const p = document.createElement("p");
+        p.className = "trayinfo";
+        p.textContent = txt;
+        t.appendChild(p);
+    };
     const add = (label, fn, sub, cls, dis) => {
         const b = document.createElement("button");
         b.innerHTML = esc(label) + (sub !== undefined ? `<small>${esc(sub)}</small>` : "");
@@ -30700,6 +30726,9 @@ function renderTray(level) {
     if (level !== "root")
         add("‹ Back", () => renderTray(level === "feel" ? "talk" : "root"), undefined, "back");
     if (level === "root") {
+        const n = (S.mess || []).length;
+        if (n)
+            info(n === 1 ? "A bit of mess on the floor: tap it in the scene." : `${n} bits of mess on the floor: tap them, or drag across them, in the scene.`);
         add("Talk", () => renderTray("talk"));
         add("Feed", () => renderTray("feed"));
         add("Play", () => {
@@ -30732,6 +30761,8 @@ function renderTray(level) {
         }, S.hat === h.id ? "wearing" : L >= h.lvl ? "" : "level " + h.lvl, S.hat === h.id ? "on" : "", L < h.lvl));
     }
     if (level === "feed")
+        info(`Each snack makes ${S.settings.pet} well fed for a while. You have ${fmt(S.g)} glimmer${S.g === 1 ? "" : "s"}.`);
+    if (level === "feed")
         snacks().forEach(s => {
             const c = snackCost(s);
             add(s.name, () => {
@@ -30741,11 +30772,14 @@ function renderTray(level) {
         });
     if (level === "me") {
         const today = S.selfcare[actDay()] || {};
+        info(`Log it and ${S.settings.pet} does the same. The first ${PAY.selfcareMax} of each kind a day earn a glimmer.`);
         SELF.forEach(x => add(x.label, () => {
             selfCare(x.id);
             closeTray();
         }, String(today[x.id] || 0)));
     }
+    if (level === "games")
+        info(`Played today: ${S.gamesDay.d === actDay() ? S.gamesDay.n : 0}.`);
     if (level === "games")
         GAMES.forEach(g => add(g.name, () => startGame(g.id)));
     if (level === "talk") // what you can say to Mite (talk.js)
@@ -31284,6 +31318,7 @@ function renderKeepsakes() {
 function renderArchive() {
     renderKeepsakes();
     renderSeasonFiled(); // (the seasons' small things: catalogue.js)
+    renderCatalogue(); // (the seasons' paintings and knits: catalogue.js)
     const done = allDone().sort((a, b) => b.d - a.d);
     const weeks = new Map();
     done.forEach(t => {
@@ -31934,7 +31969,7 @@ function boot() {
     pet.x = W * .5;
     resetAdd();
     renderAll();
-    foldSections(); // (the Cabinet's, Crafts', Notebook's and Archive's sections: collection.js)
+    foldSections(); // (Collections', the Log's and the Archive's sections: collection.js)
     updSndUI();
     sndUnlock(); // (some places let it start straight away: the Android app, a browser that knows you)
     S.settings.app = "Small Things"; // (the app's name, no longer a setting: an old renamed save goes back to it)
@@ -32038,11 +32073,6 @@ setInterval(() => {
         save();
 }, 45e3);
 setInterval(() => {
-    if (S.notes.some(n => n.at < dayStartTs()) || (S.heard || []).some(h => h.at < dayStartTs())) { // the day started: a fresh notebook page
-        notebookNewDay();
-        if (curTab === "notebook")
-            renderNotebook();
-    }
     capsuleReminder(); // the first of the month: a capsule? (keepsake-shelf.js)
     if (actDay() !== S.lastDay) {
         S.lastDay = actDay();
