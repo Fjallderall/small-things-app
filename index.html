@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 26-10-2026 -->
+<!-- Small Things, shared build of 27-10-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -4482,7 +4482,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvo4yk74ryhaf", "mvo51bqtk3fpr",
     // group 20 (25-10-2026)
     "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
-, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir"];
+, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p"];
 
 </script>
 <script>/* js/core/state.js */
@@ -6802,12 +6802,90 @@ function gramoPlaying() {
         gramoStop();
     return Gramo.on;
 }
+/* ---------- a festival's tune (jots mvoytur8ywmtb, mvoyv1lkwmyfx): "Feel the mood" on the card of a festival that
+   has its own thing in the wagon. Short and original, about the mood (cold dark evenings, candles, a spring morning),
+   not an imitation of any culture's music; the postcard festivals, learned about from friends, have none.
+   Each: bpm, meter, lead (as playLead), bell (a high soft bell on beat one), chords (one per bar, midi) and the tune
+   ([beat, note, beats] per bar). Played twice (the second time a little softer), on its own bus; the background
+   music ducks while it plays. It plays with the sound off too: you asked for it */
+const FEST_TUNES = {
+    easter: { bpm: 96, lead: "flute", bell: 1, chords: [[48, 55, 64], [53, 60, 69], [50, 57, 65], [55, 62, 71]],
+        mel: [[[0, 72, 1], [1, 76, 1], [2, 79, 2]], [[0, 77, 1], [1, 76, 1], [2, 74, 1], [3, 72, 1]], [[0, 74, 1.5], [1.5, 76, .5], [2, 77, 2]], [[0, 79, 1], [1, 74, 1], [2, 72, 2]]] },
+    kingsday: { bpm: 112, lead: "whistle", chords: [[53, 60, 69], [48, 55, 64], [50, 57, 65], [48, 55, 64]],
+        mel: [[[0, 77, .5], [.5, 79, .5], [1, 81, 1], [2, 79, .5], [2.5, 77, .5], [3, 76, 1]], [[0, 72, 1], [1, 76, .5], [1.5, 79, .5], [2, 84, 2]], [[0, 81, .5], [.5, 79, .5], [1, 77, 1], [2, 74, 1], [3, 77, 1]], [[0, 76, 1], [1, 79, 1], [2, 77, 2]]] },
+    midsummer: { bpm: 84, meter: 3, lead: "flute", chords: [[50, 57, 66], [55, 62, 71], [52, 59, 67], [57, 64, 73]],
+        mel: [[[0, 74, 1], [1, 78, 1], [2, 81, 1]], [[0, 83, 2], [2, 81, 1]], [[0, 79, 1], [1, 76, 1], [2, 78, 1]], [[0, 76, 3]]] },
+    halloween: { bpm: 80, meter: 3, lead: "box", chords: [[45, 52, 60], [41, 48, 57], [43, 50, 59], [40, 47, 56]],
+        mel: [[[0, 76, 1], [1, 72, 1], [2, 69, 1]], [[0, 77, 1], [1, 76, 1], [2, 72, 1]], [[0, 74, 1], [1, 71, 1], [2, 67, 1]], [[0, 68, 1], [1, 71, 1], [2, 76, 1]]] },
+    sintmaarten: { bpm: 72, lead: "kalimba", bell: 1, chords: [[48, 55, 64], [45, 52, 60], [53, 60, 69], [55, 62, 67]],
+        mel: [[[0, 76, 1], [1, 79, 1], [2, 76, 2]], [[0, 72, 1], [1, 76, 1], [2, 79, 2]], [[0, 81, 1], [1, 79, 1], [2, 77, 1], [3, 76, 1]], [[0, 74, 2], [2, 79, 2]]] },
+    sinterklaas: { bpm: 100, lead: "marimba", chords: [[50, 57, 65], [45, 52, 61], [50, 57, 65], [43, 50, 58]],
+        mel: [[[0, 74, .5], [.5, 77, .5], [1, 81, 1], [2, 79, .5], [2.5, 77, .5], [3, 74, 1]], [[0, 73, 1], [1, 76, 1], [2, 79, 1], [3, 76, 1]], [[0, 77, .5], [.5, 79, .5], [1, 81, 1], [2, 82, 1], [3, 81, 1]], [[0, 79, 1], [1, 76, 1], [2, 74, 2]]] },
+    solstice: { bpm: 54, lead: "vibes", chords: [[45, 52, 60], [41, 48, 57], [48, 55, 64], [43, 50, 59]],
+        mel: [[[0, 76, 2], [2, 74, 2]], [[0, 72, 2], [2, 69, 2]], [[0, 71, 1], [1, 72, 1], [2, 76, 2]], [[0, 74, 4]]] },
+    christmas: { bpm: 76, meter: 3, lead: "box", bell: 1, chords: [[53, 60, 69], [50, 57, 65], [46, 53, 62], [48, 55, 64]],
+        mel: [[[0, 81, 1], [1, 79, 1], [2, 77, 1]], [[0, 74, 2], [2, 77, 1]], [[0, 79, 1], [1, 77, 1], [2, 74, 1]], [[0, 72, 2], [2, 76, 1]]] },
+    newyear: { bpm: 104, lead: "vibes", bell: 1, chords: [[48, 55, 64], [52, 59, 67], [53, 60, 69], [55, 62, 71]],
+        mel: [[[0, 72, .5], [.5, 76, .5], [1, 79, 1], [2, 84, 2]], [[0, 83, 1], [1, 79, 1], [2, 76, 2]], [[0, 77, .5], [.5, 81, .5], [1, 84, 1], [2, 81, 1], [3, 77, 1]], [[0, 79, 1], [1, 83, 1], [2, 84, 2]]] }
+};
+const Tune = { until: 0, bus: null, id: "" };
+const tunePlaying = () => !!Snd.ctx && Snd.ctx.currentTime < Tune.until;
+/* play one (true if it started); a second tap while it plays stops it */
+function playFestTune(id) {
+    const tn = FEST_TUNES[id];
+    if (!tn)
+        return false;
+    if (!Snd.ctx && !sndInit())
+        return false;
+    const a = Snd.ctx;
+    if (a.state !== "running")
+        a.resume().catch(() => {
+        });
+    if (tunePlaying()) { // stop
+        const was = Tune.id;
+        stopFestTune();
+        if (was === id)
+            return false;
+    }
+    const bus = a.createGain();
+    bus.gain.value = 2.2;
+    bus.connect(Snd.mlp);
+    const bt = 60 / tn.bpm, meter = tn.meter || 4, bar = bt * meter, t0 = a.currentTime + .15;
+    for (let rep = 0; rep < 2; rep++)
+        tn.mel.forEach((notes, i) => {
+            const tb = t0 + (rep * tn.mel.length + i) * bar, fade = rep ? .8 : 1, ch = tn.chords[i % tn.chords.length];
+            ch.forEach((m, k) => tone(mtof(m), tb + k * .02, bar * .95, { type: "triangle", vol: .006 * fade, atk: .08, bus })); // the chord, soft
+            tone(mtof(ch[0] - 12), tb, bar * .9, { vol: .012 * fade, bus }); // and its root, low
+            if (tn.bell)
+                tone(mtof(ch[2] + 24), tb, 1.6, { vol: .003 * fade, bus });
+            notes.forEach(([b, m, len]) => playLead(tn.lead, m, tb + b * bt, bt * (len || 1), fade, bus));
+        });
+    const last = t0 + tn.mel.length * 2 * bar;
+    bus.gain.setValueAtTime(2.2, last);
+    bus.gain.linearRampToValueAtTime(0, last + 1.5);
+    Tune.until = last + 1.2;
+    Tune.bus = bus;
+    Tune.id = id;
+    return true;
+}
+function stopFestTune() {
+    if (Tune.bus && Snd.ctx) {
+        const t = Snd.ctx.currentTime;
+        Tune.bus.gain.cancelScheduledValues(t);
+        Tune.bus.gain.setTargetAtTime(0, t, .15);
+        const b = Tune.bus;
+        setTimeout(() => b.disconnect(), 900);
+    }
+    Tune.until = 0;
+    Tune.bus = null;
+    Tune.id = "";
+}
 function ambTick() {
     if (!Snd.ctx)
         return;
     const a = Snd.ctx, t = a.currentTime, running = !document.hidden && a.state === "running", on = sndMode() >= 2 && running, music = running && (sndMode() === 3 || sndMode() >= 1 && gramoPlaying());
     Snd.amb.gain.setTargetAtTime(on ? 1 : 0, t, .8);
-    Snd.mus.gain.setTargetAtTime(music ? (gramoPlaying() ? 1.9 : 1.2) : 0, t, 1.5); // (the gramophone a bit louder: owner, 24-10)
+    Snd.mus.gain.setTargetAtTime(music ? (gramoPlaying() ? 1.9 : 1.2) * (tunePlaying() ? .15 : 1) : 0, t, tunePlaying() ? .3 : 1.5); // (the gramophone a bit louder: owner, 24-10; a festival's tune: the rest ducks)
     if (!music && Snd.song) {
         Snd.song = null;
         Snd.carry = 0;
@@ -17661,7 +17739,14 @@ function showFestival(id, y, back) {
     const sub = a && festFrom(a) ? `A postcard from a friend in ${festFrom(a)} · ${festDates(a)}` : a ? festDates(a) : "";
     const moves = /lunar|holi|nowruz|eid|diwali|hanukkah|midautumn/.test(id);
     const body = f.info(yr).map(p => `<p>${esc(p)}</p>`).join("") + (moves ? `<p class="ritmeta">This one follows the moon, so its date moves every year and can differ by a day from place to place.</p>` : "");
-    openRitual(f.name, sub, `<div class="festcard">${body}</div>`, (back ? [["Back to the album", "", back]] : []).concat([["Close", "primary", closeRitual]]));
+    const mood = FEST_TUNES[id] && f.kind === "home" ? [["♪ Feel the mood", "", () => { // (its tune: sound.js)
+            const on = playFestTune(id), b = [...$("ritBtns").children].find(x => /mood|Stop/.test(x.textContent));
+            if (b)
+                b.textContent = on ? "■ Stop the tune" : "♪ Feel the mood";
+            if (on)
+                setTimeout(() => { if (b && b.isConnected && !tunePlaying()) b.textContent = "♪ Feel the mood"; }, (Tune.until - Snd.ctx.currentTime) * 1000 + 300);
+        }]] : [];
+    openRitual(f.name, sub, `<div class="festcard">${body}</div>`, (back ? [["Back to the album", "", back]] : []).concat(mood, [["Close", "primary", closeRitual]]));
     sfx("card");
     const rec = S.fest[id] || (S.fest[id] = { first: Date.now(), years: [] });
     if (!rec.years.includes(yr))
@@ -30213,7 +30298,7 @@ function seasonFind() {
         return null;
     const it = choice(unseen);
     got[it.name] = 1;
-    note(`Found: ${it.name}. ${it.note} (Only this ${SEASON_NAMES[+S.seasonal.s.split("-")[1]].toLowerCase()}.)`);
+    note(`Found: ${it.name}. ${it.note} (Only found in ${SEASON_NAMES[+S.seasonal.s.split("-")[1]].toLowerCase()}.)`);
     return it.name;
 }
 /* a new season: last season's finds into the archive, the drawers emptied */
@@ -30247,7 +30332,7 @@ function renderSeasonDrawers() {
     if (h)
         h.textContent = seasonName(cur);
     if (sub)
-        sub.textContent = `They only turn up this season, until ${dmy(d.end)}. When ${nx} begins, the ones found are filed in the archive and the drawers empty for the next.`;
+        sub.textContent = `They only turn up in ${SEASON_NAMES[+cur.split("-")[1]].toLowerCase()}, every year. This one lasts until ${dmy(d.end)}; when ${nx} begins, the ones found are filed in the archive and the drawers empty, so next year they can be found again.`;
     if (c)
         c.textContent = `${list.filter(t => got[t.name]).length}/${list.length}`;
     el.innerHTML = list.map(t => got[t.name] ? `<div class="drawer season"><b>${esc(t.name)}</b>${esc(t.note)}</div>` : `<div class="drawer unk">?</div>`).join("");
