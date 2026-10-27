@@ -892,7 +892,7 @@ body.editing #addForm{display:none}
         <div class="glimpses" id="glimpseList"></div></details>
       <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>The Deck</h3><span class="seccount" id="cnt-cab-cards"></span><span class="secnew" id="new-cab-cards" hidden>new</span></summary><p class="sub"><span class="pn">Midnightcat</span>'s cards. They come one at a time, in strange mail, and not often.</p>
         <div class="cards" id="cardList"></div></details>
-      <details class="shopsec colsec" data-sec="cab-origami" open><summary><h3>Adorbigami</h3><span class="seccount" id="cnt-cab-origami"></span><span class="secnew" id="new-cab-origami" hidden>new</span></summary><p class="sub">Folded by the ghost at the window. They hang above it on a string.</p>
+      <details class="shopsec colsec" data-sec="cab-origami" open><summary><h3>Adorbigami</h3><span class="seccount" id="cnt-cab-origami"></span><span class="secnew" id="new-cab-origami" hidden>new</span></summary><p class="sub">Folded by the ghost at the window. They hang above it on a string this week; then <span class="pn">Mite</span> files them and the list starts over.</p>
         <div class="words" id="origamiList"></div></details>
       <details class="shopsec colsec" data-sec="cab-fest" open><summary><h3>Festivals</h3><span class="seccount" id="cnt-cab-fest"></span><span class="secnew" id="new-cab-fest" hidden>new</span></summary><p class="sub">What <span class="pn">Mite</span> has learned about the festivals that came by. Tap one to read it again.</p>
         <div class="words" id="festList"></div></details>
@@ -932,6 +932,7 @@ body.editing #addForm{display:none}
         <label class="field">Your name<input id="setYou" maxlength="30"></label>
         <label class="field">Pet name<input id="setPet" maxlength="20"></label>
         <label class="field">The possum's name<input id="setPossum" maxlength="30"></label>
+        <label class="field">The snail's name<input id="setSnail" maxlength="30"></label>
         <label class="field">Work ends at<select id="setDoneBy" data-hours="12-23"></select></label>
         <label class="field">Bedtime<select id="setBed" data-hours="0-23"></select></label>
         <label class="field">A new day starts at<select id="setDayStart" data-hours="0-23" aria-describedby="dayStartHint"></select><small class="sub" id="dayStartHint">Until then it still counts as the day before: what you finish, the journal, filing the day, the notebook page. Due dates and times keep the clock. For night shifts, pick when your day really begins.</small></label>
@@ -3208,7 +3209,7 @@ const DEF = {
             "Midnightcat | (illegible: possibly a paw) | MEMO. The report bears one paw print, in what appears to be soot. Asked about it, the archive cat denied filing it, then sat on it. The Bureau considers this a signature.",
             "the moth who lives in the lamp | The lamp is never turned off on me. | MEMO. Filed by a moth with a wingspan of ████. It asks that the lamp stay exactly as it is. The Bureau has no authority over lamps but has written 'yes' on the file anyway.",
             "the world outside the window | Someone in there does one small thing at a time, and it shows. | MEMO. Filed by the world, the bit just outside your window. It rarely files reports. The Bureau has changed the wagon's file from 'small' to 'small, and well looked after'.",
-            "the night door | Never slammed. Not once. | MEMO. Filed by the night door, on its own behalf. Doors are seldom asked. This one wanted it on record. The Bureau has sent someone to oil its hinges, as thanks.",
+            "the night door | When I knock, someone always says goodnight back. | MEMO. Filed by the night door, on its own behalf. Doors are seldom asked. This one wanted it on record. The Bureau has sent someone to oil its hinges, as thanks.",
             "[REDACTED] | We just like it there. | MEMO. Filer withheld at their request. The Bureau can say only that they are very old, very large, and pass this way every hundred years or so. They were glad to see the wagon still there.",
             "the other {pet} | They were kind to the one I nearly am. | MEMO. Filed by the second {pet}, from the other side of the wall. It asked that the first {pet} not be told. This memo has unfortunately been delivered to the wrong desk. Please forget the last sentence."
         ],
@@ -4482,7 +4483,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvo4yk74ryhaf", "mvo51bqtk3fpr",
     // group 20 (25-10-2026)
     "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
-, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p"];
+, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un"];
 
 </script>
 <script>/* js/core/state.js */
@@ -4493,7 +4494,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -4667,6 +4668,7 @@ function sanitizeState(raw) {
     o.flowerBook = Array.isArray(s.flowerBook) ? arr(s.flowerBook, 80).map(fl).filter(Boolean) : defaultState().flowerBook;
     o.ndoorFlowers = dkey(s.ndoorFlowers) || "";
     o.possumSet = num(s.possumSet); // when you renamed it in Settings (a rename always wins)
+    o.snailSet = num(s.snailSet); // the same for the snail
     o.possumAt = num(s.possumAt); // when it was named (two devices: the first name given is the one that stays)
     // the notes on the pinboard (pinboard.js): text, when pinned, when taken down (0: still up). A save from before
     // the notes existed gets the first few
@@ -4941,6 +4943,9 @@ function mergeStates(a, b) {
     o.guestAt = Math.max(nw.guestAt || 0, od.guestAt || 0);
     o.ff = ((nw.ff || []).length >= (od.ff || []).length ? nw.ff : od.ff) || [];
     o.snailName = nw.snailName || od.snailName || "";
+    o.snailSet = Math.max(num(a.snailSet), num(b.snailSet));
+    if (o.snailSet) // renamed in Settings: the latest rename wins, on every device
+        o.snailName = (num(a.snailSet) >= num(b.snailSet) ? a : b).snailName || o.snailName;
     o.raccoonName = od.raccoonName || nw.raccoonName || ""; // the first name it was given stays
     { // the vase: the newest flowers; the book: every flower from either side (the first time it came)
         const va = a.vase, vb = b.vase;
@@ -8859,13 +8864,17 @@ const BEH = {
                 }
                 if (ta > 2) {
                     b.petted = 1;
-                    const secs = runConvo(convoPick("catconvo") || "M: Hello, Midnightcat. / C: Mrrp.", () => {
-                        p.bt = p.dur;
-                    });
-                    if (b.onReveal && !b.revealed) {
+                    if (b.onReveal && !b.revealed) { // (a tap: a treat, if there's one, comes first and is the whole visit)
                         b.revealed = 1;
                         b.onReveal();
                     }
+                    if (b.fed) {
+                        p.dur = p.bt + 6;
+                        return;
+                    }
+                    const secs = runConvo(convoPick("catconvo") || "M: Hello, Midnightcat. / C: Mrrp.", () => {
+                        p.bt = p.dur;
+                    });
                     p.dur = p.bt + secs + 1;
                 }
                 return;
@@ -8897,6 +8906,15 @@ const BEH = {
             po.feet = ta < .5;
             if (!b.started) {
                 b.started = 1;
+                if (b.onReveal && !b.revealed) { // (a treat first; it's the whole visit)
+                    b.revealed = 1;
+                    b.onReveal();
+                }
+                if (b.fed) {
+                    snailPause = false;
+                    p.dur = p.bt + 6;
+                    return;
+                }
                 const c = ctx();
                 const l = convoPick("snailtalk") || "M: Hello, {snail}. / S: …Hello.";
                 const secs = b.line ? runConvo(b.line, () => {
@@ -8939,15 +8957,20 @@ const BEH = {
             if (!b.started) {
                 b.started = 1;
                 possum.dir = p.x > possum.x ? 1 : -1;
+                if (b.onReveal && !b.revealed) { // (a treat first; it's the whole visit)
+                    b.revealed = 1;
+                    b.onReveal();
+                }
+                if (b.fed) {
+                    possum.chat = false;
+                    p.dur = p.bt + 6;
+                    return;
+                }
                 const line = compose("possumtalk") || "M: Hello, {possum}. / P: Hhh. Hello.";
                 const secs = runConvo(line, () => {
                     possum.chat = false;
                     p.bt = p.dur;
                 });
-                if (b.onReveal && !b.revealed) {
-                    b.revealed = 1;
-                    b.onReveal();
-                }
                 p.dur = p.bt + secs + 1;
             }
             if (ta > 40) {
@@ -11908,6 +11931,15 @@ function requestObj(kind, fx, fy) {
     }
     startObj(kind);
 }
+/* Mite is up on the wagon's balcony or the nook's platform and the thing is up high in the same room (the night
+   door, a wall piece, a window): it looks from where it stands, turned towards it, instead of going down the stairs
+   first (jots mvpjrz9t78ty0, mvpjys7espoyu). Returns the admire behaviour's extra, or null */
+function upLook(cx, cy, rm) {
+    if (!(pet.ground > 0) || rm !== view || (view !== "room" && view !== "garden") || cy > GY - R * 1.6)
+        return null;
+    const dx = cx - pet.x;
+    return { tx: pet.x, face: Math.abs(dx) < R * .6 ? 0 : Math.sign(dx), high: 1 };
+}
 /* start the behaviour for this object; its show() runs when Mite arrives (revealAt seconds after) */
 function startObj(kind) {
     let a = OBJ_ACT[kind];
@@ -11915,7 +11947,7 @@ function startObj(kind) {
         const w = WALL.find(x => x.id === kind.slice(5)) || SEAS_BY_ID[kind.slice(5)], hit = wallHits.find(h => h.id === (w && w.id));
         if (!w || !hit)
             return;
-        a = { beh: "admire", revealAt: .5, extra: { tx: hit.cx }, show: () => {
+        a = { beh: "admire", revealAt: .5, extra: upLook(hit.cx, hit.y + hit.h / 2, "room") || { tx: hit.cx }, show: () => {
                 speak(w.s ? compose("seas_" + w.id) || w.note : Math.random() < .25 ? w.line : compose("wall_" + w.id) || w.line, { ms: 6500 }); // (lines: wall_<id>, a seasonal one's seas_<id>)
                 return 6.5;
             } };
@@ -11931,6 +11963,8 @@ function startObj(kind) {
         }
         if ((sp.id === "basket" || sp.id === "smush") && pet.ground > 0 && view === "garden") // up on the platform already: Mite looks from there, not down the stairs (jots mvo51bqtk3fpr, mvo8hr607mkii)
             extra = {};
+        else if (!sp.low && upLook(sp.cx, sp.y + sp.h / 2, sp.room)) // (something high, Mite up on the balcony or platform: it looks from up there)
+            extra = upLook(sp.cx, sp.y + sp.h / 2, sp.room);
         a = { beh: sp.id === "basket" && pet.ground > 0 && view === "garden" ? "gbasket" : "admire", revealAt: .5, room: sp.room, extra, show: () => {
                 if (sp.id === "closet") { // the closet is the paternoster: every filed week (paternoster.js)
                     showPaternoster(0);
@@ -12013,7 +12047,7 @@ function startObj(kind) {
         };
         return;
     }
-    const stayUp = view === "garden" ? (["gplants", "gpin", "gpossum", "ghang", "ggramo"].includes(kind) || kind === "look:basket" || kind === "look:smush" && pet.ground > 0) : ["sill", "scope"].includes(kind) && own("loft"); // (things up on the platform or balcony: Mite stays up there)
+    const stayUp = a && a.extra && a.extra.high ? true : view === "garden" ? (["gplants", "gpin", "gpossum", "ghang", "ggramo"].includes(kind) || kind === "look:basket" || kind === "look:smush" && pet.ground > 0) : ["sill", "scope"].includes(kind) && own("loft"); // (things up on the platform or balcony: Mite stays up there)
     if (pet.ground > 0 && (view === "room" || view === "garden") && !stayUp) {
         pet.start("descend");
         const cur0 = { kind, shown: false, b: pet.b };
@@ -15598,6 +15632,15 @@ function guestStays(g, c) {
     const dark = skyAt(c.h + c.now.getMinutes() / 60).dark;
     return !!g.shelter && foulOut() || (foulOut() ? Math.random() < .7 : (c.late || dark > .7) ? Math.random() < .45 : false);
 }
+/* how far out on the floor the visitor stands: where it chose (g.tz), but while a conversation's dialogue box is up
+   (it covers the front of the floor) no lower than just above the box's top. After, it may go back out there */
+function guestZGoal(g) {
+    const z = g.tz || 0, el = $("dlg");
+    if (!el || el.hidden || view !== "room")
+        return z;
+    const top = el.getBoundingClientRect().top - cv.getBoundingClientRect().top; // (canvas coordinates are CSS pixels)
+    return Math.max(0, Math.min(z, top - GY - R * .25));
+}
 function guestTick(dt, now) {
     if (!guest) {
         if (now < guestNext)
@@ -15619,12 +15662,15 @@ function guestTick(dt, now) {
     g.t += dt;
     g.s = guestSize(g);
     const sp = R * 1.1;
+    { // out across the floor as it comes in; while the dialogue box is up it keeps above it (jot mvp75z72h288i)
+        const zg = guestZGoal(g);
+        g.z += Math.sign(zg - g.z) * Math.min(Math.abs(zg - g.z), sp * (zg < (g.tz || 0) && g.z > zg ? 2.4 : g.ph === "in" ? .6 : .9) * dt); // (out of the box's way briskly)
+    }
     if (g.ph === "in") {
         const d = g.tx - g.x;
         g.dir = Math.sign(d) || g.dir;
         g.x += Math.sign(d) * Math.min(Math.abs(d), sp * dt);
-        g.z += Math.sign((g.tz || 0) - g.z) * Math.min(Math.abs((g.tz || 0) - g.z), sp * .6 * dt); // out across the floor as it comes in
-        if (Math.abs(d) < 2 && Math.abs((g.tz || 0) - g.z) < 2) {
+        if (Math.abs(d) < 2 && Math.abs(guestZGoal(g) - g.z) < 2) {
             g.ph = "wait";
             g.t = 0;
             const kin = mouseMet(g);
@@ -17255,7 +17301,7 @@ const ANOM_DRAW = {
     }
 };
 /* the origami garland across the top of the window: what the ghost has left this week. When the week ends Mite takes
-   it down and files it (it stays in the Cabinet, and in the month's book on the archive wall); a note says so */
+   it down and files it (in the month's book on the archive wall; the Cabinet list starts over); a note says so */
 function origamiFileWeek() {
     const wk = new Date(weekKey(Date.now()) + "T12:00").getTime(), was = num(S.flags.origWk);
     if (was >= wk)
@@ -17263,8 +17309,13 @@ function origamiFileWeek() {
     S.flags.origWk = wk;
     const n = (S.origami || []).filter(o => o.at < wk && (!was || o.at >= was)).length;
     if (was && n)
-        note(`Took down last week's origami from the window (${n === 1 ? "one" : n}) and filed ${n === 1 ? "it" : "them"} away. Clean string for the ghost.`);
+        note(`Took down last week's origami from the window (${n === 1 ? "one" : n}) and filed ${n === 1 ? "it" : "them"} away. Clean string for the ghost, and a clean page in the Cabinet.`);
     saveSoon();
+}
+/* what hangs now (this week's; filed weeks are in the month's book on the archive wall) */
+function origamiOut() {
+    const wk = weekKey(Date.now());
+    return (S.origami || []).filter(o => weekKey(o.at) === wk);
 }
 /* the origami garland across the top of the window: everything the ghost has left */
 /* the adorbigami hang on strings from the ceiling at the right of the room, one under the other, two strings
@@ -28562,7 +28613,9 @@ function pantryUse(k) {
     note(`Used the ${it.name.toLowerCase().replace(/^jar of /, "")}: ${pick.text.split("|")[0].trim()}.`);
     return pick;
 }
-/* Mite's reached a resident: a treat, if there's one for it. A line and a few hearts over the resident */
+/* Mite's reached a resident: a treat, if there's one for it. A line and a few hearts over the resident.
+   A treat is the visit: the resident's usual chat doesn't follow (jot mvpw0arwowsf2): the visit is marked fed (b.fed,
+   behaviours.js catvisit / possumchat / snailchat) */
 function treatGive(who) {
     const it = PANTRY.find(x => x.who === who);
     if (!it || pantryN(it.id) <= 0 || pantryNeeds(it))
@@ -28575,6 +28628,8 @@ function treatGive(who) {
     for (let i = 0; i < 5; i++)
         addP({ type: "heart", room: p.room, x: p.x + rnd(-R * .2, R * .2), y: p.y - R * .2, vx: rnd(-20, 20), vy: -rnd(30, 60), g: -20, max: 1.3, col: "#e3a0b2", rot: 0, vr: 0, size: rnd(3, 5) });
     speak(line, { ms: clamp(3000 + line.length * 45, 4000, 9000) });
+    if (pet.b)
+        pet.b.fed = 1;
     saveSoon();
     return true;
 }
@@ -28617,7 +28672,7 @@ function renderCabinet() {
     $("altered").innerHTML = alteredList().map(t => S.altered[t.name] ? `<div class="drawer alt"><span class="cls">${esc(t.cls)}</span><b>${esc(t.name)}</b>${esc(t.note)}</div>` : `<div class="drawer unk">▮▮▮</div>`).join("");
     {
         const n = {};
-        (S.origami || []).forEach(o => n[o.k] = (n[o.k] || 0) + 1);
+        origamiOut().forEach(o => n[o.k] = (n[o.k] || 0) + 1); // only what hangs now: filed weeks go back to "?" so they can be found again (owner, 27-10-2026)
         $("origamiList").innerHTML = ORIGAMI.map(o => n[o.id] ? `<span class="word"><i>${esc(o.name)}</i>${n[o.id] > 1 ? " ×" + n[o.id] : ""}</span>` : `<span class="word" style="opacity:.45"><i>?</i></span>`).join("");
     }
     renderGlimpses(); // what the chalk circle has shown (circle.js)
@@ -28654,7 +28709,7 @@ function renderCabinet() {
     });
     $("achs").innerHTML = ACH.map(([id, n, d]) => `<li class="${S.ach[id] ? "got" : ""}"><b>${S.ach[id] ? esc(n) : "Hidden"}</b>${esc(d)}</li>`).join("");
     { // how many of each, on the headings
-        const oc = new Set((S.origami || []).map(o => o.k)), set = (k, t) => { const e = $("cnt-" + k); if (e) e.textContent = t; };
+        const oc = new Set(origamiOut().map(o => o.k)), set = (k, t) => { const e = $("cnt-" + k); if (e) e.textContent = t; };
         set("cab-small", `${trinketList().filter(t => S.trinkets[t.name]).length}/${trinketList().length}`);
         set("cab-altered", `${alteredList().filter(t => S.altered[t.name]).length}/${alteredList().length}`);
         set("cab-origami", `${ORIGAMI.filter(o => oc.has(o.id)).length}/${ORIGAMI.length}`);
@@ -28943,6 +28998,8 @@ function renderContent() {
     $("setPet").value = st.pet;
     $("setPossum").value = possumName();
     $("setPossum").closest("label").hidden = !S.flags.met_possum; // (its name only once you've met it)
+    $("setSnail").value = own("snail") ? snailName() : "";
+    $("setSnail").closest("label").hidden = !own("snail"); // (jot mvpjjes39n0ti: it couldn't be renamed)
     $("setDoneBy").value = st.doneBy;
     $("setBed").value = st.bed;
     $("setDayStart").value = st.dayStart ?? 5;
@@ -29457,6 +29514,13 @@ function saveSettings() {
             S.possumSet = Date.now();
             if (!S.possumAt)
                 S.possumAt = S.possumSet;
+        }
+    }
+    {
+        const sn = $("setSnail").value.trim().slice(0, 30);
+        if (sn && sn !== S.snailName) {
+            S.snailName = sn;
+            S.snailSet = Date.now();
         }
     }
     {
