@@ -4,7 +4,7 @@
  * The cache name changes with each build (share.js fills in the date), so old copies are cleared.
  */
 "use strict";
-const CACHE = "small-things-202610270909";
+const CACHE = "small-things-202610270941";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 self.addEventListener("install", e => {
     e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
