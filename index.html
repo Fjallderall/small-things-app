@@ -503,6 +503,15 @@ body.pixel.game .stage{border:0}
 /* the task sheet: list first, the add field at the bottom */
 .tk-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .tk-head h2{margin:0}
+.tktabs{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+.tktab{font:inherit;font-family:var(--fh,inherit);font-size:1.5em;font-weight:800;margin:0;padding:0 0 2px;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted,#888);cursor:pointer;line-height:1.2}
+.tktab[aria-selected="true"]{color:inherit;border-bottom-color:var(--accent)}
+.tktab .count{font-size:.55em;margin-left:6px;vertical-align:middle}
+#tab-tasks.ev>:not(.tk-head):not(#evPane){display:none!important}
+.evitem.evdone .tname{text-decoration:line-through;opacity:.6}
+.evitem .check.on{background:var(--leaf);color:var(--panel)}
+#evPane{display:flex;flex-direction:column;gap:10px}
+#evPane[hidden]{display:none}
 .evecard{background:var(--sunk);color:var(--ink);border:2px solid #8a6fb0;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .evecard p{margin:0;font-size:15px;line-height:1.4}
 .evecard[hidden]{display:none}
@@ -797,7 +806,12 @@ body.editing #addForm{display:none}
     </div>
 
     <div class="pane" id="tab-tasks" role="tabpanel">
-      <div class="tk-head"><h2>Today</h2><span class="sync" id="syncTxt"></span></div>
+      <div class="tk-head"><div class="tktabs" role="tablist" aria-label="Lists"><button type="button" role="tab" id="tkToday" class="tktab" aria-selected="true" aria-controls="taskList">Today</button><button type="button" role="tab" id="tkEv" class="tktab" aria-selected="false" aria-controls="evPane" tabindex="-1">The everyday<span class="count" id="evCount"></span></button></div><span class="sync" id="syncTxt"></span></div>
+      <div id="evPane" role="tabpanel" aria-labelledby="tkEv" hidden>
+        <p class="sub" id="evSub"></p>
+        <ul class="tasks" id="evList"></ul>
+        <form class="addform bottom" id="evForm" autocomplete="off"><div class="row"><input type="text" id="evTitle" placeholder="Something you do every day…" aria-label="New thing for every day" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
+      </div>
       <div class="evecard bkcard" id="bkCard" hidden>
         <p><strong>Back up today?</strong> Everything in one small file. Send it to yourself (a messenger, email) or keep it in your files.</p>
         <p class="bkwarn small">It holds all the text you've written here and isn't locked, so keep it somewhere private.</p>
@@ -4544,7 +4558,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -4744,6 +4758,10 @@ function sanitizeState(raw) {
     o.tiffany = { k: ["classic", "dragonfly", "blossom", "autumn", "sea", "nebula"].includes(s.tiffany && s.tiffany.k) ? s.tiffany.k : "classic", at: num(s.tiffany && s.tiffany.at) }; // the lamp's shade (archive-room.js)
     o.puddle = { n: clamp(num(s.puddle && s.puddle.n), 0, 1), c: /^#[0-9a-f]{6}$/i.test(s.puddle && s.puddle.c) ? s.puddle.c : "", odd: s.puddle && s.puddle.odd ? 1 : 0, at: num(s.puddle && s.puddle.at) }; // what the dripping flowers left on the floor (flowers.js)
     o.terms = arr(s.terms, 200).map(x => ({ k: str(x && x.k, 60).trim(), at: num(x && x.at) })).filter(x => x.k); // archival terms Mite has explained (archive-room.js)
+    { // The everyday: the daily checklist (everyday.js)
+        const e = s.ev && typeof s.ev === "object" ? s.ev : {}, dk = v => dkey(v) ? v : "";
+        o.ev = { items: arr(e.items, 60).map(x => ({ id: str(x && x.id, 30), t: str(x && x.t, 120).replace(/\s+/g, " ").trim(), c: num(x && x.c), u: num(x && x.u), done: dk(x && x.done), paid: dk(x && x.paid) })).filter(x => x.id && x.t), pay: { d: dk(e.pay && e.pay.d), n: clamp(num(e.pay && e.pay.n), 0, 3) } };
+    }
     o.sched = {}; // days you told Mite about in Talk: { day: { k: "off" | "work" | "" (taken back), at } } (speech.js, offline.js)
     for (const d of Object.keys(s.sched && typeof s.sched === "object" ? s.sched : {}).filter(d => dkey(d)).sort().slice(-400)) {
         const e = s.sched[d] || {};
@@ -5062,6 +5080,15 @@ function mergeStates(a, b) {
             if (!m.has(x.k.toLowerCase()) || m.get(x.k.toLowerCase()).at > x.at)
                 m.set(x.k.toLowerCase(), x);
         o.terms = [...m.values()].sort((x, y) => x.at - y.at).slice(-200);
+    }
+    { // The everyday: united by id, the newest change wins (a removed one stays removed: S.del "ev:"+id); the day's
+        // glimmers: the later day, or the most paid on the same day
+        const m = new Map();
+        for (const x of [...((a.ev && a.ev.items) || []), ...((b.ev && b.ev.items) || [])])
+            if (!m.has(x.id) || num(x.u) > num(m.get(x.id).u))
+                m.set(x.id, Object.assign({}, x));
+        const pa = (a.ev && a.ev.pay) || { d: "", n: 0 }, pb = (b.ev && b.ev.pay) || { d: "", n: 0 };
+        o.ev = { items: [...m.values()].filter(x => !(o.del && o.del["ev:" + x.id] >= num(x.u))).sort((x, y) => x.c - y.c).slice(-60), pay: pa.d === pb.d ? { d: pa.d, n: Math.max(num(pa.n), num(pb.n)) } : Object.assign({}, pa.d > pb.d ? pa : pb) };
     }
     { // the days you told Mite about: per day, whatever was said last (taking one back is said too)
         o.sched = {};
@@ -28075,6 +28102,7 @@ $("jotList").addEventListener("click", e => {
         } });
 });
 function renderTasks() {
+    renderEveryday(); // (The everyday, its own tab: everyday.js)
     renderJots();
     $("eveCard").hidden = !eveCardDue();
     $("bkCard").hidden = !backupDue();
@@ -28218,6 +28246,179 @@ function renderTasks() {
     $("doneSum").textContent = `Done today (${dt.length})`;
     $("doneList").innerHTML = dt.map(t => `<li><span>${esc(t.t)}</span><span class="sync">${new Date(t.d).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</span></li>`).join("") || `<li><span style="text-decoration:none">Nothing yet.</span></li>`;
 }
+
+</script>
+<script>/* js/ui/everyday.js */
+"use strict";
+/*
+ * everyday.js - The everyday: a daily checklist, in its own tab next to Today at the top of the Tasks pane (owner,
+ * 26-10-2026). Things you do every day; ticked ones untick themselves when the new day starts (actDay, so the
+ * day starts at Settings' "A new day starts at"). Each tick pays 1 glimmer, 3 a day at most; ticking the same thing
+ * again after unticking it doesn't pay twice. Not tasks: no archive box, no xp, no streak.
+ *   S.ev = { items: [{ id, t, c, u, done: day ticked ("" if not), paid: day it last paid }], pay: { d, n } }
+ *   evTab           which tab is showing ("today" or "ev"); kept for the session
+ *   renderEveryday() the tab row and the list (called from renderTasks)
+ */
+const EV_MAX = 40, EV_PAY_DAY = 3;
+let evTab = "today", evEdit = null;
+function evItems() {
+    return ((S.ev && S.ev.items) || []).filter(x => !(S.del && S.del["ev:" + x.id] >= num(x.u))).sort((a, b) => a.c - b.c);
+}
+function evDone(x) {
+    return x.done === actDay();
+}
+function setEvTab(k) {
+    evTab = k === "ev" ? "ev" : "today";
+    evEdit = null;
+    renderEveryday();
+}
+function evTick(id, el) {
+    const x = evItems().find(i => i.id === id);
+    if (!x)
+        return;
+    const today = actDay();
+    x.u = Date.now();
+    if (evDone(x)) {
+        x.done = "";
+        afterChange();
+        return;
+    }
+    x.done = today;
+    S.ev.pay = S.ev.pay && S.ev.pay.d === today ? S.ev.pay : { d: today, n: 0 };
+    let g = 0;
+    if (x.paid !== today && S.ev.pay.n < EV_PAY_DAY) {
+        x.paid = today;
+        S.ev.pay.n++;
+        g = addG(1);
+    }
+    sfx("done", { step: 0 });
+    const left = evItems().filter(i => !evDone(i)).length;
+    toast(left ? `${x.t}${g ? " · +1 glimmer" : ""}` : `The everyday, all ticked off${g ? " · +1 glimmer" : ""}`);
+    afterChange();
+}
+function evAdd(text) {
+    const t = str(text, 120).replace(/\s+/g, " ").trim();
+    if (!t)
+        return false;
+    S.ev.items = (S.ev.items || []).filter(x => !(S.del && S.del["ev:" + x.id] >= num(x.u)));
+    if (S.ev.items.length >= EV_MAX) {
+        toast(`The everyday holds ${EV_MAX} things at most.`);
+        return false;
+    }
+    const now = Date.now();
+    S.ev.items.push({ id: "e" + now.toString(36) + Math.random().toString(36).slice(2, 6), t, c: now, u: now, done: "", paid: "" });
+    afterChange();
+    return true;
+}
+function evRemove(x) {
+    const i = S.ev.items.indexOf(x);
+    if (i < 0)
+        return;
+    S.ev.items.splice(i, 1);
+    tomb("ev:" + x.id);
+    evEdit = null;
+    afterChange();
+    toast(`Removed from the everyday: ${x.t}`, { undo: () => {
+            x.u = Date.now();
+            delete S.del["ev:" + x.id];
+            S.ev.items.push(x);
+            afterChange();
+        } });
+}
+function renderEveryday() {
+    const pane = $("tab-tasks");
+    if (!pane || !$("evList"))
+        return;
+    const on = evTab === "ev", items = evItems(), n = items.filter(evDone).length;
+    pane.classList.toggle("ev", on);
+    $("evPane").hidden = !on;
+    $("tkToday").setAttribute("aria-selected", !on);
+    $("tkEv").setAttribute("aria-selected", on);
+    $("tkToday").tabIndex = on ? -1 : 0;
+    $("tkEv").tabIndex = on ? 0 : -1;
+    $("evCount").textContent = items.length ? `${n}/${items.length}` : "";
+    if (!on)
+        return;
+    const pay = S.ev && S.ev.pay && S.ev.pay.d === actDay() ? S.ev.pay.n : 0;
+    $("evSub").textContent = `Things you do every day. They untick themselves when the new day starts. Ticking one off: 1 glimmer, ${EV_PAY_DAY} a day at most${pay ? ` (${Math.min(pay, EV_PAY_DAY)} today)` : ""}.`;
+    const ul = $("evList");
+    ul.innerHTML = "";
+    if (!items.length)
+        ul.innerHTML = `<li class="empty">Nothing here yet. Add something you do every day below: water the plants, take a walk, a glass of water.</li>`;
+    for (const x of items) {
+        const li = document.createElement("li"), d = evDone(x);
+        li.className = `task evitem${d ? " evdone" : ""}`;
+        if (evEdit === x.id) {
+            li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="evETitle" value="${esc(x.t)}" maxlength="120" aria-label="Every day">
+        <span class="tedit-acts"><button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button></span>
+        <span class="tedit-more"><button class="btn danger" type="button" data-act="del">Remove</button></span></form>`;
+            const f = li.querySelector("form");
+            f.onsubmit = e => {
+                e.preventDefault();
+                const v = str($("evETitle").value, 120).replace(/\s+/g, " ").trim();
+                if (v) {
+                    x.t = v;
+                    x.u = Date.now();
+                }
+                evEdit = null;
+                afterChange();
+            };
+            f.querySelector('[data-act="cancel"]').onclick = () => {
+                evEdit = null;
+                renderEveryday();
+            };
+            f.querySelector('[data-act="del"]').onclick = () => evRemove(x);
+            f.onkeydown = e => {
+                if (e.key === "Escape") {
+                    e.stopPropagation();
+                    evEdit = null;
+                    renderEveryday();
+                }
+            };
+            setTimeout(() => {
+                const i = $("evETitle");
+                if (i) {
+                    i.focus();
+                    i.select();
+                }
+            }, 0);
+        }
+        else {
+            li.innerHTML = `<button class="check${d ? " on" : ""}" role="checkbox" aria-checked="${d}" aria-label="${esc(x.t)}">${d ? `<svg viewBox="0 0 7 6" width="14" height="12" shape-rendering="crispEdges" aria-hidden="true"><path d="M6 0h1v2H6zM5 2h1v1H5zM4 3h1v1H4zM3 4h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" fill="currentColor"/></svg>` : ""}</button>
+      <div style="min-width:0"><button class="tname" data-act="edit" title="Edit">${esc(x.t)}</button></div>
+      <div class="tact"><button class="mini" data-act="edit2" aria-label="Edit or remove ${esc(x.t)}" title="Edit or remove">⋯</button></div>`;
+            li.querySelector(".check").onclick = e => evTick(x.id, e.currentTarget);
+            li.querySelector('[data-act="edit"]').onclick = li.querySelector('[data-act="edit2"]').onclick = () => {
+                evEdit = x.id;
+                renderEveryday();
+            };
+        }
+        ul.appendChild(li);
+    }
+}
+/* the tab row: arrow keys move between the two tabs (the usual tablist keys) */
+(() => {
+    const t = $("tkToday"), e = $("tkEv"), f = $("evForm");
+    if (!t || !e)
+        return;
+    t.onclick = () => setEvTab("today");
+    e.onclick = () => setEvTab("ev");
+    for (const b of [t, e])
+        b.onkeydown = k => {
+            if (k.key === "ArrowLeft" || k.key === "ArrowRight" || k.key === "Home" || k.key === "End") {
+                k.preventDefault();
+                const to = k.key === "Home" ? "today" : k.key === "End" ? "ev" : evTab === "ev" ? "today" : "ev";
+                setEvTab(to);
+                $(to === "ev" ? "tkEv" : "tkToday").focus();
+            }
+        };
+    f.onsubmit = k => {
+        k.preventDefault();
+        if (evAdd($("evTitle").value))
+            $("evTitle").value = "";
+        $("evTitle").focus();
+    };
+})();
 
 </script>
 <script>/* js/ui/agenda.js */
