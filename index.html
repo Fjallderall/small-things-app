@@ -504,14 +504,17 @@ body.pixel.game .stage{border:0}
 .tk-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .tk-head h2{margin:0}
 .tktabs{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+@media (max-width:520px){.tktabs{gap:12px}.tktab{font-size:1.15em!important}}
 .tktab{font:inherit;font-family:var(--fh,inherit);font-size:1.5em;font-weight:800;margin:0;padding:0 0 2px;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted,#888);cursor:pointer;line-height:1.2}
 .tktab[aria-selected="true"]{color:inherit;border-bottom-color:var(--accent)}
 .tktab .count{font-size:.55em;margin-left:6px;vertical-align:middle}
-#tab-tasks.ev>:not(.tk-head):not(#evPane){display:none!important}
+#tab-tasks.ev>:not(.tk-head):not(#evPane):not(#buyPane){display:none!important}
 .evitem.evdone .tname{text-decoration:line-through;opacity:.6}
 .evitem .check.on{background:var(--leaf);color:var(--panel)}
-#evPane{display:flex;flex-direction:column;gap:10px}
-#evPane[hidden]{display:none}
+#evPane,#buyPane{display:flex;flex-direction:column;gap:10px}
+#evPane[hidden],#buyPane[hidden]{display:none}
+.buyacts[hidden],#buyClear[hidden]{display:none}
+#buyWa{text-decoration:none;color:inherit}
 .evecard{background:var(--sunk);color:var(--ink);border:2px solid #8a6fb0;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .evecard p{margin:0;font-size:15px;line-height:1.4}
 .evecard[hidden]{display:none}
@@ -806,11 +809,18 @@ body.editing #addForm{display:none}
     </div>
 
     <div class="pane" id="tab-tasks" role="tabpanel">
-      <div class="tk-head"><div class="tktabs" role="tablist" aria-label="Lists"><button type="button" role="tab" id="tkToday" class="tktab" aria-selected="true" aria-controls="taskList">Today</button><button type="button" role="tab" id="tkEv" class="tktab" aria-selected="false" aria-controls="evPane" tabindex="-1">The everyday<span class="count" id="evCount"></span></button></div><span class="sync" id="syncTxt"></span></div>
+      <div class="tk-head"><div class="tktabs" role="tablist" aria-label="Lists"><button type="button" role="tab" id="tkToday" class="tktab" aria-selected="true" aria-controls="taskList">Today</button><button type="button" role="tab" id="tkEv" class="tktab" aria-selected="false" aria-controls="evPane" tabindex="-1">The everyday<span class="count" id="evCount"></span></button><button type="button" role="tab" id="tkBuy" class="tktab" aria-selected="false" aria-controls="buyPane" tabindex="-1">Shopping<span class="count" id="buyCount"></span></button></div><span class="sync" id="syncTxt"></span></div>
       <div id="evPane" role="tabpanel" aria-labelledby="tkEv" hidden>
         <p class="sub" id="evSub"></p>
         <ul class="tasks" id="evList"></ul>
         <form class="addform bottom" id="evForm" autocomplete="off"><div class="row"><input type="text" id="evTitle" placeholder="Something you do every day…" aria-label="New thing for every day" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
+      </div>
+      <div id="buyPane" role="tabpanel" aria-labelledby="tkBuy" hidden>
+        <p class="sub">What to get next time you're out. Tick things off in the shop; crossed-off ones stay until you remove them.</p>
+        <ul class="tasks" id="buyList"></ul>
+        <div class="row buyacts"><button class="btn ghost" type="button" id="buyClear" hidden>Remove crossed-off</button></div>
+        <div class="row buyacts" id="buySendRow" hidden><button class="btn" type="button" id="buySend">Send to…</button><a class="btn" id="buyWa" href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a></div>
+        <form class="addform bottom" id="buyForm" autocomplete="off"><div class="row"><input type="text" id="buyTitle" placeholder="Something to buy…" aria-label="New thing to buy" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
       </div>
       <div class="evecard bkcard" id="bkCard" hidden>
         <p><strong>Back up today?</strong> Everything in one small file. Send it to yourself (a messenger, email) or keep it in your files.</p>
@@ -1115,7 +1125,7 @@ const POOL_INFO = {
     paint_medium: "While painting, about what it's painting with: medium | text (oils, acrylic, watercolour, gouache, pastel, chalk, pencil, marker, charcoal, ink, crayon, tempera)",
     paint_smell: "Now and then through the day: what the wagon smells like from the paint (medium | text, as paint_medium)",
     paint_carry: "A painting that wasn't finished goes on the next day ({item}: its title)",
-    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for Collections: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", visitorlook: "A visitor having a look round the wagon: thing (window lamp hearth rug wall sill floor) | what it says ({visitor}, {kind})", visitorcat: "A visitor and Midnightcat: V: the visitor / C: the cat ({cat}, {visitor}, {kind})", visitorsnail: "A visitor and the snail: V: the visitor / S: the snail ({snail}, {visitor})", visitorpossum: "A visitor and the possum: V: the visitor / P: the possum ({possum}, {visitor})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", festunwrap: "Mite, unwrapping the box a festival's thing comes in and putting it on the pedestal ({fest}: the festival, {thing}: what was inside)", plant_phivy: "Watering the hanging ivy in the nook", plant_phpearl: "Watering the string of pearls hanging in the nook", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", possum_catstyle: "The possum, a little sassy about Midnightcat's style of rituals (she sits still in the middle, green candles, a warlock patron; it paces and hops about)", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", anom_sheet: "Mite, after the small someone under a sheet (too many feet) shuffles off into the wall (anomaly)", anom_coat: "Mite, after the coat with nobody in it raises its hat (anomaly)", anom_lantern: "Mite, after the hooded one with no face holds its lantern up (anomaly, after dark)", anom_letters: "Letters from anomalies Mite has met: kind (double ghost tentacle moth figure hand drips door phone chair cloud eyes sheet coat lantern) | the letter (/ for a new paragraph, {pet})", glimpses_anom: "What the chalk circle shows of where an anomaly came from, once Mite has met it: kind | the glimpse", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", cat_circle_go: "Midnightcat, stepping out of the chalk circle so Mite can have a turn", cat_circle_wait: "Midnightcat, asking Mite to wait: she's busy in the chalk circle", circle_mite_wait: "Mite, waiting for its turn at the chalk circle while Midnightcat finishes", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the rug in the wagon ({rugcol}: its colour)", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the rug in the nook ({rugcol}: its colour)", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the archive's name plate ({plate}: what it says today)", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the rug in the archive ({rugcol}: its colour)", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})", serials: "Stories pen pals tell over several letters: Who | the letter (Who: a word from their name; the bits in order)", phone_key: "The phone: someone asking after a small brass key", key_thanks: "A letter from whoever had the brass key, after you gave it back (use / for a new paragraph)", kindreports: "The kind report anomaly: Who filed it | what it says | the Bureau memo explaining it ({pet})", look_puddle: "Mite, after mopping up the flowers' puddle", puddle_odd: "Mite, after mopping up a strange puddle (ink, honey, something glowing)", puddle_still: "Mite, mopping while the flowers still drip", archterms: "Archival terms Mite explains: Term | what it means", archive_digitise: "Archival work: digitising, scanning", archive_retention: "Archival work: the retention schedule", archive_deaccession: "Archival work: deaccessioning, weeding", archive_disaster: "Archival work: the disaster plan", archive_authority: "Archival work: authority records, names", archive_migrate: "Archival work: format migration, emulation", trinkets_spring: "Small things only found in spring: Name | note", trinkets_summer: "Small things only found in summer: Name | note", trinkets_autumn: "Small things only found in autumn: Name | note", trinkets_winter: "Small things only found in winter: Name | note", pantry_honey: "A special bake with wild honey from the pantry: same as bakes", pantry_spice: "A special bake with ember spice from the pantry: same as bakes", pantry_moonsugar: "A special bake with star sugar from the pantry: same as bakes", pantry_smoketea: "A special pot of smoked tea from the pantry: same as brews", pantry_starmint: "A special pot of star-mint tea from the pantry: same as brews", pantry_fogflower: "A special pot of fog-flower tea from the pantry: same as brews", treat_cat: "Mite, giving Midnightcat her catnip from the pantry", special_bake: "Mite, a moment after a special bake comes out ({item}: the ingredient, {thing}: what was baked)", special_brew: "Mite, a moment after a special pot of tea ({item}: the ingredient, {thing}: the tea)", treatback_cat: "Midnightcat, after her treat (she speaks in the second bubble)", treatback_possum: "The possum, after its treat ({possum} is its name)", treatback_snail: "The snail, after its treat ({snail} is its name)", treat_possum: "Mite, giving the possum a bin-day biscuit from the pantry ({possum} is its name)", treat_snail: "Mite, giving the snail a lettuce leaf from the pantry ({snail} is its name)"
+    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for Collections: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", visitorlook: "A visitor having a look round the wagon: thing (window lamp hearth rug wall sill floor) | what it says ({visitor}, {kind})", visitorcat: "A visitor and Midnightcat: V: the visitor / C: the cat ({cat}, {visitor}, {kind})", visitorsnail: "A visitor and the snail: V: the visitor / S: the snail ({snail}, {visitor})", visitorpossum: "A visitor and the possum: V: the visitor / P: the possum ({possum}, {visitor})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", festunwrap: "Mite, unwrapping the box a festival's thing comes in and putting it on the pedestal ({fest}: the festival, {thing}: what was inside)", plant_phivy: "Watering the hanging ivy in the nook", plant_phpearl: "Watering the string of pearls hanging in the nook", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", possum_catstyle: "The possum, a little sassy about Midnightcat's style of rituals (she sits still in the middle, green candles, a warlock patron; it paces and hops about)", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", anom_sheet: "Mite, after the small someone under a sheet (too many feet) shuffles off into the wall (anomaly)", anom_coat: "Mite, after the coat with nobody in it raises its hat (anomaly)", anom_lantern: "Mite, after the hooded one with no face holds its lantern up (anomaly, after dark)", anom_letters: "Letters from anomalies Mite has met: kind (double ghost tentacle moth figure hand drips door phone chair cloud eyes sheet coat lantern) | the letter (/ for a new paragraph, {pet})", glimpses_anom: "What the chalk circle shows of where an anomaly came from, once Mite has met it: kind | the glimpse", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", cat_circle_go: "Midnightcat, stepping out of the chalk circle so Mite can have a turn", cat_circle_wait: "Midnightcat, asking Mite to wait: she's busy in the chalk circle", circle_mite_wait: "Mite, waiting for its turn at the chalk circle while Midnightcat finishes", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the rug in the wagon ({rugcol}: its colour)", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the rug in the nook ({rugcol}: its colour)", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the archive's name plate ({plate}: what it says today)", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the rug in the archive ({rugcol}: its colour)", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})", serials: "Stories pen pals tell over several letters: Who | the letter (Who: a word from their name; the bits in order)", phone_key: "The phone: someone asking after a small brass key", key_thanks: "A letter from whoever had the brass key, after you gave it back (use / for a new paragraph)", kindreports: "The kind report anomaly: Who filed it | what it says | the Bureau memo explaining it ({pet})", look_puddle: "Mite, after mopping up the flowers' puddle", puddle_odd: "Mite, after mopping up a strange puddle (ink, honey, something glowing)", puddle_still: "Mite, mopping while the flowers still drip", archterms: "Archival terms Mite explains: Term | what it means", archive_digitise: "Archival work: digitising, scanning", archive_retention: "Archival work: the retention schedule", archive_deaccession: "Archival work: deaccessioning, weeding", archive_disaster: "Archival work: the disaster plan", archive_authority: "Archival work: authority records, names", archive_migrate: "Archival work: format migration, emulation", trinkets_spring: "Small things only found in spring: Name | note", trinkets_summer: "Small things only found in summer: Name | note", trinkets_autumn: "Small things only found in autumn: Name | note", trinkets_winter: "Small things only found in winter: Name | note", pantry_honey: "A special bake with wild honey from the pantry: same as bakes", pantry_spice: "A special bake with ember spice from the pantry: same as bakes", pantry_moonsugar: "A special bake with star sugar from the pantry: same as bakes", pantry_smoketea: "A special pot of smoked tea from the pantry: same as brews", pantry_starmint: "A special pot of star-mint tea from the pantry: same as brews", pantry_fogflower: "A special pot of fog-flower tea from the pantry: same as brews", treat_cat: "Mite, giving Midnightcat her catnip from the pantry", special_bake: "Mite, a moment after a special bake comes out ({item}: the ingredient, {thing}: what was baked)", special_brew: "Mite, a moment after a special pot of tea ({item}: the ingredient, {thing}: the tea)", treatback_cat: "Midnightcat, after her treat (she speaks in the second bubble)", treatback_possum: "The possum, after its treat ({possum} is its name)", treatback_snail: "The snail, after its treat ({snail} is its name)", treat_possum: "Mite, giving the possum a bin-day biscuit from the pantry ({possum} is its name)", treat_snail: "Mite, giving the snail a lettuce leaf from the pantry ({snail} is its name)", buy_clear: "Mite, when you clear the crossed-off things from the shopping list"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -2971,6 +2981,14 @@ const DEF = {
             "coat | A tailor's shop, long ago. A good coat made for someone who walked everywhere, and wore it for forty years. Afterwards the coat went on walking, out of habit and fondness.",
             "lantern | The last lamplighter in a city, going round with a pole and a lantern long after the lamps were all electric, just in case. Someone is still going round."
         ],
+        buy_clear: [
+            "All bought? I'll put the list back on its nail. It likes it there.",
+            "Crossed off and gone. The list feels lighter. So do I, a bit.",
+            "Did they have the good bread? Don't tell me if they didn't.",
+            "A shorter list. The best kind of list.",
+            "[strange] The list will write itself again by next week. Lists do that.",
+            "[rare] I checked: nothing on it was for me. I'm not hurt. I'm just noting it."
+        ],
         splurge_ice: [
             "An ice sculpture! A flower, petals all the way round. Very cool. Literally. Don't stand too close, it's melting.",
             "A flower carved out of ice. It'll never need watering. It'll need mopping, later. I'll enjoy it while it lasts. Which is today."
@@ -4547,7 +4565,10 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvo4yk74ryhaf", "mvo51bqtk3fpr",
     // group 20 (25-10-2026)
     "mvo69bxf179lv", "mvo6aao8zwwuf", "mvo6ej7zf07lg", "mvo6g2qmlioun", "mvo6hlwbti4l4", "mvo6kuzrtov4g", "mvo6ln39uiex2"
-, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un", "mvp8axa8idn9w", "mvpju1m9c0hfl", "mvpjo4ttghzky", "mvpjomx7zo6af", "mvqbkbk0lj3yu", "mvpk2otjj8pbe"];
+, "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un", "mvp8axa8idn9w", "mvpju1m9c0hfl", "mvpjo4ttghzky", "mvpjomx7zo6af", "mvqbkbk0lj3yu", "mvpk2otjj8pbe",
+    // shopping list (27-10-2026)
+    "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
+];
 
 </script>
 <script>/* js/core/state.js */
@@ -4558,7 +4579,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -4762,6 +4783,7 @@ function sanitizeState(raw) {
         const e = s.ev && typeof s.ev === "object" ? s.ev : {}, dk = v => dkey(v) ? v : "";
         o.ev = { items: arr(e.items, 60).map(x => ({ id: str(x && x.id, 30), t: str(x && x.t, 120).replace(/\s+/g, " ").trim(), c: num(x && x.c), u: num(x && x.u), done: dk(x && x.done), paid: dk(x && x.paid) })).filter(x => x.id && x.t), pay: { d: dk(e.pay && e.pay.d), n: clamp(num(e.pay && e.pay.n), 0, 3) } };
     }
+    o.buy = { items: arr(s.buy && s.buy.items, 80).map(x => ({ id: str(x && x.id, 30), t: str(x && x.t, 120).replace(/\s+/g, " ").trim(), c: num(x && x.c), u: num(x && x.u), done: x && x.done ? 1 : 0 })).filter(x => x.id && x.t) }; // the shopping list (shopping.js)
     o.sched = {}; // days you told Mite about in Talk: { day: { k: "off" | "work" | "" (taken back), at } } (speech.js, offline.js)
     for (const d of Object.keys(s.sched && typeof s.sched === "object" ? s.sched : {}).filter(d => dkey(d)).sort().slice(-400)) {
         const e = s.sched[d] || {};
@@ -5089,6 +5111,13 @@ function mergeStates(a, b) {
                 m.set(x.id, Object.assign({}, x));
         const pa = (a.ev && a.ev.pay) || { d: "", n: 0 }, pb = (b.ev && b.ev.pay) || { d: "", n: 0 };
         o.ev = { items: [...m.values()].filter(x => !(o.del && o.del["ev:" + x.id] >= num(x.u))).sort((x, y) => x.c - y.c).slice(-60), pay: pa.d === pb.d ? { d: pa.d, n: Math.max(num(pa.n), num(pb.n)) } : Object.assign({}, pa.d > pb.d ? pa : pb) };
+    }
+    { // the shopping list: united by id, the newest change wins (a removed one stays removed: S.del "buy:"+id)
+        const m = new Map();
+        for (const x of [...((a.buy && a.buy.items) || []), ...((b.buy && b.buy.items) || [])])
+            if (!m.has(x.id) || num(x.u) > num(m.get(x.id).u))
+                m.set(x.id, Object.assign({}, x));
+        o.buy = { items: [...m.values()].filter(x => !(o.del && o.del["buy:" + x.id] >= num(x.u))).sort((x, y) => x.c - y.c).slice(-80) };
     }
     { // the days you told Mite about: per day, whatever was said last (taking one back is said too)
         o.sched = {};
@@ -28256,10 +28285,10 @@ function renderTasks() {
  * day starts at Settings' "A new day starts at"). Each tick pays 1 glimmer, 3 a day at most; ticking the same thing
  * again after unticking it doesn't pay twice. Not tasks: no archive box, no xp, no streak.
  *   S.ev = { items: [{ id, t, c, u, done: day ticked ("" if not), paid: day it last paid }], pay: { d, n } }
- *   evTab           which tab is showing ("today" or "ev"); kept for the session
+ *   evTab           which tab is showing ("today", "ev" or "buy": the shopping list, shopping.js); kept for the session
  *   renderEveryday() the tab row and the list (called from renderTasks)
  */
-const EV_MAX = 40, EV_PAY_DAY = 3;
+const EV_MAX = 40, EV_PAY_DAY = 3, EV_TABS = [["tkToday", "today"], ["tkEv", "ev"], ["tkBuy", "buy"]];
 let evTab = "today", evEdit = null;
 function evItems() {
     return ((S.ev && S.ev.items) || []).filter(x => !(S.del && S.del["ev:" + x.id] >= num(x.u))).sort((a, b) => a.c - b.c);
@@ -28268,8 +28297,10 @@ function evDone(x) {
     return x.done === actDay();
 }
 function setEvTab(k) {
-    evTab = k === "ev" ? "ev" : "today";
+    evTab = ["ev", "buy"].includes(k) ? k : "today";
     evEdit = null;
+    if (typeof buyEdit !== "undefined")
+        buyEdit = null;
     renderEveryday();
 }
 function evTick(id, el) {
@@ -28330,13 +28361,20 @@ function renderEveryday() {
     if (!pane || !$("evList"))
         return;
     const on = evTab === "ev", items = evItems(), n = items.filter(evDone).length;
-    pane.classList.toggle("ev", on);
+    pane.classList.toggle("ev", evTab !== "today");
     $("evPane").hidden = !on;
-    $("tkToday").setAttribute("aria-selected", !on);
-    $("tkEv").setAttribute("aria-selected", on);
-    $("tkToday").tabIndex = on ? -1 : 0;
-    $("tkEv").tabIndex = on ? 0 : -1;
+    if ($("buyPane"))
+        $("buyPane").hidden = evTab !== "buy";
+    for (const [id, k] of EV_TABS) {
+        const b = $(id);
+        if (b) {
+            b.setAttribute("aria-selected", evTab === k);
+            b.tabIndex = evTab === k ? 0 : -1;
+        }
+    }
     $("evCount").textContent = items.length ? `${n}/${items.length}` : "";
+    if (typeof renderShopping === "function")
+        renderShopping();
     if (!on)
         return;
     const pay = S.ev && S.ev.pay && S.ev.pay.d === actDay() ? S.ev.pay.n : 0;
@@ -28396,28 +28434,212 @@ function renderEveryday() {
         ul.appendChild(li);
     }
 }
-/* the tab row: arrow keys move between the two tabs (the usual tablist keys) */
+/* the tab row: arrow keys move between the tabs (the usual tablist keys) */
 (() => {
-    const t = $("tkToday"), e = $("tkEv"), f = $("evForm");
-    if (!t || !e)
+    const f = $("evForm");
+    if (!$("tkToday") || !$("tkEv"))
         return;
-    t.onclick = () => setEvTab("today");
-    e.onclick = () => setEvTab("ev");
-    for (const b of [t, e])
-        b.onkeydown = k => {
-            if (k.key === "ArrowLeft" || k.key === "ArrowRight" || k.key === "Home" || k.key === "End") {
-                k.preventDefault();
-                const to = k.key === "Home" ? "today" : k.key === "End" ? "ev" : evTab === "ev" ? "today" : "ev";
-                setEvTab(to);
-                $(to === "ev" ? "tkEv" : "tkToday").focus();
-            }
+    const tabs = EV_TABS.filter(([id]) => $(id));
+    for (const [id, k] of tabs) {
+        const b = $(id);
+        b.onclick = () => setEvTab(k);
+        b.onkeydown = e => {
+            if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key))
+                return;
+            e.preventDefault();
+            const i = tabs.findIndex(t => t[1] === evTab), n = tabs.length;
+            const j = e.key === "Home" ? 0 : e.key === "End" ? n - 1 : (i + (e.key === "ArrowRight" ? 1 : n - 1)) % n;
+            setEvTab(tabs[j][1]);
+            $(tabs[j][0]).focus();
         };
+    }
     f.onsubmit = k => {
         k.preventDefault();
         if (evAdd($("evTitle").value))
             $("evTitle").value = "";
         $("evTitle").focus();
     };
+})();
+
+</script>
+<script>/* js/ui/shopping.js */
+"use strict";
+/*
+ * shopping.js - The shopping list: a third tab next to Today and The everyday at the top of the Tasks pane (owner,
+ * design agreed 27-10-2026; jots mvofkviashe6c, mvp6huo5cu26b, mvp6iyqqpo2ps). Just text per item; no glimmers,
+ * no xp, no archive box. Crossed-off items stay, struck through, until "Remove crossed-off" (with undo); then Mite
+ * sometimes says a buy_clear line. "Send to…" (the share sheet: Android plugin, then navigator.share, else WhatsApp) and
+ * "WhatsApp" (a wa.me link) send what's still to buy as plain text (owner, 27-10-2026).
+ *   S.buy = { items: [{ id, t, c, u, done: 1 if crossed off }] }   removed: tombstone S.del["buy:"+id]
+ *   renderShopping() the list and the tab's count (called from renderEveryday)
+ * The tab row itself (evTab "today" | "ev" | "buy") lives in everyday.js.
+ */
+const BUY_MAX = 60;
+let buyEdit = null;
+function buyItems() {
+    return ((S.buy && S.buy.items) || []).filter(x => !(S.del && S.del["buy:" + x.id] >= num(x.u))).sort((a, b) => a.c - b.c);
+}
+function buyTick(id) {
+    const x = buyItems().find(i => i.id === id);
+    if (!x)
+        return;
+    x.u = Date.now();
+    x.done = x.done ? 0 : 1;
+    if (x.done)
+        sfx("done", { step: 0 });
+    afterChange();
+}
+function buyAdd(text) {
+    const t = str(text, 120).replace(/\s+/g, " ").trim();
+    if (!t)
+        return false;
+    S.buy.items = buyItems();
+    if (S.buy.items.length >= BUY_MAX) {
+        toast(`The shopping list holds ${BUY_MAX} things at most.`);
+        return false;
+    }
+    const now = Date.now();
+    S.buy.items.push({ id: "b" + now.toString(36) + Math.random().toString(36).slice(2, 6), t, c: now, u: now, done: 0 });
+    afterChange();
+    return true;
+}
+function buyBack(list) { // undo: the removed ones come back where they were
+    const now = Date.now();
+    for (const x of list) {
+        x.u = now;
+        delete S.del["buy:" + x.id];
+        if (!S.buy.items.includes(x))
+            S.buy.items.push(x);
+    }
+    afterChange();
+}
+function buyRemove(x) {
+    const i = S.buy.items.indexOf(x);
+    if (i < 0)
+        return;
+    S.buy.items.splice(i, 1);
+    tomb("buy:" + x.id);
+    buyEdit = null;
+    afterChange();
+    toast(`Removed from the shopping list: ${x.t}`, { undo: () => buyBack([x]) });
+}
+function buyClear() {
+    const gone = buyItems().filter(x => x.done);
+    if (!gone.length)
+        return;
+    S.buy.items = S.buy.items.filter(x => !gone.includes(x));
+    for (const x of gone)
+        tomb("buy:" + x.id);
+    buyEdit = null;
+    afterChange();
+    toast(gone.length === 1 ? `Removed: ${gone[0].t}` : `Removed ${gone.length} crossed-off things`, { undo: () => buyBack(gone) });
+    if (Math.random() < .5)
+        setTimeout(() => say("buy_clear"), 600);
+}
+function buyText() { // what's still to buy, as a message
+    const left = buyItems().filter(x => !x.done);
+    return left.length ? "Shopping list\n" + left.map(x => "- " + x.t).join("\n") : "";
+}
+function buyWaUrl() {
+    return "https://wa.me/?text=" + encodeURIComponent(buyText());
+}
+async function buySend() {
+    const text = buyText();
+    if (!text)
+        return;
+    const sh = window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.Share;
+    try {
+        if (sh && sh.share)
+            return void await sh.share({ title: "Shopping list", text });
+        if (navigator.share)
+            return void await navigator.share({ title: "Shopping list", text });
+    }
+    catch (e) {
+        if (/cancel|abort/i.test(String(e && (e.name + " " + e.message))))
+            return; // closed the share sheet: nothing happened
+    }
+    const a = $("buyWa");
+    if (a)
+        a.click();
+}
+function renderShopping() {
+    if (!$("buyList"))
+        return;
+    const items = buyItems(), left = items.filter(x => !x.done).length, crossed = items.length - left;
+    $("buyCount").textContent = left ? String(left) : "";
+    if (evTab !== "buy")
+        return;
+    const c = $("buyClear");
+    c.hidden = !crossed;
+    c.textContent = `Remove crossed-off (${crossed})`;
+    $("buySendRow").hidden = !left;
+    $("buyWa").href = buyWaUrl();
+    const ul = $("buyList");
+    ul.innerHTML = "";
+    if (!items.length)
+        ul.innerHTML = `<li class="empty">Nothing to buy yet. Add things below; tick them off in the shop.</li>`;
+    for (const x of items) {
+        const li = document.createElement("li"), d = !!x.done;
+        li.className = `task evitem${d ? " evdone" : ""}`;
+        if (buyEdit === x.id) {
+            li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="buyETitle" value="${esc(x.t)}" maxlength="120" aria-label="To buy">
+        <span class="tedit-acts"><button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button></span>
+        <span class="tedit-more"><button class="btn danger" type="button" data-act="del">Remove</button></span></form>`;
+            const f = li.querySelector("form"), close = () => {
+                buyEdit = null;
+                renderShopping();
+            };
+            f.onsubmit = e => {
+                e.preventDefault();
+                const v = str($("buyETitle").value, 120).replace(/\s+/g, " ").trim();
+                if (v) {
+                    x.t = v;
+                    x.u = Date.now();
+                }
+                buyEdit = null;
+                afterChange();
+            };
+            f.querySelector('[data-act="cancel"]').onclick = close;
+            f.querySelector('[data-act="del"]').onclick = () => buyRemove(x);
+            f.onkeydown = e => {
+                if (e.key === "Escape") {
+                    e.stopPropagation();
+                    close();
+                }
+            };
+            setTimeout(() => {
+                const i = $("buyETitle");
+                if (i) {
+                    i.focus();
+                    i.select();
+                }
+            }, 0);
+        }
+        else {
+            li.innerHTML = `<button class="check${d ? " on" : ""}" role="checkbox" aria-checked="${d}" aria-label="${esc(x.t)}">${d ? `<svg viewBox="0 0 7 6" width="14" height="12" shape-rendering="crispEdges" aria-hidden="true"><path d="M6 0h1v2H6zM5 2h1v1H5zM4 3h1v1H4zM3 4h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" fill="currentColor"/></svg>` : ""}</button>
+      <div style="min-width:0"><button class="tname" data-act="edit" title="Edit">${esc(x.t)}</button></div>
+      <div class="tact"><button class="mini" data-act="edit2" aria-label="Edit or remove ${esc(x.t)}" title="Edit or remove">⋯</button></div>`;
+            li.querySelector(".check").onclick = () => buyTick(x.id);
+            li.querySelector('[data-act="edit"]').onclick = li.querySelector('[data-act="edit2"]').onclick = () => {
+                buyEdit = x.id;
+                renderShopping();
+            };
+        }
+        ul.appendChild(li);
+    }
+}
+(() => {
+    const f = $("buyForm"), c = $("buyClear");
+    if (!f)
+        return;
+    f.onsubmit = k => {
+        k.preventDefault();
+        if (buyAdd($("buyTitle").value))
+            $("buyTitle").value = "";
+        $("buyTitle").focus();
+    };
+    c.onclick = buyClear;
+    $("buySend").onclick = buySend;
 })();
 
 </script>
