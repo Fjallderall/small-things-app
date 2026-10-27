@@ -374,6 +374,8 @@ body.traying .nextup{display:none}
 /* ---------- UX pass ---------- */
 .subtabs{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px 0}
 .subtabs[hidden]{display:none}
+.gamectl .pauseg{width:42px;height:42px;border-radius:50%;background:rgba(14,18,14,.5);color:#f3f0e2;display:grid;place-items:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.gamectl .pauseg[hidden]{display:none}
 .gamectl .wide{width:auto;border-radius:999px;padding:0 13px;font-size:13.5px;font-weight:700;gap:5px;display:flex}
 .nu-skip{flex:none;border:1px solid #cdd3bf;background:transparent;border-radius:999px;padding:4px 10px;font-size:12.5px;color:#5f6857}
 .nextup.rest .check,.nextup.rest .nu-skip{display:none}
@@ -779,7 +781,7 @@ body.editing #addForm{display:none}
       <button type="button" class="scopeview brewview" id="flowerView" hidden aria-label="Close"><canvas id="flowerCv" width="56" height="56"></canvas><span id="flowerCap"></span></button>
       <button type="button" class="scopeview brewview" id="brewView" hidden aria-label="Close"><canvas id="brewCv" width="150" height="150"></canvas><span id="brewCap"></span></button>
       <button type="button" class="scopeview" id="scopeView" hidden aria-label="Close the telescope view"><canvas id="scopeCv" width="150" height="150"></canvas><span id="scopeCap"></span></button>
-      <div class="gamectl"><button id="sndG" aria-label="Sound off" title="Sound">♪</button><button id="fsBtn" aria-label="Fullscreen" title="Fullscreen">⛶</button></div>
+      <div class="gamectl"><span id="pauseG" class="pauseg" hidden role="img" aria-label="Paused while a menu is open" title="Paused while a menu is open"><svg viewBox="0 0 5 5" width="15" height="15" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 0h1v5H1zM3 0h1v5H3z" fill="currentColor"/></svg></span><button id="sndG" aria-label="Sound off" title="Sound">♪</button><button id="fsBtn" aria-label="Fullscreen" title="Fullscreen">⛶</button></div>
       <div class="kbd" id="kbd"><button id="kPat">Pat</button><button id="kGold" hidden>Catch the firefly</button><button id="kAnom" hidden>Deal with it</button><button id="kSweep" hidden>Sweep</button><button data-k="book" hidden>Read a book</button><button data-k="brew" hidden>Make tea</button><button data-k="oven" hidden>Bake something</button><button data-k="scope" hidden>Look through the telescope</button><button data-k="jar" hidden>Visit the fireflies</button><button data-k="hearth" hidden>Sit by the fire</button><button data-k="calendar">Check the calendar</button><button data-k="capsule" hidden>Time capsules</button></div>
     </div>
   </section>
@@ -27253,6 +27255,38 @@ function drawMess(dk, room) {
  * bubbles and side panel. Also Mite's remarks out of the blue and invented words.
  */
 let last = performance.now(), uiAcc = 0, talkAt = performance.now() + rnd(25e3, 45e3);
+/* while a menu, card or close-up covers the scene (talkHeld, speech.js) or Settings is open, nothing new starts and
+   what's under way waits: the timers for the next anomaly, golden firefly, drifter, remark, chat, look, hunt, summoning,
+   visit and post round move on with the clock, and a running anomaly's or firefly's time stands still (owner's jot,
+   26-10-2026: she caught only the tail of an anomaly while adding a task). A pause sign shows next to the music note */
+let eventsHeldWas = false;
+function eventsHeld() {
+    return !document.hidden && (talkHeld() || document.body.classList.contains("desking"));
+}
+function eventsHoldTick(dt) {
+    const h = eventsHeld();
+    if (h !== eventsHeldWas) {
+        eventsHeldWas = h;
+        const g = $("pauseG");
+        if (g)
+            g.hidden = !h;
+    }
+    if (!h)
+        return false;
+    const ms = dt * 1000;
+    nextAnom += ms;
+    nextGold += ms;
+    nextDrift += ms;
+    talkAt += ms;
+    animalTalkAt += ms;
+    obsAt += ms;
+    catHuntNext += ms;
+    possumSummonAt += ms;
+    snailCircleAt += ms;
+    snailPostAt += ms;
+    guestNext += ms;
+    return true;
+}
 /* one frame (about 30 a second): time, Mite, the scene, bubbles, the side panel now and then */
 const IDLE_AFTER = 120e3, IDLE_MS = 1000 / 15; // nothing touched for two minutes: 15 frames a second (easier on a phone's battery), back to 30 at the next tap
 const FRAME_MS = 1000 / 31; // the scene runs at about 30 frames a second (plenty for pixel art, and half the work on a phone); swiping gets every frame
@@ -27264,6 +27298,7 @@ function frame(now) {
     const dt = Math.min(.1, (now - last) / 1000);
     last = now;
     speechHoldTick(now, dt); // (a menu or card open: the lines on screen wait for it, speech.js)
+    const held = eventsHoldTick(dt); // (and so do the events: anomalies, the golden firefly, drifters, ...)
     // economy
     decayMom(dt * 1000);
     // pet logic
@@ -27317,7 +27352,7 @@ function frame(now) {
     }
     dreamOutTick(dt);
     driftTick(dt, now);
-    if (anom) {
+    if (anom && !held) {
         anom.t += dt;
         anomTick(anom, dt, now);
         if (anom && anom.t > (anom.life || 24)) {
@@ -27447,7 +27482,8 @@ function frame(now) {
             }
         }
         if (gold) {
-            gold.t += dt;
+            if (!held)
+                gold.t += dt;
             gold.x += Math.sin(gold.t * 1.4 + gold.seed) * R * 1.2 * dt;
             gold.y += Math.cos(gold.t * 1.9 + gold.seed) * R * .8 * dt;
             gold.x = clamp(gold.x, R, W - R);
