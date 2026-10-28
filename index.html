@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 27-10-2026 -->
+<!-- Small Things, shared build of 28-10-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -514,7 +514,6 @@ body.pixel.game .stage{border:0}
 #evPane,#buyPane{display:flex;flex-direction:column;gap:10px}
 #evPane[hidden],#buyPane[hidden]{display:none}
 .buyacts[hidden],#buyClear[hidden]{display:none}
-#buyWa{text-decoration:none;color:inherit}
 .evecard{background:var(--sunk);color:var(--ink);border:2px solid #8a6fb0;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
 .evecard p{margin:0;font-size:15px;line-height:1.4}
 .evecard[hidden]{display:none}
@@ -819,7 +818,7 @@ body.editing #addForm{display:none}
         <p class="sub">What to get next time you're out. Tick things off in the shop; crossed-off ones stay until you remove them.</p>
         <ul class="tasks" id="buyList"></ul>
         <div class="row buyacts"><button class="btn ghost" type="button" id="buyClear" hidden>Remove crossed-off</button></div>
-        <div class="row buyacts" id="buySendRow" hidden><button class="btn" type="button" id="buySend">Send to…</button><a class="btn" id="buyWa" href="#" target="_blank" rel="noopener noreferrer">WhatsApp</a></div>
+        <div class="row buyacts" id="buySendRow" hidden><button class="btn" type="button" id="buySend">Share list</button></div>
         <form class="addform bottom" id="buyForm" autocomplete="off"><div class="row"><input type="text" id="buyTitle" placeholder="Something to buy…" aria-label="New thing to buy" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
       </div>
       <div class="evecard bkcard" id="bkCard" hidden>
@@ -28468,8 +28467,9 @@ function renderEveryday() {
  * shopping.js - The shopping list: a third tab next to Today and The everyday at the top of the Tasks pane (owner,
  * design agreed 27-10-2026; jots mvofkviashe6c, mvp6huo5cu26b, mvp6iyqqpo2ps). Just text per item; no glimmers,
  * no xp, no archive box. Crossed-off items stay, struck through, until "Remove crossed-off" (with undo); then Mite
- * sometimes says a buy_clear line. "Send to…" (the share sheet: Android plugin, then navigator.share, else WhatsApp) and
- * "WhatsApp" (a wa.me link) send what's still to buy as plain text (owner, 27-10-2026).
+ * sometimes says a buy_clear line. "Share list" sends what's still to buy as plain text to any app the share sheet
+ * offers (Android Share plugin, then navigator.share); with no share sheet it's copied to paste anywhere (owner,
+ * 28-10-2026: any app, not only WhatsApp).
  *   S.buy = { items: [{ id, t, c, u, done: 1 if crossed off }] }   removed: tombstone S.del["buy:"+id]
  *   renderShopping() the list and the tab's count (called from renderEveryday)
  * The tab row itself (evTab "today" | "ev" | "buy") lives in everyday.js.
@@ -28540,9 +28540,6 @@ function buyText() { // what's still to buy, as a message
     const left = buyItems().filter(x => !x.done);
     return left.length ? "Shopping list\n" + left.map(x => "- " + x.t).join("\n") : "";
 }
-function buyWaUrl() {
-    return "https://wa.me/?text=" + encodeURIComponent(buyText());
-}
 async function buySend() {
     const text = buyText();
     if (!text)
@@ -28558,9 +28555,13 @@ async function buySend() {
         if (/cancel|abort/i.test(String(e && (e.name + " " + e.message))))
             return; // closed the share sheet: nothing happened
     }
-    const a = $("buyWa");
-    if (a)
-        a.click();
+    try { // no share sheet (a computer, or blocked here): copy it instead
+        await navigator.clipboard.writeText(text);
+        toast("Shopping list copied: paste it into any app");
+    }
+    catch (e) {
+        toast("Couldn't share or copy the list here");
+    }
 }
 function renderShopping() {
     if (!$("buyList"))
@@ -28573,7 +28574,6 @@ function renderShopping() {
     c.hidden = !crossed;
     c.textContent = `Remove crossed-off (${crossed})`;
     $("buySendRow").hidden = !left;
-    $("buyWa").href = buyWaUrl();
     const ul = $("buyList");
     ul.innerHTML = "";
     if (!items.length)
