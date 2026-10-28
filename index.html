@@ -504,7 +504,7 @@ body.pixel.game .stage{border:0}
 .tk-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .tk-head h2{margin:0}
 .tktabs{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
-@media (max-width:520px){.tktabs{gap:12px}.tktab{font-size:1.15em!important}}
+@media (max-width:520px){.tktabs{gap:12px}.tktab{font-size:1.15em!important}.tk-head{flex-direction:column;align-items:stretch;gap:2px}.tk-head .sync{align-self:flex-end}} /* (on a phone "Saved" goes under the tabs, so the three stay on one line) */
 .tktab{font:inherit;font-family:var(--fh,inherit);font-size:1.5em;font-weight:800;margin:0;padding:0 0 2px;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted,#888);cursor:pointer;line-height:1.2}
 .tktab[aria-selected="true"]{color:inherit;border-bottom-color:var(--accent)}
 .tktab .count{font-size:.55em;margin-left:6px;vertical-align:middle}
@@ -812,7 +812,7 @@ body.editing #addForm{display:none}
     </div>
 
     <div class="pane" id="tab-tasks" role="tabpanel">
-      <div class="tk-head"><div class="tktabs" role="tablist" aria-label="Lists"><button type="button" role="tab" id="tkToday" class="tktab" aria-selected="true" aria-controls="taskList">Today</button><button type="button" role="tab" id="tkEv" class="tktab" aria-selected="false" aria-controls="evPane" tabindex="-1">The everyday<span class="count" id="evCount"></span></button><button type="button" role="tab" id="tkBuy" class="tktab" aria-selected="false" aria-controls="buyPane" tabindex="-1">Shopping<span class="count" id="buyCount"></span></button></div><span class="sync" id="syncTxt"></span></div>
+      <div class="tk-head"><div class="tktabs" role="tablist" aria-label="Lists"><button type="button" role="tab" id="tkToday" class="tktab" aria-selected="true" aria-controls="taskList">Today</button><button type="button" role="tab" id="tkEv" class="tktab" aria-selected="false" aria-controls="evPane" tabindex="-1">Everyday<span class="count" id="evCount"></span></button><button type="button" role="tab" id="tkBuy" class="tktab" aria-selected="false" aria-controls="buyPane" tabindex="-1">Shopping<span class="count" id="buyCount"></span></button></div><span class="sync" id="syncTxt"></span></div>
       <div id="evPane" role="tabpanel" aria-labelledby="tkEv" hidden>
         <p class="sub" id="evSub"></p>
         <ul class="tasks" id="evList"></ul>
@@ -28654,7 +28654,7 @@ function evTick(id, el) {
     }
     sfx("done", { step: 0 });
     const left = evItems().filter(i => !evDone(i)).length;
-    toast(left ? `${x.t}${g ? " · +1 glimmer" : ""}` : `The everyday, all ticked off${g ? " · +1 glimmer" : ""}`);
+    toast(left ? `${x.t}${g ? " · +1 glimmer" : ""}` : `Everyday, all ticked off${g ? " · +1 glimmer" : ""}`);
     afterChange();
 }
 function evAdd(text) {
@@ -28663,7 +28663,7 @@ function evAdd(text) {
         return false;
     S.ev.items = (S.ev.items || []).filter(x => !(S.del && S.del["ev:" + x.id] >= num(x.u)));
     if (S.ev.items.length >= EV_MAX) {
-        toast(`The everyday holds ${EV_MAX} things at most.`);
+        toast(`Everyday holds ${EV_MAX} things at most.`);
         return false;
     }
     const now = Date.now();
@@ -28679,7 +28679,7 @@ function evRemove(x) {
     tomb("ev:" + x.id);
     evEdit = null;
     afterChange();
-    toast(`Removed from the everyday: ${x.t}`, { undo: () => {
+    toast(`Removed from Everyday: ${x.t}`, { undo: () => {
             x.u = Date.now();
             delete S.del["ev:" + x.id];
             S.ev.items.push(x);
