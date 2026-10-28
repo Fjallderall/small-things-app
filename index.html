@@ -4698,6 +4698,7 @@ const dkey = v => {
     return /^\d{4}-\d{2}-\d{2}$/.test(x) ? x : "";
 };
 const arr = (a, max) => Array.isArray(a) ? a.slice(0, max).filter(x => x && typeof x === "object") : [];
+const BURROW_AT = 1793145600000; // 28-10-2026 0000 UTC: games begun from then on start in a burrow; the wagon comes by letter (post.js)
 const SHOP5_AT = 1793016000000; // 26-10-2026 1200 UTC: from then on the Tiffany lamp and the hanging plants are bought in the shop
 const numMap = o => {
     const r = {};
@@ -5790,12 +5791,19 @@ function pool(k) {
 function homeKind() {
     return S && S.settings && S.settings.home === "burrow" ? "burrow" : "wagon";
 }
+/* {wagon} / {Wagon} in a text always says wagon, also in the burrow (the wheelwright's letter: post.js) */
 function homeTxt(t) {
-    if (homeKind() !== "burrow" || typeof t !== "string")
+    if (typeof t !== "string")
         return t;
-    return t.replace(/a small travelling wagon that is always parked somewhere near \{you\}\. Sometimes it rolls on to somewhere new; mostly it stays put\./g, "a burrow under {you}'s desk.")
+    if (homeKind() !== "burrow")
+        return t.indexOf("{") < 0 ? t : t.replace(/\{([wW])agon(s?)\}/g, "$1agon$2");
+    return t.replace(/\{([wW])agon(s?)\}/g, "\u0001$1$2").replace(/a small travelling wagon that is always parked somewhere near \{you\}\. Sometimes it rolls on to somewhere new; mostly it stays put\./g, "a burrow under {you}'s desk.")
         .replace(/a small travelling wagon that is always parked somewhere near ([^.]+)\. Sometimes it rolls on to somewhere new; mostly it stays put\./g, "a burrow under $1's desk.")
-        .replace(/the wagon wall/g, "the hill").replace(/wagon roof/g, "burrow ceiling").replace(/under the wagon floor/g, "at the bottom of the burrow").replace(/\bwagons\b/g, "burrows").replace(/\bwagon\b/g, "burrow").replace(/\bWagon\b/g, "Burrow");
+        .replace(/the wagon wall/g, "the hill").replace(/wagon roof/g, "burrow ceiling").replace(/under the wagon floor/g, "at the bottom of the burrow").replace(/\bwagons\b/g, "burrows").replace(/\bwagon\b/g, "burrow").replace(/\bWagon\b/g, "Burrow").replace(/\u0001([wW])(s?)/g, "$1agon$2");
+}
+/* a game that began in the burrow (BURROW_AT, state.js) and hasn't had the wheelwright's letter yet: no Home setting */
+function burrowLocked() {
+    return homeKind() === "burrow" && !num(S.flags.homeOk) && num(S.created) >= BURROW_AT;
 }
 function applyHomeLabels() {
     const b = homeKind() === "burrow";
@@ -5803,6 +5811,14 @@ function applyHomeLabels() {
     if (h)
         h.textContent = b ? "The burrow" : "The wagon";
     $("scene").setAttribute("aria-label", b ? "Your mossling in its burrow" : "Your mossling in its wagon");
+    for (const e of [document.querySelector("#tab-grow h2 + .sub"), $("deskHome")]) { // (static words in the page)
+        if (!e)
+            continue;
+        if (!e.dataset.orig)
+            e.dataset.orig = e.firstChild && e.firstChild.nodeType === 3 ? e.firstChild.nodeValue : "";
+        if (e.dataset.orig && e.firstChild && e.firstChild.nodeType === 3)
+            e.firstChild.nodeValue = homeTxt(e.dataset.orig);
+    }
     if (typeof renderAll === "function" && S)
         try {
             showPane(curTab);
@@ -7713,6 +7729,7 @@ function checkClearance(rec) {
  * notes.js - The notebook (note), short messages at the bottom (toast), achievements.
  */
 function incNote(text) {
+    text = homeTxt(text); // (kept as it was: an incident in the burrow stays in the burrow)
     note(text);
     (S.inc = S.inc || []).unshift({ at: Date.now(), text });
     if (S.inc.length > 100)
@@ -21890,12 +21907,55 @@ function yourLetterCard(delay) {
 function showYourLetter(l) {
     if (l.card) // strange mail: a card for the Deck (cards.js)
         return showDeckCard(l);
+    if (l.from === WHEELWRIGHT) { // the wagon, offered
+        const b = homeKind() === "burrow", desk = hasDesk();
+        openRitual("A letter from the wheelwright", b ? "About a {wagon}. It's for you and me both." : "The letter that brought the {wagon}.", `<div class="letter">${esc(homeTxt(l.text)).replace(/\n/g, "<br>")}</div>${b ? `<p class="ritmeta">Not yet is fine: Settings, under Preferences, has a Home setting now, whenever you're ready.</p>` : ""}`,
+            b ? [["Move into the {wagon}", "primary", moveToWagon], ["Not yet", "ghost", () => {
+                closeRitual();
+                setTimeout(() => speak(choice(["Not yet, then. The burrow is cosy. The {wagon} will keep.", "The burrow it is, for now. I'll keep the letter."])), 500);
+            }]] : [[desk ? "Put it back in the rack" : "Close", "primary", closeRitual]]);
+        sfx("card");
+        return 3;
+    }
     const first = l.text === WELCOME_LETTER, desk = hasDesk(), c = S.give && S.give.cur;
     const ask = l.give === "ask" && c && c.from === l.from && !c.gone ? ` The jar on the desk is for ${c.name} now.` : "";
     openRitual(l.give ? `A letter from ${l.from}` : first ? "A letter, for you" : "Another letter from the world", l.give ? `To you and me both.${ask}` : first ? `It came when we got here. It's addressed to you, not me.` : `It came in the post. For you again.`,
         `<div class="letter">${esc(homeTxt(l.text)).replace(/\n/g, "<br>")}</div>`, [[desk ? "Put it back in the rack" : "Keep it (it goes in the rack once there's a desk)", "primary", closeRitual]]);
     sfx("card");
     return 3;
+}
+/* The burrow start (group 24): a game begun in the burrow (BURROW_AT) gets a letter from a wheelwright once it's
+   five days old and fifteen tasks are done: a wagon, if you'd like it. Move in from the letter, or later in Settings
+   (the Home setting shows from then on, both ways). {wagon} keeps the word in the burrow (homeTxt) */
+const WHEELWRIGHT = "the wheelwright at the crossroads", WAGON_DAYS = 5, WAGON_TASKS = 15;
+const WAGON_LETTER = "Dear Mite, and dear you,\n\nI build small {wagons}, for people who carry their home about with them. One of mine came back to the yard this week: a round window, a little stove with a crooked pipe, room for a moss patch and a good deal of tea. Its last owner went to sea, and it wants someone who'll keep it warm.\n\nWord gets about. Word says you keep a tidy burrow and finish what you start. If you'd like the {wagon}, it's yours. It can stand right where the burrow is, and it only rolls on when you want it to.\n\nNo hurry. A {wagon} is patient. Say yes whenever you like, or don't, and I'll keep it oiled either way.\n\nWith respect,\nthe wheelwright at the crossroads";
+function wagonOfferTick(t) {
+    if (homeKind() !== "burrow" || num(S.flags.homeOk) || num(S.created) < BURROW_AT || t - num(S.created) < WAGON_DAYS * 864e5 || doneCount() < WAGON_TASKS)
+        return false;
+    S.flags.homeOk = 1;
+    S.post.inbox.push({ from: WHEELWRIGHT, text: WAGON_LETTER, at: t, read: 0, you: 1 });
+    corrRegister("in", WHEELWRIGHT, WAGON_LETTER, t, true);
+    if (S.post.inbox.length > 40)
+        S.post.inbox.splice(0, S.post.inbox.length - 40);
+    note("A letter came from a wheelwright. It's about a {wagon}.");
+    speak(hasDesk() ? "A letter came, for both of us. From a wheelwright. It's about a {wagon}! It's in the rack in the nook." : "A letter came, for both of us. From a wheelwright. It's about a {wagon}!", { ms: 6000 });
+    if (!hasDesk())
+        yourLetterCard(9000);
+    saveSoon();
+    renderContent();
+    return true;
+}
+function moveToWagon() {
+    closeRitual();
+    S.settings.home = "wagon";
+    S.settingsAt = Date.now();
+    S.flags.homeOk = 1;
+    applyHomeLabels();
+    renderContent();
+    note("Moved into the wagon. Everything came along, even the dust.");
+    setTimeout(() => speak("We live in a wagon now. Everything came along, even the dust. If we ever miss the burrow, Settings, under Preferences, can take us back."), 600);
+    saveSoon();
+    afterChange();
 }
 let postCheckAt = 0;
 /* how long a reply to the letter sent at `at` takes (the same on every device) */
@@ -21940,6 +22000,8 @@ function postTick(now) {
         }
         saveSoon();
     }
+    if (wagonOfferTick(t)) // (a wheelwright, for a game begun in the burrow)
+        return;
     if (keyThanksTick(t)) // (the brass key's owner writes: anomalies.js)
         return;
     if (anomPostTick(t)) // (and the anomalies Mite has met: anomalies.js)
@@ -29179,7 +29241,7 @@ function renderShop() {
         el.className = "bld";
         shopFurnShown.add(b.id);
         const shown = Math.min(own, b.max), needs = !own && b.needs && !S.b[b.needs] ? BUILDINGS.find(x => x.id === b.needs) : null, ls = !own && lessonLock(b); // (the vase stands on the chest; some things wait for a lesson)
-        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : needs ? `<span class="owned">Needs the ${esc(needs.name.toLowerCase())}</span>` : ls ? `<span class="owned">After the lesson ${esc(ls.name)}: ${ls.n - doneCount()} more task${ls.n - doneCount() === 1 ? "" : "s"}</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(b.name)} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${homeTxt(b.name)}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${homeTxt(b.note)}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : needs ? `<span class="owned">Needs the ${esc(needs.name.toLowerCase())}</span>` : ls ? `<span class="owned">After the lesson ${esc(ls.name)}: ${ls.n - doneCount()} more task${ls.n - doneCount() === 1 ? "" : "s"}</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(homeTxt(b.name))} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
         if (own && RUG_DEF[b.id]) { // a rug: its colour and shape (S.rugCol); colours past the first three are bought once, then go on any rug
             const cur = rugCol(b.id).id, row = document.createElement("div");
             row.className = "rugcols";
@@ -29231,7 +29293,7 @@ function renderShop() {
         const own = (S.b[b.id] || 0) > 0;
         const el = document.createElement("div");
         el.className = "bld";
-        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${shopNewTag(b.id)}<span class="own">${own ? "on the wall" : ""}</span><p>${b.note}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${homeTxt(b.name)}</b>${shopNewTag(b.id)}<span class="own">${own ? "on the wall" : ""}</span><p>${homeTxt(b.note)}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(homeTxt(b.name))} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
         const wb = el.querySelector("[data-w]");
         if (wb)
             wb.onclick = () => buyWall(b);
@@ -29244,7 +29306,7 @@ function renderShop() {
         const own = (S.b[b.id] || 0) > 0;
         const el = document.createElement("div");
         el.className = "bld";
-        el.innerHTML = `<div style="min-width:0"><b>${esc(b.name)}</b>${shopNewTag(b.id)}<span class="own">${own ? (isShown(b.id) ? seasPlace(b) : "put away") : ""}</span><p>${esc(b.note)}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${esc(homeTxt(b.name))}</b>${shopNewTag(b.id)}<span class="own">${own ? (isShown(b.id) ? seasPlace(b) : "put away") : ""}</span><p>${esc(homeTxt(b.note))}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(homeTxt(b.name))} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
         const wb = el.querySelector("[data-w]");
         if (wb)
             wb.onclick = () => buySeas(b);
@@ -29252,7 +29314,7 @@ function renderShop() {
     });
     const box = SEASONAL.filter(b => b.s !== sn && (S.b[b.id] || 0) > 0), bx = $("seasBox");
     bx.hidden = !box.length;
-    bx.textContent = box.length ? "In the seasonal box until their season: " + box.map(b => `${b.name} (${SEAS_NAMES[b.s]})`).join(", ") + "." : "";
+    bx.textContent = box.length ? "In the seasonal box until their season: " + box.map(b => `${homeTxt(b.name)} (${SEAS_NAMES[b.s]})`).join(", ") + "." : "";
     const ps = $("plantShop");
     ps.innerHTML = "";
     byPrice(PLANTS).forEach(b => {
@@ -29261,7 +29323,7 @@ function renderShop() {
         el.className = "bld";
         const full = !own && !b.hang && sillPlants("all").length >= SILL_MAX.room + SILL_MAX.garden + SILL_MAX.archive; // (three window sills: room for all of them; the hanging ones have their own pots)
         const where = !own ? "" : !isShown(b.id) ? "put away" : b.hang ? "hanging in the nook" : sillPlants("all").includes(b) ? "on a window sill" : "waiting for a spot";
-        el.innerHTML = `<div style="min-width:0"><b>${b.name}</b>${shopNewTag(b.id)}<span class="own">${where}</span></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : full ? `<span class="owned">Sills are full</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${homeTxt(b.name)}</b>${shopNewTag(b.id)}<span class="own">${where}</span></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : full ? `<span class="owned">Sills are full</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(homeTxt(b.name))} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
         const wb = el.querySelector("[data-w]");
         if (wb)
             wb.onclick = () => buyWall(b);
@@ -29276,7 +29338,7 @@ function renderShop() {
         // the shelf shows six; more can be bought, and switching one off (In the scene) puts the next one up: a swap
         const noCab = !own && !S.b.crystals, onShelf = cabinetCrystals().includes(b);
         const where = !own ? "" : !isShown(b.id) ? "put away" : onShelf ? "on the shelf" : "in the box (switch one off to swap)";
-        el.innerHTML = `<div style="min-width:0"><b>${esc(b.name)}</b>${shopNewTag(b.id)}<span class="own">${where}</span></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : noCab ? `<span class="owned">Needs the shelf</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(b.name)} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${esc(homeTxt(b.name))}</b>${shopNewTag(b.id)}<span class="own">${where}</span></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label><span class="owned">Owned</span>` : noCab ? `<span class="owned">Needs the shelf</span>` : `<button class="btn amber" data-w="${b.id}" ${S.g < b.price ? "disabled" : ""} aria-label="Buy ${esc(homeTxt(b.name))} for ${b.price} glimmers">${b.price} ◆</button>`}</span>`;
         const wb = el.querySelector("[data-w]");
         if (wb)
             wb.onclick = () => buyWall(b);
@@ -29340,7 +29402,7 @@ function buyWall(b) {
         buySpeak(`I put the ${b.name.toLowerCase()} on the crystal shelf. It caught the light straight away, like it was waiting.`);
     else
         buySpeak(compose("buy", { item: b.name.toLowerCase() }));
-    note(plant ? `New plant ${b.hang ? "hanging in the nook" : "on the sill"}: ${b.name}.` : crystal ? `New crystal on the shelf: ${b.name}.` : `Hung up: ${b.name}.`);
+    note(plant ? `New plant ${b.hang ? "hanging in the nook" : "on the sill"}: ${homeTxt(b.name)}.` : crystal ? `New crystal on the shelf: ${homeTxt(b.name)}.` : `Hung up: ${homeTxt(b.name)}.`);
     burst("spark", 6);
     afterChange();
 }
@@ -30031,6 +30093,7 @@ function renderContent() {
     const st = S.settings;
     $("setLoc").value = st.wloc || "";
     $("setHome").value = homeKind();
+    $("setHome").closest("label").hidden = burrowLocked(); // (a game begun in the burrow: once the wheelwright has written)
     $("setYou").value = st.you;
     $("setPet").value = st.pet;
     $("setPossum").value = possumName();
@@ -30840,6 +30903,7 @@ function eraseAll() {
     KEEP = { refl: [], caps: [], cat: [], tcat: [], corr: [], del: {}, wipe: Date.now() }; // the keepsakes go too (wipe: so another copy can't bring them back)
     saveKeep();
     S = defaultState();
+    S.settings.home = "burrow"; // (back to the burrow: the wagon comes by letter again)
     S.g = S.gTotal = RESTART_G; // the starting gift again, so the shop isn't empty-handed on day one
     S.flags.starter = 1; // (it's the gift, not earned: earnedG)
     S.flags.m_furn = S.flags.m_rugs = S.flags.m_possum = 1; // (a new game starts without the desk, the chair and the rugs: they're in the shop)
@@ -33270,7 +33334,7 @@ function showIncidents() {
         const e = L[k], kn = anomKnown(k), seeking = kn.total > 0 && kn.seen < kn.total, last = reports.find(r => incKind(r.text) === k);
         return `<li class="incent"><b>${esc(name(k))}</b>${seeking ? ` <button type="button" class="seeking" data-k="${esc(k)}" aria-label="Seeking: there is more to learn about this one">[SEEKING]</button>` : ""}<br><span class="sub">Encountered ${e.n}× · first encountered ${esc(dmy(new Date(e.first)))}${e.last && e.last !== e.first ? ` · most recent encounter ${esc(dmy(new Date(e.last)))}` : ""}</span>${last ? `<br><span class="increp">${esc(last.text.replace(/^Incident \d+, \d{4}: /, ""))}</span>` : ""}<p class="seeknote" hidden></p></li>`;
     }).join("");
-    const body = rows ? `<ul class="inclog">${rows}</ul>` : `<p class="ritmeta">${S.incidents ? "The reports are missing. That's its own kind of incident." : "Nothing yet. When something odd shows up in the wagon, tap it."}</p>`;
+    const body = rows ? `<ul class="inclog">${rows}</ul>` : `<p class="ritmeta">${S.incidents ? "The reports are missing. That's its own kind of incident." : homeTxt("Nothing yet. When something odd shows up in the wagon, tap it.")}</p>`;
     openRitual("Incident log", `${S.incidents} incident${S.incidents === 1 ? "" : "s"} on file, ${kinds.length} kind${kinds.length === 1 ? "" : "s"} of anomaly. All handled. Mostly by ${S.settings.pet}.`, body, [["Close", "primary", closeRitual]]);
     document.querySelectorAll("#ritBody .seeking").forEach(b => b.onclick = e => {
         e.stopPropagation();
@@ -33289,7 +33353,7 @@ function openRitual(title, line, bodyHTML, buttons, onClose) {
     ritOpenedAt = performance.now();
     ritOpener = document.activeElement;
     ritClose = onClose || null;
-    $("ritTitle").textContent = title;
+    $("ritTitle").textContent = homeTxt(title);
     { // (only the journal's name is a button: journal.js sets it again after this)
         const t = $("ritTitle");
         t.classList.remove("jname");
@@ -33298,14 +33362,14 @@ function openRitual(title, line, bodyHTML, buttons, onClose) {
         t.removeAttribute("title");
         t.onclick = t.onkeydown = null;
     }
-    $("ritLine").textContent = line || "";
+    $("ritLine").textContent = homeTxt(line || "");
     $("ritBody").innerHTML = bodyHTML;
     const bb = $("ritBtns");
     bb.innerHTML = "";
     buttons.forEach(([label, cls, fn]) => {
         const b = document.createElement("button");
         b.className = "btn " + (cls || "");
-        b.textContent = label;
+        b.textContent = homeTxt(label);
         b.onclick = () => {
             fn();
         };
@@ -33643,6 +33707,8 @@ function boot() {
     const isNew = !local;
     firstStart = isNew;
     S = merge(defaultState(), local || {});
+    if (isNew) // (a new game begins in a burrow; the wagon comes later, by letter: post.js)
+        S.settings.home = "burrow";
     const prevSeen = S.lastSeen || Date.now();
     loadArchLocal();
     loadKeepLocal();
