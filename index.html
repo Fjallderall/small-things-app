@@ -4673,7 +4673,7 @@ const BUILDINGS = [
     { id: "rental", name: "Renter's chest", price: 16, max: 1, note: "For the nook: a chest of drawers whose drawers are let out to tenants. Brass labels, a list of who's in." },
     { id: "vase", name: "Vase & pressed flowers", price: 10, max: 1, needs: "rental", note: "A vase for the top of the renter's chest, with a book for drying what's been in it. Visitors bring flowers; Mite picks some on walks." },
     { id: "closet", name: "Bigger-inside closet", price: 80, max: 1, note: "Measured from the inside, it doesn't end. Built into the archive's shelves." },
-    { id: "recorder", name: "Tape recorder", price: 40, max: 1, note: "A little reel-to-reel, under the archive's reading desk. The residents record their stories on it, a side at a time; visitors sometimes leave one too. Blank tapes are in the pantry." },
+    { id: "recorder", name: "Tape recorder", price: 40, max: 1, note: "A little reel-to-reel, for a shelf in the archive just above the closet. The residents record their stories on it, a side at a time; visitors sometimes leave one too. Blank tapes are in the pantry." },
     { id: "lostprop", name: "Lost property shelf", price: 25, max: 1, needs: "closet", note: "A shelf inside the bigger-inside closet. Things lost somewhere else turn up on it, tagged. Sometimes someone comes asking." },
     { id: "rug", name: "Rug: the wagon", price: 8, max: 1, note: "For the middle of the wagon's floor. Woven, warm, a good place to lie and look at the ceiling. Red, green or blue come with it; more colours and a rectangular weave are for sale here once it's down." },
     { id: "grug", name: "Rug: the nook", price: 8, max: 1, note: "For the nook's floor, by the chesterfield. Soft as moss. Red, green or blue come with it; more colours and a rectangular weave are for sale here once it's down." },
@@ -15342,9 +15342,9 @@ function closetX() {
     const g = archGeo();
     return g.x0 + R * .43 + R * .48; // (a little in from the side of the shelving)
 }
-/* where a shelf row starts: after the closet, for the rows beside it */
+/* where a shelf row starts: after the closet, for the rows beside it; after the tape recorder, on the row it stands on */
 function rowX0(g, row) {
-    return row < closetRows(g) ? closetX() + R * .43 + R * .12 : g.x0;
+    return row < closetRows(g) ? closetX() + R * .43 + R * .12 : row === closetRows(g) && own("recorder") ? g.x0 + R * .9 : g.x0;
 }
 /* how many of the bottom shelf rows the closet takes up, and where those rows stop (for the boxes) */
 function closetRows(g) {
@@ -15403,7 +15403,7 @@ function archLayout(g) {
             }
             if (i === 0)
                 rows.push({ row, week: w });
-            for (let c = 0, n = row < cr ? perC : per; c < n && i < w.tasks.length; c++, i++)
+            for (let c = 0, n = row < cr ? perC : row === cr && own("recorder") ? Math.max(1, Math.floor((g.x1 - rowX0(g, row) - g.tag - 6) / g.pitch)) : per; c < n && i < w.tasks.length; c++, i++) // (the recorder's row is shorter too)
                 slots.push({ t: w.tasks[i], week: w, row, x: rowX0(g, row) + g.tag + 4 + (c + .5) * g.pitch, y: GY - row * g.rh - (row ? 3 : 0) });
             row++;
         }
@@ -15519,13 +15519,13 @@ function drawArchiveRoom(now, dt) {
         cx.fillRect(dx0 + R * .08, top + R * .16, dx1 - dx0 - R * .16, R * .3);
         if (own("tiffany"))
             drawTiffany(dk, tsec, dx1 - R * .55, top); // the stained-glass lamp
-        if (own("recorder"))
-            drawRecorder(dk, g, tsec); // the tape recorder (oral.js)
     });
     const dq = Math.round(dk * 20) / 20;
     drawLayered(() => drawDeskChair(dq, g), "deskchair|" + dq); // a small chair, tucked in at the desk (still: kept)
     if (own("closet")) // the bigger-inside closet, built into the left end of the shelves (draw-world.js)
         drawLayered(() => drawCloset(dk, closetX()));
+    if (own("recorder")) // the tape recorder, on the shelf just above the closet (oral.js)
+        drawRecorder(dk, g);
     if (own("tiffany"))
         softGlow(g.deskX1 - R * .55, GY - R * 1.65, R * 1.6, `rgba(255,190,110,${.16 + .18 * dk})`);
     drawKeepsakesOn(g.deskX1 - R * .95, GY - R * .95, dk, tsec);
@@ -22899,12 +22899,13 @@ function renderTapes() {
     if (c)
         c.textContent = `${ts.length}`;
 }
-/* the recorder under the reading desk (the desk's top is the journal's and the lamp's): a little reel-to-reel on the
-   floor, left of the chair, its red light on while a side waits to be played */
+/* the recorder stands on the archive's shelves: at the left end of the row just above the closet (owner, 31-10-2026),
+   that row's boxes start after it (rowX0). Still, no moving parts: only a steady red light while a side waits */
 function recorderGeo(g) {
-    return { x: g.deskX0 + R * .22, y: GY - PX, w: R * .62, h: R * .32 };
+    const row = closetRows(g);
+    return { x: g.x0 + R * .12, y: GY - row * g.rh - (row ? 3 : 0), w: R * .62, h: R * .32 };
 }
-function drawRecorder(dk, g, tsec) {
+function drawRecorder(dk, g) {
     const r = recorderGeo(g), q = v => Math.round(v / PX) * PX, P = PX, w = Math.max(P * 10, q(r.w)), h = Math.max(P * 5, q(r.h)), x = q(r.x), y = q(r.y) - h;
     const lit = S.tapes && S.tapes.lit;
     // (in whole art pixels, palette colours: the scene is snapped to PAL)
@@ -22914,14 +22915,10 @@ function drawRecorder(dk, g, tsec) {
     cx.fillRect(x, y + h - P, w, P);
     cx.fillStyle = mix("#241812", "#120c0a", dk); // the tape window
     cx.fillRect(x + P, y + P, w - P * 2, h - P * 3);
-    cx.fillStyle = mix("#ecd6ad", "#74503a", dk * .7); // the two hubs; one tooth goes round while nothing's waiting
-    for (const fx of [.28, .72]) {
-        const hx = q(x + w * fx - P / 2), hy = y + P + q((h - P * 3) / 2 - P / 2);
-        cx.fillRect(hx, hy, P, P);
-        if (!lit && Math.floor(tsec * 2) % 2)
-            cx.fillRect(hx + P, hy, P, P);
-    }
-    if (lit && Math.sin(tsec * 3) > -.3) { // the red light: a side nobody's played yet
+    cx.fillStyle = mix("#ecd6ad", "#74503a", dk * .7); // the two hubs (still: it isn't running)
+    for (const fx of [.28, .72])
+        cx.fillRect(q(x + w * fx - P / 2), y + P + q((h - P * 3) / 2 - P / 2), P, P);
+    if (lit) { // the red light, steady: a side nobody's played yet
         cx.fillStyle = "#df8a3a";
         cx.fillRect(x + w - P * 2, y - P, P, P); // (a little lamp on top, right)
         softGlow(x + w - P * 1.5, y - P / 2, R * .12, `rgba(255,90,50,${.2 + .2 * dk})`);
@@ -22967,7 +22964,7 @@ function lostTick(t) {
             cands = lostList().filter(x => !on.has(x.n.toLowerCase()));
         }
         if (cands.length) {
-            const it = choice(cands), id = "lp" + t.toString(36);
+            const it = choice(cands), id = "lp" + t.toString(36) + Math.random().toString(36).slice(2, 5);
             L.items.push({ id, n: it.n, tag: it.tag, at: t, cl: "", clAt: 0 });
             L.had = (L.had || []).concat(it.n).slice(-200);
             while (lostOnShelf().length > LOST_MAX) { // the oldest goes back where it came from
@@ -30404,7 +30401,7 @@ function buy(b) {
         lampCache.key = "";
     }
     else if (S.b[b.id] === 1 && b.id === "recorder") {
-        buySpeak(pantryN("tape") ? "A tape recorder, under the archive's desk, and a blank tape ready. Someone will want to say something soon." : "A tape recorder, under the archive's desk. It needs blank tapes: they're in the pantry. Then someone will want to say something.", { ms: 7000 });
+        buySpeak(pantryN("tape") ? "A tape recorder, on the shelf above the closet, and a blank tape ready. Someone will want to say something soon." : "A tape recorder, on the shelf above the closet. It needs blank tapes: they're in the pantry. Then someone will want to say something.", { ms: 7000 });
         note("Got the tape recorder for the archive.");
     }
     else if (S.b[b.id] === 1 && b.id === "lostprop") {
