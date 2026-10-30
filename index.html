@@ -777,6 +777,21 @@ body.editing #addForm{display:none}
 body.pixel .tmrbig .tmrtime{font-family:var(--f-display);font-size:56px}
 .tmrbig .tmrtask{max-width:100%;overflow-wrap:anywhere}
 
+/* group 26 (30-10-2026): one look for what's said and what pops up. The second bubble has a name tag; a hint has a
+   small ? before it; messages are paper slips just above the dock, out of the way of the window and of Mite */
+.bubble .btag{position:absolute;top:-12px;left:10px;font-style:normal;font-weight:700;font-size:11.5px;line-height:16px;padding:0 7px;border-radius:8px;background:#3a2c22;color:#f3ecd8;white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis}
+.bubble.tagged{padding-top:13px}
+body.pixel .bubble .btag{font-family:var(--f-display);font-weight:400;font-size:18px;line-height:18px;top:-14px;padding:1px 6px;background:var(--px-ink)}
+body.pixel .bubble.tagged{padding-top:12px}
+.bubble.hint::before{content:"?";display:inline-block;width:18px;height:18px;line-height:18px;margin-right:8px;vertical-align:-2px;text-align:center;font-style:normal;font-weight:700;font-size:14px;background:#c47f1c;color:#fffdf4;border-radius:3px}
+body.pixel .bubble.hint::before{font-family:var(--f-display);font-weight:400;font-size:18px}
+body.game:not(.sheet) .toasts:not(.stay){top:auto;left:16px;right:16px;max-width:440px;margin:0 auto;transform:none;align-items:stretch;bottom:calc(env(safe-area-inset-bottom,0px) + 118px)}
+body.pixel .toast{background:#f3ead2;color:var(--px-ink);border:2px solid var(--px-ink);box-shadow:3px 3px 0 rgba(0,0,0,.3);font-family:var(--f-read);font-size:15px;line-height:22px}
+body.pixel .toast button{font-family:var(--f-display);font-size:19px;line-height:20px;border-width:2px}
+body.pixel .toast.ach{background:#f1c27a;color:var(--px-ink)}
+body.pixel .toast.bought{background:#fffdf4}
+body.pixel .bubble.snailb{font-style:normal}
+
 </style>
 <div class="app">
   <section class="world" aria-label="Pet">
@@ -4682,7 +4697,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
 , "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un", "mvp8axa8idn9w", "mvpju1m9c0hfl", "mvpjo4ttghzky", "mvpjomx7zo6af", "mvqbkbk0lj3yu", "mvpk2otjj8pbe",
     // shopping list (27-10-2026)
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
-, "mvofv9gayg23f"];
+, "mvofv9gayg23f", "mvp1qjs64lw2q"];
 
 </script>
 <script>/* js/core/state.js */
@@ -6383,7 +6398,7 @@ function cardCap(el, html) {
         speakReadUntil = lineReadUntil = 0;
         speakWhole = false;
         if (t && !b.classList.contains("thinking") && !b.classList.contains("emote"))
-            talkQueue("mite", t, { asked: 1 }, true); // (it was being said: it gets its turn back)
+            talkQueue("mite", t, Object.assign({ asked: 1 }, b.classList.contains("hint") ? { hint: 1 } : {}), true); // (it was being said: it gets its turn back)
     }
     $("bubble2").hidden = true;
 }
@@ -6562,6 +6577,7 @@ function speak(text, opts = {}) {
     b.hidden = false;
     b.classList.toggle("thinking", !!thinking);
     b.classList.toggle("emote", !!emote);
+    b.classList.toggle("hint", !!opts.hint && !small); // a tip, not a remark: marked with a small ? (group 26)
     b.classList.remove("pinned");
     bubbleW = b.offsetWidth;
     if (emote) {
@@ -6589,7 +6605,7 @@ function hint(key, text, ms = 7500) {
     if (S.hints[key])
         return false;
     S.hints[key] = 1;
-    speak(text, { ms, asked: 1 }); // (a hint is said once: it waits its turn rather than being let go)
+    speak(text, { ms, asked: 1, hint: 1 }); // (a hint is said once: it waits its turn rather than being let go)
     saveSoon();
     return true;
 }
@@ -15700,13 +15716,22 @@ function snailSay(text, ms, who, emote, fromQ, name) { // name: who said it, kep
     b2.classList.toggle("catb", b2Who === "cat");
     b2.classList.toggle("possumb", b2Who === "possum");
     b2.classList.toggle("emote", !!emote);
-    b2.textContent = homeTxt(guestFill(String(text).replace(/\{snail\}/g, snailName()).replace(/\{possum\}/g, possumName())));
+    const said = homeTxt(guestFill(String(text).replace(/\{snail\}/g, snailName()).replace(/\{possum\}/g, possumName())));
+    b2.textContent = "";
+    if (!emote) { // a name tag on the bubble says who's talking, not only its tint (group 26, owner 30-10-2026)
+        const tag = document.createElement("b");
+        tag.className = "btag";
+        tag.textContent = name || b2Name(who);
+        b2.appendChild(tag);
+    }
+    b2.appendChild(document.createTextNode(said));
+    b2.classList.toggle("tagged", !emote);
     b2.hidden = false;
     snail2Until = now + ms;
-    b2ReadUntil = emote ? 0 : now + Math.min(ms, clamp(1000 + b2.textContent.length * 50, 1800, 8000) / readF());
+    b2ReadUntil = emote ? 0 : now + Math.min(ms, clamp(1000 + said.length * 50, 1800, 8000) / readF());
     blip("o", ["guest", "cat", "possum"].includes(b2Who) ? b2Who : "snail");
     if (!emote)
-        heard(name || b2Name(b2Who), b2.textContent, Date.now());
+        heard(name || b2Name(b2Who), said, Date.now());
 }
 /* the name over a second-bubble line in Overheard */
 function b2Name(who) {
