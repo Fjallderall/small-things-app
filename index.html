@@ -1037,7 +1037,7 @@ body.pixel .bubble.snailb{font-style:normal}
       <ul class="ailog" id="aiLog"></ul>
       <div class="help">
         <b>Conditions</b> go in square brackets at the start: <code>[tue h8-10] Training soon.</code> Mite only says the line when all of them fit.<br>
-        Days <code>mon</code>…<code>sun</code>, <code>workday</code> <code>offday</code> <code>office</code> <code>home</code>; times <code>morning</code> <code>afternoon</code> <code>evening</code> <code>night</code> <code>h9-12</code>; state <code>busy</code> (6+ open) <code>open0</code> <code>done0</code> <code>doneSome</code> <code>streak3</code> <code>lvl5</code> <code>messy</code> (6+ bits of mess); seasons <code>autumn</code> <code>winter</code> <code>spring</code> <code>summer</code>; moon <code>fullmoon</code> <code>newmoon</code> <code>waxing</code> <code>waning</code>; <code>halloween</code> (20–31 Oct); <code>strange</code> (Strangeness on); anomalies <code>door</code> <code>phone</code> <code>eyes</code> (omen pool); <code>rare</code> makes a line four times less likely.<br>
+        Days <code>mon</code>…<code>sun</code>, <code>workday</code> <code>offday</code> <code>office</code> <code>home</code>; times <code>morning</code> <code>afternoon</code> <code>evening</code> <code>night</code> <code>h9-12</code>; light <code>darkearly</code> (dark before 1900 in winter) <code>lightlate</code> (still light after 2000 in summer), with a weather location; state <code>busy</code> (6+ open) <code>open0</code> <code>done0</code> <code>doneSome</code> <code>streak3</code> <code>lvl5</code> <code>messy</code> (6+ bits of mess); seasons <code>autumn</code> <code>winter</code> <code>spring</code> <code>summer</code>; moon <code>fullmoon</code> <code>newmoon</code> <code>waxing</code> <code>waning</code>; <code>halloween</code> (20–31 Oct); <code>strange</code> (Strangeness on); anomalies <code>door</code> <code>phone</code> <code>eyes</code> (omen pool); <code>rare</code> makes a line four times less likely.<br>
         <b>Variables</b>: <code>{you}</code> <code>{pet}</code> <code>{open}</code> <code>{oldest}</code> <code>{oldestAge}</code> <code>{smallest}</code> <code>{doneToday}</code> <code>{week}</code> <code>{total}</code> <code>{streak}</code> <code>{level}</code> <code>{favHour}</code> <code>{daysTogether}</code> <code>{doneBy}</code> <code>{bed}</code> <code>{pats}</code> <code>{moon}</code> <code>{clearance}</code> <code>{incidents}</code> <code>{n}</code> (random number), plus <code>{task}</code> <code>{age}</code> <code>{item}</code> <code>{away}</code> <code>{awayTime}</code> where the pool provides them. A line whose variable is unknown at that moment is skipped.
       </div>
       <div><h3>Personality (only used for ✦ Write 8 more with AI)</h3></div>
@@ -1221,6 +1221,15 @@ const DEF = {
             "had a long chat with a {#creature} about {#topic}"
         ],
         idle: [
+            "[darkearly] Dark already. The lamps were ready for it.",
+            "[darkearly] The sun went down before tea. It does that this time of year. Rude, but traditional.",
+            "[darkearly] Night came in early. I've let it sit by the stove.",
+            "[darkearly] Already dark out. Good. More evening to go round.",
+            "[darkearly rare] The dark comes earlier every day now. I've started leaving it a biscuit.",
+            "[lightlate] Still light out. The evening's taking its time.",
+            "[lightlate] It's late and the sky hasn't noticed. Summer.",
+            "[lightlate] The sun's still up. I'm not going to tell it.",
+            "[lightlate] Long light tonight. The fireflies are waiting their turn.",
             "That {snack} earlier. I'm still thinking about it.",
             "[rare] I could have another {snack}. I won't. Probably.",
             "Thank you for the {snack}. I meant to say so properly.",
@@ -4697,7 +4706,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
 , "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un", "mvp8axa8idn9w", "mvpju1m9c0hfl", "mvpjo4ttghzky", "mvpjomx7zo6af", "mvqbkbk0lj3yu", "mvpk2otjj8pbe",
     // shopping list (27-10-2026)
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
-, "mvofv9gayg23f", "mvp1qjs64lw2q"];
+, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl"];
 
 </script>
 <script>/* js/core/state.js */
@@ -6129,6 +6138,8 @@ function condOk(k, c) {
         case "afternoon": return c.h >= 12 && c.h < 18;
         case "evening": return c.h >= 18 && c.h < 23;
         case "night": return c.h >= 23 || c.h < 5;
+        case "darkearly": { const st = sunTimes(); return !!st && st.set < 17.5 && c.h < 19 && c.h + c.now.getMinutes() / 60 > st.set + .3; } // (dark already, early in the evening: winter)
+        case "lightlate": { const st = sunTimes(); return !!st && st.set > 20.5 && c.h >= 20 && c.h + c.now.getMinutes() / 60 < st.set - .2; } // (still light in the evening: summer)
         case "busy": return c.open >= 6;
         case "open0": return c.open === 0;
         case "done0": return c.doneToday === 0;
@@ -7438,6 +7449,42 @@ function wxIcon(kind) {
     return `<svg class="wxicon" viewBox="0 0 9 9" width="14" height="14" aria-hidden="true" shape-rendering="crispEdges">${r}</svg>`;
 }
 
+/* ---------- the real day (group 28, owner 30-10-2026) ----------
+   Sunrise and sunset where the weather location says (Settings), worked out here on the device (NOAA's short
+   formulas, about a minute off at most), in the device's own time. No location: null, and the fixed day stays. */
+let sunMemo = { k: "", v: null };
+function sunTimes(d) {
+    d = d || new Date();
+    const loc = typeof S !== "undefined" && S && S.settings ? parseLoc(S.settings.wloc) : null;
+    if (!loc)
+        return null;
+    const k = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + "|" + loc.la + "," + loc.lo + "|" + d.getTimezoneOffset();
+    if (sunMemo.k === k)
+        return sunMemo.v;
+    const rad = Math.PI / 180, n = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(d.getFullYear(), 0, 0)) / 864e5);
+    const g = 2 * Math.PI / 365 * (n - 1);
+    const eq = 229.18 * (.000075 + .001868 * Math.cos(g) - .032077 * Math.sin(g) - .014615 * Math.cos(2 * g) - .040849 * Math.sin(2 * g));
+    const dec = .006918 - .399912 * Math.cos(g) + .070257 * Math.sin(g) - .006758 * Math.cos(2 * g) + .000907 * Math.sin(2 * g) - .002697 * Math.cos(3 * g) + .00148 * Math.sin(3 * g);
+    const la = loc.la * rad, cosH = Math.cos(90.833 * rad) / (Math.cos(la) * Math.cos(dec)) - Math.tan(la) * Math.tan(dec);
+    const noon = (720 - 4 * loc.lo - eq - d.getTimezoneOffset()) / 60; // (local hours; getTimezoneOffset is UTC minus local)
+    let half = cosH >= 1 ? 0 : cosH <= -1 ? 12 : Math.acos(cosH) / rad * 4 / 60; // (half the day, in hours)
+    half = clamp(half, 2, 10); // where the sun doesn't set or doesn't rise: a short night or a short day still comes
+    const v = { rise: noon - half, set: noon + half, noon };
+    sunMemo = { k, v };
+    return v;
+}
+/* the clock hour as the hour of the fixed day (SKY, canvas.js), stretched so its dawn falls at the real sunrise and
+   its dusk at the real sunset: 6 is sunrise, 19 sunset. Without a location, the clock hour itself */
+function sunHour(h, d) {
+    const st = sunTimes(d);
+    if (!st)
+        return h;
+    const r = st.rise, s = st.set, t = ((h - r) % 24 + 24) % 24, day = s - r;
+    if (t <= day)
+        return 6 + t / day * 13;
+    return (19 + (t - day) / (24 - day) * 11) % 24;
+}
+
 </script>
 <script>/* js/core/economy.js */
 "use strict";
@@ -8205,7 +8252,11 @@ function mix(a, b, t) {
     return "rgb(" + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(",") + ")";
 }
 const SKY = [[0, "#121833", "#262a4d", 1], [5, "#2b2d55", "#b7826f", .8], [7, "#8fb8cf", "#f0dcb8", .15], [12, "#86bde0", "#dceee2", 0], [16.5, "#90b0cf", "#f1d1a1", .05], [19, "#4a4775", "#e48e6c", .45], [21, "#1b2142", "#3b3463", .9], [24, "#121833", "#262a4d", 1]];
+/* the sky and how dark it is at clock hour h: the fixed day, stretched to the real sunrise and sunset when there's
+   a location (sunHour, weather.js). Everything about light and dark reads this; lines about morning and evening keep
+   the clock */
 function skyAt(h) {
+    h = typeof sunHour === "function" ? sunHour(h) : h;
     for (let i = 0; i < SKY.length - 1; i++) {
         const a = SKY[i], b = SKY[i + 1];
         if (h >= a[0] && h <= b[0]) {
