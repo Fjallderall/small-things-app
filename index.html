@@ -666,6 +666,8 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .kswatch{display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-2px;border:1px solid rgba(0,0,0,.35)}
 /* the paternoster (paternoster.js): the window, the turning buttons, the months as one scrolling row of keys */
 .pncv{display:block;width:100%;max-width:420px;margin:0 auto 8px;aspect-ratio:160/100;image-rendering:pixelated;image-rendering:crisp-edges}
+.deepmap{font:12px/1.35 ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow-x:auto;margin:0 0 10px;padding:8px 10px;border-radius:8px;background:var(--card2,rgba(0,0,0,.06))}
+.deeph{font-size:14px;margin:12px 0 4px}
 .pnnav{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
 .pnnav b{text-align:center;font-size:13px;line-height:1.3}
 .pnnav .btn{padding:6px 10px;white-space:nowrap}
@@ -1165,7 +1167,7 @@ const POOL_INFO = {
     paint_medium: "While painting, about what it's painting with: medium | text (oils, acrylic, watercolour, gouache, pastel, chalk, pencil, marker, charcoal, ink, crayon, tempera)",
     paint_smell: "Now and then through the day: what the wagon smells like from the paint (medium | text, as paint_medium)",
     paint_carry: "A painting that wasn't finished goes on the next day ({item}: its title)",
-    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for Collections: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", visitorlook: "A visitor having a look round the wagon: thing (window lamp hearth rug wall sill floor) | what it says ({visitor}, {kind})", visitorcat: "A visitor and Midnightcat: V: the visitor / C: the cat ({cat}, {visitor}, {kind})", visitorsnail: "A visitor and the snail: V: the visitor / S: the snail ({snail}, {visitor})", visitorpossum: "A visitor and the possum: V: the visitor / P: the possum ({possum}, {visitor})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", festunwrap: "Mite, unwrapping the box a festival's thing comes in and putting it on the pedestal ({fest}: the festival, {thing}: what was inside)", plant_phivy: "Watering the hanging ivy in the nook", plant_phpearl: "Watering the string of pearls hanging in the nook", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", possum_catstyle: "The possum, a little sassy about Midnightcat's style of rituals (she sits still in the middle, green candles, a warlock patron; it paces and hops about)", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", anom_sheet: "Mite, after the small someone under a sheet (too many feet) shuffles off into the wall (anomaly)", anom_coat: "Mite, after the coat with nobody in it raises its hat (anomaly)", anom_lantern: "Mite, after the hooded one with no face holds its lantern up (anomaly, after dark)", anom_letters: "Letters from anomalies Mite has met: kind (double ghost tentacle moth figure hand drips door phone chair cloud eyes sheet coat lantern) | the letter (/ for a new paragraph, {pet})", glimpses_anom: "What the chalk circle shows of where an anomaly came from, once Mite has met it: kind | the glimpse", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", cat_circle_go: "Midnightcat, stepping out of the chalk circle so Mite can have a turn", cat_circle_wait: "Midnightcat, asking Mite to wait: she's busy in the chalk circle", circle_mite_wait: "Mite, waiting for its turn at the chalk circle while Midnightcat finishes", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the rug in the wagon ({rugcol}: its colour)", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the rug in the nook ({rugcol}: its colour)", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the archive's name plate ({plate}: what it says today)", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the rug in the archive ({rugcol}: its colour)", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})", serials: "Stories pen pals tell over several letters: Who | the letter (Who: a word from their name; the bits in order)", phone_key: "The phone: someone asking after a small brass key", key_thanks: "A letter from whoever had the brass key, after you gave it back (use / for a new paragraph)", kindreports: "The kind report anomaly: Who filed it | what it says | the Bureau memo explaining it ({pet})", look_puddle: "Mite, after mopping up the flowers' puddle", puddle_odd: "Mite, after mopping up a strange puddle (ink, honey, something glowing)", puddle_still: "Mite, mopping while the flowers still drip", archterms: "Archival terms Mite explains: Term | what it means", archive_digitise: "Archival work: digitising, scanning", archive_retention: "Archival work: the retention schedule", archive_deaccession: "Archival work: deaccessioning, weeding", archive_disaster: "Archival work: the disaster plan", archive_authority: "Archival work: authority records, names", archive_migrate: "Archival work: format migration, emulation", trinkets_spring: "Small things only found in spring: Name | note", trinkets_summer: "Small things only found in summer: Name | note", trinkets_autumn: "Small things only found in autumn: Name | note", trinkets_winter: "Small things only found in winter: Name | note", pantry_honey: "A special bake with wild honey from the pantry: same as bakes", pantry_spice: "A special bake with ember spice from the pantry: same as bakes", pantry_moonsugar: "A special bake with star sugar from the pantry: same as bakes", pantry_smoketea: "A special pot of smoked tea from the pantry: same as brews", pantry_starmint: "A special pot of star-mint tea from the pantry: same as brews", pantry_fogflower: "A special pot of fog-flower tea from the pantry: same as brews", treat_cat: "Mite, giving Midnightcat her catnip from the pantry", special_bake: "Mite, a moment after a special bake comes out ({item}: the ingredient, {thing}: what was baked)", special_brew: "Mite, a moment after a special pot of tea ({item}: the ingredient, {thing}: the tea)", treatback_cat: "Midnightcat, after her treat (she speaks in the second bubble)", treatback_possum: "The possum, after its treat ({possum} is its name)", treatback_snail: "The snail, after its treat ({snail} is its name)", treat_possum: "Mite, giving the possum a bin-day biscuit from the pantry ({possum} is its name)", treat_snail: "Mite, giving the snail a lettuce leaf from the pantry ({snail} is its name)", buy_clear: "Mite, when you clear the crossed-off things from the shopping list", timer_start: "Mite, when you start the timer ({task} if it's for a task)", timer_break: "Mite, when a work block on the timer ends and a break starts ({mins}: the break's length, {task})", timer_back: "Mite, when a break on the timer ends and the next block starts ({task})", timer_done: "Mite, when a one-off block on the timer ends ({task})", give_far: "Far-off places whose lamp has gone dim, asking for glimmers: From | Place | what's gone dim (one or two sentences) | the letter (/ for a new paragraph)", give_pal: "A pen pal asking for glimmers for their own town or spot: From (a pen pal) | Place | what's gone dim | the letter (/ for a new paragraph)", give_bureau: "A Bureau memo about one of its dim spots, asking for glimmers: From | Place | what's gone dim | the memo (/ for a new paragraph)", give_thanks_far: "A thank-you letter from a far-off place once its jar came ({place}, {from}; / for a new paragraph)", give_thanks_pal: "A pen pal's thank-you once the jar for their town came ({place}, {from}; / for a new paragraph)", give_thanks_bureau: "The Bureau's thank-you memo once the jar came ({place}, {from}; / for a new paragraph)", give_letter: "Mite, when a place writes asking for glimmers and it puts a jar out on the desk ({place})", give_jar: "Mite, when you put glimmers in the jar ({place})", give_full: "Mite, when the jar is full ({place})", give_off: "The snail, taking the full jar on its post round ({place}, {snail})", "oralhist": "Oral histories the residents record on the tape recorder in the archive, a side at a time: who (cat, possum or snail) | Title | the side ({cat}, {possum}, {snail}; a story's sides in order)", "oral_visitor": "A one-side tape a visitor records before it goes: Title | the story ({visitor}, {kind})", "oral_new": "Mite, when a resident has recorded another side on the tape recorder ({who}, {title})", "oral_done": "Mite, when a resident has finished a story on the tape recorder ({who}, {title})", "oral_play": "Mite, pressing play on the tape recorder ({who}: who's on the tape, {title})", "oral_notape": "Mite, when a resident wants to record but there are no blank tapes ({who})", "lostprop": "Things that turn up on the lost property shelf inside the closet: Name | what its tag says", "lost_new": "Mite, when something turns up on the lost property shelf ({item}, {tag})", "lost_claim": "A pen pal's letter: something on the lost property shelf is theirs ({penpal}, {item}, {tag}; / for a new paragraph)", "lost_thanks": "A pen pal's thank-you once the snail has brought their lost thing back ({penpal}, {item}; / for a new paragraph)", "lost_raccoon": "Mite, when the raccoon offers one of its curios for something on the lost property shelf ({raccoon}, {item}, {curio})", "lost_swap": "Mite, after swapping something from the lost property shelf with the raccoon ({raccoon}, {item}, {curio})", "oral_left": "Mite, when a visitor has left a story on a tape ({visitor}, {title})"
+    trinkets: "Trinkets: Name | note", barter_tea: "Teas the raccoon brings (once traded, the kettle makes them too): same as brews", barter_bake: "Bakes the raccoon brings (once traded, the oven bakes them too): same as bakes", barter_flower: "Flowers the raccoon brings (once traded, they come into the vase): same as flowers", barter_curio: "Curios only the raccoon finds, for Collections: Name | note", snailnames: "Names the snail might have (it picks one, once)", visitors: "Mice and rats who visit: Name | mouse or rat", visitortalk: "Conversations with a visitor about the outside: M: Mite says / V: the visitor says / … ({visitor}, {treat}, {kind})", visitorbye: "What a visitor says when leaving ({visitor}, {treat}, {kind})", visitorlook: "A visitor having a look round the wagon: thing (window lamp hearth rug wall sill floor) | what it says ({visitor}, {kind})", visitorcat: "A visitor and Midnightcat: V: the visitor / C: the cat ({cat}, {visitor}, {kind})", visitorsnail: "A visitor and the snail: V: the visitor / S: the snail ({snail}, {visitor})", visitorpossum: "A visitor and the possum: V: the visitor / P: the possum ({possum}, {visitor})", raccoonnames: "Names Mite's raccoon friend might have (it picks one, once)", raccoontalk: "Conversations with the raccoon friend about what it found: M: Mite says / V: the raccoon says ({visitor}, {treat})", snailtalk: "Conversations between Mite and the snail: M: Mite says / S: the snail says / … ({snail} is its name)", penpals: "Friends Mite sends its daily painting to", ffnames: "Names Mite gives the fireflies in the jar, one per line", fireflies: "Things Mite says about the fireflies when you tap the jar ({name}, {name2}, {all})", hearth: "Things Mite says by the fireplace, tap it", bakes: "Things Mite bakes in the oven, tap it: Name | remark | look (cake bread pie cookies muffin tart bun croissant pudding gingerbread, #colour, glow sparkle smoke eye float)", brews: "Drinks from the kettle, tap it: Name | Mite's remark | how it looks (#colour, cup=mug/teacup/glass/flask/bowl/thimble, float=leaf/star/moon/eye/lemon/marshmallow/petal, glow sparkle bubbles foam smoke layers empty)", bookshelf: "Book titles on the shelf, tap it: Title | what Mite thinks (optional [conditions])", altered: "Altered items: Name | Class | note", files: "Bureau files: L0–L6 | Title | text with [[redactions]]", meanings: "Meanings for invented words", wall_wposter: "Tapping the 'Hang In There' poster on the wall", wall_wclover: "Tapping the pressed clover on the wall", wall_wmoth: "Tapping the framed moth on the wall", wall_wmap: "Tapping the map of the wagon on the wall", wall_wcert: "Tapping the Employee of the Month certificate on the wall", wall_wweek: "Tapping the One Whole Week certificate on the wall", wall_wtravel: "Tapping the Thin Place poster on the wall", wall_wantler: "Tapping the tiny antlers on the wall", wall_wcloud: "Tapping the cloud under a dome on the wall", wall_wclock: "Tapping the wrong cuckoo clock on the wall", wall_wmoon: "Tapping the pickled moon on the wall", wall_wmirror: "Tapping the late mirror on the wall", crystal_cclear: "Looking closer at a crystal on the shelf (clear)", crystal_ccitrine: "Looking closer at a crystal on the shelf (citrine)", crystal_camethyst: "Looking closer at a crystal on the shelf (amethyst)", crystal_cfluorite: "Looking closer at a crystal on the shelf (fluorite)", crystal_cmoonstone: "Looking closer at a crystal on the shelf (moonstone)", crystal_cobsidian: "Looking closer at a crystal on the shelf (obsidian)", crystal_clabra: "Looking closer at a crystal on the shelf (labra)", crystal_cgeode: "Looking closer at a crystal on the shelf (geode)", crystal_cdream: "Looking closer at a crystal on the shelf (dream)", crystal_cstar: "Looking closer at a crystal on the shelf (star)", plant_pfern: "Watering a plant on a window sill (fern)", plant_pcactus: "Watering a plant on a window sill (cactus)", plant_ppothos: "Watering a plant on a window sill (pothos)", plant_psucc: "Watering a plant on a window sill (succ)", plant_pherb: "Watering a plant on a window sill (herb)", plant_ppilea: "Watering a plant on a window sill (pilea)", plant_psnake: "Watering a plant on a window sill (snake)", plant_pflytrap: "Watering a plant on a window sill (flytrap)", plant_pbonsai: "Watering a plant on a window sill (bonsai)", plant_pmoon: "Watering a plant on a window sill (moon)", festunwrap: "Mite, unwrapping the box a festival's thing comes in and putting it on the pedestal ({fest}: the festival, {thing}: what was inside)", plant_phivy: "Watering the hanging ivy in the nook", plant_phpearl: "Watering the string of pearls hanging in the nook", look_window: "Tapping the wagon's round window and its suncatchers", look_lamp: "Tapping the hanging lamp in the wagon", look_lanterns: "Tapping the paper lanterns", look_closet: "Tapping the bigger-inside closet", capsule_remind: "Mite, on the first of the month: a time capsule? (the plank in the archive, or the journal)", anom_door: "Mite, after looking through a door that wasn't there (when it brings nothing back)", anom_eyes: "Mite, about the eyes in the dark", anom_tentacle: "Mite, after the tentacle takes the tea", anom_chair: "Mite, after sitting on the chair that wasn't there", anom_cloud: "Mite, after the indoor raincloud", anom_moth: "Mite, after the courteous moth", anom_space: "Mite, tapped during the planeshift through space", anom_deep: "Mite, tapped during the planeshift to the bottom of the sea", seeking: "The incident log, tapping [SEEKING]: a researcher's note that there's more to learn ({name}, {seen}, {total})", closet_echo: "Mite, after calling into the closet and hearing an echo", closet_reach: "Mite, after pulling something out of the closet ({item})", closet_items: "Things Mite pulls out of the closet (a few words each)", closet_breeze: "Mite, after a breeze from somewhere else blows out of the closet", closet_knock: "Mite, after a knock from inside the closet", closet_lantern: "Mite, after someone far inside the closet waves a lantern", closet_store: "Mite, after putting a box into offsite storage in the closet", archive_ingest: "Archival work: taking in a new box (ingest, accessioning)", archive_provenance: "Archival work: recording where things came from (provenance)", archive_arrange: "Archival work: arranging (respect des fonds, original order, series)", archive_describe: "Archival work: describing, writing the finding aid", archive_rehouse: "Archival work: rehousing and preservation", archive_appraise: "Archival work: appraisal, deciding what to keep", archive_fixity: "Archival work: checking digital files (fixity, checksums)", archive_access: "Archival work: a request, the reading room, access", look_ndoor: "Tapping the night door", look_circle: "Tapping the chalk circle (when it won't look back any more today)", possumsummon: "The possum in the chalk circle, trying to summon garbage", possumsummonok: "The possum, when its summoning works (something to eat appears)", possumsummonno: "The possum, when its summoning doesn't work", possum_catstyle: "The possum, a little sassy about Midnightcat's style of rituals (she sits still in the middle, green candles, a warlock patron; it paces and hops about)", snailcircle: "The snail, studying the chalk circle in the archive", anom_figure: "Mite, after looking at the tall figure in the corner (anomaly)", anom_hand: "Mite, after giving the hand from the floor a biscuit (anomaly)", anom_drips: "Mite, after wiping the drips running up the wall (anomaly)", anom_double: "Mite, after the second, greyer Mite waves back late (anomaly)", anom_sheet: "Mite, after the small someone under a sheet (too many feet) shuffles off into the wall (anomaly)", anom_coat: "Mite, after the coat with nobody in it raises its hat (anomaly)", anom_lantern: "Mite, after the hooded one with no face holds its lantern up (anomaly, after dark)", anom_letters: "Letters from anomalies Mite has met: kind (double ghost tentacle moth figure hand drips door phone chair cloud eyes sheet coat lantern) | the letter (/ for a new paragraph, {pet})", glimpses_anom: "What the chalk circle shows of where an anomaly came from, once Mite has met it: kind | the glimpse", splurge_ice: "Mite, when you buy the ice treat", splurge_ice_tap: "Mite, tapping the ice treat", splurge_balloons: "Mite, when you buy the balloons treat", splurge_balloons_tap: "Mite, tapping the balloons treat", splurge_cake: "Mite, when you buy the cake treat", splurge_cake_tap: "Mite, tapping the cake treat", splurge_fireworks: "Mite, when you buy the fireworks treat", splurge_fireworks_tap: "Mite, tapping the fireworks treat", catritual: "Midnightcat, when you tap her while she sits in the chalk circle doing a ritual (she is a warlock patron)", cat_circle_go: "Midnightcat, stepping out of the chalk circle so Mite can have a turn", cat_circle_wait: "Midnightcat, asking Mite to wait: she's busy in the chalk circle", circle_mite_wait: "Mite, waiting for its turn at the chalk circle while Midnightcat finishes", glimpses: "What the chalk circle shows of the past: Who | a glimpse of their family history ({cat}, {possum}, {snail}, {raccoon}, {pet} work as names)", look_rug: "Tapping the rug in the wagon ({rugcol}: its colour)", look_nookwindow: "Tapping the nook's half-round window", look_sidetable: "Tapping the side table with the candle and tea, by the chesterfield", look_beam: "Tapping the beam in the nook (the possum sleeps there)", look_greenrug: "Tapping the rug in the nook ({rugcol}: its colour)", look_archwindow: "Tapping the archive's little window", look_nameplate: "Tapping the archive's name plate ({plate}: what it says today)", look_bulb: "Tapping the bare bulb in the archive", look_ladder: "Tapping the archive's rolling ladder", look_desklamp: "Tapping the Tiffany lamp on the archive's desk", look_bluerug: "Tapping the rug in the archive ({rugcol}: its colour)", look_moss: "Tapping a patch of moss", nookup: "Mite, sitting up on the nook's platform (short, a few words)", quote_say: "Mite reading out a note from the pinboard ({quote}: the note, without its full stop)", flowers: "Flowers visitors bring for the vase in the nook: Name | #colour | shape (daisy, tulip, sprig, bell, poppy, bud, herb) | note", flowers_odd: "Strange flowers the ghost or the night door leaves: Name | #colour | shape and effects (glow, eye, float, sparkle, night, petals) | note", flowerbring: "Mite, when a visitor leaves flowers ({visitor}, {flower})", flowerodd: "Mite, when strange flowers turn up in the vase ({flower})", flowerwalk: "Mite, back from a walk with new flowers ({flower})", serials: "Stories pen pals tell over several letters: Who | the letter (Who: a word from their name; the bits in order)", phone_key: "The phone: someone asking after a small brass key", key_thanks: "A letter from whoever had the brass key, after you gave it back (use / for a new paragraph)", kindreports: "The kind report anomaly: Who filed it | what it says | the Bureau memo explaining it ({pet})", look_puddle: "Mite, after mopping up the flowers' puddle", puddle_odd: "Mite, after mopping up a strange puddle (ink, honey, something glowing)", puddle_still: "Mite, mopping while the flowers still drip", archterms: "Archival terms Mite explains: Term | what it means", archive_digitise: "Archival work: digitising, scanning", archive_retention: "Archival work: the retention schedule", archive_deaccession: "Archival work: deaccessioning, weeding", archive_disaster: "Archival work: the disaster plan", archive_authority: "Archival work: authority records, names", archive_migrate: "Archival work: format migration, emulation", trinkets_spring: "Small things only found in spring: Name | note", trinkets_summer: "Small things only found in summer: Name | note", trinkets_autumn: "Small things only found in autumn: Name | note", trinkets_winter: "Small things only found in winter: Name | note", pantry_honey: "A special bake with wild honey from the pantry: same as bakes", pantry_spice: "A special bake with ember spice from the pantry: same as bakes", pantry_moonsugar: "A special bake with star sugar from the pantry: same as bakes", pantry_smoketea: "A special pot of smoked tea from the pantry: same as brews", pantry_starmint: "A special pot of star-mint tea from the pantry: same as brews", pantry_fogflower: "A special pot of fog-flower tea from the pantry: same as brews", treat_cat: "Mite, giving Midnightcat her catnip from the pantry", special_bake: "Mite, a moment after a special bake comes out ({item}: the ingredient, {thing}: what was baked)", special_brew: "Mite, a moment after a special pot of tea ({item}: the ingredient, {thing}: the tea)", treatback_cat: "Midnightcat, after her treat (she speaks in the second bubble)", treatback_possum: "The possum, after its treat ({possum} is its name)", treatback_snail: "The snail, after its treat ({snail} is its name)", treat_possum: "Mite, giving the possum a bin-day biscuit from the pantry ({possum} is its name)", treat_snail: "Mite, giving the snail a lettuce leaf from the pantry ({snail} is its name)", buy_clear: "Mite, when you clear the crossed-off things from the shopping list", timer_start: "Mite, when you start the timer ({task} if it's for a task)", timer_break: "Mite, when a work block on the timer ends and a break starts ({mins}: the break's length, {task})", timer_back: "Mite, when a break on the timer ends and the next block starts ({task})", timer_done: "Mite, when a one-off block on the timer ends ({task})", give_far: "Far-off places whose lamp has gone dim, asking for glimmers: From | Place | what's gone dim (one or two sentences) | the letter (/ for a new paragraph)", give_pal: "A pen pal asking for glimmers for their own town or spot: From (a pen pal) | Place | what's gone dim | the letter (/ for a new paragraph)", give_bureau: "A Bureau memo about one of its dim spots, asking for glimmers: From | Place | what's gone dim | the memo (/ for a new paragraph)", give_thanks_far: "A thank-you letter from a far-off place once its jar came ({place}, {from}; / for a new paragraph)", give_thanks_pal: "A pen pal's thank-you once the jar for their town came ({place}, {from}; / for a new paragraph)", give_thanks_bureau: "The Bureau's thank-you memo once the jar came ({place}, {from}; / for a new paragraph)", give_letter: "Mite, when a place writes asking for glimmers and it puts a jar out on the desk ({place})", give_jar: "Mite, when you put glimmers in the jar ({place})", give_full: "Mite, when the jar is full ({place})", give_off: "The snail, taking the full jar on its post round ({place}, {snail})", "oralhist": "Oral histories the residents record on the tape recorder in the archive, a side at a time: who (cat, possum or snail) | Title | the side ({cat}, {possum}, {snail}; a story's sides in order)", "oral_visitor": "A one-side tape a visitor records before it goes: Title | the story ({visitor}, {kind})", "oral_new": "Mite, when a resident has recorded another side on the tape recorder ({who}, {title})", "oral_done": "Mite, when a resident has finished a story on the tape recorder ({who}, {title})", "oral_play": "Mite, pressing play on the tape recorder ({who}: who's on the tape, {title})", "oral_notape": "Mite, when a resident wants to record but there are no blank tapes ({who})", "lostprop": "Things that turn up on the lost property shelf inside the closet: Name | what its tag says", "lost_new": "Mite, when something turns up on the lost property shelf ({item}, {tag})", "lost_claim": "A pen pal's letter: something on the lost property shelf is theirs ({penpal}, {item}, {tag}; / for a new paragraph)", "lost_thanks": "A pen pal's thank-you once the snail has brought their lost thing back ({penpal}, {item}; / for a new paragraph)", "lost_raccoon": "Mite, when the raccoon offers one of its curios for something on the lost property shelf ({raccoon}, {item}, {curio})", "lost_swap": "Mite, after swapping something from the lost property shelf with the raccoon ({raccoon}, {item}, {curio})", "oral_left": "Mite, when a visitor has left a story on a tape ({visitor}, {title})", "deep_log": "What Mite says after a trip into the closet, for the log: level (1 the coats, 2 the stairwell, 3 the reading room for no one, 4 the underground lake, 5 the door with the archive's name on it) | how odd (0 plain, 1 odd, 2 very odd: Strangeness) | the line", "deep_find": "What Mite sometimes brings back from a trip into the closet: level (1-5, as in deep_log) | Name | note", "other_notes": "Notes from the other archivist, further in, under the closet door, in order (who they are comes out slowly; / for a new paragraph, {pet})", "other_answers": "Mite's answers to the other archivist's notes, the same order (/ for a new paragraph, {pet})", "other_note": "Mite, when a note from further in has come under the closet door", "other_answered": "Mite, after answering the note from further in"
 };
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
@@ -3520,6 +3522,97 @@ const DEF = {
             "{curio} is ours now, and {item} has gone off with {raccoon}. Fair trade, by raccoon rules.",
             "{raccoon} tucked {item} under its arm and left {curio} on the shelf. It's in Collections.",
         ],
+        deep_log: [
+            "1 | 0 | Coats, mostly. Rows and rows of them, all buttoned up. I counted forty and then stopped, because it felt rude.",
+            "1 | 0 | I went as far as the coats. One had a ticket in its pocket for a cloakroom that closed in 1931. I put it back.",
+            "1 | 1 | The coats go on longer than the closet does. Some of them were still warm. I didn't ask whose.",
+            "1 | 1 | Past the coats there's a hat rack with no hats on it, only hooks, waiting. I hung my scarf there for a moment, so it would feel useful.",
+            "1 | 2 | One of the coats turned round as I went by. Nobody in it, but very good manners. It held the lantern while I tied my lace.",
+            "1 | 2 | The coats were talking about the weather somewhere I've never been. Drizzle, they think. Coats are usually right about drizzle.",
+            "2 | 0 | Past the coats there's a stairwell. Stone steps going down, worn in the middle. I tied the rope to the banister and went down twelve.",
+            "2 | 0 | The stairwell smells of old paper and cold tea. Somebody has numbered the steps in pencil. I got as far as 47.",
+            "2 | 1 | The stairs go down, and also, a little, sideways. The rope helped. I came back up a different step from the one I went down.",
+            "2 | 1 | Halfway down the stairwell there's a landing with a window. It looks out onto the archive. Ours, from somewhere above. I waved at the empty desk.",
+            "2 | 2 | I heard someone coming up the stairs while I went down. We never passed each other. The steps were warm where they'd been.",
+            "2 | 2 | The stairwell had one more step than last time. I've made a note of it. Somebody should.",
+            "3 | 0 | At the bottom of the stairs there's a reading room. Green lamps, long tables, sharpened pencils. Nobody in it. I chalked an arrow so I'd find the way back.",
+            "3 | 0 | There's a request slip on every table in the reading room, filled in and not signed. I read one. Someone would like the box with the summer in it.",
+            "3 | 1 | All the chairs in the reading room were pulled out a little, as if everyone had stood up at once. I pushed one in. Then out again. It looked lonely.",
+            "3 | 1 | The clock in the reading room says closing time. It always says closing time. Nobody has ever closed.",
+            "3 | 2 | I sat in the reading room for a while, and a book was brought to my table. I didn't see who brought it. It was the one I'd been meaning to ask for.",
+            "3 | 2 | My chalk arrows from last time were still there, and some new ones in somebody else's hand. Small, neat arrows. All pointing to the tea urn.",
+            "4 | 0 | Past the reading room the floor gets damp, and then there's a lake. Black and flat and very quiet. The map calls it Do Not Index.",
+            "4 | 0 | There's a little rowing boat tied up at the edge of the lake. I didn't take it. It isn't mine, and the oars are labelled.",
+            "4 | 1 | The lake is full of sunken shelving. You can see the spines of books down there, perfectly dry. I don't understand it either.",
+            "4 | 1 | I held the lantern over the lake, and the reflection held one back. The same lantern. Not quite the same paw.",
+            "4 | 2 | Something in the lake was humming. Not a song: more like a filing system. I hummed back the bit I knew.",
+            "4 | 2 | The lake was a little lower today. I think someone's been reading it. There's a cup on the shore with a ring of lake in the bottom.",
+            "5 | 0 | On the far side of the lake there's a door with a brass plate, and the archive's name on it. Our name. I didn't try the key. I just looked.",
+            "5 | 0 | I polished the name plate on the door at the bottom. It's the same as ours, letter for letter, only older.",
+            "5 | 1 | There was light under the door with our name on it, and a chair being pushed back. I knocked once. Someone knocked once back, very politely.",
+            "5 | 1 | I stood by the door with our name on it with the key in my pocket. The key got warm. Not unlocked: warm, as if it was pleased to be near.",
+            "5 | 2 | The name plate on the door at the bottom changed while I watched, the way ours does. They're in step. I think it's our door, from the other side.",
+            "5 | 2 | I slid a biscuit under the door with our name on it. A minute later it slid back, one bite gone, with a note: lovely, mind the lake.",
+        ],
+        deep_find: [
+            "1 | A cloakroom ticket, number 0 | Nobody has ever had ticket number 0. Until now.",
+            "1 | One very good glove | The left one. The right one is presumably still in there, being looked for.",
+            "1 | A brass button with an anchor on it | It came off something important. You can tell.",
+            "2 | A pencil stub from the stairwell | The one that numbered the steps. Still sharp.",
+            "2 | A candle end | It lights the stairs it was carried on, and nowhere else.",
+            "2 | A banister knob | It came off in Mite's paw. It seemed relieved.",
+            "3 | A filled-in request slip | It asks for the box with the summer in it. Not signed.",
+            "3 | A very small green lampshade | From the reading room. Still a little warm.",
+            "3 | A reader's ticket in nobody's name | Valid until further notice.",
+            "4 | A smooth black pebble | From the lake. It's dry, and it stays dry.",
+            "4 | An oar's label | Return to the reading room, it says. The oar stayed behind.",
+            "4 | A bottle with a finding aid in it | For a collection nobody has heard of. Very thorough.",
+            "5 | A flake of brass polish | From the name plate on the door at the bottom.",
+            "5 | A note that says: mind the lake | Small, neat handwriting. Not Mite's. Nearly, though.",
+            "5 | A spare name plate | The archive's name, engraved. Blank on the back. In case.",
+        ],
+        other_notes: [
+            "To whoever keeps the archive at the top, / A note, under your door, I hope. I heard footsteps on the stairs last week, and a rope being tied very carefully to my banister. Good knot. / I'm further in. I keep things here. / Yours, further in",
+            "Dear top of the stairs, / You answered! I've pinned your note above my desk, where I keep the things that matter, and a calendar three years out of date. / Since you ask: yes, it's an archive down here too. Smaller, damper, and very well arranged, if I say so myself. There's nobody else to say so. / Further in",
+            "Dear {pet} (you signed it, so I'll use it), / The lantern comes down most days now. I see it go along the coats and stop at the stairs. I always put the kettle on when I see it, then feel silly, because you never come all the way. / No hurry. Things down here keep. / F.I.",
+            "Dear {pet}, / A question, archivist to archivist: do your boxes ever rearrange themselves while you're not looking? Mine do. Not badly. They put themselves in an order I hadn't thought of, and it's usually better. / I've stopped minding. I write the new order down and call it provenance. / F.I.",
+            "Dear {pet}, / What I do, since you asked: I keep what falls down the back. Of drawers, of sofas, of years. Everything that slips through ends up somewhere, and somewhere is here. / I log it, box it, and wait to see if anyone comes looking. Some do. It's the best part of the job. / F.I.",
+            "Dear {pet}, / The chalk arrows in the reading room were yours. I added a few of my own. I hope you don't mind: I wanted you to find the tea urn. It's the only thing down here that's always hot. / Further in",
+            "Dear {pet}, / I've been here a long time. I don't know how long: the clock in the reading room only does closing time, and the calendar's no help. Long enough to have had the job explained to me by someone who'd been here longer. / They went further in. I stayed. Someone ought to mind the middle. / F.I.",
+            "Dear {pet}, / You asked what I look like. I'm not quite sure. There aren't many mirrors down here, and the lake doesn't count: it shows whoever it's thinking of. / I wear cardigans, I have ink on one paw at all times, and I'm shorter than the shelves. That's most archivists, I think. / F.I.",
+            "Dear {pet}, / Something I've noticed. Your handwriting and mine slope the same way. We both cross our sevens. We both draw a little circle for a full stop when we're pleased. / I'm not saying anything. I'm only noticing. Archivists notice. / F.I.",
+            "Dear {pet}, / I found a box today with my name on it, in my own hand, from before I came here. Inside: a cloakroom ticket, a lantern on a short chain, and a letter I'd written to whoever kept the archive at the top. / I never sent it. I suppose I'm sending it now, a bit at a time. / F.I.",
+            "Dear {pet}, / I think I was where you are, once. At the top, with a wagon, and a cat who knew more than she said, and somebody whose finished things I filed in little boxes. Then one day I went a bit further in than usual, and found there was more archive than there was me. / I don't regret it. But I do like hearing about the wagon. / F.I.",
+            "Dear {pet}, / You keep asking if I'm lonely. Not in the way you'd think. Everything down here was someone's once, and it still feels a bit like company. And now there are notes under the door. / That's a lot, for further in. / F.I.",
+            "Dear {pet}, / Years ago I put a name plate on my door, so I'd know which door was mine. It says the archive's name. I hadn't realised, until you wrote, that yours says the same. / So we're one archive. You keep the top and I keep the bottom, and the closet is the corridor in between. / F.I.",
+            "Dear {pet}, / Don't come all the way in. I mean that kindly. Someone has to keep the top, and you're very good at it: I can tell from what slips down. / Do keep sending the lantern down the stairs, though. I put the kettle on every time, and now it isn't silly at all. / Yours, always further in",
+        ],
+        other_answers: [
+            "Dear further in, / It was my rope. Sorry about your banister. I'm {pet}, and I keep the archive at the top, with the wagon. Do you need anything sending down? We have biscuits. / {pet}",
+            "Dear further in, / Ours is drier, I think, and has a cat in it. I'd like to see yours one day. What was on the calendar, three years ago? / {pet}",
+            "Dear F.I., / Next time I'll come one step further, so the kettle isn't wasted. Milk? / {pet}",
+            "Dear F.I., / Mine don't, yet. The closet does, though. I'll start calling it provenance too. / {pet}",
+            "Dear F.I., / That explains the closet. Things turn up in it all the time, and some of them go home again. That's my favourite part too. / {pet}",
+            "Dear F.I., / I found the urn. The best tea I've had underground. Thank you for the arrows. / {pet}",
+            "Dear F.I., / Thank you for minding the middle. It's an important bit. Things would rattle about without it. / {pet}",
+            "Dear F.I., / Cardigans, ink on one paw, shorter than the shelves. That's me too. Funny. / {pet}",
+            "Dear F.I., / I've just checked. I do cross my sevens. I don't know what that means yet. I'll keep noticing too. / {pet}",
+            "Dear F.I., / I got this bit. I'm keeping your notes in a box of their own, tied with tape, with both our names on it. / {pet}",
+            "Dear F.I., / The wagon's well. The cat still knows more than she says. I'll tell you about it in every note, if you like. / {pet}",
+            "Dear F.I., / Then I'll keep writing. That's settled. / {pet}",
+            "Dear F.I., / The top and the bottom of the same archive. I like that a lot. I'll keep the top tidy for you. / {pet}",
+            "Dear F.I., / I won't come all the way. But now and then I'll come as far as the door and knock once, and you knock once back. That can be how we say hello. / {pet}",
+        ],
+        other_note: [
+            "There's a note under the closet door. Folded small. From further in. It's with the letters.",
+            "Something slid under the closet door: a note. The handwriting slopes like mine. It's with the letters.",
+            "A note, under the closet door. I'll read it with a cup of tea. It's with the letters, if you'd like to read it too.",
+        ],
+        other_answered: [
+            "I've answered the note from further in, and slid it under the closet door. It went at once.",
+            "Wrote back to further in. Folded it twice, slid it under the door. Somebody took it straight away.",
+            "Answered. Under the door it goes. I put a biscuit in with it.",
+        ],
         serials: [
             "Bramble | Dear Mite, a small thing. My reflection in the canal has started arriving late. I bend to fish and it bends a moment after, as if it was thinking of something else. I'm not worried. I'm keeping an eye on it. Bramble",
             "Bramble | Dear Mite, the reflection is later now. Nearly a second. This morning it was still standing when I'd already sat down, and it looked at me as if I'd been rude. I've started waiting for it. It seems to appreciate that. Bramble",
@@ -4674,7 +4767,12 @@ const BUILDINGS = [
     { id: "vase", name: "Vase & pressed flowers", price: 10, max: 1, needs: "rental", note: "A vase for the top of the renter's chest, with a book for drying what's been in it. Visitors bring flowers; Mite picks some on walks." },
     { id: "closet", name: "Bigger-inside closet", price: 80, max: 1, note: "Measured from the inside, it doesn't end. Built into the archive's shelves." },
     { id: "recorder", name: "Tape recorder", price: 40, max: 1, note: "A little reel-to-reel, for a shelf in the archive just above the closet. The residents record their stories on it, a side at a time; visitors sometimes leave one too. Blank tapes are in the pantry." },
-    { id: "lostprop", name: "Lost property shelf", price: 25, max: 1, needs: "closet", note: "A shelf inside the bigger-inside closet. Things lost somewhere else turn up on it, tagged. Sometimes someone comes asking." },
+    { id: "lostprop", name: "Lost property shelf", price: 25, max: 1, needs: "closet", noscene: 1, note: "A shelf inside the bigger-inside closet. Things lost somewhere else turn up on it, tagged. Sometimes someone comes asking." },
+    { id: "dlantern", name: "Lantern on a longer chain", price: 30, max: 1, needs: "closet", noscene: 1, note: "For going further into the closet. Mite goes in once a day, as far as its gear allows, and comes back with a line for the log. First stop: the coats." },
+    { id: "drope", name: "Rope", price: 50, max: 1, needs: "dlantern", noscene: 1, note: "Further in, past the coats, there are stairs going down. A good rope makes them a lot friendlier." },
+    { id: "dchalk", name: "Chalk", price: 80, max: 1, needs: "drope", noscene: 1, note: "For marking the way back. Below the stairs, the rooms start to look alike." },
+    { id: "dmapcase", name: "A borrowed map case", price: 120, max: 1, needs: "dchalk", noscene: 1, note: "Borrowed from whom, nobody says. The maps inside go further than the closet should." },
+    { id: "dkey", name: "A key that fits nothing", price: 160, max: 1, needs: "dmapcase", noscene: 1, note: "Old, brass, heavy for its size. It fits nothing. It's still the right key for the last part of the way." },
     { id: "rug", name: "Rug: the wagon", price: 8, max: 1, note: "For the middle of the wagon's floor. Woven, warm, a good place to lie and look at the ceiling. Red, green or blue come with it; more colours and a rectangular weave are for sale here once it's down." },
     { id: "grug", name: "Rug: the nook", price: 8, max: 1, note: "For the nook's floor, by the chesterfield. Soft as moss. Red, green or blue come with it; more colours and a rectangular weave are for sale here once it's down." },
     { id: "arug", name: "Rug: the archive", price: 8, max: 1, note: "For the archive's floor. Muffles footsteps, which archives like. Red, green or blue come with it; more colours and a rectangular weave are for sale here once it's down." },
@@ -4846,7 +4944,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
 , "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un", "mvp8axa8idn9w", "mvpju1m9c0hfl", "mvpjo4ttghzky", "mvpjomx7zo6af", "mvqbkbk0lj3yu", "mvpk2otjj8pbe",
     // shopping list (27-10-2026)
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
-, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl"];
+, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96"];
 
 </script>
 <script>/* js/core/state.js */
@@ -4857,7 +4955,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -5086,6 +5184,12 @@ function sanitizeState(raw) {
     { // lost property (lostprop.js): what's on the shelf (claimed ones on their way back), names that have turned up, ids gone
         const L = s.lost && typeof s.lost === "object" ? s.lost : {};
         o.lost = { items: arr(L.items, 40).filter(x => str(x.id, 20) && str(x.n, 80)).map(x => ({ id: str(x.id, 20), n: str(x.n, 80), tag: str(x.tag, 200), at: num(x.at), cl: str(x.cl, 60), clAt: num(x.clAt) })), had: (Array.isArray(L.had) ? L.had : []).filter(x => typeof x === "string").slice(-200).map(x => x.slice(0, 80)), gone: (Array.isArray(L.gone) ? L.gone : []).filter(x => typeof x === "string").slice(-120).map(x => x.slice(0, 20)), back: Math.max(0, Math.round(num(L.back))), next: num(L.next), claimAt: num(L.claimAt), swapAt: num(L.swapAt), sw: L.sw && typeof L.sw === "object" && str(L.sw.id, 20) && str(L.sw.c, 80) ? { id: str(L.sw.id, 20), c: str(L.sw.c, 80) } : null };
+    }
+    { // going deeper (deeper.js): the expeditions' log (newest last), the day of the last one, lines said lately; the other archivist's notes
+        const D = s.deep && typeof s.deep === "object" ? s.deep : {}, lg = Array.isArray(D.log) ? D.log.filter(x => x && typeof x === "object") : [];
+        o.deep = { log: lg.slice(-80).filter(x => num(x.at) && str(x.t, 400)).map(x => Object.assign({ at: num(x.at), lv: clamp(Math.round(num(x.lv, 1)), 1, 5), t: str(x.t, 400) }, str(x.f, 80) ? { f: str(x.f, 80), fn: str(x.fn, 200) } : {})), day: dkey(D.day) ? D.day : "", had: (Array.isArray(D.had) ? D.had : []).filter(x => typeof x === "string").slice(-40).map(x => x.slice(0, 60)) };
+        const O = s.other && typeof s.other === "object" ? s.other : {}, i = clamp(Math.round(num(O.i)), 0, 99);
+        o.other = { i, at: num(O.at), next: num(O.next), rep: clamp(Math.round(num(O.rep)), 0, i), repAt: num(O.repAt) };
     }
     o.sched = {}; // days you told Mite about in Talk: { day: { k: "off" | "work" | "" (taken back), at } } (speech.js, offline.js)
     for (const d of Object.keys(s.sched && typeof s.sched === "object" ? s.sched : {}).filter(d => dkey(d)).sort().slice(-400)) {
@@ -5450,6 +5554,14 @@ function mergeStates(a, b) {
                 m.set(x.id, m.has(x.id) && m.get(x.id).cl ? m.get(x.id) : Object.assign({}, x));
         const sw = [lb.sw, la.sw].find(w => w && m.has(w.id)) || null;
         o.lost = { items: [...m.values()].sort((x, y) => x.at - y.at).slice(-40), had: [...new Set([...(la.had || []), ...(lb.had || [])])].slice(-200), gone: [...gone].slice(-120), back: Math.max(num(la.back), num(lb.back)), next: Math.max(num(la.next), num(lb.next)), claimAt: Math.max(num(la.claimAt), num(lb.claimAt)), swapAt: Math.max(num(la.swapAt), num(lb.swapAt)), sw };
+    }
+    { // going deeper: both logs together (by time), the later day; the other archivist: whichever side has got further
+        const da = a.deep || {}, db = b.deep || {}, m = new Map();
+        for (const x of [...(da.log || []), ...(db.log || [])])
+            m.set(x.at + "|" + x.t, Object.assign({}, x));
+        o.deep = { log: [...m.values()].sort((x, y) => x.at - y.at).slice(-80), day: [da.day || "", db.day || ""].sort().pop(), had: [...new Set([...(da.had || []), ...(db.had || [])])].slice(-40) };
+        const oa = a.other || {}, ob = b.other || {}, f = num(oa.i) * 100 + num(oa.rep) >= num(ob.i) * 100 + num(ob.rep) ? oa : ob;
+        o.other = { i: num(f.i), at: num(f.at), next: num(f.next), rep: num(f.rep), repAt: num(f.repAt) };
     }
     { // the days you told Mite about: per day, whatever was said last (taking one back is said too)
         o.sched = {};
@@ -8554,7 +8666,7 @@ function lessonOk(id) {
 /* where the stove (oven and kettle) and the firefly jar stand in the wagon */
 const stoveX = () => W * .325, jarX = () => W * .195;
 /* objects in the wagon: where they stand, and how Mite walks up to one */
-const OA = { bookOut: -1, scope: 0, tilt: 0, jar: 0, drawer: -1, closet: 0, closetFigure: 0 };
+const OA = { bookOut: -1, scope: 0, tilt: 0, jar: 0, drawer: -1, closet: 0, closetFigure: 0, closetLamp: 0, closetDepth: 0 };
 function resetOA() {
     OA.oven = 0;
     OA.bookOut = -1;
@@ -8565,6 +8677,8 @@ function resetOA() {
     OA.rattle = false;
     OA.closet = 0;
     OA.closetFigure = 0;
+    OA.closetLamp = 0;
+    OA.closetDepth = 0;
 }
 function scopeBase() {
     if (own("loft")) {
@@ -10615,6 +10729,47 @@ Object.assign(BEH, {
                 once("s1", 2.6, () => floatText("offsite storage", cxl, GY - R * 2, "#ffe39a"));
             }
             once("said", b.act - 1.6, () => say("closet_" + b.v, { item: b.item || "" }));
+        } },
+    // going deeper (deeper.js): once a day, when there's gear for it, Mite opens the closet and goes in for a minute:
+    // smaller and smaller down the corridor, then only its lantern, going away and coming back. Out again, it says
+    // the line for the log (logged when it goes in), and shows what it found, if anything
+    deepgo: { d: [64, 64], w: c => deepCan() && view === "archive" ? 4 : 0, init(b) {
+            b.e = deepTrip();
+            const st = standBy(OBJX.closet(), R * 1.2, 1);
+            b.tx = st.x;
+            b.face = st.face;
+            b.act = 62;
+        },
+        step(b, p, t, po, dt) {
+            if (!b.e) {
+                p.bt = p.dur;
+                return;
+            }
+            const ta = goTo(b, p, po, dt, b.tx, b.face, b.act), cxl = OBJX.closet(), A = b.act;
+            if (ta < 0)
+                return;
+            const sm = k => (k = clamp(k, 0, 1)) * k * (3 - 2 * k), once = (k, at, f) => {
+                if (ta > at && !b[k]) {
+                    b[k] = 1;
+                    f();
+                }
+            };
+            OA.closet = Math.min(1, ta / .6, Math.max(0, (A - ta) / .6));
+            const g = closetBox(cxl), toDoor = sm((ta - .6) / .8) * (1 - sm((ta - (A - 2)) / .8));
+            p.x = b.tx + (cxl - b.tx) * toDoor;
+            const ins = sm((ta - 1.4) / 2) * (1 - sm((ta - (A - 4.2)) / 2));
+            if (ins > 0)
+                po.inside = { k: ins, x: g.vx, y: g.vy + g.ih * .34 };
+            po.lookOverride = ins > 0 ? { x: 0, y: -.4 } : { x: b.face, y: .1 };
+            OA.closetLamp = ta > 2 && ta < A - 3.4 ? Math.min(1, (ta - 2) / 1.5, (A - 3.4 - ta) / .8) : 0;
+            OA.closetDepth = sm((ta - 3.4) / 18) * (1 - sm((ta - (A - 13)) / 8.5));
+            po.eyes = ta > A - 1.6 ? "happy" : "open";
+            once("s1", 1, () => floatText("further in…", cxl, GY - R * 2, "#ffe39a"));
+            once("said", A - 1.5, () => {
+                speak(b.e.t, { ms: clamp(3500 + b.e.t.length * 50, 6000, 12000) });
+                if (b.e.f)
+                    floatText(b.e.f, p.x, GY - R * 2.2, "#ffe39a");
+            });
         } },
     // archival work at the desk or the shelves, now and then: taking in a new box, recording where things came from,
     // arranging, describing, rehousing, appraising, checking files. Little labels float up as Mite works, and it
@@ -15330,7 +15485,7 @@ function routeDown(p) {
 let view = "room", archHits = [], archiveSince = 0;
 const archLadder = { x: -1, tx: -1 };
 /* behaviours that may run in the archive; anything else walks Mite back to the wagon first */
-const ARCHIVE_OK = new Set(["carryPile", "scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "archivework", "chairSit", "journalsit", "stare", "bow", "dizzy"]);
+const ARCHIVE_OK = new Set(["carryPile", "scry", "ward", "answerphone", "possumchat", "snailchat", "catvisit", "idle", "wander", "curious", "admire", "browse", "fetchBox", "toWagon", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "closetpeek", "deepgo", "archivework", "chairSit", "journalsit", "stare", "bow", "dizzy"]);
 /* interactions that live in the archive; asking for one from the wagon walks Mite there first */
 function isArchiveKind(kind) {
     return kind === "capsule" || kind === "journal" || kind.startsWith("refl:") || kind.startsWith("box:");
@@ -15755,7 +15910,7 @@ function chooseArchiveBeh() {
         return;
     }
     const filed = ARCH_FLAT.length > 0; // (nothing filed yet: no archival work, nothing on the shelves to browse)
-    const opts = [["idle", 3], ["browse", filed ? 3 : 0], ["archivework", filed ? 1.6 : 0], ["wander", 1.2], ["lookAround", .6], ["stretch", .3], ["yawn", .3], ["catvisit", BEH.catvisit.w(ctx()) * 3], ["closetpeek", BEH.closetpeek.w(ctx())]].filter(([k, w]) => BEH[k] && w > 0).map(([k, w]) => [k, k === pet.beh ? w * .2 : w]); // (the same thing again: much less likely)
+    const opts = [["idle", 3], ["browse", filed ? 3 : 0], ["archivework", filed ? 1.6 : 0], ["wander", 1.2], ["lookAround", .6], ["stretch", .3], ["yawn", .3], ["catvisit", BEH.catvisit.w(ctx()) * 3], ["closetpeek", BEH.closetpeek.w(ctx())], ["deepgo", BEH.deepgo.w(ctx())]].filter(([k, w]) => BEH[k] && w > 0).map(([k, w]) => [k, k === pet.beh ? w * .2 : w]); // (the same thing again: much less likely)
     let r = Math.random() * opts.reduce((a, o) => a + o[1], 0);
     for (const [k, w] of opts) {
         if ((r -= w) <= 0)
@@ -22315,6 +22470,8 @@ function postTick(now) {
         return;
     if (giveTick(t)) // (and a place that needs glimmers, or its thanks: giving.js)
         return;
+    if (otherTick(t)) // (and a note from further in, or Mite's answer: deeper.js)
+        return;
     lostTick(t); // (and the lost property shelf in the closet: lostprop.js)
     serialTick(t);
     for (const s of S.post.sent) {
@@ -23068,6 +23225,169 @@ function showLostProp() {
         a.onclick = () => lostSwap(true);
     if (b)
         b.onclick = () => lostSwap(false);
+}
+
+</script>
+<script>/* js/scene/deeper.js */
+"use strict";
+/*
+ * deeper.js - Going deeper, and the other archivist (group 28, batch 5).
+ * Going deeper: five pieces of gear from the shop (DEEP_GEAR, each needs the one before) let Mite go further into the
+ * bigger-inside closet: the coats, the stairwell, the reading room for no one, the underground lake, the door with the
+ * archive's own name plate. At most one expedition a day (the behaviour "deepgo", behaviours-archive.js): Mite goes
+ * in for about a minute and comes back with a line for the log (pool deep_log, "level | odd | text": Strangeness says
+ * how odd), sometimes with a find (deep_find, "level | Name | note"). The log and a text map are on the closet card's
+ * second page ("Further in", from the paternoster).
+ * The other archivist: from the second level on, a note comes under the closet door every 3-6 days (other_notes, in
+ * order, 14 of them) and Mite answers it the next day (other_answers, the same order). They come in as letters and
+ * go in the correspondence register; while one is unread, it lies under the closet door.
+ *   S.deep  { log: [{at, lv, t, f?, fn?}], day: "YYYY-MM-DD" of the last trip, had: [lines said lately] }
+ *   S.other { i: notes come, at: the last one, next: when the next is due, rep: answers sent, repAt: when the next is due }
+ */
+const DEEP_GEAR = ["dlantern", "drope", "dchalk", "dmapcase", "dkey"];
+const DEEP_PLACES = ["the coats", "the stairwell", "the reading room for no one", "the underground lake", "the door with the archive's name on it"];
+const DEEP_BUY = [
+    "A lantern on a longer chain. Now I can go a bit further into the closet than the door. Once a day, I think. Any more and the closet would get ideas.",
+    "Rope! Past the coats there are stairs, going down. I'll tie it to the banister. I'm good at knots.",
+    "Chalk, for arrows on the walls. Below the stairs every room looks like the last one, and I'd like to come home for tea.",
+    "A map case. Borrowed, it says on the strap. The maps go further than the closet is deep. That's normal for maps, I think.",
+    "A key that fits nothing. I tried it in every lock in the wagon. Nothing. It's exactly right, then. I'll take it with me tomorrow."
+];
+const OTHER_NAME = "the other archivist", OTHER_GAP = [3, 6];
+/* how far the gear goes (0: not at all) */
+function deepLevel() {
+    let n = 0;
+    for (const id of DEEP_GEAR) {
+        if (!S.b[id])
+            break;
+        n++;
+    }
+    return S.b.closet ? n : 0;
+}
+const deepDone = () => !!(S.deep && S.deep.day === actDay());
+const deepCan = () => deepLevel() > 0 && !deepDone();
+const deepPlace = lv => DEEP_PLACES[clamp(lv, 1, 5) - 1];
+function deepParse(k) {
+    return pool(k).map(l => parseLine(l).text.split("|").map(x => x.trim())).filter(p => p.length >= 3 && +p[0] >= 1 && +p[0] <= 5 && p[2]);
+}
+/* the trip: where to (mostly as far as the gear goes), the line for the log, and now and then a find. Logged at once,
+   so it counts even if Mite is called away before it comes out again */
+function deepTrip(t = Date.now()) {
+    const L = deepLevel();
+    if (!L || !S.deep)
+        return null;
+    const D = S.deep, s = strangeness(), lv = Math.random() < .6 ? L : 1 + Math.floor(Math.random() * L);
+    const all = deepParse("deep_log").filter(p => +p[0] === lv && (+p[1] || 0) <= s), fresh = all.filter(p => !(D.had || []).includes(p[2].slice(0, 60)));
+    const cands = (fresh.length ? fresh : all).map(p => ({ p, w: (+p[1] || 0) === s ? 2 : 1 }));
+    if (!cands.length)
+        return null;
+    let r = Math.random() * cands.reduce((a, c) => a + c.w, 0), pick = cands[0].p;
+    for (const c of cands)
+        if ((r -= c.w) <= 0) {
+            pick = c.p;
+            break;
+        }
+    const e = { at: t, lv, t: fillText(pick.slice(2).join(" | "), ctx()) };
+    const found = new Set(D.log.filter(x => x.f).map(x => x.f.toLowerCase())), finds = deepParse("deep_find").filter(p => +p[0] === lv && !found.has(p[1].toLowerCase()));
+    if (finds.length && Math.random() < .35) {
+        const f = choice(finds);
+        e.f = f[1];
+        e.fn = f.slice(2).join(" | ");
+    }
+    D.log.push(e);
+    D.log = D.log.slice(-80);
+    D.had = (D.had || []).concat(pick[2].slice(0, 60)).slice(-40);
+    D.day = actDay(t);
+    note(`${S.settings.pet} went into the closet, as far as ${deepPlace(lv)}.${e.f ? ` It brought back ${e.f.replace(/^(A|An|One|The) /, m => m.toLowerCase())}.` : ""}`);
+    saveSoon();
+    return e;
+}
+/* the card's button, or anywhere else: off it goes (to the archive first) */
+function goDeep() {
+    if (!deepCan())
+        return false;
+    closeRitual();
+    if (view !== "archive")
+        setView("archive");
+    pet.start("deepgo");
+    return true;
+}
+/* the map, as text: the levels reached, how often, and what the next one needs */
+function deepMap() {
+    const L = deepLevel(), n = lv => S.deep.log.filter(x => x.lv === lv).length, out = ["┌ the closet door"];
+    for (let lv = 1; lv <= 5; lv++) {
+        if (lv <= L) {
+            const k = n(lv), nm = deepPlace(lv);
+            out.push(`├ ${lv} ${nm[0].toUpperCase() + nm.slice(1)}${k ? ` · ${k} trip${k === 1 ? "" : "s"}` : ""}`);
+        }
+        else {
+            const g = BUILDINGS.find(b => b.id === DEEP_GEAR[lv - 1]);
+            out.push(`├ ${lv} · · ·  (needs ${g ? g.name.replace(/^A /, "a ").replace(/^[A-Z]/, c => c.toLowerCase()) : "more gear"})`);
+            break;
+        }
+    }
+    if (L === 5)
+        out.push("└ and further in: someone else's");
+    return out.join("\n");
+}
+/* the closet card's second page */
+function showDeep() {
+    const D = S.deep || { log: [] }, L = deepLevel(), log = D.log.slice().reverse().slice(0, 40), who = esc(S.settings.pet);
+    const today = !L ? "" : deepDone() ? `<p class="sub">Today's trip is done. Tomorrow, further in again.</p>` : `<p class="sub">${who} hasn't been in today.</p><span class="bacts"><button type="button" class="btn amber" id="deepGo">Go in now</button></span>`;
+    const notes = otherNotes(), O = S.other || { i: 0, rep: 0 }, ans = otherAnswers();
+    const other = O.i ? `<h3 class="deeph">Notes under the door</h3><p class="sub">From further in. ${O.i} of ${notes.length}${O.i >= notes.length && O.rep >= O.i ? ", and that's all of them, for now" : ""}.</p><ul class="fbooklist">${notes.slice(0, O.i).map((x, i) => `<li><details><summary><b>Note ${i + 1}</b></summary><p class="sub">${esc(otherText(x)).replace(/\n/g, "<br>")}</p>${i < O.rep && ans[i] ? `<p class="sub"><i>${who} wrote back:</i><br>${esc(otherText(ans[i])).replace(/\n/g, "<br>")}</p>` : `<p class="sub"><i>${who} hasn't answered yet.</i></p>`}</details></li>`).join("")}</ul>` : "";
+    openRitual("Further in", L ? "The closet goes back and back. This is how far, so far." : "The closet goes back and back. With the right gear (it's in the shop), Mite can go further in, once a day.",
+        `<pre class="deepmap">${esc(deepMap())}</pre>${today}${log.length ? `<h3 class="deeph">The log</h3><ul class="fbooklist">${log.map(x => `<li><b>${esc(dmy(new Date(x.at)))} · ${esc(deepPlace(x.lv))}</b><br><span class="sub">${esc(x.t)}</span>${x.f ? `<br><span class="sub">Brought back: <b>${esc(x.f)}</b>. ${esc(x.fn || "")}</span>` : ""}</li>`).join("")}</ul>` : ""}${other}`,
+        [["The paternoster", "", () => showPaternoster(0)], ["Close", "primary", closeRitual]]);
+    sfx("card");
+    const b = $("deepGo");
+    if (b)
+        b.onclick = goDeep;
+}
+/* ---- the other archivist ---- */
+const otherNotes = () => pool("other_notes").map(l => parseLine(l).text).filter(Boolean);
+const otherAnswers = () => pool("other_answers").map(l => parseLine(l).text).filter(Boolean);
+const otherText = x => fillText(x, ctx()).replace(/ \/ /g, "\n\n");
+const otherWaiting = () => !!(S.post && S.post.inbox.some(l => l.from === OTHER_NAME && !l.read));
+/* every minute or so (from postTick): a note under the door, or Mite's answer to the last one */
+function otherTick(t) {
+    if (deepLevel() < 2 || !S.other)
+        return false;
+    const O = S.other, notes = otherNotes(), ans = otherAnswers();
+    if (!num(O.next)) { // (the rope's just come: the first note within the day)
+        O.next = t + (8 + 12 * Math.random()) * 36e5;
+        return false;
+    }
+    if (O.rep < O.i && t >= num(O.repAt)) { // Mite answers, the day after
+        const text = ans[O.rep] ? otherText(ans[O.rep]) : "";
+        O.rep++;
+        if (text)
+            corrRegister("out", OTHER_NAME, text, t);
+        note(`${S.settings.pet} answered the note from further in, and slid it under the closet door.`);
+        const l = compose("other_answered");
+        if (l && roomVisible("archive"))
+            speak(l, { ms: 5500 });
+        saveSoon();
+        return true;
+    }
+    if (O.rep >= O.i && O.i < notes.length && t >= num(O.next)) { // a note under the door
+        const text = otherText(notes[O.i]);
+        O.i++;
+        O.at = t;
+        O.repAt = t + (18 + 10 * Math.random()) * 36e5;
+        O.next = t + (OTHER_GAP[0] + Math.random() * (OTHER_GAP[1] - OTHER_GAP[0])) * 864e5;
+        S.post.inbox.push({ from: OTHER_NAME, text, at: t, read: 0 });
+        corrRegister("in", OTHER_NAME, text, t);
+        if (S.post.inbox.length > 40)
+            S.post.inbox.splice(0, S.post.inbox.length - 40);
+        note("A note came under the closet door, from further in. It's with the letters.");
+        const l = compose("other_note");
+        if (l && roomVisible("archive"))
+            speak(l, { ms: 5500 });
+        saveSoon();
+        return true;
+    }
+    return false;
 }
 
 </script>
@@ -27681,6 +28001,12 @@ function drawLanterns(s, dk) {
 /* the bigger-inside closet (in the archive): a tall walnut wardrobe in the same wood and brass as the archive, a
    carved top, a brass label card and keyhole, a line of light under the door. Open (OA.closet), the inside goes
    back and back: shelves of filing drawers, receding to a lamp somewhere very far away */
+/* the closet's opening, where the corridor goes back to (the same sums as drawCloset, for Mite going in: deeper.js) */
+function closetBox(x) {
+    const q = PX, w = Math.round(R * .86 / q) * q, h = Math.round(R * 1.72 / q) * q, x0 = Math.round((x - w / 2) / q) * q, y0 = GY - h;
+    const ix = x0 + q, iy = y0 + q, iw = w - q * 2, ih = h - q * 3;
+    return { ix, iy, iw, ih, vx: ix + iw / 2, vy: iy + ih * .42 };
+}
 function drawCloset(dk, x) {
     const q = PX, w = Math.round(R * .86 / q) * q, h = Math.round(R * 1.72 / q) * q, x0 = Math.round((x - w / 2) / q) * q, y0 = GY - h;
     const wood = mix("#7a4e30", "#24170e", dk), woodD = mix("#4e321f", "#140d08", dk), woodL = mix("#a8744a", "#2e1f14", dk);
@@ -27728,6 +28054,14 @@ function drawCloset(dk, x) {
             cx.fillStyle = "#ffd696";
             cx.fillRect(fx + q + sw, fy - q * 4, Math.max(1, q / 2), Math.max(1, q / 2));
         }
+        if (OA.closetLamp > 0) { // Mite's lantern, going further in and coming back (deeper.js)
+            const d = OA.closetDepth || 0, lx = vx + iw * .06 * (1 - d), ly = iy + ih * (.9 - .3 * d) - q * 2 * (1 - d);
+            glow(lx, ly, (2.6 - .9 * d) * OA.closetLamp, `rgba(255,214,150,${(.95 - .1 * d) * OA.closetLamp})`);
+            cx.fillStyle = "#ffe8b0";
+            cx.globalAlpha = OA.closetLamp;
+            cx.fillRect(Math.round(lx / q) * q, Math.round(ly / q) * q, q, q);
+            cx.globalAlpha = 1;
+        }
         softGlow(x, y0 + h * .5, w * 1.5 * open, "rgba(200,190,255,.25)");
     }
     // the door: raised panels, a brass label card and a keyhole; it swings open to the left
@@ -27761,6 +28095,12 @@ function drawCloset(dk, x) {
     cx.fillRect(ix - q, iy + ih - q * 5, q, q * 2);
     cx.fillStyle = woodD; // the plinth
     cx.fillRect(x0, GY - q * 2, w, q);
+    if (open < .3 && typeof otherWaiting === "function" && otherWaiting()) { // a note from further in, half under the door
+        cx.fillStyle = mix("#f4ecd8", "#6a6250", dk);
+        cx.fillRect(x0 + Math.round(w * .3 / q) * q, GY - q, q * 4, q);
+        cx.fillStyle = mix("#c9bfa4", "#4a4436", dk);
+        cx.fillRect(x0 + Math.round(w * .3 / q) * q + q * 2, GY - q, Math.max(1, q / 2), q);
+    }
     if (open < .05) {
         cx.fillStyle = Math.sin(t * .9) > -.6 ? "#ffd696" : "#e8b070"; // (it flickers, now and then: someone's walking about in there)
         cx.fillRect(ix + q, GY - q * 2, iw - q * 2, q);
@@ -28536,7 +28876,19 @@ function frame(now) {
         if (!onNook)
             withRoom("garden", () => drawLoftFront("garden"));
         drawPastimesBehind(); // (the sticky note being written, behind Mite: pastimes.js)
-        if ((pet.ground || 0) > 0 && !(pet.b && pet.b.door)) // up on a platform: kept inside its own room
+        if (po.inside && po.inside.k >= .97) { } // (gone into the closet: deeper.js)
+        else if (po.inside) // going into the closet, or coming out: smaller and fainter, down the corridor
+            withRoomLight(view, () => {
+                const k = po.inside.k, s = 1 - .9 * Math.pow(k, .6), fx = pet.x + (po.inside.x - pet.x) * k, fy = GY + (po.inside.y - GY) * k;
+                cx.save();
+                cx.globalAlpha = 1 - k * k;
+                cx.translate(fx, fy);
+                cx.scale(s, s);
+                cx.translate(-pet.x, -GY);
+                drawPet(po);
+                cx.restore();
+            });
+        else if ((pet.ground || 0) > 0 && !(pet.b && pet.b.door)) // up on a platform: kept inside its own room
             withRoom(view, () => drawPet(po));
         else
             withRoomLight(view, () => drawPet(po)); // not clipped: Mite walks across from one room into the next
@@ -30142,7 +30494,7 @@ function renderShop() {
         el.className = "bld";
         shopFurnShown.add(b.id);
         const shown = Math.min(own, b.max), needs = !own && b.needs && !S.b[b.needs] ? BUILDINGS.find(x => x.id === b.needs) : null, ls = !own && lessonLock(b); // (the vase stands on the chest; some things wait for a lesson)
-        el.innerHTML = `<div style="min-width:0"><b>${homeTxt(b.name)}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${homeTxt(b.note)}</p></div><span class="bacts">${own ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : needs ? `<span class="owned">Needs the ${esc(needs.name.toLowerCase())}</span>` : ls ? `<span class="owned">After the lesson ${esc(ls.name)}: ${ls.n - doneCount()} more task${ls.n - doneCount() === 1 ? "" : "s"}</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(homeTxt(b.name))} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
+        el.innerHTML = `<div style="min-width:0"><b>${homeTxt(b.name)}</b>${b.price > 0 ? shopNewTag(b.id) : ""}<span class="own">${b.max > 1 && own ? `${shown} of ${b.max}` : own ? "in the " + homeKind() : ""}</span><p>${homeTxt(b.note)}</p></div><span class="bacts">${own && !b.noscene ? `<label class="sw"><input type="checkbox" data-vis="${b.id}" ${isShown(b.id) ? "checked" : ""}><span>In the scene</span></label>` : ""}${maxed(b) ? `<span class="owned">Owned</span>` : needs ? `<span class="owned">Needs the ${esc(needs.name.toLowerCase())}</span>` : ls ? `<span class="owned">After the lesson ${esc(ls.name)}: ${ls.n - doneCount()} more task${ls.n - doneCount() === 1 ? "" : "s"}</span>` : `<button class="btn amber" data-b="${b.id}" aria-label="Buy ${esc(homeTxt(b.name))} for ${cost(b)} glimmers">${cost(b)} ◆</button>`}</span>`;
         if (own && RUG_DEF[b.id]) { // a rug: its colour and shape (S.rugCol); colours past the first three are bought once, then go on any rug
             const cur = rugCol(b.id).id, row = document.createElement("div");
             row.className = "rugcols";
@@ -30403,6 +30755,10 @@ function buy(b) {
     else if (S.b[b.id] === 1 && b.id === "recorder") {
         buySpeak(pantryN("tape") ? "A tape recorder, on the shelf above the closet, and a blank tape ready. Someone will want to say something soon." : "A tape recorder, on the shelf above the closet. It needs blank tapes: they're in the pantry. Then someone will want to say something.", { ms: 7000 });
         note("Got the tape recorder for the archive.");
+    }
+    else if (S.b[b.id] === 1 && DEEP_GEAR.includes(b.id)) {
+        buySpeak(DEEP_BUY[DEEP_GEAR.indexOf(b.id)], { ms: 7500 });
+        note(`Got ${b.name.replace(/^A /, "a ").replace(/^(Lantern|Rope|Chalk)/, m => "the " + m.toLowerCase())}, for going further into the closet.`);
     }
     else if (S.b[b.id] === 1 && b.id === "lostprop") {
         buySpeak("A lost property shelf, inside the closet. I've put it a little way in, where things end up. Something will turn up soon. Things always do.", { ms: 7000 });
@@ -32186,7 +32542,7 @@ function showPaternoster(at = 0) {
     pnSel = -1;
     openRitual("The paternoster", "", `<canvas id="pnCv" class="pncv" width="160" height="100" aria-hidden="true"></canvas>
         <div class="pnnav"><button type="button" class="btn" id="pnUp" aria-label="Turn to the week before">▲ Earlier</button><b id="pnWeek" aria-live="polite"></b><button type="button" class="btn" id="pnDown" aria-label="Turn to the week after">Later ▼</button></div>
-        <div class="pnmonths" id="pnMonths" role="group" aria-label="Turn to a month"></div><p class="sub" id="pnMonthLine"></p><ul class="fbooklist pnlist" id="pnList"></ul>`, (S.b.lostprop ? [[`Lost property${lostOnShelf().length ? ` (${lostOnShelf().length})` : ""}`, "", showLostProp]] : []).concat([["Close", "primary", closeRitual]]));
+        <div class="pnmonths" id="pnMonths" role="group" aria-label="Turn to a month"></div><p class="sub" id="pnMonthLine"></p><ul class="fbooklist pnlist" id="pnList"></ul>`, (deepLevel() ? [[`Further in${deepCan() ? " ·" : ""}`, "", showDeep]] : []).concat(S.b.lostprop ? [[`Lost property${lostOnShelf().length ? ` (${lostOnShelf().length})` : ""}`, "", showLostProp]] : []).concat([["Close", "primary", closeRitual]]));
     sfx("card");
     $("ritBody").scrollTop = 0;
     $("pnUp").onclick = () => pnTurn(1);
