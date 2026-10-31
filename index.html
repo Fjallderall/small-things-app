@@ -8278,6 +8278,24 @@ function checkClearance(rec) {
             rec.timers.push(id);
     }
 }
+/* the order of open tasks (the Today list and Mite's "next up"): area for the time of day, picked, due/planned,
+   then the order they were made in. wh = isWorkHours() at the moment of sorting. */
+function taskSortKey(t, wh) {
+    const d = dueInfo(t), pl = t.on && t.on <= dayKey();
+    return [areaRank(t, wh), isPicked(t) ? -1 : (d ? Math.min(d.rank, pl ? 1 : 9) : pl ? 1 : t.wk ? 5 : 6), pl ? (t.at || "98") : d ? t.due : "99", t.c];
+}
+function taskSortCmp(wh) {
+    return (a, b) => {
+        const A = taskSortKey(a, wh), B = taskSortKey(b, wh);
+        for (let i = 0; i < 4; i++) {
+            if (A[i] < B[i])
+                return -1;
+            if (A[i] > B[i])
+                return 1;
+        }
+        return 0;
+    };
+}
 
 </script>
 <script>/* js/core/notes.js */
@@ -17621,10 +17639,7 @@ function anomPostTick(t) {
     const fresh = lines.filter(x => !had.has(fill(x))), x = choice(fresh.length ? fresh : lines), text = fill(x), from = fillNames(ANOM_WHO[x.k]);
     S.flags.anomPostAt = t;
     S.flags.letterInDay = dayNum();
-    S.post.inbox.push({ from, text, at: t, read: 0 });
-    if (S.post.inbox.length > 40)
-        S.post.inbox.splice(0, S.post.inbox.length - 40);
-    corrRegister("in", from, text, t);
+    deliverLetter(from, text, t);
     note(`A letter came from ${from}. It's in the rack in the nook.`);
     speak(choice([`A letter came. From ${from}. The envelope's a bit cold. It's in the rack.`, `Post. From ${from}. I didn't know they knew the address. It's in the rack.`, `A letter's in the rack. It says it's from ${from}. The stamp is of a place I don't know.`]), { ms: 5500 });
     saveSoon();
@@ -22806,13 +22821,17 @@ function serialTick(t) {
         return;
     const text = serialTake(ser, t);
     S.flags.letterInDay = dayNum();
+    deliverLetter(from, text, t);
+    note(`A letter came from ${from}${ser.n ? ", the next bit of their news" : ", without being written to first"}.`);
+    say("letterarrived", { penpal: from });
+    saveSoon();
+}
+/* a letter arrives in the rack: in the inbox (the 40 latest kept) and in the correspondence record */
+function deliverLetter(from, text, t) {
     S.post.inbox.push({ from, text, at: t, read: 0 });
     corrRegister("in", from, text, t);
     if (S.post.inbox.length > 40)
         S.post.inbox.splice(0, S.post.inbox.length - 40);
-    note(`A letter came from ${from}${ser.n ? ", the next bit of their news" : ", without being written to first"}.`);
-    say("letterarrived", { penpal: from });
-    saveSoon();
 }
 /* Mite at the rack: the oldest unread letter, read out (or an old one, now and then) */
 function readLetter() {
@@ -23458,10 +23477,7 @@ function lostTick(t) {
 function lostLetter(from, text, t, msg) {
     S.flags.letterInDay = dayNum();
     text = text.replace(/ \/ /g, "\n\n");
-    S.post.inbox.push({ from, text, at: t, read: 0 });
-    corrRegister("in", from, text, t);
-    if (S.post.inbox.length > 40)
-        S.post.inbox.splice(0, S.post.inbox.length - 40);
+    deliverLetter(from, text, t);
     note(msg);
     say("letterarrived", { penpal: from });
 }
@@ -23660,10 +23676,7 @@ function otherTick(t) {
         O.at = t;
         O.repAt = t + (18 + 10 * Math.random()) * 36e5;
         O.next = t + (OTHER_GAP[0] + Math.random() * (OTHER_GAP[1] - OTHER_GAP[0])) * 864e5;
-        S.post.inbox.push({ from: OTHER_NAME, text, at: t, read: 0 });
-        corrRegister("in", OTHER_NAME, text, t);
-        if (S.post.inbox.length > 40)
-            S.post.inbox.splice(0, S.post.inbox.length - 40);
+        deliverLetter(OTHER_NAME, text, t);
         note("A note came under the closet door, from further in. It's with the letters.");
         const l = compose("other_note");
         if (l && roomVisible("archive"))
@@ -29990,21 +30003,7 @@ function renderTasks() {
     const open = openTasks().concat(editingId ? S.tasks.filter(t => t.id === editingId && !t.d && isAhead(t)) : []);
     $("openCount").textContent = open.length || "";
     const vis = t => filter === "all" || (filter === "week" && t.wk) || t.tag === filter;
-    const wh = isWorkHours();
-    const key = t => {
-        const d = dueInfo(t), pl = t.on && t.on <= dayKey();
-        return [areaRank(t, wh), isPicked(t) ? -1 : (d ? Math.min(d.rank, pl ? 1 : 9) : pl ? 1 : t.wk ? 5 : 6), pl ? (t.at || "98") : d ? t.due : "99", t.c];
-    };
-    const cmp = (a, b) => {
-        const A = key(a), B = key(b);
-        for (let i = 0; i < 4; i++) {
-            if (A[i] < B[i])
-                return -1;
-            if (A[i] > B[i])
-                return 1;
-        }
-        return 0;
-    };
+    const cmp = taskSortCmp(isWorkHours());
     const tops = open.filter(t => !t.p || !open.some(o => o.id === t.p)).filter(vis).sort(cmp);
     const ul = $("taskList");
     ul.innerHTML = "";
@@ -30237,56 +30236,67 @@ function renderEveryday() {
     ul.innerHTML = "";
     if (!items.length)
         ul.innerHTML = `<li class="empty">Nothing here yet. Add something you do every day below: water the plants, take a walk, a glass of water.</li>`;
-    for (const x of items) {
-        const li = document.createElement("li"), d = evDone(x);
-        li.className = `task evitem${d ? " evdone" : ""}`;
-        if (evEdit === x.id) {
-            li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="evETitle" value="${esc(x.t)}" maxlength="120" aria-label="Every day">
+    for (const x of items)
+        ul.appendChild(listRow(x, {
+            done: evDone(x), editing: evEdit === x.id, inputId: "evETitle", label: "Every day",
+            tick: btn => evTick(x.id, btn),
+            edit: on => {
+                evEdit = on ? x.id : null;
+                if (on)
+                    renderEveryday();
+            },
+            close: renderEveryday,
+            del: () => evRemove(x)
+        }));
+}
+/* one row of a checklist (The everyday, Shopping): a tick box and the name, or the edit form for it.
+   o: done, editing, inputId, label (for the input), tick(button), edit(on) (sets which row is being edited,
+   and with on re-renders), close() (re-render), del(). Saving trims the text and calls afterChange(). */
+function listRow(x, o) {
+    const li = document.createElement("li"), d = !!o.done;
+    li.className = `task evitem${d ? " evdone" : ""}`;
+    if (o.editing) {
+        li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="${o.inputId}" value="${esc(x.t)}" maxlength="120" aria-label="${esc(o.label)}">
         <span class="tedit-acts"><button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button></span>
         <span class="tedit-more"><button class="btn danger" type="button" data-act="del">Remove</button></span></form>`;
-            const f = li.querySelector("form");
-            f.onsubmit = e => {
-                e.preventDefault();
-                const v = str($("evETitle").value, 120).replace(/\s+/g, " ").trim();
-                if (v) {
-                    x.t = v;
-                    x.u = Date.now();
-                }
-                evEdit = null;
-                afterChange();
-            };
-            f.querySelector('[data-act="cancel"]').onclick = () => {
-                evEdit = null;
-                renderEveryday();
-            };
-            f.querySelector('[data-act="del"]').onclick = () => evRemove(x);
-            f.onkeydown = e => {
-                if (e.key === "Escape") {
-                    e.stopPropagation();
-                    evEdit = null;
-                    renderEveryday();
-                }
-            };
-            setTimeout(() => {
-                const i = $("evETitle");
-                if (i) {
-                    i.focus();
-                    i.select();
-                }
-            }, 0);
-        }
-        else {
-            li.innerHTML = `<button class="check${d ? " on" : ""}" role="checkbox" aria-checked="${d}" aria-label="${esc(x.t)}">${d ? `<svg viewBox="0 0 7 6" width="14" height="12" shape-rendering="crispEdges" aria-hidden="true"><path d="M6 0h1v2H6zM5 2h1v1H5zM4 3h1v1H4zM3 4h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" fill="currentColor"/></svg>` : ""}</button>
+        const f = li.querySelector("form"), close = () => {
+            o.edit(false);
+            o.close();
+        };
+        f.onsubmit = e => {
+            e.preventDefault();
+            const v = str($(o.inputId).value, 120).replace(/\s+/g, " ").trim();
+            if (v) {
+                x.t = v;
+                x.u = Date.now();
+            }
+            o.edit(false);
+            afterChange();
+        };
+        f.querySelector('[data-act="cancel"]').onclick = close;
+        f.querySelector('[data-act="del"]').onclick = () => o.del();
+        f.onkeydown = e => {
+            if (e.key === "Escape") {
+                e.stopPropagation();
+                close();
+            }
+        };
+        setTimeout(() => {
+            const i = $(o.inputId);
+            if (i) {
+                i.focus();
+                i.select();
+            }
+        }, 0);
+    }
+    else {
+        li.innerHTML = `<button class="check${d ? " on" : ""}" role="checkbox" aria-checked="${d}" aria-label="${esc(x.t)}">${d ? `<svg viewBox="0 0 7 6" width="14" height="12" shape-rendering="crispEdges" aria-hidden="true"><path d="M6 0h1v2H6zM5 2h1v1H5zM4 3h1v1H4zM3 4h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" fill="currentColor"/></svg>` : ""}</button>
       <div style="min-width:0"><button class="tname" data-act="edit" title="Edit">${esc(x.t)}</button></div>
       <div class="tact"><button class="mini" data-act="edit2" aria-label="Edit or remove ${esc(x.t)}" title="Edit or remove">⋯</button></div>`;
-            li.querySelector(".check").onclick = e => evTick(x.id, e.currentTarget);
-            li.querySelector('[data-act="edit"]').onclick = li.querySelector('[data-act="edit2"]').onclick = () => {
-                evEdit = x.id;
-                renderEveryday();
-            };
-        }
-        ul.appendChild(li);
+        li.querySelector(".check").onclick = e => o.tick(e.currentTarget);
+        li.querySelector('[data-act="edit"]').onclick = li.querySelector('[data-act="edit2"]').onclick = () => o.edit(true);
     }
+    return li;
 }
 /* the tab row: arrow keys move between the tabs (the usual tablist keys) */
 (() => {
@@ -30433,55 +30443,18 @@ function renderShopping() {
     ul.innerHTML = "";
     if (!items.length)
         ul.innerHTML = `<li class="empty">Nothing to buy yet. Add things below; tick them off in the shop.</li>`;
-    for (const x of items) {
-        const li = document.createElement("li"), d = !!x.done;
-        li.className = `task evitem${d ? " evdone" : ""}`;
-        if (buyEdit === x.id) {
-            li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="buyETitle" value="${esc(x.t)}" maxlength="120" aria-label="To buy">
-        <span class="tedit-acts"><button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button></span>
-        <span class="tedit-more"><button class="btn danger" type="button" data-act="del">Remove</button></span></form>`;
-            const f = li.querySelector("form"), close = () => {
-                buyEdit = null;
-                renderShopping();
-            };
-            f.onsubmit = e => {
-                e.preventDefault();
-                const v = str($("buyETitle").value, 120).replace(/\s+/g, " ").trim();
-                if (v) {
-                    x.t = v;
-                    x.u = Date.now();
-                }
-                buyEdit = null;
-                afterChange();
-            };
-            f.querySelector('[data-act="cancel"]').onclick = close;
-            f.querySelector('[data-act="del"]').onclick = () => buyRemove(x);
-            f.onkeydown = e => {
-                if (e.key === "Escape") {
-                    e.stopPropagation();
-                    close();
-                }
-            };
-            setTimeout(() => {
-                const i = $("buyETitle");
-                if (i) {
-                    i.focus();
-                    i.select();
-                }
-            }, 0);
-        }
-        else {
-            li.innerHTML = `<button class="check${d ? " on" : ""}" role="checkbox" aria-checked="${d}" aria-label="${esc(x.t)}">${d ? `<svg viewBox="0 0 7 6" width="14" height="12" shape-rendering="crispEdges" aria-hidden="true"><path d="M6 0h1v2H6zM5 2h1v1H5zM4 3h1v1H4zM3 4h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" fill="currentColor"/></svg>` : ""}</button>
-      <div style="min-width:0"><button class="tname" data-act="edit" title="Edit">${esc(x.t)}</button></div>
-      <div class="tact"><button class="mini" data-act="edit2" aria-label="Edit or remove ${esc(x.t)}" title="Edit or remove">⋯</button></div>`;
-            li.querySelector(".check").onclick = () => buyTick(x.id);
-            li.querySelector('[data-act="edit"]').onclick = li.querySelector('[data-act="edit2"]').onclick = () => {
-                buyEdit = x.id;
-                renderShopping();
-            };
-        }
-        ul.appendChild(li);
-    }
+    for (const x of items)
+        ul.appendChild(listRow(x, {
+            done: !!x.done, editing: buyEdit === x.id, inputId: "buyETitle", label: "To buy",
+            tick: () => buyTick(x.id),
+            edit: on => {
+                buyEdit = on ? x.id : null;
+                if (on)
+                    renderShopping();
+            },
+            close: renderShopping,
+            del: () => buyRemove(x)
+        }));
 }
 (() => {
     const f = $("buyForm"), c = $("buyClear");
@@ -34372,21 +34345,7 @@ function daysOffSave() {
 function nextUpPick(skipIds = []) {
     const open = openTasks();
     const c = ctx(), late = isLate(c.h), workHours = isWorkHours(c);
-    const wh = isWorkHours();
-    const key = t => {
-        const d = dueInfo(t), pl = t.on && t.on <= dayKey();
-        return [areaRank(t, wh), isPicked(t) ? -1 : (d ? Math.min(d.rank, pl ? 1 : 9) : pl ? 1 : t.wk ? 5 : 6), pl ? (t.at || "98") : d ? t.due : "99", t.c];
-    };
-    const cmp = (a, b) => {
-        const A = key(a), B = key(b);
-        for (let i = 0; i < 4; i++) {
-            if (A[i] < B[i])
-                return -1;
-            if (A[i] > B[i])
-                return 1;
-        }
-        return 0;
-    };
+    const cmp = taskSortCmp(isWorkHours());
     const roots = open.filter(t => !t.p || !open.some(o => o.id === t.p)).sort(cmp);
     const flat = [];
     roots.forEach(r => {
