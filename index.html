@@ -5083,7 +5083,9 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
 , "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un", "mvp8axa8idn9w", "mvpju1m9c0hfl", "mvpjo4ttghzky", "mvpjomx7zo6af", "mvqbkbk0lj3yu", "mvpk2otjj8pbe",
     // shopping list (27-10-2026)
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
-, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t", "mvqi4h680yovh", "mvru6yetlxofd", "mvrujk91xqygh", "mvqp9s8512wxa", "mvshqinq5llx4", "mvs75jof0hcot", "mvs76pjhzxzxr", "mvs76f3yi73yg", "mvs7bjqxpz1ra", "mvs7cugkj3fhe", "mvs7cya26weun", "mvscobidynjkr", "mvruau0k2yd2j", "mvre03nu4ozba", "mvrzzeedlnxq4", "mvte8rmm57470"];
+, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t", "mvqi4h680yovh", "mvru6yetlxofd", "mvrujk91xqygh", "mvqp9s8512wxa", "mvshqinq5llx4", "mvs75jof0hcot", "mvs76pjhzxzxr", "mvs76f3yi73yg", "mvs7bjqxpz1ra", "mvs7cugkj3fhe", "mvs7cya26weun", "mvscobidynjkr", "mvruau0k2yd2j", "mvre03nu4ozba", "mvrzzeedlnxq4", "mvte8rmm57470",
+    // group 33 (31-10-2026)
+    "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq"];
 
 </script>
 <script>/* js/core/state.js */
@@ -12910,6 +12912,10 @@ function requestObj(kind, fx, fy) {
         ovenJob.called = performance.now();
         kind = "ovenOut";
     }
+    if (kind === "look:closet" && pet.beh === "deepgo" && pet.b.e && pet.b.arr !== undefined) { // Mite's inside: it calls back how long (jot mvw5flosv9hue)
+        speak(closetCallBack(pet.dur - pet.bt), { ms: 4000 });
+        return;
+    }
     {
         const k = kind.startsWith("wall:") ? "wall" : kind.startsWith("refl:") ? "refl" : kind.startsWith("look:") ? "look" : kind;
         if (!S.flags["tap_" + k]) {
@@ -16713,9 +16719,9 @@ function animalTalkTick(now) {
 
 /* now and then Midnightcat, sitting in the archive with you looking, has a word with a patron's eye in the jars: two
    colleagues, neither above the other (lines catpatron: "id | C: … / F: …"; the eye speaks as F, owner's jots
-   mvs7cugkj3fhe, mvs7cya26weun) */
+   mvs7cugkj3fhe, mvs7cya26weun). Only with the chalk circle bought and out in the scene (owner, 31-10-2026) */
 function patronTalk(now) {
-    if (!cat.ready || cat.room !== "archive" || !roomOnScreen("archive") || cat.g > 0 || !["sit", "walk"].includes(cat.ph) || catInCircle() || Math.random() > .4)
+    if (!own("circle") || !cat.ready || cat.room !== "archive" || !roomOnScreen("archive") || cat.g > 0 || !["sit", "walk"].includes(cat.ph) || catInCircle() || Math.random() > .4)
         return false;
     const have = (S.eyes || []).map(s => s.k).filter(isPatronEye);
     const ls = pool("catpatron").map(x => parseLine(x).text.split("|")).filter(x => x.length > 1 && have.includes(x[0].trim()));
@@ -23414,6 +23420,7 @@ function showRecorder() {
     const T = S.tapes || {};
     if (T.lit) {
         T.lit = 0;
+        tapeRunUntil = performance.now() + rnd(60e3, 120e3); // (the reels turn for a minute or two: jot mvw5aog8ovqp8)
         saveSoon();
         const tp = oralTapes().sort((a, b) => b.at - a.at)[0];
         if (tp) {
@@ -23470,7 +23477,9 @@ function renderTapes() {
         c.textContent = `${ts.length}`;
 }
 /* the recorder stands on the archive's shelves: at the left end of the row just above the closet (owner, 31-10-2026),
-   that row's boxes start after it (rowX0). Still, no moving parts: only a steady red light while a side waits */
+   that row's boxes start after it (rowX0). A steady red light while a side waits; once played, the reels turn for a
+   minute or two with a green light on */
+let tapeRunUntil = 0;
 function recorderGeo(g) {
     const row = closetRows(g);
     return { x: g.x0 + R * .12, y: GY - row * g.rh - (row ? 3 : 0), w: R * .62, h: R * .32 };
@@ -23485,9 +23494,21 @@ function drawRecorder(dk, g) {
     cx.fillRect(x, y + h - P, w, P);
     cx.fillStyle = mix("#241812", "#120c0a", dk); // the tape window
     cx.fillRect(x + P, y + P, w - P * 2, h - P * 3);
-    cx.fillStyle = mix("#ecd6ad", "#74503a", dk * .7); // the two hubs (still: it isn't running)
-    for (const fx of [.28, .72])
-        cx.fillRect(q(x + w * fx - P / 2), y + P + q((h - P * 3) / 2 - P / 2), P, P);
+    const run = performance.now() < tapeRunUntil, fr = (performance.now() / 220 | 0) % 2, wh = h - P * 3; // (playing: the reels turn)
+    cx.fillStyle = mix("#ecd6ad", "#74503a", dk * .7); // the two hubs
+    for (const fx of [.28, .72]) {
+        const hx = q(x + w * fx - P / 2), hy = y + P + q(wh / 2 - P / 2);
+        cx.fillRect(hx, hy, P, P);
+        if (wh >= P * 3) // (room for spokes: a + and an x in turn while it runs; a still + otherwise)
+            for (const [dx, dy] of run && fr ? [[-1, -1], [1, -1], [-1, 1], [1, 1]] : [[-1, 0], [1, 0], [0, -1], [0, 1]])
+                cx.fillRect(hx + dx * P, hy + dy * P, P, P);
+        else if (run && fr)
+            cx.fillRect(hx + P, hy, P, P);
+    }
+    if (run) { // a little green light while it plays
+        cx.fillStyle = "#8fd06a";
+        cx.fillRect(x + P, y - P, P, P);
+    }
     if (lit) { // the red light, steady: a side nobody's played yet
         cx.fillStyle = "#df8a3a";
         cx.fillRect(x + w - P * 2, y - P, P, P); // (a little lamp on top, right)
@@ -23689,7 +23710,8 @@ function deepTrip(t = Date.now()) {
     const L = deepLevel();
     if (!L || !S.deep)
         return null;
-    const D = S.deep, s = strangeness(), lv = Math.random() < .6 ? L : 1 + Math.floor(Math.random() * L);
+    const D = S.deep, s = strangeness(), lastLv = (D.log[D.log.length - 1] || {}).lv, lvs = [...Array(L)].map((_, i) => i + 1).filter(v => L < 2 || v !== lastLv);
+    const lv = choice(lvs); // (any level the gear reaches, evenly, not the same as last time: jot mvw5h095d4nzq; was 60% the furthest)
     const all = deepParse("deep_log").filter(p => +p[0] === lv && (+p[1] || 0) <= s), fresh = all.filter(p => !(D.had || []).includes(p[2].slice(0, 60)));
     const cands = (fresh.length ? fresh : all).map(p => ({ p, w: (+p[1] || 0) === s ? 2 : 1 }));
     if (!cands.length)
@@ -23714,6 +23736,13 @@ function deepTrip(t = Date.now()) {
     note(`${S.settings.pet} went into the closet, as far as ${deepPlace(lv)}.${e.f ? ` It brought back ${e.f.replace(/^(A|An|One|The) /, m => m.toLowerCase())}.` : ""}`);
     saveSoon();
     return e;
+}
+/* the closet tapped while Mite is in it: how long it'll be, called back from inside (seconds left) */
+function closetCallBack(left) {
+    if (left < 8)
+        return "Coming out! Nearly there.";
+    const m = Math.round(left / 60);
+    return m < 1 ? choice(["Less than a minute! Put the kettle on.", "Half a minute! I'm on the way back.", "Not long! I can see the door from here."]) : choice([`About a minute! It goes back a long way.`, `A minute, maybe. I'm counting coats.`, `About a minute! Don't shut the door.`]);
 }
 /* the card's button, or anywhere else: off it goes (to the archive first) */
 function goDeep() {
@@ -34978,7 +35007,7 @@ function autoFileOld() {
 /* the credits page: inspirations (tone and ideas only: no names, characters, places or text taken from them),
    the fonts and their licence */
 const CREDITS_HTML = `<div><h2>Credits and inspiration</h2><p class="sub">Small Things is a small, original thing. These are the works whose mood it borrows: their tone and ideas, never their characters, places or words. It isn't affiliated with any of them.</p></div>
-<div><h3>Inspiration</h3><p class="sub">The Syndicates, The SCP Foundation, Control, World of Darkness, Fallen London, The Elder Scrolls V: Skyrim, Persona, Fallout, Animal Crossing, Stardew Valley, Finch, cosy witch games and virtual pets.</p></div>
+<div><h3>Inspiration</h3><p class="sub">The Syndicates, The SCP Foundation, Control, World of Darkness, The Magnus Archives, House of Leaves, Fallen London, Finch and Tamagotchi.</p></div>
 <div><h3>Books on the shelf</h3><p class="sub">A few of the books <span class="pn">Mite</span> reads have titles borrowed from books in other games, as a nod to them. Only the titles: what <span class="pn">Mite</span> says about them is its own.</p></div>
 <div><h3>Fonts</h3><p class="sub">Bricolage Grotesque, Atkinson Hyperlegible, IBM Plex Mono, DotGothic16 and VT323, each under the SIL Open Font License 1.1.</p></div>
 <div><h3>Made with</h3><p class="sub">Written, drawn and built with Claude. All the pixel art is drawn in code, and all of it is original.</p></div>
