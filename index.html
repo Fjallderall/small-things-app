@@ -626,6 +626,12 @@ body.pixel .desk .desk-h,.desk .desk-h{font-family:var(--f-body);font-size:14px;
   body.game.sheet .toasts.stay{right:auto;left:calc((100vw - var(--side)) / 2)}
 }
 @media (min-width: 960px) and (prefers-reduced-motion: reduce){body.game .world{transition:none}}
+/* big screens (1920×1080 and up, group 32): a wider side panel, so the six Satchel tabs sit on one line and the lists
+   aren't a narrow strip at the edge; a touch larger text in it */
+@media (min-width: 1600px) {
+  body.game.sheet{--side:min(540px,30vw)}
+  body.game .panel{width:min(540px,30vw);font-size:15px}
+}
 
 /* the jotted-down pile: small paper notes */
 .jots{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -4952,7 +4958,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
 , "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un", "mvp8axa8idn9w", "mvpju1m9c0hfl", "mvpjo4ttghzky", "mvpjomx7zo6af", "mvqbkbk0lj3yu", "mvpk2otjj8pbe",
     // shopping list (27-10-2026)
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
-, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t"];
+, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t", "mvqi4h680yovh", "mvru6yetlxofd", "mvrujk91xqygh", "mvqp9s8512wxa", "mvshqinq5llx4"];
 
 </script>
 <script>/* js/core/state.js */
@@ -4963,7 +4969,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -5174,7 +5180,7 @@ function sanitizeState(raw) {
         ["rug", "grug", "arug"].forEach(k => r.sh && r.sh[k] === "rect" && (rSh[k] = "rect"));
         o.rugCol = { rug: pick("rug", "red"), grug: pick("grug", "green"), arug: pick("arug", "blue"), own: [...new Set(rOwn)], rect: r.rect ? 1 : 0, sh: rSh, at: num(r.at) };
     }
-    o.kettleStyle = { k: ["copper", "blue", "green", "pink", "bluefl"].includes(s.kettleStyle && s.kettleStyle.k) ? s.kettleStyle.k : "copper", at: num(s.kettleStyle && s.kettleStyle.at) }; // the kettle's looks (draw-world.js)
+    o.kettleStyle = { k: ["copper", "blue", "green", "pink", "bluefl", "grey"].includes(s.kettleStyle && s.kettleStyle.k) ? s.kettleStyle.k : "copper", at: num(s.kettleStyle && s.kettleStyle.at) }; // the kettle's looks (draw-world.js)
     o.postits = arr(s.postits, 12).map(n => ({ room: ["room", "garden", "archive"].includes(n.room) ? n.room : "room", fx: clamp(num(n.fx), 0, 1), fy: clamp(num(n.fy), 0, 1), at: num(n.at), rot: clamp(num(n.rot), -1, 1), curl: !!n.curl, tape: !!n.tape, sz: clamp(num(n.sz, 1), .5, 1.5), col: /^#[0-9a-f]{6}$/i.test(n.col) ? n.col : "#f2d06b", text: str(n.text, 60) })); // Mite's sticky notes on the walls (pastimes.js)
     o.basket = { t: (Array.isArray(s.basket && s.basket.t) ? s.basket.t.slice(-20) : []).filter(k => ["dust", "paper", "crumb", "leaf", "postit"].includes(k)), at: num(s.basket && s.basket.at) }; // the possum's basket (basket.js)
     o.tiffany = { k: ["classic", "dragonfly", "blossom", "autumn", "sea", "nebula"].includes(s.tiffany && s.tiffany.k) ? s.tiffany.k : "classic", at: num(s.tiffany && s.tiffany.at) }; // the lamp's shade (archive-room.js)
@@ -5245,7 +5251,7 @@ function sanitizeState(raw) {
         const b = s.barter && typeof s.barter === "object" ? s.barter : {};
         o.barter = { wk: dkey(b.wk) || "", stock: arr(b.stock, 4).map(x => ({ k: ["tea", "bake", "flower", "curio", "eye"].includes(x.k) ? x.k : "", id: str(x.id, 80), price: clamp(Math.round(num(x.price, 20)), 1, 999) })).filter(x => x.id && x.k), got: (Array.isArray(b.got) ? b.got : []).slice(0, 4).map(x => str(x, 80)).filter(Boolean) };
     }
-    o.colSeen = { ids: (Array.isArray(s.colSeen && s.colSeen.ids) ? s.colSeen.ids : []).map(x => str(x, 40)).filter(Boolean).slice(-60), at: num(s.colSeen && s.colSeen.at) }; // the Collections sections you've seen (collection.js)
+    o.colSeen = { ids: (Array.isArray(s.colSeen && s.colSeen.ids) ? s.colSeen.ids : []).map(x => str(x, 40)).filter(Boolean).slice(-60), at: num(s.colSeen && s.colSeen.at), it: (Array.isArray(s.colSeen && s.colSeen.it) ? s.colSeen.it : []).map(x => str(x, 24)).filter(Boolean).slice(-1500), itAt: num(s.colSeen && s.colSeen.itAt) }; // the Collections sections and things you've seen (collection.js)
     o.lastSnack = { n: str(s.lastSnack && s.lastSnack.n, 40), at: num(s.lastSnack && s.lastSnack.at) }; // the last snack Mite had ({snack} in lines, for 12 hours)
     o.fold = {}; // which foldable sections you opened or closed (shop, Collections, Log, Archive), in the save so it keeps and syncs (jot mvoyeagumgay6)
     for (const [k, v] of Object.entries(s.fold && typeof s.fold === "object" ? s.fold : {}).slice(0, 120))
@@ -5618,7 +5624,7 @@ function mergeStates(a, b) {
     }
     o.pantry = Object.assign({}, nw.pantry || {}); // (the newer save's stock: what was used up stays used up)
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
-    o.colSeen = { ids: [...new Set([...((a.colSeen || {}).ids || []), ...((b.colSeen || {}).ids || [])])].slice(-60), at: Math.max(num((a.colSeen || {}).at), num((b.colSeen || {}).at)) };
+    o.colSeen = { ids: [...new Set([...((a.colSeen || {}).ids || []), ...((b.colSeen || {}).ids || [])])].slice(-60), at: Math.max(num((a.colSeen || {}).at), num((b.colSeen || {}).at)), it: [...new Set([...((a.colSeen || {}).it || []), ...((b.colSeen || {}).it || [])])].slice(-1500), itAt: Math.max(num((a.colSeen || {}).itAt), num((b.colSeen || {}).itAt)) };
     o.fold = Object.assign({}, od.fold || {}, nw.fold || {});
     o.lastSnack = num((a.lastSnack || {}).at) > num((b.lastSnack || {}).at) ? a.lastSnack : b.lastSnack || a.lastSnack;
     o.shopSeen = { ids: [...new Set([...((a.shopSeen || {}).ids || []), ...((b.shopSeen || {}).ids || [])])].slice(-600), at: Math.max(num((a.shopSeen || {}).at), num((b.shopSeen || {}).at)) };
@@ -16475,7 +16481,7 @@ function raccoonName() {
     }
     return S.raccoonName;
 }
-const guestSize = g => R * (g.kind === "raccoon" ? .82 : g.kind === "rat" ? .62 : .5) * 1.15;
+const guestSize = g => R * (g.kind === "raccoon" ? .82 : g.kind === "rat" ? .62 : .54) * 1.15;
 function spawnRaccoon() {
     const side = Math.random() < .5 ? -1 : 1;
     let tx = W * rnd(.3, .7);
@@ -16493,7 +16499,8 @@ function spawnGuest() {
     let tx = W * rnd(.28, .72);
     for (let k = 0; k < 8 && Math.abs(tx - pet.x) < R * 2; k++)
         tx = W * rnd(.22, .78);
-    guest = { name: pick[0].slice(0, 30), kind, s: R * (kind === "rat" ? .62 : .5) * 1.15, x: side < 0 ? -R : W + R, tx, dir: -side, ph: "in", t: 0, treat: guestTreat(), eaten: 0, treatOut: false, tside: 1, scarf: guestScarf(pick[0]), z: 0, tz: Math.random() < .5 ? floorDepth() : 0 };
+    guest = { name: pick[0].slice(0, 30), kind, s: 0, x: side < 0 ? -R : W + R, tx, dir: -side, ph: "in", t: 0, treat: guestTreat(), eaten: 0, treatOut: false, tside: 1, scarf: guestScarf(pick[0]), z: 0, tz: Math.random() < .5 ? floorDepth() : 0 };
+    guest.s = guestSize(guest);
     S.guestAt = Date.now();
     saveSoon();
 }
@@ -16849,88 +16856,110 @@ function drawGuest(g, now) {
     if (g.kind === "raccoon")
         return drawRaccoon(g, now);
     const s = g.s, d = g.dir, x = g.x, y = GY + (g.z || 0), nap = g.ph === "nap" && !g.napped2, moving = g.ph === "in" || g.ph === "out" || g.ph === "roam" && g.act && g.act.ph === "walk", bob = moving ? Math.abs(Math.sin(now / 90)) * s * .08 : 0;
-    const col = g.kind === "rat" ? "#8a8580" : "#b8a48a", belly = "#e9dfcf", pink = "#e8a5a5", ink = "#2a1e18";
+    /* a mouse: small, round rump, big round ears, a pointed snout and a thin tail that curls up; a rat: longer and
+       hunched, small ears set back, a long blunt snout and a thick tail that tapers along the floor (group 32) */
+    const rat = g.kind === "rat", col = rat ? "#8c8a80" : "#d4b083", back = rat ? "#55392a" : "#b58c62", belly = rat ? "#c9c4b4" : "#ecd6ad", pink = "#e8a5a5", ink = "#2a1e18";
+    const fill = (c, ex, ey, rx, ry, rot) => {
+        cx.fillStyle = c;
+        cx.beginPath();
+        cx.ellipse(ex, ey, rx, ry, rot || 0, 0, 7);
+        cx.fill();
+    };
     drawTreat(g, s, x, y);
+    /* the tail: a mouse's thin and curling up, a rat's thick at the root, tapering, lying along the floor */
+    const tw = Math.sin(now / 300) * s * .12, tx0 = x - d * s * (rat ? .62 : .5), ty0 = nap ? y - s * .12 : y - s * (rat ? .2 : .22) - bob;
     cx.strokeStyle = pink;
-    cx.lineWidth = Math.max(1.5, s * .07);
-    cx.beginPath();
+    cx.lineCap = "round";
     if (nap) {
-        cx.moveTo(x - d * s * .5, y - s * .1);
-        cx.quadraticCurveTo(x, y + s * .06, x + d * s * .55, y - s * .06);
+        cx.lineWidth = Math.max(1.5, s * (rat ? .09 : .06));
+        cx.beginPath();
+        cx.moveTo(tx0, ty0);
+        cx.quadraticCurveTo(x, y + s * .06, x + d * s * .6, y - s * .04);
+        cx.stroke();
     }
-    else {
-        const w = Math.sin(now / 300) * s * .15;
-        cx.moveTo(x - d * s * .5, y - s * .25 - bob);
-        cx.quadraticCurveTo(x - d * s * 1.0, y - s * .1 + w, x - d * s * 1.35, y - s * .3 + w);
-    }
-    cx.stroke();
-    cx.fillStyle = col;
-    cx.beginPath();
-    if (nap)
-        cx.ellipse(x, y - s * .3, s * .62, s * .32, 0, 0, 7);
-    else
-        cx.ellipse(x, y - s * .42 - bob, s * .58, s * .4, 0, 0, 7);
-    cx.fill();
-    cx.fillStyle = belly;
-    cx.beginPath();
-    if (nap)
-        cx.ellipse(x + d * s * .1, y - s * .16, s * .4, s * .14, 0, 0, 7);
-    else
-        cx.ellipse(x + d * s * .18, y - s * .3 - bob, s * .34, s * .22, 0, 0, 7);
-    cx.fill();
-    if (!nap) {
-        cx.fillStyle = pink;
-        const st = moving ? Math.sin(now / 90) * s * .08 : 0;
-        for (const fx of [-.3, .32]) {
+    else if (rat) {
+        const pts = [[tx0, ty0], [x - d * s * 1.0, y - s * .06 + tw * .3], [x - d * s * 1.5, y - s * .04 + tw * .5], [x - d * s * 1.85, y - s * .12 + tw]];
+        for (let i = 0; i < 3; i++) {
+            cx.lineWidth = Math.max(1.5, s * (.13 - i * .035));
             cx.beginPath();
-            cx.ellipse(x + fx * s + st * (fx < 0 ? 1 : -1), y - s * .03, s * .1, s * .05, 0, 0, 7);
-            cx.fill();
+            cx.moveTo(pts[i][0], pts[i][1]);
+            cx.lineTo(pts[i + 1][0], pts[i + 1][1]);
+            cx.stroke();
         }
     }
-    const hx = nap ? x + d * s * .45 : x + d * s * .55, hy = nap ? y - s * .32 : y - s * .66 - bob, hr = s * (nap ? .26 : .3);
-    if (!nap) {
+    else {
+        cx.lineWidth = Math.max(1.5, s * .055);
+        cx.beginPath();
+        cx.moveTo(tx0, ty0);
+        cx.bezierCurveTo(x - d * s * 1.1, y - s * .02, x - d * s * 1.45, y - s * .1 + tw, x - d * s * 1.4, y - s * .55 + tw);
+        cx.stroke();
+    }
+    cx.lineCap = "butt";
+    /* the body */
+    if (nap) {
+        fill(col, x, y - s * .3, s * (rat ? .72 : .6), s * (rat ? .3 : .32));
+        fill(belly, x + d * s * .1, y - s * .14, s * .42, s * .12);
+    }
+    else if (rat) { // long, with the haunch higher than the shoulders
+        fill(col, x - d * s * .18, y - s * .42 - bob, s * .5, s * .38);
+        fill(col, x + d * s * .22, y - s * .34 - bob, s * .44, s * .3);
+        fill(belly, x + d * s * .14, y - s * .2 - bob, s * .42, s * .14);
+    }
+    else { // round at the back, narrowing to the head
+        fill(col, x - d * s * .08, y - s * .4 - bob, s * .5, s * .38);
+        fill(col, x + d * s * .3, y - s * .36 - bob, s * .3, s * .26);
+        fill(belly, x + d * s * .14, y - s * .22 - bob, s * .32, s * .16);
+    }
+    if (!nap) { // feet
+        const st = moving ? Math.sin(now / 90) * s * .08 : 0;
+        for (const fx of rat ? [-.42, .44] : [-.3, .36])
+            fill(pink, x + fx * s * d + st * (fx < 0 ? 1 : -1), y - s * .03, s * .1, s * .05);
+    }
+    /* the head: a mouse's sits up and forward, a rat's is longer and lower */
+    const hr = s * (nap ? .25 : rat ? .27 : .28), hx = nap ? x + d * s * .48 : x + d * s * (rat ? .7 : .6), hy = nap ? y - s * .3 : y - s * (rat ? .5 : .6) - bob;
+    if (!nap) { // the scarf, at the neck
         cx.fillStyle = g.scarf;
         cx.beginPath();
-        cx.ellipse(x + d * s * .32, y - s * .56 - bob, s * .12, s * .24, d * .3, 0, 7);
+        cx.ellipse(hx - d * hr * .75, hy + hr * .25, s * .1, s * .22, d * .3, 0, 7);
         cx.fill();
     }
-    for (const [ex, ey, er] of [[-.3, -.82, .46], [.32, -.8, .4]]) {
-        cx.fillStyle = col;
-        cx.beginPath();
-        cx.arc(hx + d * hr * ex, hy + hr * ey, hr * er, 0, 7);
-        cx.fill();
-        cx.fillStyle = pink;
-        cx.beginPath();
-        cx.arc(hx + d * hr * ex, hy + hr * ey, hr * er * .6, 0, 7);
-        cx.fill();
-    }
+    /* ears: the far one first, a shade darker; a mouse's are big and round, a rat's small and set back */
+    const er = hr * (rat ? .58 : .95), ex = hx - d * hr * (rat ? .6 : .75), ey = hy - hr * (rat ? .75 : .9);
+    fill(rat ? col : back, ex + d * er * .55, ey + er * .1, er * .85, er * .85);
+    fill(col, ex, ey, er, er);
+    fill(pink, ex + d * er * .1, ey + er * .05, er * .58, er * .58);
+    fill(col, hx, hy, hr, hr * .9);
+    /* the snout: a mouse's short and pointed, a rat's long and blunt */
     cx.fillStyle = col;
     cx.beginPath();
-    cx.arc(hx, hy, hr, 0, 7);
-    cx.fill();
-    cx.beginPath();
-    cx.moveTo(hx + d * hr * .5, hy - hr * .45);
-    cx.lineTo(hx + d * hr * 1.45, hy + hr * .2);
-    cx.lineTo(hx + d * hr * .45, hy + hr * .6);
+    if (rat) {
+        cx.moveTo(hx + d * hr * .3, hy - hr * .7);
+        cx.lineTo(hx + d * hr * 1.75, hy + hr * .05);
+        cx.lineTo(hx + d * hr * 1.7, hy + hr * .45);
+        cx.lineTo(hx + d * hr * .3, hy + hr * .8);
+    }
+    else {
+        cx.moveTo(hx + d * hr * .4, hy - hr * .6);
+        cx.lineTo(hx + d * hr * 1.55, hy + hr * .22);
+        cx.lineTo(hx + d * hr * .4, hy + hr * .75);
+    }
     cx.closePath();
     cx.fill();
-    cx.fillStyle = pink;
-    cx.beginPath();
-    cx.arc(hx + d * hr * 1.4, hy + hr * .18, Math.max(1, hr * .15), 0, 7);
-    cx.fill();
+    const nx = hx + d * hr * (rat ? 1.75 : 1.52), ny = hy + hr * (rat ? .22 : .22);
+    fill(pink, nx, ny, Math.max(1, hr * .17), Math.max(1, hr * .15));
     cx.fillStyle = ink;
     cx.strokeStyle = ink;
     if (nap) {
         cx.lineWidth = Math.max(1, hr * .1);
         cx.beginPath();
-        cx.moveTo(hx + d * hr * .15, hy - hr * .05);
-        cx.lineTo(hx + d * hr * .55, hy - hr * .05);
+        cx.moveTo(hx + d * hr * .1, hy - hr * .05);
+        cx.lineTo(hx + d * hr * .5, hy - hr * .05);
         cx.stroke();
     }
-    else {
-        cx.beginPath();
-        cx.arc(hx + d * hr * .4, hy - hr * .15, Math.max(1, hr * .13), 0, 7);
-        cx.fill();
+    else
+    { // the eye: a whole pixel or two, so it doesn't blur into the fur
+        const ez = Math.max(1.2, hr * .3);
+        cx.fillRect(Math.round(hx + d * hr * (rat ? .55 : .5) - ez / 2), Math.round(hy - hr * .1 - ez / 2), Math.ceil(ez), Math.ceil(ez));
     }
 }
 /* the cup of tea or plate of cookies next to a visitor, going down as they eat */
@@ -24799,22 +24828,27 @@ function drawSeasPiece(id, s, dk, t) {
             rect("#4a3420", Math.cos(a) * s * .3 - s * .05, Math.sin(a) * s * .3 - s * .07, s * .1, s * .04);
         }
     }
-    else if (id === "sgourd") { // a squat striped gourd by the hearth; now and then it knocks
-        const knock = (t % 17) < 1.2, jig = knock ? Math.round(Math.sin(t * 20)) * s * .01 : 0;
-        shade(0, -s * .02, s * .3, s * .05);
-        oval("#d9922e", jig, -s * .17, s * .27, s * .18);
-        cx.strokeStyle = D("#5f7a3a");
-        cx.lineWidth = Math.max(1, s * .03);
-        for (const k of [-.14, 0, .14]) {
-            cx.beginPath();
-            cx.ellipse(jig + k * s, -s * .17, s * .05, s * .17, 0, 0, 7);
-            cx.stroke();
-        }
-        rect("#4a3a20", jig - s * .02, -s * .42, s * .04, s * .09);
-        cx.strokeStyle = D("#5f7a3a");
+    else if (id === "sgourd") { // a squat ribbed gourd by the hearth, a curled stem and a leaf; now and then it knocks
+        const knock = (t % 17) < 1.2, jig = knock ? Math.round(Math.sin(t * 20)) * s * .01 : 0, cy = -s * .2;
+        shade(0, -s * .02, s * .34, s * .05);
+        /* the ribs: outer lobes a deeper orange, the middle ones lighter, each overlapping the last (group 32: it read as
+           a flat bun with green scribbles before) */
+        oval("#b8592f", jig - s * .17, cy, s * .15, s * .19);
+        oval("#b8592f", jig + s * .17, cy, s * .15, s * .19);
+        oval("#df8a3a", jig - s * .08, cy, s * .14, s * .21);
+        oval("#df8a3a", jig + s * .08, cy, s * .14, s * .21);
+        oval("#f2c14e", jig, cy - s * .01, s * .08, s * .2);
+        oval("#fff0b8", jig - s * .03, cy - s * .1, s * .025, s * .05); // a shine
+        /* the stem: thick, brown-green, curling over to one side, with a small leaf */
+        cx.strokeStyle = D("#365a2c");
+        cx.lineCap = "round";
+        cx.lineWidth = Math.max(PX * .67, s * .06);
         cx.beginPath();
-        cx.arc(jig + s * .05, -s * .4, s * .04, Math.PI, 0);
+        cx.moveTo(jig, cy - s * .18);
+        cx.quadraticCurveTo(jig - s * .01, cy - s * .3, jig + s * .08, cy - s * .32);
         cx.stroke();
+        cx.lineCap = "butt";
+        oval("#4f7d3c", jig - s * .09, cy - s * .24, s * .07, s * .035, -.5);
         if (knock) { // little knocking lines
             cx.strokeStyle = D("#f3e7c8");
             cx.lineWidth = Math.max(1, s * .02);
@@ -28490,7 +28524,8 @@ const KETTLE_STYLES = [
     { id: "blue", sid: "kt_blue", name: "Blue enamel kettle", price: 12, note: "Chipped at the spout, which is how you know it's loved.", body: "#3f6aa8", dark: "#24406e", lite: "#a8c8ec" },
     { id: "green", sid: "kt_green", name: "Green enamel kettle", price: 12, note: "The colour of moss after rain. Mite chose it, obviously.", body: "#4f8a4a", dark: "#2c5a2c", lite: "#b8dc9a" },
     { id: "pink", sid: "kt_pink", name: "White kettle, pink flowers", price: 16, note: "The flowers are painted on. Probably. They look different some mornings.", body: "#f1ece0", dark: "#b8b0a0", lite: "#ffffff", flower: "#e3a0b2" },
-    { id: "bluefl", sid: "kt_bluefl", name: "White kettle, blue flowers", price: 16, note: "Blue flowers, white enamel. It hums one note when it's nearly ready.", body: "#f1ece0", dark: "#b8b0a0", lite: "#ffffff", flower: "#5a86c8" }
+    { id: "bluefl", sid: "kt_bluefl", name: "White kettle, blue flowers", price: 16, note: "Blue flowers, white enamel. It hums one note when it's nearly ready.", body: "#f1ece0", dark: "#b8b0a0", lite: "#ffffff", flower: "#5a86c8" },
+    { id: "grey", sid: "kt_grey", name: "Grey enamel kettle", price: 12, note: "Plain grey, like a rainy Tuesday. It boils faster when nobody's watching.", body: "#8c8a80", dark: "#241812", lite: "#c9c4b4" }
 ];
 /* the kettles that are bought (copper: with the kettle itself) and not put away */
 function kettlesOwned() {
@@ -31200,14 +31235,65 @@ function colSections() {
             nw.hidden = !news.includes(k);
     });
     $("colEmpty").hidden = shown.length > 0;
+    const itemNews = colItemTags();
     clearTimeout(colSeenTimer);
-    if (news.length) // seen once it's been on screen a moment; the word stays until the next time you look
+    if (news.length || itemNews.length) // seen once it's been on screen a moment; the word stays until the next time you look
         colSeenTimer = setTimeout(() => {
             if ($("tab-cabinet").hidden || !document.body.classList.contains("sheet"))
                 return;
             S.colSeen.ids = [...new Set(S.colSeen.ids.concat(news))].slice(-60);
+            S.colSeen.it = [...new Set((S.colSeen.it || []).concat(itemNews))].slice(-COL_IT_MAX);
             saveSoon();
         }, 3000);
+}
+/* a "new" tag on each thing in Collections that has come since you last looked, like the shop's (jot mvqp9s8512wxa,
+   group 32). Found in the rendered lists, so every section works the same way: each thing's key is its section and a
+   short hash of its name (S.colSeen.it; S.colSeen.itAt 0 = never looked: then all that's there counts as seen, so an
+   older game isn't all "new"). Only things in an open section count as seen. Returns the keys tagged now */
+const COL_IT_MAX = 1500;
+const COL_ITEMS = ".drawer:not(.unk), .word:not([style]), #festList .chipbtn, #hats .chipbtn:not(:disabled), #achs li.got, #termList dt, #dreamLog li, #gallery figure, #knitList figure, .cardrow, #glimpseList details > p, #tapeList li";
+function colItemKey(sec, el) {
+    const lab = el.querySelector("b, i, figcaption");
+    const txt = ((lab ? lab.textContent : el.textContent) || "").replace(/\s*×\d+\s*$/, "").replace(/ · today$/, "").trim().slice(0, 120); // (a count or "today" doesn't make it another thing)
+    let h = 2166136261;
+    for (let i = 0; i < txt.length; i++)
+        h = Math.imul(h ^ txt.charCodeAt(i), 16777619);
+    return txt ? sec.replace(/^cab-/, "") + ":" + (h >>> 0).toString(36) : "";
+}
+function colItemTags() {
+    const all = [];
+    document.querySelectorAll("#tab-cabinet .itemnew").forEach(x => x.remove()); // (from the last time, if a list wasn't drawn again)
+    document.querySelectorAll("#tab-cabinet details.colsec").forEach(d => {
+        if (!COL_HAS[d.dataset.sec] || d.hidden)
+            return;
+        d.querySelectorAll(COL_ITEMS).forEach(el => {
+            const k = colItemKey(d.dataset.sec, el);
+            if (k)
+                all.push([k, el, d]);
+        });
+    });
+    if (!S.colSeen.itAt) { // the first look since this came in: everything there now is known
+        S.colSeen.it = [...new Set((S.colSeen.it || []).concat(all.map(a => a[0])))].slice(-COL_IT_MAX);
+        S.colSeen.itAt = Date.now();
+        saveSoon();
+        return [];
+    }
+    const seen = new Set(S.colSeen.it || []), fresh = [];
+    for (const [k, el, d] of all) {
+        if (seen.has(k))
+            continue;
+        const tag = document.createElement("span");
+        tag.className = "itemnew";
+        tag.textContent = "new";
+        const lab = el.querySelector("b, figcaption");
+        (lab || el).appendChild(tag);
+        const nw = $("new-" + d.dataset.sec); // the section says so too
+        if (nw)
+            nw.hidden = false;
+        if (d.open)
+            fresh.push(k);
+    }
+    return fresh;
 }
 /* the foldable sections in Collections, the Log and the Archive: open to start with; what you open or close is
    remembered in this browser */
