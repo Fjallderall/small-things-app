@@ -8766,6 +8766,93 @@ function nearestHit(p, list) {
 }
 
 </script>
+<script>/* js/scene/closeups.js */
+"use strict";
+/*
+ * closeups.js - The close-ups that open over the scene, in two kinds:
+ *   cards   small pictures that fade in, close themselves after a while, and close on a tap: the tea (#brewView,
+ *           kettle.js), the bake (#bakeView, oven.js), the painting (#paintView, easel.js), the flowers
+ *           (#flowerView, flowers.js), the telescope (#scopeView, telescope-view.js).
+ *           cardShow(id) / cardHide(id, stillOpen) / cardTaps(id, close)
+ *   zooms   things you look around in, drawn every frame: the crystal shelf (#cabView, crystals.js) and the
+ *           pinboard (#pinView, pinboard.js). They close with their ✕, Escape, or a tap outside what they keep.
+ *           zoomTaps(id, opts) / zoomLoop(id, draw)
+ * A tap on either never reaches the scene behind it.
+ */
+const CARD_VIEWS = []; // every card, in the order registered (native.js closes the open one on Back)
+
+/* a card fades in (again, if it was on its way out) */
+function cardShow(id) {
+    const el = $(id);
+    el.classList.remove("out");
+    el.hidden = false;
+    sfx("soft");
+}
+/* a card fades out, then hides; stillOpen() (optional) true by then means it was shown again meanwhile.
+   after() (optional) runs once it's gone */
+function cardHide(id, stillOpen, after) {
+    const el = $(id);
+    el.classList.add("out");
+    setTimeout(() => {
+        if (!stillOpen || !stillOpen())
+            el.hidden = true;
+        if (after)
+            after();
+    }, 500);
+}
+/* a tap on the card closes it */
+function cardTaps(id, close) {
+    const el = $(id);
+    CARD_VIEWS.push(id);
+    el.addEventListener("click", e => {
+        e.stopPropagation();
+        close();
+    });
+    el.addEventListener("pointerdown", e => e.stopPropagation());
+}
+/* the card that's showing and not on its way out ("" if none) */
+function cardShowing() {
+    return CARD_VIEWS.find(id => {
+        const el = $(id);
+        return el && !el.hidden && !el.classList.contains("out");
+    }) || "";
+}
+
+/* a zoom's taps: its ✕ (closeBtn) and Escape close it, and so does a tap anywhere outside the selectors in keep */
+function zoomTaps(id, { closeBtn, keep, isOpen, close }) {
+    $(closeBtn).addEventListener("click", e => {
+        e.stopPropagation();
+        close();
+    });
+    $(id).addEventListener("click", e => {
+        if (!keep.some(sel => e.target.closest(sel)))
+            close();
+    });
+    $(id).addEventListener("pointerdown", e => e.stopPropagation());
+    document.addEventListener("keydown", e => {
+        if (isOpen() && e.key === "Escape") {
+            e.preventDefault();
+            close();
+        }
+    });
+}
+/* a zoom's frames: draw(seconds) every frame while it's open. Starting again stops the previous loop */
+const zoomRaf = {};
+function zoomLoop(id, draw) {
+    cancelAnimationFrame(zoomRaf[id]);
+    const el = $(id), loop = now => {
+        if (el.hidden)
+            return;
+        draw(now / 1000);
+        zoomRaf[id] = requestAnimationFrame(loop);
+    };
+    zoomRaf[id] = requestAnimationFrame(loop);
+}
+function zoomStop(id) {
+    cancelAnimationFrame(zoomRaf[id]);
+}
+
+</script>
 <script>/* js/scene/pet.js */
 "use strict";
 /*
@@ -13387,8 +13474,8 @@ function showBook() {
 <script>/* js/scene/kettle.js */
 "use strict";
 /*
- * kettle.js - The kettle's drink panel (one strange warm drink per tap), and the close handlers that
- * the drink, bake and painting panels share.
+ * kettle.js - The kettle's drink panel (one strange warm drink per tap). Its card opens and closes through
+ * closeups.js, like the bake and painting cards.
  */
 let brew = null;
 const recentBrews = [];
@@ -13437,10 +13524,7 @@ function showBrew() {
     specialSay(special, "brew", d.name);
     brew = { d, t0: performance.now() };
     cardCap($("brewCap"), `<b>${esc(d.name)}</b>${d.note ? " " + esc(d.note) : ""}`);
-    const el = $("brewView");
-    el.classList.remove("out");
-    el.hidden = false;
-    sfx("soft");
+    cardShow("brewView");
     S.flags.brews = (S.flags.brews || 0) + 1;
     if (Math.random() < .25)
         note(`Tea from the kettle: ${d.name}.`);
@@ -13453,30 +13537,11 @@ function showBrew() {
 function closeBrew() {
     if (!brew)
         return;
-    const el = $("brewView");
     clearTimeout(brew.to);
     brew = null;
-    el.classList.add("out");
-    setTimeout(() => {
-        if (!brew)
-            el.hidden = true;
-    }, 500);
+    cardHide("brewView", () => brew);
 }
-$("brewView").addEventListener("click", e => {
-    e.stopPropagation();
-    closeBrew();
-});
-$("bakeView").addEventListener("click", e => {
-    e.stopPropagation();
-    closeBake();
-});
-$("bakeView").addEventListener("pointerdown", e => e.stopPropagation());
-$("paintView").addEventListener("click", e => {
-    e.stopPropagation();
-    $("paintView").hidden = true;
-});
-$("paintView").addEventListener("pointerdown", e => e.stopPropagation());
-$("brewView").addEventListener("pointerdown", e => e.stopPropagation());
+cardTaps("brewView", closeBrew);
 function brewFrame(now) {
     if (!brew)
         return;
@@ -13751,10 +13816,7 @@ function showScope() {
     scope = { kind, t0: performance.now(), stars, seed };
     const cap = fillText(choice(SCOPE_CAP[kind]), Object.assign(ctx(), kind.startsWith("lit_") ? { place: giveLitPlace(kind.slice(4)) || "a place far off" } : {})).replace(/(^|[.!?…]\s+)([a-z])/g, (m, a, b) => a + b.toUpperCase()); // (a place's name can start a sentence)
     cardCap($("scopeCap"), esc(cap));
-    const el = $("scopeView");
-    el.classList.remove("out");
-    el.hidden = false;
-    sfx("soft");
+    cardShow("scopeView");
     if (kind === "eye") {
         note(`Through the telescope: an eye up there, looking back. A friendly one. ${S.settings.pet} waved; it blinked.`);
     }
@@ -13776,20 +13838,11 @@ function floatHeart(c, x, y, u) { // a small pixel heart
 function closeScope() {
     if (!scope)
         return;
-    const el = $("scopeView");
     clearTimeout(scope.to);
     scope = null;
-    el.classList.add("out");
-    setTimeout(() => {
-        if (!scope)
-            el.hidden = true;
-    }, 500);
+    cardHide("scopeView", () => scope);
 }
-$("scopeView").addEventListener("click", e => {
-    e.stopPropagation();
-    closeScope();
-});
-$("scopeView").addEventListener("pointerdown", e => e.stopPropagation());
+cardTaps("scopeView", closeScope);
 function scopeFrame(now) {
     if (!scope)
         return;
@@ -15178,53 +15231,38 @@ function paintDayCheck() {
         S.paint = { day: today, prog: 0, sent, on: today, p0: 0 };
     saveSoon();
 }
-/* tapping the easel once today's painting is finished: Mite shows it on a card */
-function showToday() {
-    const day = S.paint && S.paint.day || actDay(), P = paintingOf(day), cv = $("paintCv");
-    cv.width = 96;
-    cv.height = Math.round(cv.width * .76);
-    const c = cv.getContext("2d");
-    c.clearRect(0, 0, cv.width, cv.height);
-    drawPainting(c, 0, 0, cv.width, cv.height, day, 1);
-    cardCap($("paintCap"), paintLabel(day, "Finished. It goes out with the post tomorrow."));
-    const el = $("paintView");
-    el.classList.remove("out");
-    el.hidden = false;
-    sfx("soft");
-    clearTimeout(showToday.t);
-    showToday.t = setTimeout(() => {
-        el.classList.add("out");
-        setTimeout(() => el.hidden = true, 500);
-    }, 7000);
-}
-function showSendoff(day, prog = 1) {
-    const P = paintingOf(day), friend = choice(pool("penpals").length ? pool("penpals") : ["a friend"]);
+cardTaps("paintView", () => $("paintView").hidden = true); // (a tap hides it at once)
+/* the painting of a day on its card (prog: how far along), with a line under it */
+function paintCard(day, prog, line) {
     const cv = $("paintCv");
     cv.width = 96;
     cv.height = Math.round(cv.width * .76);
     const c = cv.getContext("2d");
     c.clearRect(0, 0, cv.width, cv.height);
     drawPainting(c, 0, 0, cv.width, cv.height, day, prog);
-    cardCap($("paintCap"), paintLabel(day, own("snail") ? `The snail is taking it to ${esc(friend)}.` : `Posted to ${esc(friend)}.`));
-    const el = $("paintView");
-    el.classList.remove("out");
-    el.hidden = false;
-    sfx("soft");
+    cardCap($("paintCap"), paintLabel(day, line));
+    cardShow("paintView");
+}
+/* tapping the easel once today's painting is finished: Mite shows it on a card */
+function showToday() {
+    paintCard(S.paint && S.paint.day || actDay(), 1, "Finished. It goes out with the post tomorrow.");
+    clearTimeout(showToday.t);
+    showToday.t = setTimeout(() => cardHide("paintView"), 7000);
+}
+function showSendoff(day, prog = 1) {
+    const P = paintingOf(day), friend = choice(pool("penpals").length ? pool("penpals") : ["a friend"]);
+    paintCard(day, prog, own("snail") ? `The snail is taking it to ${esc(friend)}.` : `Posted to ${esc(friend)}.`);
     note(`Sent yesterday's painting, “${P.title}”, to ${friend}.`);
     addToGallery(day, friend, own("snail") ? "snail" : "post", prog);
-    setTimeout(() => {
-        el.classList.add("out");
-        setTimeout(() => {
-            el.hidden = true;
-            if (own("snail")) {
-                snailCarry = true;
-                if (snailRoom === "room")
-                    snailX = Math.min(snailX, .3);
-            }
-            else
-                pet.start("outing");
-        }, 500);
-    }, 9000);
+    setTimeout(() => cardHide("paintView", null, () => { // then off it goes
+        if (own("snail")) {
+            snailCarry = true;
+            if (snailRoom === "room")
+                snailX = Math.min(snailX, .3);
+        }
+        else
+            pet.start("outing");
+    }), 9000);
 }
 
 </script>
@@ -15318,10 +15356,7 @@ function showBake() {
     lastBakeKind = d.kind;
     specialSay(special, "bake", d.name);
     cardCap($("bakeCap"), `<b>${esc(d.name)}</b>${d.note ? " " + esc(d.note) : ""}`);
-    const el = $("bakeView");
-    el.classList.remove("out");
-    el.hidden = false;
-    sfx("soft");
+    cardShow("bakeView");
     S.flags.bakes = (S.flags.bakes || 0) + 1;
     if (Math.random() < .3)
         note(`Baked: ${d.name}.`);
@@ -15334,15 +15369,11 @@ function showBake() {
 function closeBake() {
     if (!bake)
         return;
-    const el = $("bakeView");
     clearTimeout(bake.to);
     bake = null;
-    el.classList.add("out");
-    setTimeout(() => {
-        if (!bake)
-            el.hidden = true;
-    }, 500);
+    cardHide("bakeView", () => bake);
 }
+cardTaps("bakeView", closeBake);
 function bakeFrame(now) {
     if (!bake)
         return;
@@ -20103,7 +20134,7 @@ function drawCrystalShelf(dk, tsec) {
    and scaled up by CSS. CV_SLOTS: where each crystal stands on the plank, and how big it's drawn */
 const CV_W = 96, CV_H = 54, CV_SHELF = 38;
 const CV_SLOTS = [0, 1, 2, 3, 4, 5].map(i => [Math.round(10.5 + i * 15), CV_SHELF - 1, 1.35]);
-let cabOpen = false, cabSel = -1, cabSelAt = 0, cabRaf = 0;
+let cabOpen = false, cabSel = -1, cabSelAt = 0;
 function openCabinet() {
     if (cabOpen)
         return;
@@ -20134,19 +20165,13 @@ function openCabinet() {
     $("cabDlg").hidden = true;
     $("cabView").hidden = false;
     $("cabClose").focus({ preventScroll: true });
-    const loop = now => {
-        if (!cabOpen)
-            return;
-        drawCabView(now / 1000);
-        cabRaf = requestAnimationFrame(loop);
-    };
-    cabRaf = requestAnimationFrame(loop);
+    zoomLoop("cabView", drawCabView);
 }
 function closeCabinet() {
     if (!cabOpen)
         return;
     cabOpen = false;
-    cancelAnimationFrame(cabRaf);
+    zoomStop("cabView");
     $("cabView").hidden = true;
     sfx("tock");
 }
@@ -20347,24 +20372,10 @@ function drawCrystalArt(g, c, x, base, k, t) {
     }
 }
 /* closing: the ✕, Escape, or a tap anywhere outside the picture (the dialogue box only hides itself) */
-$("cabClose").addEventListener("click", e => {
-    e.stopPropagation();
-    closeCabinet();
-});
-$("cabView").addEventListener("click", e => {
-    if (!e.target.closest("#cabBox") && !e.target.closest("#cabDlg"))
-        closeCabinet();
-});
+zoomTaps("cabView", { closeBtn: "cabClose", keep: ["#cabBox", "#cabDlg"], isOpen: () => cabOpen, close: closeCabinet });
 $("cabDlg").addEventListener("click", e => {
     e.stopPropagation();
     $("cabDlg").hidden = true;
-});
-$("cabView").addEventListener("pointerdown", e => e.stopPropagation());
-document.addEventListener("keydown", e => {
-    if (cabOpen && e.key === "Escape") {
-        e.preventDefault();
-        closeCabinet();
-    }
 });
 
 </script>
@@ -25431,7 +25442,7 @@ function noteCol(q) {
         h = (h * 31 + ch.charCodeAt(0)) >>> 0;
     return NOTE_COLS[h % NOTE_COLS.length];
 }
-let pinOpen = false, pinSel = null, pinSelAt = 0, pinRaf = 0, pinPage = 0;
+let pinOpen = false, pinSel = null, pinSelAt = 0, pinPage = 0;
 /* every note that's up, oldest first */
 function pinAllNotes() {
     return (S.quotes || []).filter(q => !q.off && q.t);
@@ -25536,20 +25547,14 @@ function openPinboard() {
     $("pinDlg").hidden = true;
     $("pinView").hidden = false;
     $("pinClose").focus({ preventScroll: true });
-    const loop = now => {
-        if (!pinOpen)
-            return;
-        drawPinView(now / 1000);
-        pinRaf = requestAnimationFrame(loop);
-    };
-    pinRaf = requestAnimationFrame(loop);
+    zoomLoop("pinView", drawPinView);
 }
 function closePinboard() {
     if (!pinOpen)
         return;
     pinOpen = false;
     pinPage = 0; // (the board in the nook always shows the newest)
-    cancelAnimationFrame(pinRaf);
+    zoomStop("pinView");
     $("pinView").hidden = true;
     sfx("tock");
 }
@@ -25685,15 +25690,7 @@ function drawPinView(t) {
     }
 }
 /* closing: the ✕, Escape, or a tap outside the board and the box */
-$("pinClose").addEventListener("click", e => {
-    e.stopPropagation();
-    closePinboard();
-});
-$("pinView").addEventListener("click", e => {
-    if (!e.target.closest("#pinBox") && !e.target.closest("#pinDlg") && !e.target.closest("#pinAdd") && !e.target.closest("#pinPager"))
-        closePinboard();
-});
-$("pinView").addEventListener("pointerdown", e => e.stopPropagation());
+zoomTaps("pinView", { closeBtn: "pinClose", keep: ["#pinBox", "#pinDlg", "#pinAdd", "#pinPager"], isOpen: () => pinOpen, close: closePinboard });
 $("pinPrev").addEventListener("click", e => {
     e.stopPropagation();
     pinTurn(1);
@@ -25743,12 +25740,6 @@ $("pinDown").addEventListener("click", e => {
     pinSel = null;
     $("pinDlg").hidden = true;
     pinBuildHits();
-});
-document.addEventListener("keydown", e => {
-    if (pinOpen && e.key === "Escape") {
-        e.preventDefault();
-        closePinboard();
-    }
 });
 $("pinAlbum").addEventListener("click", e => {
     e.stopPropagation();
@@ -25980,10 +25971,7 @@ function showFlower() {
     flowerCard = { v, t0: performance.now() };
     const from = v.from ? (v.from === "a walk" ? "Picked on a walk." : v.from === "the night door" ? "Left on the step of the night door." : `From ${v.from}.`) : "";
     cardCap($("flowerCap"), `<b>${esc(v.n)}</b>${v.note ? " " + esc(v.note) : ""}${from ? ` <i>${esc(from)}</i>` : ""}`);
-    const el = $("flowerView");
-    el.classList.remove("out");
-    el.hidden = false;
-    sfx("soft");
+    cardShow("flowerView");
     const ms = clamp(5000 + (v.note || "").length * 45, 6500, 11000);
     flowerCard.to = setTimeout(closeFlower, ms);
     requestAnimationFrame(flowerFrame);
@@ -25994,12 +25982,7 @@ function closeFlower() {
         return;
     clearTimeout(flowerCard.to);
     flowerCard = null;
-    const el = $("flowerView");
-    el.classList.add("out");
-    setTimeout(() => {
-        if (!flowerCard)
-            el.hidden = true;
-    }, 500);
+    cardHide("flowerView", () => flowerCard);
 }
 function flowerFrame(now) {
     if (!flowerCard)
@@ -26212,11 +26195,7 @@ function showFlowerBook() {
     sfx("card");
     return 2;
 }
-$("flowerView").addEventListener("click", e => {
-    e.stopPropagation();
-    closeFlower();
-});
-$("flowerView").addEventListener("pointerdown", e => e.stopPropagation());
+cardTaps("flowerView", closeFlower);
 
 </script>
 <script>/* js/scene/archive-wall.js */
@@ -35390,12 +35369,10 @@ setGame();
  *   keeps the page clear of the system bars).
  */
 function appBack() {
-    for (const id of ["scopeView", "brewView", "bakeView", "paintView", "flowerView"]) { // the little close-up cards close on a tap
-        const el = $(id);
-        if (el && !el.hidden && !el.classList.contains("out")) {
-            el.click();
-            return true;
-        }
+    const card = cardShowing(); // a close-up card closes as on a tap (closeups.js)
+    if (card) {
+        $(card).click();
+        return true;
     }
     const open = pinOpen || (typeof cabOpen !== "undefined" && cabOpen) || !$("ritual").hidden || !$("desk").hidden || document.body.classList.contains("sheet") || !$("tray").hidden || !!game;
     if (open) { // everything else closes with Escape (game-view.js, pinboard.js, crystals.js)
