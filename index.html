@@ -539,6 +539,13 @@ body.pixel .cabglim{border-radius:0;font-family:var(--f-display);font-size:18px;
 .dlg.crystal{border-color:#4a3a66}.dlg.crystal b{background:#4a3a66}
 .pinbox{aspect-ratio:96/60}
 .eyelist li{display:flex;gap:10px;align-items:flex-start}
+.eyetap{all:unset;cursor:pointer;flex:none;line-height:0}
+.eyetap:focus-visible{outline:2px solid var(--accent,#c8862a);outline-offset:2px}
+/* what an eye's other eye sees: a little thought bubble, square-cornered like the speech bubbles, with two dots trailing up to it */
+.eyethink{display:block;position:relative;margin:10px 0 2px 8px;padding:6px 9px;background:#fffdf6;color:#2a1d10;border:2px solid #2a1d10;font-style:italic;box-shadow:3px 3px 0 rgba(42,29,16,.18)}
+.eyethink::before,.eyethink::after{content:"";position:absolute;background:#fffdf6;border:2px solid #2a1d10}
+.eyethink::before{width:6px;height:6px;left:-6px;top:-9px}
+.eyethink::after{width:3px;height:3px;left:-12px;top:-15px}
 .pressedlist li{display:flex;gap:10px;align-items:flex-start}
 .pressed{width:50px;height:60px;flex:0 0 auto;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .eyepic{width:72px;height:48px;flex:0 0 auto;image-rendering:pixelated;image-rendering:crisp-edges;background:#2f2420;border-radius:4px}
@@ -1121,6 +1128,15 @@ body.pixel .bubble.snailb{font-style:normal}
  * Lines you add in the app live in your save (S.content.pools), not here.
  */
 const POOL_INFO = {
+    eyes_other: "What an eye's other eye sees, shown in a thought bubble when you tap it on the eye jars' card: id | what it sees (ids: owl, goat, cat, paper, moth, frog, deep, door, dream, crow, snail, spider, lantern, stone, star, kind, fox, chameleon, potato, storm, sovereign, seahag, glassdoll, heron, lighthouse, bureau)",
+    catpatron: "Midnightcat talking with a patron's eye in the jars, colleague to colleague: id | C: the cat / F: the eye (ids: sovereign, seahag)",
+    catpatron_new: "Midnightcat, when a patron colleague has lent an eye for the jars after one of her rituals ({eye} is which)",
+    cathunt_rainbow: "Mite, after Midnightcat pounces on a rainbow from the suncatchers",
+    eclipse_solar: "Mite, on the day of a solar eclipse (the wagon's window always gets it)",
+    eclipse_lunar: "Mite, on the day of a lunar eclipse",
+    eclipse_now_solar: "Mite, while the sun in the window is eclipsed",
+    eclipse_now_lunar: "Mite, while the moon in the window is red with the eclipse",
+    drawernote: "The note a tenant leaves in the drawer when it moves out ({label} is who)",
     seas_sfrog: "Mite, tapping the frogspawn jar on the nook's windowsill (the tadpoles change colour every morning)",
     seas_snest: "Mite, tapping the nest with one blue egg on the wall (the egg hums, never hatches)",
     seas_swillow: "Mite, tapping the pussy willow in a bottle on the mantel (the catkins purr when stroked)",
@@ -1178,6 +1194,115 @@ const POOL_INFO = {
 const DEF = {
     persona: "{pet} is a small mossling who lives in a small travelling wagon that is always parked somewhere near {you}. Sometimes it rolls on to somewhere new; mostly it stays put. Dry, curious, observant, gently funny. Short sentences. Likes order, small objects, labels, tea, and the sound of a list getting shorter. Never pushy, never guilt-tripping, never corporate or motivational-poster. Always content, even on days nothing gets done, but quietly pleased when things do. Prefers reasons over cheerleading. Never flatters.",
     pools: {
+        eyes_other: [
+            "owl | A barn at night. A mouse, very still, thinking it's hidden. It isn't.",
+            "owl | The inside of a hollow tree. Its owl is asleep, so it's keeping watch for both of them.",
+            "goat | A hillside, all the way round. Grass, grass, a fence, grass.",
+            "goat | Another goat, chewing. Chewing back.",
+            "cat | A windowsill somewhere warm. A cousin, pretending to sleep.",
+            "cat | A bird on a wire, just out of reach. Very rude of the bird.",
+            "paper | The ghost's window, from the inside. It's folding a crane.",
+            "paper | A blank page, waiting to be folded into something.",
+            "moth | A lamp. Then another lamp. It's lamps all the way down.",
+            "moth | The underside of a leaf, in the rain. Cosy.",
+            "frog | Pond water, green and full of small news.",
+            "frog | A lily pad. A fly. Then no fly.",
+            "deep | Dark. Then a small light. Then dark again. It likes the small light.",
+            "deep | Something very big swimming past, very slowly. It isn't worried.",
+            "door | A corridor that goes on longer than it should. Someone waves from the end.",
+            "door | The other side of the door. There's a wagon there too. Ours, almost.",
+            "dream | Somebody's dream about a staircase. They're nearly at the top.",
+            "dream | Clouds, from above. Someone's flying in their sleep.",
+            "crow | A rooftop, and a spoon somebody dropped. It's thinking about the spoon.",
+            "crow | Its crow, counting buttons. Forty-one. It's hoping for forty-two.",
+            "snail | Lettuce. A long, slow look at lettuce.",
+            "snail | Our snail, from above. It's checking its new eye works. It does.",
+            "spider | Its web, with dew on it. Seven other eyes are looking at the dew too.",
+            "spider | The corner of a ceiling, upside down. Home.",
+            "lantern | Deep water, lit up in one small round patch. Fish come to look.",
+            "lantern | Its own light, from the other side. It's never sure which side is the front.",
+            "stone | The square. The same square. A pigeon, the same pigeon.",
+            "stone | Moss, slowly growing over it. It doesn't mind.",
+            "star | A planet going round. It's watched it go round for a very long time.",
+            "star | Somewhere very bright and very quiet. Then it blinks, and it's the jar again.",
+            "kind | Someone making tea for someone else.",
+            "kind | A face, smiling at it. It smiles back, in its way.",
+            "fox | A hedge at dusk. Its fox is listening to something we can't hear.",
+            "fox | A bin lid, from underneath. The raccoon got there first.",
+            "chameleon | Something else entirely. Its eyes don't agree on anything.",
+            "chameleon | Us, from another angle. It's been looking at us the whole time.",
+            "potato | Soil. Dark, cool, comfortable. It's thinking about sprouting.",
+            "potato | The inside of a sack and forty other potatoes, all with eyes. Nobody says anything.",
+            "storm | Rain going sideways over a grey sea. It's calm in the middle. It always is.",
+            "storm | Lightning, from above. It counts to see how far away it is. Very close.",
+            "sovereign | Her children, in a hundred windows. They're doing it themselves now. She watches. She doesn't help.",
+            "sovereign | One of her children, stuck on something. She waits. They work it out. She doesn't blink.",
+            "sovereign | Her whole realm at once. It's quiet. That's how she likes it.",
+            "seahag | The sea, where a boat should be. It isn't. It keeps looking.",
+            "seahag | A lighthouse a long way off. She thinks: maybe. Then: not.",
+            "seahag | The bottom of the sea, and a ring lying on it. She won't go down for it. Not yet.",
+            "glassdoll | An attic. The dolls' tea party is still going. Nobody has poured.",
+            "glassdoll | The inside of a hatbox, very dim. It tilts, and opens, and shuts.",
+            "heron | A river. A fish. Patience.",
+            "heron | Its own reflection, being patient back.",
+            "lighthouse | The sea at night, all the way to the edge. A ship, safe.",
+            "lighthouse | Its lamp, going round. It's dizzy, but proud.",
+            "bureau | A filing room with no door. Somebody is stamping something RECEIVED.",
+            "bureau | A form, half filled in. The box says 'Eye (other)'. It's looking at itself."
+        ],
+        catpatron: [
+            "sovereign | C: Evening, Sovereign. / F: Midnight. Your warlock called twice this week. / C: He'll manage. / F: They always do, if you let them.",
+            "sovereign | C: You never blink. / F: Neither do you, when it matters. / C: …Hm. Fair.",
+            "sovereign | F: One of mine burned the soup. / C: And? / F: And then they made more soup. / C: Good. That's the job.",
+            "sovereign | C: Do you ever help them? / F: I watch. Watching is help. / C: I prefer a nudge. / F: You prefer a swat. / C: A nudge, with claws.",
+            "sovereign | F: The little green one keeps waving at me. / C: That's Mite. It waves at everything. / F: …I waved back. Don't tell anyone.",
+            "seahag | C: Still looking for him? / F: Always. The sea is big. / C: So is the dark. I'll keep an eye out. / F: …Thank you, colleague.",
+            "seahag | F: Is it raining? It smells of rain. / C: That's you. You're crying again. / F: Ah. So I am.",
+            "seahag | C: The jar's saltier since you came. / F: Do the others mind? / C: The frog likes it. The rest are being polite.",
+            "seahag | F: He used to whistle, on the boat. / C: What tune? / F: I'll know it when I hear it. / C: Then we'll listen.",
+            "seahag | C: Patron business is quiet tonight. / F: Mine never is. The tide keeps calling. / C: Let it ring."
+        ],
+        catpatron_new: [
+            "A colleague left this. On loan. Indefinitely. Don't stare back.",
+            "Patron business. Put it in the jar, Mite. Gently. It outranks you.",
+            "Someone owed me a favour. Now you have an eye. Everyone's even.",
+            "A colleague's. Treat it well. It reports back."
+        ],
+        cathunt_rainbow: [
+            "She pounced on the rainbow. Now it's on her back. She's pretending that was the plan.",
+            "Caught it, sort of. It's light. It just sat on her paws. She's furious, very quietly.",
+            "Six colours, one cat, no winner.",
+            "She got it! Then the sun moved. She's blaming the sun.",
+            "The rainbow's on her nose now. Best she's ever looked. Don't tell her."
+        ],
+        eclipse_solar: [
+            "There's a solar eclipse today. Somewhere. The wagon's window always gets one anyway. Don't look straight at it.",
+            "Eclipse day. The moon's going to sit in front of the sun for a bit. Very cheeky of the moon.",
+            "The almanac says solar eclipse today. I've put the curtains on standby."
+        ],
+        eclipse_lunar: [
+            "A lunar eclipse tonight. The moon goes red for a while. It's fine. It does this.",
+            "Tonight the world gets in the way of the moon. Politely. It'll go a coppery red.",
+            "Eclipse tonight. The moon blushes. I'll stay up. Probably."
+        ],
+        eclipse_now_solar: [
+            "It's happening. The sun has a bite out of it.",
+            "The light's gone thin and strange. That's the eclipse. Everything's a bit silver.",
+            "Look, don't look. The moon's in front of the sun. The birds have gone quiet."
+        ],
+        eclipse_now_lunar: [
+            "Look at the moon. Red as a coal. It'll be white again by morning.",
+            "The moon's gone copper. The eyes in the jars are all looking at it.",
+            "A red moon. Midnightcat says it's a good night for paperwork."
+        ],
+        drawernote: [
+            "Thank you for the drawer. It was very dark and very kind. — {label}",
+            "Left a crumb for the next one. For luck. — {label}",
+            "Mind the left corner, it creaks at night. That's only the drawer remembering things. — {label}",
+            "Took the dust. Left the smell of cloves. Fair trade. — {label}",
+            "Back in spring, maybe. Keep it dark for me. — {label}",
+            "The rent was always fair and the neighbours were always quiet. Would rent again. — {label}"
+        ],
         greet: [
             "[morning] Morning, {you}. I've been awake for ages. Two minutes.",
             "[morning] The light's doing the thing again. Good morning.",
@@ -4958,7 +5083,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
 , "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un", "mvp8axa8idn9w", "mvpju1m9c0hfl", "mvpjo4ttghzky", "mvpjomx7zo6af", "mvqbkbk0lj3yu", "mvpk2otjj8pbe",
     // shopping list (27-10-2026)
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
-, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t", "mvqi4h680yovh", "mvru6yetlxofd", "mvrujk91xqygh", "mvqp9s8512wxa", "mvshqinq5llx4"];
+, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t", "mvqi4h680yovh", "mvru6yetlxofd", "mvrujk91xqygh", "mvqp9s8512wxa", "mvshqinq5llx4", "mvs75jof0hcot", "mvs76pjhzxzxr", "mvs76f3yi73yg", "mvs7bjqxpz1ra", "mvs7cugkj3fhe", "mvs7cya26weun", "mvscobidynjkr", "mvruau0k2yd2j", "mvre03nu4ozba", "mvrzzeedlnxq4", "mvte8rmm57470"];
 
 </script>
 <script>/* js/core/state.js */
@@ -4969,7 +5094,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "" }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [] }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -5272,7 +5397,7 @@ function sanitizeState(raw) {
     o.mice = arr(s.mice, 20).map(m => ({ n: str(m && m.n, 30).trim(), at: num(m && m.at), kin: m && m.kin ? 1 : 0, told: m && m.told ? 1 : 0 })).filter(m => m.n); // mice who've visited; kin: the circle has shown its found family, told: it knows Mite saw (visitors.js, circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
     // the chest of drawers for rent in the nook: when it arrived, and who Mite last knew was living in it (sig)
-    o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240) };
+    o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240), notes: (Array.isArray(s.drawers && s.drawers.notes) ? s.drawers.notes : []).filter(n => n && [0, 1, 2, 3].includes(n.d)).map(n => ({ d: n.d, from: str(n.from, 40), t: str(n.t, 200), at: num(n.at) })).filter(n => n.t).slice(-4) }; // (notes: what a tenant who moved out left in its drawer, garden.js)
     // the post: letters Mite wrote at the desk (to whom, when, whether a reply came: r) and the replies (read or not)
     {
         const ps = s.post && typeof s.post === "object" ? s.post : {};
@@ -5671,7 +5796,11 @@ function mergeStates(a, b) {
     }
     { // the drawers: the earliest arrival counts (so both sides agree who lives there); the newer side's news
         const da = a.drawers || {}, db = b.drawers || {}, ats = [num(da.at), num(db.at)].filter(x => x > 0);
-        o.drawers = { at: ats.length ? Math.min(...ats) : 0, sig: str((nw.drawers || {}).sig || (od.drawers || {}).sig, 240) };
+        const notes = {}; // (one per drawer: the later one)
+        for (const n of [...(da.notes || []), ...(db.notes || [])])
+            if (!notes[n.d] || num(n.at) > num(notes[n.d].at))
+                notes[n.d] = n;
+        o.drawers = { at: ats.length ? Math.min(...ats) : 0, sig: str((nw.drawers || {}).sig || (od.drawers || {}).sig, 240), notes: Object.values(notes) };
     }
     { // the post from both sides: a letter answered (or read) on either one counts
         const pa = a.post || {}, pb = b.post || {}, sent = new Map(), inbox = new Map();
@@ -8867,6 +8996,35 @@ const BEH = {
             p.x += Math.sign(d) * Math.min(Math.abs(d), R * 1.6 * dt);
             po.walk = true;
         } },
+    /* down to the lower end of the room, nearer you: it walks down onto the floor, potters about there a while, and
+       comes back up to the wall (pet.ground below 0 is towards you; owner's jot mvrzzeedlnxq4, group 32) */
+    floorwalk: { d: [12, 20], w: c => 1, init(b, p) {
+            b.dep = rnd(R * .5, Math.max(R * .6, Math.min((H - GY) * .5, R * 1.8)));
+            b.tx = clamp(p.x + rnd(-1, 1) * W * .3, W * .16, W * .84);
+            b.tx2 = clamp(b.tx + rnd(-1, 1) * W * .2, W * .16, W * .84);
+            b.say = Math.random() < .3;
+        }, step(b, p, t, po, dt) {
+            const mv = 2.2, ease = k => k * k * (3 - 2 * k), end = p.dur;
+            if (t < mv) {
+                po.ground = -b.dep * ease(t / mv);
+                walkTo(p, po, b.tx, R * 1.2, dt, 3);
+                po.walk = true;
+                return;
+            }
+            if (t > end - mv) {
+                po.ground = -b.dep * ease(clamp((end - t) / mv, 0, 1));
+                po.walk = true;
+                return;
+            }
+            po.ground = -b.dep;
+            if (t > end / 2 && !walkTo(p, po, b.tx2, R * .9, dt, 3)) // halfway: a few steps along the floor
+                return;
+            po.lookOverride = { x: Math.sin(t * .7) * .6, y: .5 }; // looking about, and out at you
+            if (b.say && t > mv + 1) {
+                b.say = false;
+                floatText(choice(["hello, down here", "the floor's warmer here", "new angle", "you look bigger from here"]), p.x, GY + b.dep - R * 2.3, "#fff");
+            }
+        } },
     sit: { d: [4, 9], w: c => 1.6, step(b, p, t, po) {
             po.sy = -.12;
             po.eyes = t > 2 ? "half" : "open";
@@ -10148,7 +10306,7 @@ function chooseGardenBeh() {
         return pet.start("sleep");
     if (performance.now() - gardenSince > rnd(70e3, 140e3))
         return pet.start("fromGarden");
-    const opts = [["idle", 3], ["wander", 1.4], ["gwater", BEH.gwater.w(c)], ["write", BEH.write.w(c)], ["armread", BEH.armread.w(c)], ["readletter", BEH.readletter.w(c)], ["lookAround", .6], ["stretch", .3], ["yawn", c.dark > .5 ? .8 : .3], ["catvisit", BEH.catvisit.w(c) * 2], ["ndoorlisten", own("ndoor") ? BEH.listen.w(c) * 1.5 : 0], ["listen", BEH.listen.w(c) * .5], ["nookup", .5], ["fbookchair", BEH.fbookchair.w(c)]].filter(([k, w]) => BEH[k] && w > 0 && k !== pet.beh);
+    const opts = [["idle", 3], ["wander", 1.4], ["floorwalk", .7], ["gwater", BEH.gwater.w(c)], ["write", BEH.write.w(c)], ["armread", BEH.armread.w(c)], ["readletter", BEH.readletter.w(c)], ["lookAround", .6], ["stretch", .3], ["yawn", c.dark > .5 ? .8 : .3], ["catvisit", BEH.catvisit.w(c) * 2], ["ndoorlisten", own("ndoor") ? BEH.listen.w(c) * 1.5 : 0], ["listen", BEH.listen.w(c) * .5], ["nookup", .5], ["fbookchair", BEH.fbookchair.w(c)]].filter(([k, w]) => BEH[k] && w > 0 && k !== pet.beh);
     let r = Math.random() * opts.reduce((a, o) => a + o[1], 0);
     for (const [k, w] of opts)
         if ((r -= w) <= 0)
@@ -12245,6 +12403,23 @@ function drawWindow(rm, sky, d, hf, tsec, dt, dk, arr = wparts, shutters = true)
             cx.fillRect(wx - wr, wy - wr, wr * 2, wr * 2);
         }
     }
+    { // an eclipse, over the clouds: the window always gets it (eclipses.js)
+        const ec = eclipseToday(d), am = ec ? eclipseAmt(d) : 0;
+        if (am > 0 && ec.k === "s" && sky.dark < .5) {
+            const a = clamp((hf - 6) / 14, 0, 1), sx = wx - wr * .7 + a * wr * 1.4, sy = wy + wr * .25 - Math.sin(a * Math.PI) * wr * .8;
+            cx.fillStyle = `rgba(16,18,40,${eclipseDim(d)})`; // the light goes thin
+            cx.fillRect(wx - wr, wy - wr, wr * 2, wr * 2);
+            cx.fillStyle = "#ffecaa";
+            cx.beginPath();
+            cx.arc(sx, sy, wr * .19, 0, 7);
+            cx.fill();
+            drawEclipsedSun(sx, sy, wr * .19, am, sky);
+        }
+        else if (am > 0 && ec.k === "l" && sky.dark >= .5) {
+            drawMoon(wx + wr * .35, wy - wr * .4, wr * .15, .5);
+            drawRedMoon(wx + wr * .35, wy - wr * .4, wr * .15, am);
+        }
+    }
     windowFall(arr, wx, wy - wr - 4, wy + wr + 6, wr, dt, tsec, d, W8);
     if (travelling()) {
         for (let i = 0; i < 4; i++) {
@@ -12457,6 +12632,100 @@ function drawRainbows() {
     }
     cx.globalAlpha = 1;
 }
+
+</script>
+<script>/* js/scene/eclipses.js */
+"use strict";
+/*
+ * eclipses.js - Solar and lunar eclipses (owner's jot mvruau0k2yd2j, group 32). The days are the real ones; where on
+ * Earth they can be seen doesn't matter: the wagon's window always gets them. A solar one shows by day (at the real
+ * hour if that's daytime here, else early afternoon), a lunar one by night (at the real hour if that's dark here, else
+ * late evening), each for about an hour and a half, deepest in the middle. Mite mentions it once on the day
+ * (eclipse_solar / eclipse_lunar) and once while it's happening (eclipse_now_solar / eclipse_now_lunar).
+ *   ECLIPSES          [date (UTC), "s" solar or "l" lunar, hour of greatest eclipse (UTC, rounded), how deep 0..1]
+ *   eclipseToday(d)   today's, if there is one: { k, deep, centre (local hour) }
+ *   eclipseAmt(d)     how far it has gone right now, 0..1 (0 outside the window)
+ * Penumbral lunar eclipses are left out: you can hardly see them.
+ */
+const ECLIPSES = [
+    ["2027-02-06", "s", 16, .9], ["2027-08-02", "s", 10, 1],
+    ["2028-01-12", "l", 4, .1], ["2028-01-26", "s", 15, .9], ["2028-07-06", "l", 18, .4], ["2028-07-22", "s", 3, 1], ["2028-12-31", "l", 17, 1],
+    ["2029-01-14", "s", 17, .7], ["2029-06-12", "s", 4, .5], ["2029-06-26", "l", 3, 1], ["2029-07-11", "s", 16, .25], ["2029-12-05", "s", 15, .9], ["2029-12-20", "l", 23, 1],
+    ["2030-06-01", "s", 6, .9], ["2030-06-15", "l", 19, .5], ["2030-11-25", "s", 7, 1]
+];
+function eclipseToday(d = new Date()) {
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const e = ECLIPSES.find(x => x[0] === key);
+    if (!e)
+        return null;
+    const local = ((e[2] - d.getTimezoneOffset() / 60) % 24 + 24) % 24; // the real hour, here
+    const centre = e[1] === "s" ? (local >= 9 && local <= 16 ? local : 13.5) : (local >= 21 || local <= 3 ? local : 22.5);
+    return { k: e[1], deep: e[3], centre };
+}
+function eclipseAmt(d = new Date()) {
+    const e = eclipseToday(d);
+    if (!e)
+        return 0;
+    let h = d.getHours() + d.getMinutes() / 60, dh = Math.abs(h - e.centre);
+    dh = Math.min(dh, 24 - dh);
+    return clamp(1 - dh / .75, 0, 1) * Math.max(.35, e.deep);
+}
+/* the sun in the window, with the moon's disc sliding across it (x, y, r: the sun) */
+function drawEclipsedSun(x, y, r, amt, sky) {
+    if (amt <= 0)
+        return;
+    const off = (1 - amt) * r * 2.1;
+    glow(x, y, r * 2.4, `rgba(255,240,200,${.15 + amt * .25})`); // the light round it, so the bitten sun still reads
+    cx.fillStyle = "#1a1c2c";
+    cx.beginPath();
+    cx.arc(x + off, y - off * .15, r * 1.02, 0, 7);
+    cx.fill();
+    if (amt > .9) { // nearly all covered: the corona
+        glow(x, y, r * 2.2, `rgba(240,240,255,${(amt - .9) * 3})`);
+    }
+}
+/* the window dims a little while the sun is covered */
+function eclipseDim(d) {
+    const e = eclipseToday(d);
+    return e && e.k === "s" ? eclipseAmt(d) * .45 : 0;
+}
+/* the moon in the window turning red (over drawMoon) */
+function drawRedMoon(x, y, r, amt) {
+    if (amt <= 0)
+        return;
+    cx.globalAlpha = clamp(amt * 1.1, 0, .9);
+    cx.fillStyle = "#b8492f";
+    cx.beginPath();
+    cx.arc(x, y, r, 0, 7);
+    cx.fill();
+    cx.globalAlpha = 1;
+    glow(x, y, r * 1.4, `rgba(200,80,50,${amt * .25})`);
+}
+/* Mite's two mentions: once on the day (in the wagon, nothing else going on), once while it's on */
+function eclipseTick() {
+    if (!S || document.hidden || !$("bubble").hidden || objQ.cur || talkHeld() || S.lightsOut)
+        return;
+    const d = new Date(), e = eclipseToday(d), dn = dayNum();
+    if (!e)
+        return;
+    const kind = e.k === "s" ? "solar" : "lunar";
+    if (num(S.flags.eclDay) !== dn && view === "room" && d.getHours() >= 7) {
+        S.flags.eclDay = dn;
+        speak(compose("eclipse_" + kind) || "There's an eclipse today.", { ms: 6000 });
+        note(`An eclipse today (${kind}).`);
+        saveSoon();
+        return;
+    }
+    if (num(S.flags.eclNow) !== dn && eclipseAmt(d) > .5 && view === "room") {
+        S.flags.eclNow = dn;
+        speak(compose("eclipse_now_" + kind) || "It's happening.", { ms: 6000 });
+        saveSoon();
+    }
+}
+setInterval(() => {
+    if (typeof booted !== "undefined" && booted)
+        eclipseTick();
+}, 15e3);
 
 </script>
 <script>/* js/scene/telescope.js */
@@ -15962,7 +16231,7 @@ function chooseArchiveBeh() {
         return;
     }
     const filed = ARCH_FLAT.length > 0; // (nothing filed yet: no archival work, nothing on the shelves to browse)
-    const opts = [["idle", 3], ["browse", filed ? 3 : 0], ["archivework", filed ? 1.6 : 0], ["wander", 1.2], ["lookAround", .6], ["stretch", .3], ["yawn", .3], ["catvisit", BEH.catvisit.w(ctx()) * 3], ["closetpeek", BEH.closetpeek.w(ctx())], ["deepgo", BEH.deepgo.w(ctx())]].filter(([k, w]) => BEH[k] && w > 0).map(([k, w]) => [k, k === pet.beh ? w * .2 : w]); // (the same thing again: much less likely)
+    const opts = [["idle", 3], ["browse", filed ? 3 : 0], ["archivework", filed ? 1.6 : 0], ["wander", 1.2], ["floorwalk", .7], ["lookAround", .6], ["stretch", .3], ["yawn", .3], ["catvisit", BEH.catvisit.w(ctx()) * 3], ["closetpeek", BEH.closetpeek.w(ctx())], ["deepgo", BEH.deepgo.w(ctx())]].filter(([k, w]) => BEH[k] && w > 0).map(([k, w]) => [k, k === pet.beh ? w * .2 : w]); // (the same thing again: much less likely)
     let r = Math.random() * opts.reduce((a, o) => a + o[1], 0);
     for (const [k, w] of opts) {
         if ((r -= w) <= 0)
@@ -16402,6 +16671,8 @@ function animalTalkTick(now) {
         here.push({ k: "P", room: possum.room, x: possum.x });
     if (own("snail") && !snailAsleep && !snailPause && !snailCarry)
         here.push({ k: "S", room: snailRoom, x: snailX * W - R * .2 });
+    if (patronTalk(now))
+        return;
     const pairs = [], elsewhere = [];
     for (let i = 0; i < here.length; i++)
         for (let j = i + 1; j < here.length; j++)
@@ -16440,6 +16711,29 @@ function animalTalkTick(now) {
     });
 }
 
+/* now and then Midnightcat, sitting in the archive with you looking, has a word with a patron's eye in the jars: two
+   colleagues, neither above the other (lines catpatron: "id | C: … / F: …"; the eye speaks as F, owner's jots
+   mvs7cugkj3fhe, mvs7cya26weun) */
+function patronTalk(now) {
+    if (!cat.ready || cat.room !== "archive" || !roomOnScreen("archive") || cat.g > 0 || !["sit", "walk"].includes(cat.ph) || catInCircle() || Math.random() > .4)
+        return false;
+    const have = (S.eyes || []).map(s => s.k).filter(isPatronEye);
+    const ls = pool("catpatron").map(x => parseLine(x).text.split("|")).filter(x => x.length > 1 && have.includes(x[0].trim()));
+    if (!ls.length)
+        return false;
+    const [id, ...rest] = choice(ls), e = EYES.find(x => x.id === id.trim());
+    if (!e)
+        return false;
+    const hold = now + 40e3;
+    Object.assign(cat, { ph: "sit", until: hold, dir: eyeJarHit ? Math.sign(eyeJarHit.cx - cat.x) || 1 : cat.dir });
+    convoFar = { F: e.name.replace(/'s eye$/, "").replace(/^A /, "The ") };
+    runConvo(rest.join("|").trim(), () => {
+        convoFar = {};
+        if (cat.until === hold)
+            cat.until = performance.now() + rnd(4e3, 12e3);
+    });
+    return true;
+}
 $("bubble2").addEventListener("click", e => { // a tap on an animal's (or a visitor's) bubble: go and look
     e.stopPropagation();
     lookAtSpeaker(b2Who);
@@ -20882,9 +21176,19 @@ function catBallTick(dt, now) {
 const CAT_PREY = ["firefly", "spore", "seed", "page"];
 let catHuntNext = 0;
 function catHuntTick(dt, now) {
+    if (cat.ph === "stalk" && cat.prey && cat.prey.k === "rainbow") { // a rainbow on the floor: it follows the sun about, so she keeps re-aiming
+        const sp = rainbowSpots.find(s => s.floor && s.i === cat.prey.i && s.a > .3);
+        if (!sp || cat.room !== "room") {
+            cat.prey = null;
+            Object.assign(cat, { ph: "sit", until: now + rnd(6e3, 12e3) });
+            return true;
+        }
+        cat.prey.x = sp.x;
+        cat.prey.y = GY - R * .2;
+    }
     if (cat.ph === "stalk") {
         const d = cat.prey;
-        if (!d || !drifters.includes(d) || driftAlpha(d) < .3) { // gone: never mind
+        if (!d || d.k !== "rainbow" && (!drifters.includes(d) || driftAlpha(d) < .3)) { // gone: never mind
             cat.prey = null;
             Object.assign(cat, { ph: "sit", until: now + rnd(6e3, 12e3) });
             return true;
@@ -20915,14 +21219,15 @@ function catHuntTick(dt, now) {
             if (cat.room === view && Math.random() < .6)
                 setTimeout(() => {
                     if ($("bubble").hidden)
-                        say(kind === "firefly" ? "cathunt_firefly" : "cathunt");
+                        say(kind === "firefly" ? "cathunt_firefly" : kind === "rainbow" ? "cathunt_rainbow" : "cathunt");
                 }, 900);
         }
         return true;
     }
     if (!cat.ready || now < catHuntNext || cat.g > 0 || cat.dest || cat.obs || catNight() || !["sit", "walk"].includes(cat.ph) || catInCircle())
         return false;
-    const d = drifters.find(q => q.room === cat.room && CAT_PREY.includes(q.k) && driftAlpha(q) > .6 && q.y > GY - R * 2.4 && q.x > R * .5 && q.x < W - R * .5);
+    const rb = cat.room === "room" && Math.random() < .5 ? rainbowSpots.find(s => s.floor && s.a > .45 && s.x > R * .5 && s.x < W - R * .5) : null; // some of the suncatchers' rainbows too (jot mvscobidynjkr)
+    const d = rb ? { k: "rainbow", i: rb.i, x: rb.x, y: GY - R * .2 } : drifters.find(q => q.room === cat.room && CAT_PREY.includes(q.k) && driftAlpha(q) > .6 && q.y > GY - R * 2.4 && q.x > R * .5 && q.x < W - R * .5);
     if (!d || !evWait(now)) // (a drifter she's after waits for the gap too; it may have gone by then)
         return false;
     catHuntNext = now + rnd(20e3, 40e3);
@@ -20933,6 +21238,12 @@ function catHuntTick(dt, now) {
 }
 /* the pounce lands: did she get it? */
 function catCatch(d) {
+    if (d && d.k === "rainbow") { // it's light: she lands on it and it lands on her
+        for (let i = 0; i < 6; i++)
+            addP({ type: "spark", x: cat.px1, y: GY - R * .3, vx: rnd(-40, 40), vy: rnd(-50, 0), g: 40, max: .6, col: SPECTRUM[i], size: 2, room: "room" });
+        cat.rainbowAt = performance.now();
+        return true;
+    }
     if (!d || !drifters.includes(d))
         return false;
     const burst = col => {
@@ -21298,6 +21609,8 @@ function drawerLabels(t = Date.now()) {
         return null;
     });
 }
+/* the note the last tenant of drawer i left in it, while it's to let (S.drawers.notes: [{ d, from, t, at }]) */
+const drawerNote = i => ((S.drawers && S.drawers.notes) || []).find(n => n.d === i) || null;
 /* now and then: the chest arrives (the first time); and Mite mentions who moved in or out since it last looked */
 function drawerTick() {
     if (!hasDrawers())
@@ -21320,18 +21633,36 @@ function drawerTick() {
             news = news && news[0] === "drawermovein" ? news : ["drawermovein", d.label, i + 1];
         }
         else if (!d && old) {
-            note(`${old} moved out of drawer ${i + 1}.`);
-            news = news || ["drawermoveout", old, i + 1];
+            const lb = old === old.toUpperCase() ? old[0] + old.slice(1).toLowerCase() : old;
+            const nt = compose("drawernote", { label: lb }); // they leave a little note in the drawer (jot mvre03nu4ozba)
+            if (nt) {
+                S.drawers.notes = (S.drawers.notes || []).filter(n => n.d !== i).concat([{ d: i, from: lb, t: nt.slice(0, 200), at: Date.now() }]);
+                note(`${lb} moved out of drawer ${i + 1} and left a note: ${nt}`);
+            }
+            else
+                note(`${lb} moved out of drawer ${i + 1}.`);
+            news = news || ["drawermoveout", lb, i + 1];
         }
     });
     S.drawers.sig = sig;
-    if (news)
+    S.drawers.notes = (S.drawers.notes || []).filter(n => !now[n.d]); // (a new tenant has the drawer: the note's been read and kept)
+    if (news) {
         say(news[0], { label: news[1], drawer: news[2] });
+        if (news[0] === "drawermoveout" && drawerNote(news[2] - 1))
+            setTimeout(() => speak(`They left a note in the drawer. I'll leave it there for whoever opens it.`, { ms: 4500 }), 5200);
+    }
     saveSoon();
 }
 /* Mite at the drawers: opens one that has decided (the newest, mostly) and says what's in it */
 function openDrawer() {
     const dec = drawerLabels(), ok = dec.map((d, i) => d ? i : -1).filter(i => i >= 0);
+    const left = [0, 1, 2, 3].filter(i => !dec[i] && drawerNote(i));
+    if (left.length && (!ok.length || Math.random() < .4)) { // an empty drawer with a note from the last tenant in it
+        const i = choice(left), n = drawerNote(i), text = `Drawer ${i + 1}, to let. ${n.from} left a note in it: "${n.t}"`;
+        gardenDrawer = { i, until: performance.now() + 6000 };
+        speak(text, { whole: true, ms: clamp(4000 + text.length * 50, 6000, 14000) });
+        return clamp(4 + text.length * .05, 6, 14);
+    }
     if (!ok.length) {
         gardenDrawer = { i: ri(0, 3), until: performance.now() + 3000 };
         speak(choice(["All four to let. Nobody's moved in yet. I've dusted them, to make a good impression.", "Empty. The drawers are between tenants. They're very calm about it."]), { ms: 5000 });
@@ -21346,7 +21677,7 @@ function openDrawer() {
 /* the framed tenants' list above the chest: who has which drawer, and since when */
 function showTenants() {
     const dec = drawerLabels();
-    const rows = dec.map((d, i) => `<li><b>Drawer ${i + 1}</b> ${d ? `${esc(d.label)} <span class="sub">since ${esc(dmy(new Date(d.since)))}</span>` : `<span class="sub">to let</span>`}</li>`).join("");
+    const rows = dec.map((d, i) => { const n = !d && drawerNote(i); return `<li><b>Drawer ${i + 1}</b> ${d ? `${esc(d.label)} <span class="sub">since ${esc(dmy(new Date(d.since)))}</span>` : `<span class="sub">to let</span>${n ? `<br><i>A note from ${esc(n.from)}: "${esc(n.t)}"</i>` : ""}`}</li>`; }).join("");
     openRitual("Tenants", "Who rents which drawer. Tap the chest and " + S.settings.pet + " opens one.", `<ul class="fbooklist">${rows}</ul>`, [["Close", "primary", closeRitual]]);
     sfx("card");
 }
@@ -22768,7 +23099,8 @@ function showCorrItem(id) {
  * thank-you letter follows one or two days later, and from then on the telescope can show that kind of place lit up.
  * Giving never pays back: no glimmers, no xp, and S.gTotal (earned) doesn't drop.
  * S.give: { cur: { id, kind, from, name, dim, goal, got, at, full, gone } or null, done: [{ id, kind, name, at }], n, nextAt }
- * Needs the writing desk (no desk, no places write).
+ * Needs the writing desk (no desk, no places write), and one of everything in the shop (shopComplete, shop.js): a jar
+ * already on the desk or on its way still finishes.
  */
 const GIVE_KINDS = ["far", "pal", "bureau"], GIVE_KEEP = 20, GIVE_FIRST = 3 * 864e5;
 /* the places a kind of pool offers: "From | Place | what's gone dim | the letter" */
@@ -22831,6 +23163,8 @@ function giveTick(t) {
         return true;
     }
     if (c || t < G.nextAt)
+        return false;
+    if (!shopComplete()) // (only once there's one of everything in the shop: owner's jot mvte8rmm57470, group 32)
         return false;
     const kind = GIVE_KINDS[num(G.n) % GIVE_KINDS.length], all = givePlaces(kind);
     if (!all.length)
@@ -26233,7 +26567,7 @@ function archWallTap(p) {
             return true;
         }
     if (eyeJarHit && hitIn(p, eyeJarHit, 16)) {
-        showEyeJars();
+        tapEyeJars(); // (they all blink, then the card)
         return true;
     }
     if (capPlankHit && hitIn(p, capPlankHit, 20)) { // the time capsule plank
@@ -26276,12 +26610,28 @@ let catRitualSince = 0;
 function catInCircle() {
     const c = circleGeo(), on = own("circle") > 0 && cat.room === "archive" && cat.ph === "sit" && Math.abs(cat.x - c.x) < R * .3 && Math.abs(GY + cat.z - c.y) < R * .3;
     if (!on) {
+        if (catRitualSince && performance.now() - catRitualSince > 20e3)
+            patronAfterRitual();
         catRitualSince = 0;
         return false;
     }
     if (!catRitualSince)
         catRitualSince = performance.now();
     return performance.now() - catRitualSince > 1500;
+}
+/* a ritual has ended: now and then a colleague of hers lends an eye for the jars (a patron's: eyes.js). She says so if
+   you're looking; the eye goes in by itself (owner's jots mvs76f3yi73yg, mvs7bjqxpz1ra, group 32) */
+function patronAfterRitual() {
+    if (Math.random() > .25 || !(S.eyes || []).length)
+        return;
+    const e = findEye("patron");
+    if (!e)
+        return;
+    if (view === "archive" && !talkHeld()) {
+        const line = compose("catpatron_new", { eye: e.name }) || "A colleague left this. On loan. Indefinitely.";
+        snailSay(line, clamp(3000 + line.length * 45, 4000, 8000), "cat");
+        heard(CAT_NAME, line, Date.now());
+    }
 }
 /* little signs along the edge, 5×5 (made up: a moon, an eye, a spiral, a key, a door, a seed, a star, a wave) */
 const CIRCLE_SIGNS = [
@@ -27066,13 +27416,20 @@ const EYES = [
     { id: "stone", name: "Stone eye", ring: "#8a8a96", pupil: "none", note: "From a statue that got tired of watching the same square. Very calm." },
     { id: "star", name: "Something's eye, from very far up", ring: "#1a2050", pupil: "star", glow: "#c8d8ff", note: "There are stars in it. It's looking at somewhere we haven't been." },
     { id: "kind", name: "A kind eye", ring: "#a07850", pupil: "round", note: "Nobody knows whose. It just looks kind. Mite put it in the front." },
+    { id: "fox", name: "Fox's eye", ring: "#d0702a", pupil: "slit", note: "Sharp and amber. It notices the possum before anyone else does." },
+    { id: "chameleon", name: "Chameleon's eye", ring: "#7ab84a", pupil: "round", note: "It looks two ways at once. The other one is somewhere else entirely." },
+    { id: "potato", name: "A potato's eye", ring: "#b89a6a", pupil: "none", note: "Technically an eye. It's sprouting a little. Mite's letting it." },
+    { id: "storm", name: "The eye of a small storm", ring: "#6a7a8a", pupil: "round", glow: "#c8e0ff", note: "Very calm in there. Damp at the edges." },
+    // lent by patrons, Midnightcat's colleagues: one turns up now and then after one of her rituals (circle.js)
+    { id: "sovereign", name: "The Unblinking Sovereign's eye", ring: "#d8b040", pupil: "slit", glow: "#ffe9a0", noblink: true, note: "On loan from a patron, a colleague of Midnightcat's. It watches over her children and lets them learn to manage on their own. It never blinks." },
+    { id: "seahag", name: "A sea hag's eye", ring: "#3a9a8a", pupil: "round", tears: true, note: "On loan from a patron, a colleague of Midnightcat's. It cries for a lover lost at sea. The jar's water is a little saltier now." },
     // only the raccoon brings these (barter.js): Mite never finds them itself
     { id: "glassdoll", name: "Doll's glass eye", ring: "#5a9ad0", pupil: "round", note: "From an attic doll who has another one and says that's enough. Opens when you tilt it." },
     { id: "heron", name: "Heron's eye", ring: "#e8d050", pupil: "round", note: "Yellow and very patient. It watches the jar's bubbles as if one might be a fish." },
     { id: "lighthouse", name: "Lighthouse eye", ring: "#f4ecd0", pupil: "slit", glow: "#fff4b0", note: "Sweeps slowly round the jar, once a minute. The other eyes have learned to look away." },
     { id: "bureau", name: "Eye with a Bureau tag", ring: "#7a8a7a", pupil: "bar", note: "Tagged 'surplus, do not reissue'. The raccoon got it from a skip behind an office that isn't on any map." }
 ];
-const EYES_PER_JAR = 6, EYE_JARS = 3; // (two on the shelf, one on top: eighteen eyes fit)
+const EYES_PER_JAR = 8, EYE_JARS = 3; // (two on the shelf, one on top: twenty-four eyes fit; eight to a jar since group 32, was six)
 /* the raccoon's eyes have a jar of their own, which only turns up once the raccoon has brought Mite one: then every
    one of them can be collected too, however full Mite's own jars are. An eye goes in it by who brought it (s.from),
    so the few it brought before it kept to its own kinds are in there too */
@@ -27094,7 +27451,8 @@ function raccEyeCleanup() {
     S.eyes = (S.eyes || []).filter(e => !gone.includes(e));
 }
 /* where each eye comes from (some are only found one way) */
-const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door", glassdoll: "raccoon", heron: "raccoon", lighthouse: "raccoon", bureau: "raccoon" };
+const EYE_FROM = { paper: "ghost", door: "door", dream: "dream", star: "door", glassdoll: "raccoon", heron: "raccoon", lighthouse: "raccoon", bureau: "raccoon", sovereign: "patron", seahag: "patron" };
+const isPatronEye = id => EYE_FROM[id] === "patron";
 function findEye(from) {
     if (Date.now() - num(S.created) < 864e5) // (no eyes in the first day of a game, jot 25-10-2026)
         return null;
@@ -27103,19 +27461,30 @@ function findEye(from) {
     const have = new Set((S.eyes || []).map(e => e.k));
     const can = EYES.filter(e => !have.has(e.id) && (!EYE_FROM[e.id] || EYE_FROM[e.id] === from));
     const pref = can.filter(e => EYE_FROM[e.id] === from); // its own kind first
-    if (from === "raccoon" && !pref.length) // (the raccoon only ever brings its own: never one Mite could find itself)
+    if ((from === "raccoon" || from === "patron") && !pref.length) // (the raccoon and the patrons only ever bring their own: never one Mite could find itself)
         return null;
-    const e = from === "raccoon" ? choice(pref) : pref.length && Math.random() < .6 ? choice(pref) : can.length ? choice(can) : null;
+    const e = from === "raccoon" || from === "patron" ? choice(pref) : pref.length && Math.random() < .6 ? choice(pref) : can.length ? choice(can) : null;
     if (!e || (from !== "raccoon" && ownEyes().length >= EYES_PER_JAR * EYE_JARS))
         return null;
     S.eyes = (S.eyes || []).concat([{ k: e.id, at: Date.now(), from: String(from || "").slice(0, 20) }]);
-    if (from !== "raccoon")
+    if (from !== "raccoon" && from !== "patron")
         S.flags.eyeDay = dayNum();
     note(`Found an eye for the jar: ${e.name.toLowerCase()}. ${e.note}`);
     saveSoon();
     return e;
 }
-let eyeJarHit = null, eyeLook = { x: 0, y: 0, tx: 0, ty: 0, at: 0 };
+let eyeJarHit = null, eyeLook = { x: 0, y: 0, tx: 0, ty: 0, at: 0 }, eyeTapAt = -1e9;
+/* a tap on the jars: every eye in them blinks at once (all but the Sovereign's), then the card opens (group 32) */
+function tapEyeJars() {
+    eyeTapAt = performance.now();
+    sfx("soft");
+    setTimeout(showEyeJars, 380);
+}
+/* what an eye's other eye is seeing, wherever the rest of it is (lines eyes_other: "id | what it sees") */
+function eyeOther(id) {
+    const l = pool("eyes_other").map(x => parseLine(x).text.split("|").map(s => s.trim())).filter(x => x[0] === id && x[1]);
+    return l.length ? choice(l)[1] : "";
+}
 /* the jars, on their shelf at its right end: two side by side, and one more standing on their lids (as many as are
    needed, one per six eyes). Round-shouldered glass with a cork and a paper label, cloudy green liquid with a few
    bubbles, and the eyes crowded in it at all heights, each looking about and blinking in its own time */
@@ -27177,10 +27546,10 @@ function drawEyeJars(dk, t, xRight, yTop) {
             cx.fillRect(jx + jw - q * 3, jy + q, q * 2, q * 2);
         });
         const mine = rj ? racc : have.slice(j * EYES_PER_JAR, (j + 1) * EYES_PER_JAR);
-        const pos = [[.3, .78], [.7, .72], [.34, .58], [.68, .5], [.3, .38], [.66, .32]]; // crowded in at all heights
+        const pos = [[.3, .78], [.7, .72], [.34, .58], [.68, .5], [.3, .38], [.66, .32], [.5, .86], [.5, .44]]; // crowded in at all heights
         mine.forEach((e, i) => {
             const ex = jx + jw * pos[i][0] + Math.sin(t * .5 + i * 2 + j) * q * .5, ey = jy + jh * pos[i][1] + Math.sin(t * .7 + i + j) * q * .5;
-            const blink = ((t + i * 1.37 + j * 2.1) % (4 + (i % 3))) < .14 || (e.id === "dream" && pet.beh === "yawn");
+            const blink = !e.noblink && (((t + i * 1.37 + j * 2.1) % (4 + (i % 3))) < .14 || (e.id === "dream" && pet.beh === "yawn") || performance.now() - eyeTapAt < 320);
             const er = q;
             if (e.glow)
                 glow(ex, ey, 1.4, e.glow + "88");
@@ -27191,6 +27560,11 @@ function drawEyeJars(dk, t, xRight, yTop) {
                 return;
             }
             cx.fillRect(X, Y, sz, sz); // a small eye: two by two, the coloured part looking about inside it
+            if (e.tears && (t + i) % 6 < 2.5) { // the sea hag's: a tear, drifting down into the water
+                cx.fillStyle = mix("#bfe8ef", "#2a3a40", dk * .5);
+                cx.fillRect(X + q, Y + sz + Math.round(((t + i) % 6) / 2.5 * q * 2 / q) * q, Math.max(1, q / 2), Math.max(1, q / 2));
+                cx.fillStyle = mix(e.paper ? "#f4ecd8" : "#f4efe6", "#4a4844", dk * .45);
+            }
             const lx = X + (eyeLook.x > .2 ? q : eyeLook.x < -.2 ? 0 : Math.round(q / 2)), ly = Y + (eyeLook.y > .15 ? q : 0);
             cx.fillStyle = mix(e.ring, "#141018", dk * .35);
             cx.fillRect(lx, ly, q, q);
@@ -27210,15 +27584,35 @@ function drawEyeJars(dk, t, xRight, yTop) {
 /* the card: every eye in the jars, what it is and where it came from */
 function showEyeJars() {
     const have = (S.eyes || []).slice().sort((a, b) => num(b.at) - num(a.at)).map(s => ({ s, e: EYES.find(e => e.id === s.k) })).filter(x => x.e); // (newest first)
-    const from = { ghost: "left by the ghost", door: "through a door", dream: "from the dream archive", raccoon: "from the raccoon" };
-    const body = have.length ? `<ul class="fbooklist eyelist">${have.map(x => `<li><canvas class="eyepic" width="24" height="16" data-eye="${esc(x.e.id)}" aria-hidden="true"></canvas><span><b>${esc(x.e.name)}</b> <span class="sub">${esc(from[x.s.from] || "found")} · ${esc(dmy(new Date(x.s.at)))}</span><br>${esc(x.e.note)}</span></li>`).join("")}</ul>` : "";
+    const from = { ghost: "left by the ghost", door: "through a door", dream: "from the dream archive", raccoon: "from the raccoon", patron: "lent by a patron" };
+    const body = have.length ? `<ul class="fbooklist eyelist">${have.map(x => `<li><button type="button" class="eyetap" data-eye="${esc(x.e.id)}" aria-label="${esc(x.e.name)}: what its other eye sees"><canvas class="eyepic" width="24" height="16" data-eye="${esc(x.e.id)}" aria-hidden="true"></canvas></button><span><b>${esc(x.e.name)}</b> <span class="sub">${esc(from[x.s.from] || "found")} · ${esc(dmy(new Date(x.s.at)))}</span><br>${esc(x.e.note)}<span class="eyethink" hidden aria-live="polite"></span></span></li>`).join("")}</ul><p class="sub">Tap an eye: it blinks, and you see what its other eye is looking at.</p>` : "";
     openRitual(have.length ? "The eye jars" : "An empty jar", have.length ? `${have.length} of ${EYES.length} eyes, for reference. They're only looking.` : `Nothing in it yet. ${S.settings.pet} keeps it here, just in case.`, body, [["Close", "primary", closeRitual]]);
     sfx("card");
     animateEyePics();
+    document.querySelectorAll("#ritBody .eyetap").forEach(b => b.addEventListener("click", () => eyeThink(b)));
 }
+/* a tapped eye on the card blinks (not the Sovereign's: it never does) and a thought bubble says what its other eye
+   sees, a different one each tap where there are more (owner's jots mvs75jof0hcot, mvs76pjhzxzxr) */
+function eyeThink(b) {
+    const id = b.dataset.eye, e = EYES.find(x => x.id === id), li = b.closest("li"), th = li && li.querySelector(".eyethink");
+    if (!e || !th)
+        return;
+    const pic = eyePicsLive.find(p => p.e === e);
+    if (pic && !e.noblink)
+        pic.blinkAt = pic.now;
+    let line = eyeOther(id);
+    for (let k = 0; k < 4 && line && line === th.dataset.last; k++)
+        line = eyeOther(id);
+    th.dataset.last = line;
+    th.textContent = line ? (e.noblink ? "(It doesn't blink.) " : "") + line : (e.noblink ? "It doesn't blink. It never has." : "It blinks. Whatever its other eye sees, it's keeping to itself.");
+    th.hidden = false;
+    sfx("soft");
+}
+let eyePicsLive = [];
 /* the pictures on the card: each eye up close, looking about and blinking, while the card is open */
 function animateEyePics() {
-    const pics = [...document.querySelectorAll("#ritBody canvas.eyepic")].map((c, i) => ({ c, g: c.getContext("2d"), e: EYES.find(x => x.id === c.dataset.eye), i, lx: 0, ly: 0, tx: 0, ty: 0, next: 0, blinkAt: 1500 + Math.random() * 4000 }));
+    const pics = [...document.querySelectorAll("#ritBody canvas.eyepic")].map((c, i) => ({ c, g: c.getContext("2d"), e: EYES.find(x => x.id === c.dataset.eye), i, lx: 0, ly: 0, tx: 0, ty: 0, next: 0, now: 0, blinkAt: 1500 + Math.random() * 4000 }));
+    eyePicsLive = pics;
     if (!pics.length)
         return;
     const t0 = performance.now();
@@ -27226,8 +27620,10 @@ function animateEyePics() {
         if ($("ritual").hidden || !pics[0].c.isConnected)
             return;
         const t = now - t0;
-        for (const p of pics)
+        for (const p of pics) {
+            p.now = t;
             drawEyePic(p, t);
+        }
         requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -27243,7 +27639,7 @@ function drawEyePic(p, t) {
     p.ly += (p.ty - p.ly) * .12;
     if (t > p.blinkAt + 220)
         p.blinkAt = t + rnd(2000, 6000);
-    const bk = t > p.blinkAt ? Math.sin(clamp((t - p.blinkAt) / 220, 0, 1) * Math.PI) : 0; // 0 open, 1 shut
+    const bk = e.noblink ? 0 : t > p.blinkAt ? Math.sin(clamp((t - p.blinkAt) / 220, 0, 1) * Math.PI) : 0; // 0 open, 1 shut
     g.clearRect(0, 0, W2, H2);
     const inEye = (x, y) => ((x + .5 - cx0) / 10.5) ** 2 + ((y + .5 - cy0) / 6.5) ** 2 <= 1;
     const px = (x, y, c) => {
@@ -27282,6 +27678,11 @@ function drawEyePic(p, t) {
         for (let x = 0; x < W2; x++)
             if (inEye(x, y) && (y < 1 + shut + (cy0 - 7) || y > H2 - 2 - Math.round(bk * 5)))
                 px(x, y, e.paper ? "#c8bca0" : "#b88a7a");
+    if (e.tears && !bk) { // the sea hag's: a tear running down from the corner, now and then
+        const k = (t / 1400) % 2;
+        if (k < 1)
+            px(cx0 + 6, Math.min(H2 - 1, 11 + Math.floor(k * 5)), "#9ad8e6");
+    }
     for (let y = 0; y < H2; y++) // a dark outline
         for (let x = 0; x < W2; x++)
             if (!inEye(x, y) && (inEye(x - 1, y) || inEye(x + 1, y) || inEye(x, y - 1) || inEye(x, y + 1)))
@@ -28881,7 +29282,7 @@ function frame(now) {
         po.lookOverride = { x: pointAt.dir * .8, y: -.2 };
     }
     if (po.ground === undefined)
-        po.ground = LOFT_OK.has(pet.beh) ? pet.ground : 0;
+        po.ground = pet.ground < 0 ? Math.min(0, pet.ground + R * 2.4 * sdt) : LOFT_OK.has(pet.beh) ? pet.ground : 0; // (down on the floor nearer you: back up to the wall in a few steps, not a jump)
     pet.ground = po.ground;
     shimmerTick(dt, po); // (after a snack or a game: care.js)
     if (po.walk && !held)
