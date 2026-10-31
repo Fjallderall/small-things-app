@@ -16095,68 +16095,6 @@ function drawFilingFlight(now, dk) {
         floatText("fwoomp", x, GY - R * 2.1, "#f2b07a");
     }
 }
-/* taps while in the archive; returns true when the tap was used */
-function archiveTap(p) {
-    if (view === "archive")
-        archiveSince = performance.now();
-    if (journalHit && hitIn(p, journalHit, 24)) { // the journal, even with Midnightcat sitting beside it
-        requestObj("journal", journalHit.cx, journalHit.y);
-        return true;
-    }
-    if (catHit && catHit.room === "archive" && hitIn(p, catHit)) {
-        catTap();
-        return true;
-    }
-    if (drifterTap(p, "archive"))
-        return true;
-    if (anom && anom.room === "archive" && anomHit(p)) {
-        resolveAnom();
-        return true;
-    }
-    if (postitTap(p, "archive"))
-        return true;
-    if (sweepAt(p.x, p.y, "archive")) // mess on the archive floor
-        return true;
-    if (circleTap(p)) // the chalk circle: Mite looks back into the past (circle.js)
-        return true;
-    if (possumHit && possumHit.room === "archive" && hitIn(p, possumHit)) {
-        possumTap();
-        return true;
-    }
-    if (snailHit(p, "archive")) {
-        requestObj("snail");
-        return true;
-    }
-    if (archWallTap(p)) // the filing tube, the capsule plank, the eye jars (archive-wall.js)
-        return true;
-    const keeps = [...(capHit ? [Object.assign({ k: "capsule" }, capHit)] : []), ...(journalHit ? [Object.assign({ k: "journal" }, journalHit)] : [])];
-    const kh = nearestHit(p, keeps);
-    if (kh) {
-        requestObj(kh.k, kh.cx, kh.y);
-        return true;
-    }
-    const px = pet.x, py = GY - R - (pet.ground || 0);
-    if (view === "archive" && Math.hypot(p.x - px, (p.y - py) * .9) < R * 1.25) {
-        patPet();
-        return true;
-    }
-    const bh = archHits.find(r => p.x >= r.x - 3 && p.x <= r.x + r.w + 3 && p.y >= r.y - 3 && p.y <= r.y + r.h + 3);
-    if (bh) {
-        requestObj("box:" + bh.t.id, bh.cx, bh.y);
-        return true;
-    }
-    if (lookTap(p, "archive")) // the window, the ladder, the bulb... (looks.js)
-        return true;
-    if (p.y > H * .35) {
-        if (view === "archive")
-            pet.start("curious", { tx: clamp(p.x, W * .1, W * .9) });
-        else if (!objQ.cur) {
-            camFollow();
-            pet.start(routeTo("archive")); // Mite comes over
-        }
-    }
-    return true;
-}
 /* what Mite says about a box once it's reached it */
 function boxLine(t, week) {
     const dd = new Date(t.d), i = week.tasks.indexOf(t) + 1;
@@ -22331,95 +22269,6 @@ function ndoorX() {
 function gardenCandle(g) {
     return { x: g.tableX - R * .22, y: GY - R * .75 - R * .36 };
 }
-/* ---------- taps in the greenhouse (p in its coordinates) ---------- */
-function gardenTap(p) {
-    if (shadeTap(p)) // the shadow reaching out of the night door (draw-world.js)
-        return;
-    if (splurgeTap(p, "garden")) // the ice flower up on the platform (splurge.js)
-        return;
-    if (drifterTap(p, "garden"))
-        return;
-    if (anom && anom.room === "garden" && anomHit(p)) {
-        resolveAnom();
-        return;
-    }
-    if (possumHit && possumHit.room === "garden" && hitIn(p, possumHit)) {
-        possumTap();
-        return;
-    }
-    if (catHit && catHit.room === "garden" && hitIn(p, catHit)) {
-        catTap();
-        return;
-    }
-    if (snailHit(p, "garden")) {
-        requestObj("snail");
-        return;
-    }
-    if (view === "garden") {
-        const py = GY - R - (pet.ground || 0);
-        if (Math.hypot(p.x - pet.x, (p.y - py) * .9) < R * 1.25) {
-            patPet();
-            return;
-        }
-    }
-    const pl = gardenHits.plants.find(r => hitIn(p, r));
-    if (pl) {
-        gardenPlantAt = pl.cx;
-        requestObj("gplants", pl.cx, pl.y);
-        return;
-    }
-    if (gardenHits.gramo && hitIn(p, gardenHits.gramo, 12)) { // the gramophone: Mite goes up and winds it (or stops it)
-        requestObj("ggramo", gardenHits.gramo.cx, gardenHits.gramo.y);
-        return;
-    }
-    if (gardenHits.jar && hitIn(p, gardenHits.jar, 8)) { // the jar for a place that needs glimmers: Mite brings it over (giving.js)
-        requestObj("gjar", gardenHits.jar.cx, gardenHits.jar.y);
-        return;
-    }
-    if (gardenHits.letters && hitIn(p, gardenHits.letters, 30)) { // the letter rack: Mite reads what's come
-        requestObj("gletters", gardenHits.letters.cx, gardenHits.letters.y);
-        return;
-    }
-    if (gardenHits.boardAll && hitIn(p, gardenHits.boardAll)) { // the pinboard: up close (pinboard.js); empty at first, so Mite goes up and pins the first postcards
-        if (boardHung() < BOARD_FIRST)
-            requestObj("ghang", gardenHits.boardAll.cx, gardenHits.boardAll.y);
-        else
-            openPinboard();
-        return;
-    }
-    if (flowerHit && hitIn(p, flowerHit, 30)) { // the vase: Mite smells the flowers (flowers.js)
-        requestObj("gvase", flowerHit.cx, flowerHit.y);
-        return;
-    }
-    if (fbookHit && hitIn(p, fbookHit, 30)) { // the dried flower book
-        requestObj("gfbook", fbookHit.cx, fbookHit.y);
-        return;
-    }
-    if (gardenHits.tenants && hitIn(p, gardenHits.tenants, 16)) { // the framed list of who rents which drawer
-        showTenants();
-        return;
-    }
-    if (gardenHits.drawers && hitIn(p, gardenHits.drawers)) {
-        requestObj("gdrawers", gardenHits.drawers.cx, gardenHits.drawers.y);
-        return;
-    }
-    if (gardenHits.chair && hitIn(p, gardenHits.chair)) {
-        requestObj("gchair", gardenHits.chair.cx, gardenHits.chair.y);
-        return;
-    }
-    if (gardenHits.desk && hitIn(p, gardenHits.desk)) {
-        requestObj("gdesk", gardenHits.desk.cx, gardenHits.desk.y);
-        return;
-    }
-    if (postitTap(p, "garden"))
-        return;
-    if (sweepAt(p.x, p.y, "garden")) // mess on the nook's floor
-        return;
-    if (lookTap(p, "garden")) // the window, the side table, the beam... (looks.js)
-        return;
-    if (view === "garden" && p.y > H * .35 && pet.beh !== "sleep")
-        pet.start("curious", { tx: clamp(p.x, W * .1, W * .9) });
-}
 let gardenPlantAt = 0, gardenPin = null;
 function isGardenKind(kind) {
     return kind === "ggramo" || kind === "gplants" || kind === "gdesk" || kind === "gchair" || kind === "gletters" || kind === "gjar" || kind === "gdrawers" || kind === "gpin" || kind === "gpossum" || kind === "gvase" || kind === "gfbook" || kind === "ghang";
@@ -26551,7 +26400,7 @@ function showTube() {
     sfx("card");
 }
 let shelfHits = null;
-/* a tap on the wall (archiveTap): true if it was a board, the eye jars, the capsule plank or the tube */
+/* a tap on the wall (taps.js, in the archive): true if it was a board, the eye jars, the capsule plank or the tube */
 function archWallTap(p) {
     for (const k of ["jars", "caps"]) // the boards first (what's standing on them is checked after: it's above them)
         if (shelfHits && hitIn(p, shelfHits[k], 0)) {
@@ -29610,7 +29459,8 @@ function inventWord() {
 <script>/* js/scene/input.js */
 "use strict";
 /*
- * input.js - Taps on the scene: patting Mite, catching the golden firefly, and which object a tap hits.
+ * input.js - Pointer input on the scene: patting Mite, catching the golden firefly, swipes, and routing a tap to
+ * its room (which object a tap hits is decided in taps.js).
  * The screen can show two rooms side by side (camera.js): a tap goes to the room under the finger, in that
  * room's coordinates. A sideways swipe pans the view along the wagon.
  */
@@ -29704,160 +29554,7 @@ cv.addEventListener("pointerdown", e => {
         }
         return;
     }
-    if (gold && (gold.room || "room") === rm && Math.hypot(p.x - gold.x, p.y - gold.y) < R * .9) { // in whichever room it is
-        catchGold();
-        return;
-    }
-    if (seasTap(p, rm)) // a seasonal thing (seasonal.js): small, so before the rooms' bigger things
-        return;
-    if (rm === "garden") {
-        gardenTap(p);
-        return;
-    }
-    if (rm === "archive") {
-        archiveTap(p);
-        return;
-    }
-    if (anom && (anom.room || "room") === "room" && anomHit(p)) {
-        resolveAnom();
-        return;
-    }
-    if (dreamOutHit(p)) {
-        catchDream();
-        return;
-    }
-    if (origamiTap(p) || festTap(p) || drifterTap(p))
-        return;
-    if (calHit && hitIn(p, calHit) && notOnMite(p)) { // the calendar first: nothing on the wall covers it
-        requestObj("calendar", calHit.cx, calHit.y);
-        return;
-    }
-    if (postitTap(p, "room")) // a sticky note Mite put up (pastimes.js)
-        return;
-    if (splurgeTap(p)) // the day's treat (splurge.js)
-        return;
-    if (possumHit && possumHit.room === "room" && hitIn(p, possumHit) && notOnMite(p)) {
-        possumTap();
-        return;
-    }
-    if (catHit && catHit.room === "room" && hitIn(p, catHit) && notOnMite(p)) {
-        catTap();
-        return;
-    }
-    if (guest && hitIn(p, { x: guest.x - guest.s * .8, y: GY + (guest.z || 0) - guest.s * 1.2, w: guest.s * 1.6, h: guest.s * 1.2 })) {
-        const g = guest;
-        if (g.ph === "wait")
-            requestObj("guest", g.x, GY + (g.z || 0) - g.s * 1.4);
-        else if (g.ph === "nap")
-            speak(`Shh. ${g.name} is napping.`, { ms: 3500 });
-        else
-            speak(`That's ${g.name}. ${g.kind === "raccoon" ? "My friend. Knows every bin, attic and lost-property box in town." : g.kind === "rat" ? "Knows every gutter in town." : "Knows every hedge in town."}`, { ms: 4000 });
-        return;
-    }
-    if (snailHit(p, "room") && notOnMite(p)) {
-        const sp = snailPos();
-        requestObj("snail", sp.x, sp.y - R * .6);
-        return;
-    }
-    if (vaultHit && hitIn(p, vaultHit) && notOnMite(p)) {
-        requestObj("vault", vaultHit.cx, vaultHit.y);
-        return;
-    }
-    if (easelHit && hitIn(p, easelHit)) {
-        requestObj("easel", easelHit.cx, easelHit.y);
-        return;
-    }
-    if (sillHit && hitIn(p, sillHit)) {
-        requestObj("sill", sillHit.cx, sillHit.y);
-        return;
-    }
-    if (own("jar")) {
-        const jx = jarX();
-        if (Math.abs(p.x - jx) <= R * .45 && p.y >= GY - R * 1.05 && p.y <= GY + 4 && notOnMite(p)) {
-            requestObj("jar", jx, GY - R * 1.1);
-            return;
-        }
-    }
-    if (cabHit && hitIn(p, cabHit) && notOnMite(p)) {
-        cabinetTap();
-        return;
-    }
-    if (own("hearth")) {
-        const hx = hearthX();
-        if (Math.abs(p.x - hx) <= R * .7 && p.y >= GY - R * 1.4 && p.y <= GY + 4 && notOnMite(p)) {
-            requestObj("hearth", hx, GY - R * 1.5);
-            return;
-        }
-    }
-    {
-        const all = [...(calHit ? [Object.assign({ k: "calendar" }, calHit)] : []), ...wallHits.map(r => Object.assign({ k: "wall:" + r.id }, r))];
-        const h = nearestHit(p, all);
-        if (h && notOnMite(p)) {
-            requestObj(h.k, h.cx, h.y);
-            return;
-        }
-    }
-    if (own("oven")) {
-        const ox = stoveX();
-        if (Math.abs(p.x - ox) <= R * .55 && p.y >= GY - ovenH() && p.y <= GY + 4 && notOnMite(p)) {
-            requestObj("oven", ox, GY - ovenH() - R * .9);
-            return;
-        }
-    }
-    if (own("kettle")) {
-        const kx = stoveX();
-        if (Math.abs(p.x - kx) <= R * .65 && p.y >= kettleY() - R * .85 && p.y <= kettleY() + 4 && notOnMite(p)) {
-            requestObj("brew", kx, GY - R * 1.3);
-            return;
-        }
-    }
-    if (own("books")) {
-        const bx0 = W * .03, brd = GY - R * 2.3, top = brd - ((own("books") || 0) > 7 ? R * .42 : 0) - R * .4;
-        if (p.x >= bx0 - 6 && p.x <= bx0 + 7 * R * .18 + 8 && p.y >= top - 6 && p.y <= brd + 8) {
-            requestObj("book", bx0 + R * .6, top - R * .2);
-            return;
-        }
-    }
-    if (own("scope")) {
-        const sb = scopeBase(), bx = sb.x;
-        if (p.x >= bx - R * .45 && p.x <= bx + R * .95 && p.y >= sb.y - R * 1.75 && p.y <= sb.y + 4 && notOnMite(p)) {
-            requestObj("scope", bx + R * .25, sb.y - R * 1.8);
-            return;
-        }
-    }
-    const px = pet.x, py = GY - R - (pet.ground || 0);
-    if (view === "room" && Math.hypot(p.x - px, (p.y - py) * .9) < R * 1.25) {
-        patPet();
-        return;
-    }
-    if (sweepAt(p.x, p.y))
-        return;
-    if (pileHit && p.x >= pileHit.x && p.x <= pileHit.x + pileHit.w && p.y >= pileHit.y && p.y <= pileHit.y + pileHit.h) {
-        openEvening(true);
-        return;
-    }
-    const bh = boxHits.find(r => p.x >= r.x - 3 && p.x <= r.x + r.w + 3 && p.y >= r.y - 3 && p.y <= r.y + r.h + 3);
-    if (bh) {
-        const t = bh.t, dd = new Date(t.d);
-        sfx("tock");
-        speak(`Box ${shelfBoxes().indexOf(t) + 1}: ${t.t}. Finished ${dd.toLocaleDateString("en-GB", { weekday: "long" })} at ${hhmm(dd)}.`);
-        if (view === "room")
-            pet.start("curious", { tx: clamp(bh.x, W * .1, W * .9) });
-        return;
-    }
-    if (lookTap(p, "room")) // the lamp, the window, the rug... (looks.js)
-        return;
-    if (p.y > H * .35 && pet.beh !== "sleep") {
-        if (view === "room")
-            pet.start("curious", { tx: clamp(p.x, W * .1, W * .9) });
-        else if (!objQ.cur) {
-            camFollow();
-            pet.start(routeTo("room")); // Mite's in another room: it comes over
-        }
-    }
-    else if (pet.beh === "sleep" && Math.random() < .5) {
-        speak("mm? ...five more minutes.");
-    }
+    tapRoom(p, rm); // who gets the tap: taps.js
 });
 function patPet() {
     sfx("pat");
@@ -29903,6 +29600,268 @@ function catchGold() {
     for (let i = 0; i < 14; i++)
         addP({ type: "spark", x, y, vx: rnd(-120, 120), vy: rnd(-140, 40), g: 200, max: 1.2, col: "#ffd76a", size: rnd(3, 5) });
     afterChange();
+}
+
+</script>
+<script>/* js/scene/taps.js */
+"use strict";
+/*
+ * taps.js - Who gets a tap on the scene, decided in one place.
+ *
+ * TAP_TARGETS: every tappable thing, by id. A target is either
+ *   { hit(p, rm), act(p, rm, h) }  hit says whether the point is on it (h = what hit returned), act does the tap; or
+ *   { tap(p, rm) }                 for the things whose own file both checks and acts (postitTap, lookTap, ...):
+ *                                  true if it took the tap.
+ * p is in the coordinates of room rm ("room" = the wagon, "garden" = the nook, "archive").
+ * TAP_ORDER: per room, which targets are tried, in order. The first one that takes the tap wins; nothing after it
+ * hears about it. Small things go before the big things they sit on or in front of.
+ * The rooms' orders differ on purpose in places (in the archive the journal goes before Midnightcat, who sits beside
+ * it); keep that in mind when moving an id.
+ *
+ * Adding something tappable: add a target here and put its id in the room's list.
+ */
+
+/* the wagon checks most things only when the tap isn't on Mite; the nook and the archive never did */
+function clearOfMite(p, rm) {
+    return rm !== "room" || notOnMite(p);
+}
+/* a tap on Mite itself, in the room on screen */
+function onMite(p, rm) {
+    return view === rm && Math.hypot(p.x - pet.x, (p.y - (GY - R - (pet.ground || 0))) * .9) < R * 1.25;
+}
+/* a box in the room: the wagon's 3 px of slack around each one */
+function tapBoxIn(list, p) {
+    return list.find(r => p.x >= r.x - 3 && p.x <= r.x + r.w + 3 && p.y >= r.y - 3 && p.y <= r.y + r.h + 3);
+}
+/* a thing standing on the wagon floor at x: within dx either side, from top down to the floor */
+function standsAt(p, x, dx, top) {
+    return Math.abs(p.x - x) <= dx && p.y >= top && p.y <= GY + 4;
+}
+/* a hit box that Mite walks to: requestObj with the box's top centre */
+function tapGoTo(kind) {
+    return (p, rm, h) => requestObj(kind, h.cx, h.y);
+}
+/* a hit box that only counts when it's drawn (null otherwise), with hitIn's slack */
+function tapBox(get, min) {
+    return p => {
+        const h = get();
+        return h && hitIn(p, h, min) ? h : null;
+    };
+}
+
+const TAP_TARGETS = {
+    /* everywhere */
+    gold: { // the golden firefly, in whichever room it is
+        hit: (p, rm) => gold && (gold.room || "room") === rm && Math.hypot(p.x - gold.x, p.y - gold.y) < R * .9,
+        act: () => catchGold()
+    },
+    seasonal: { tap: (p, rm) => seasTap(p, rm) }, // seasonal.js: small, so before the rooms' bigger things
+    anomaly: {
+        hit: (p, rm) => anom && (anom.room || "room") === rm && anomHit(p),
+        act: () => resolveAnom()
+    },
+    drifter: { tap: (p, rm) => drifterTap(p, rm) },
+    postit: { tap: (p, rm) => postitTap(p, rm) }, // a sticky note Mite put up (pastimes.js)
+    splurge: { tap: (p, rm) => splurgeTap(p, rm) }, // the day's treat (splurge.js)
+    possum: {
+        hit: (p, rm) => possumHit && possumHit.room === rm && hitIn(p, possumHit) && clearOfMite(p, rm),
+        act: () => possumTap()
+    },
+    cat: {
+        hit: (p, rm) => catHit && catHit.room === rm && hitIn(p, catHit) && clearOfMite(p, rm),
+        act: () => catTap()
+    },
+    snail: {
+        hit: (p, rm) => snailHit(p, rm) && clearOfMite(p, rm),
+        act: (p, rm) => {
+            if (rm !== "room")
+                return requestObj("snail");
+            const sp = snailPos();
+            requestObj("snail", sp.x, sp.y - R * .6);
+        }
+    },
+    pet: { hit: onMite, act: () => patPet() },
+    sweep: { tap: (p, rm) => sweepAt(p.x, p.y, rm) }, // mess on the floor (care.js)
+    look: { tap: (p, rm) => lookTap(p, rm) }, // the lamp, the window, the ladder... (looks.js)
+    floor: { tap: (p, rm) => floorTap(p, rm) }, // nothing else: Mite comes to look
+
+    /* the wagon */
+    dream: { hit: p => dreamOutHit(p), act: () => catchDream() },
+    origami: { tap: p => origamiTap(p) },
+    festival: { tap: p => festTap(p) },
+    calendar: { // nothing on the wall covers it
+        hit: p => calHit && hitIn(p, calHit) && notOnMite(p) && calHit,
+        act: tapGoTo("calendar")
+    },
+    guest: {
+        hit: p => guest && hitIn(p, { x: guest.x - guest.s * .8, y: GY + (guest.z || 0) - guest.s * 1.2, w: guest.s * 1.6, h: guest.s * 1.2 }),
+        act: () => guestTap()
+    },
+    vault: { hit: p => vaultHit && hitIn(p, vaultHit) && notOnMite(p) && vaultHit, act: tapGoTo("vault") },
+    easel: { hit: tapBox(() => easelHit), act: tapGoTo("easel") },
+    sill: { hit: tapBox(() => sillHit), act: tapGoTo("sill") },
+    jar: {
+        hit: p => own("jar") && standsAt(p, jarX(), R * .45, GY - R * 1.05) && notOnMite(p),
+        act: () => requestObj("jar", jarX(), GY - R * 1.1)
+    },
+    cabinet: { hit: p => cabHit && hitIn(p, cabHit) && notOnMite(p), act: () => cabinetTap() },
+    hearth: {
+        hit: p => own("hearth") && standsAt(p, hearthX(), R * .7, GY - R * 1.4) && notOnMite(p),
+        act: () => requestObj("hearth", hearthX(), GY - R * 1.5)
+    },
+    wall: { // the nearest of the things hung on the wall (and the calendar again, when they overlap)
+        hit: p => {
+            const all = [...(calHit ? [Object.assign({ k: "calendar" }, calHit)] : []), ...wallHits.map(r => Object.assign({ k: "wall:" + r.id }, r))];
+            const h = nearestHit(p, all);
+            return h && notOnMite(p) ? h : null;
+        },
+        act: (p, rm, h) => requestObj(h.k, h.cx, h.y)
+    },
+    oven: {
+        hit: p => own("oven") && standsAt(p, stoveX(), R * .55, GY - ovenH()) && notOnMite(p),
+        act: () => requestObj("oven", stoveX(), GY - ovenH() - R * .9)
+    },
+    kettle: {
+        hit: p => own("kettle") && Math.abs(p.x - stoveX()) <= R * .65 && p.y >= kettleY() - R * .85 && p.y <= kettleY() + 4 && notOnMite(p),
+        act: () => requestObj("brew", stoveX(), GY - R * 1.3)
+    },
+    books: {
+        hit: p => {
+            if (!own("books"))
+                return null;
+            const bx0 = W * .03, brd = GY - R * 2.3, top = brd - ((own("books") || 0) > 7 ? R * .42 : 0) - R * .4;
+            return p.x >= bx0 - 6 && p.x <= bx0 + 7 * R * .18 + 8 && p.y >= top - 6 && p.y <= brd + 8 ? { cx: bx0 + R * .6, y: top - R * .2 } : null;
+        },
+        act: tapGoTo("book")
+    },
+    scope: {
+        hit: p => {
+            if (!own("scope"))
+                return null;
+            const sb = scopeBase(), bx = sb.x;
+            return p.x >= bx - R * .45 && p.x <= bx + R * .95 && p.y >= sb.y - R * 1.75 && p.y <= sb.y + 4 && notOnMite(p) ? { cx: bx + R * .25, y: sb.y - R * 1.8 } : null;
+        },
+        act: tapGoTo("scope")
+    },
+    pile: { // the evening's pile of finished things
+        hit: p => pileHit && p.x >= pileHit.x && p.x <= pileHit.x + pileHit.w && p.y >= pileHit.y && p.y <= pileHit.y + pileHit.h,
+        act: () => openEvening(true)
+    },
+    shelfbox: { hit: p => tapBoxIn(boxHits, p), act: (p, rm, h) => shelfBoxTap(h) },
+
+    /* the nook */
+    shade: { tap: p => shadeTap(p) }, // the shadow reaching out of the night door (draw-world.js)
+    plants: {
+        hit: p => gardenHits.plants.find(r => hitIn(p, r)),
+        act: (p, rm, h) => {
+            gardenPlantAt = h.cx;
+            requestObj("gplants", h.cx, h.y);
+        }
+    },
+    gramophone: { hit: tapBox(() => gardenHits.gramo, 12), act: tapGoTo("ggramo") }, // Mite winds it (or stops it)
+    givejar: { hit: tapBox(() => gardenHits.jar, 8), act: tapGoTo("gjar") }, // a place that needs glimmers (giving.js)
+    letters: { hit: tapBox(() => gardenHits.letters, 30), act: tapGoTo("gletters") }, // the letter rack
+    pinboard: { // up close (pinboard.js); empty at first, so Mite goes up and pins the first postcards
+        hit: tapBox(() => gardenHits.boardAll),
+        act: (p, rm, h) => boardHung() < BOARD_FIRST ? requestObj("ghang", h.cx, h.y) : openPinboard()
+    },
+    vase: { hit: tapBox(() => flowerHit, 30), act: tapGoTo("gvase") }, // Mite smells the flowers (flowers.js)
+    flowerbook: { hit: tapBox(() => fbookHit, 30), act: tapGoTo("gfbook") },
+    tenants: { hit: tapBox(() => gardenHits.tenants, 16), act: () => showTenants() }, // who rents which drawer
+    drawers: { hit: tapBox(() => gardenHits.drawers), act: tapGoTo("gdrawers") },
+    chair: { hit: tapBox(() => gardenHits.chair), act: tapGoTo("gchair") },
+    desk: { hit: tapBox(() => gardenHits.desk), act: tapGoTo("gdesk") },
+
+    /* the archive */
+    archiveSeen: { // takes no tap: notes that you're looking at the archive
+        tap: () => {
+            if (view === "archive")
+                archiveSince = performance.now();
+            return false;
+        }
+    },
+    journal: { hit: tapBox(() => journalHit, 24), act: tapGoTo("journal") },
+    circle: { tap: p => circleTap(p) }, // the chalk circle (circle.js)
+    archwall: { tap: p => archWallTap(p) }, // the filing tube, the capsule plank, the eye jars (archive-wall.js)
+    keepsakes: { // the nearest of the time capsule and the journal
+        hit: p => nearestHit(p, [...(capHit ? [Object.assign({ k: "capsule" }, capHit)] : []), ...(journalHit ? [Object.assign({ k: "journal" }, journalHit)] : [])]),
+        act: (p, rm, h) => requestObj(h.k, h.cx, h.y)
+    },
+    archbox: { hit: p => tapBoxIn(archHits, p), act: (p, rm, h) => requestObj("box:" + h.t.id, h.cx, h.y) }
+};
+
+const TAP_ORDER = {
+    room: ["gold", "seasonal", "anomaly", "dream", "origami", "festival", "drifter", "calendar", "postit", "splurge",
+        "possum", "cat", "guest", "snail", "vault", "easel", "sill", "jar", "cabinet", "hearth", "wall", "oven", "kettle",
+        "books", "scope", "pet", "sweep", "pile", "shelfbox", "look", "floor"],
+    garden: ["gold", "seasonal", "shade", "splurge", "drifter", "anomaly", "possum", "cat", "snail", "pet", "plants",
+        "gramophone", "givejar", "letters", "pinboard", "vase", "flowerbook", "tenants", "drawers", "chair", "desk",
+        "postit", "sweep", "look", "floor"],
+    archive: ["gold", "seasonal", "archiveSeen", "journal", "cat", "drifter", "anomaly", "postit", "sweep", "circle",
+        "possum", "snail", "archwall", "keepsakes", "pet", "archbox", "look", "floor"]
+};
+
+/* a tap at p in room rm: the first target in the room's order that takes it. Returns its id ("" if none) */
+function tapRoom(p, rm) {
+    for (const id of TAP_ORDER[rm] || []) {
+        const t = TAP_TARGETS[id];
+        if (t.tap) {
+            if (t.tap(p, rm))
+                return id;
+            continue;
+        }
+        const h = t.hit(p, rm);
+        if (h) {
+            t.act(p, rm, h);
+            return id;
+        }
+    }
+    return "";
+}
+
+/* a tap on nothing in particular, low enough to be the floor: Mite comes to look. The rooms differ: the wagon
+   and the archive call Mite over from another room, the nook doesn't; only the wagon lets a sleeping Mite be */
+function floorTap(p, rm) {
+    const low = p.y > H * .35, here = view === rm;
+    if (rm === "garden") {
+        if (here && low && pet.beh !== "sleep")
+            pet.start("curious", { tx: clamp(p.x, W * .1, W * .9) });
+        return true;
+    }
+    if (rm === "room" && pet.beh === "sleep") {
+        if (Math.random() < .5)
+            speak("mm? ...five more minutes.");
+        return true;
+    }
+    if (low) {
+        if (here)
+            pet.start("curious", { tx: clamp(p.x, W * .1, W * .9) });
+        else if (!objQ.cur) {
+            camFollow();
+            pet.start(routeTo(rm)); // Mite's in another room: it comes over
+        }
+    }
+    return true;
+}
+
+/* the raccoon, rat or mouse visiting the wagon */
+function guestTap() {
+    const g = guest;
+    if (g.ph === "wait")
+        requestObj("guest", g.x, GY + (g.z || 0) - g.s * 1.4);
+    else if (g.ph === "nap")
+        speak(`Shh. ${g.name} is napping.`, { ms: 3500 });
+    else
+        speak(`That's ${g.name}. ${g.kind === "raccoon" ? "My friend. Knows every bin, attic and lost-property box in town." : g.kind === "rat" ? "Knows every gutter in town." : "Knows every hedge in town."}`, { ms: 4000 });
+}
+
+/* a box on the wagon's shelf of finished things: what it holds */
+function shelfBoxTap(bh) {
+    const t = bh.t, dd = new Date(t.d);
+    sfx("tock");
+    speak(`Box ${shelfBoxes().indexOf(t) + 1}: ${t.t}. Finished ${dd.toLocaleDateString("en-GB", { weekday: "long" })} at ${hhmm(dd)}.`);
+    if (view === "room")
+        pet.start("curious", { tx: clamp(bh.x, W * .1, W * .9) });
 }
 
 </script>
