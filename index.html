@@ -4944,7 +4944,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
 , "mvo6mw6p52u13", "mvo6ys48a7cnl", "mvo71149gjcre", "mvo7aqj23e5a6", "mvo7eio0mj6o5", "mvo7ftgm4eox3", "mvo7h91z3lzkl", "mvo7rs2lkjfbn", "mvo7xysqhqlcq", "mvo7y7edr9vzu", "mvo8a3jcjjhw7", "mvo8gej0mjwfj", "mvo8hr607mkii", "mvo8kgy6d4rph", "mvo8s0ny7nqw2", "mvo8t3j0dr6or", "mvo8whw3vujmh", "mvo8zfo8zu8ls", "mvo92do7wfphh", "mvo93u8d8kbab", "mvoay0fnk9tov", "mvod5h5zja6zn", "mvod4eby76oel", "mvodjtqig7idg", "mvoe8izzi58ba", "mvoe0zhuo5n7l", "mvoeadjdpegln", "mvodlafuuwxc1", "mvoe634589lt0", "mvodaa4a9tcce", "mvodb0j92xhe5", "mvodd2wa05x5w", "mvoddl250g57h", "mvodf9a57q9g3", "mvodsvqd4eseg", "mvodhontf9lsd", "mvodik3y0tz7z", "mvodq7tp6ah9i", "mvofqnik2z25n", "mvod7jxf9465p", "mvod8dcgfczor", "mvoe2rdh3lb1v", "mvoe4t64emsjk", "mvoe4yff4fts6", "mvoeccnmrd878", "mvoevetau8z9k", "mvofsguy7e6dx", "mvoftg831yuyo", "mvoegc6hph6gy", "mvofo9a2m0mep", "mvoztft2lpzr0", "mvp1p2tb1wwgx", "mvp1q2yngsaff", "mvozwa0az0gkw", "mvoyeagumgay6", "mvodns0w6meyu", "mvoeephmkxpo0", "mvoef8crnsiid", "mvoe09qz1jwbe", "mvozhr913hxr7", "mvozjfc84jmir", "mvoytur8ywmtb", "mvoyv1lkwmyfx", "mvpk1bovf1y1p", "mvp75z72h288i", "mvpjjes39n0ti", "mvpjrz9t78ty0", "mvpjys7espoyu", "mvpw0arwowsf2", "mvpkbyncbsvzi", "mvqbigum039un", "mvp8axa8idn9w", "mvpju1m9c0hfl", "mvpjo4ttghzky", "mvpjomx7zo6af", "mvqbkbk0lj3yu", "mvpk2otjj8pbe",
     // shopping list (27-10-2026)
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
-, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y"];
+, "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1"];
 
 </script>
 <script>/* js/core/state.js */
@@ -15475,9 +15475,11 @@ function followRoute(b, p, po, dt) {
     }
     return b.ri >= r.length;
 }
+/* partway up or down the stairs (not at the bottom, not up on the platform) */
+const onStairs = (p, g) => (p.ground || 0) > 1 && (p.ground || 0) < g.rise - 1;
 function routeUp(p, targetX) {
     const g = loftGeo();
-    return { route: [{ x: g.stX0, g: 0 }, { x: g.stX1, g: g.rise }, { x: clamp(targetX, g.balL + R * 1.05, g.balR - R * 1.05), g: g.rise }], ri: 0, sx: p.x, sg: p.ground || 0 };
+    return { route: [{ x: g.stX0, g: 0 }, { x: g.stX1, g: g.rise }, { x: clamp(targetX, g.balL + R * 1.05, g.balR - R * 1.05), g: g.rise }], ri: onStairs(p, g) ? 1 : 0, sx: p.x, sg: p.ground || 0 }; // (already partway up: on from there, not down to the bottom first; jot mvs7hxx4z76h3)
 }
 /* the way up to x on the platform, or just along it if Mite's already up there */
 function upTo(p, tx) {
@@ -15488,7 +15490,7 @@ function upTo(p, tx) {
 }
 function routeDown(p) {
     const g = loftGeo();
-    return { route: [{ x: g.stX1, g: g.rise }, { x: g.stX0, g: 0 }, { x: g.stX0 - R * .6, g: 0 }], ri: 0, sx: p.x, sg: p.ground || 0 };
+    return { route: [{ x: g.stX1, g: g.rise }, { x: g.stX0, g: 0 }, { x: g.stX0 - R * .6, g: 0 }], ri: onStairs(p, g) ? 1 : 0, sx: p.x, sg: p.ground || 0 };
 }
 
 </script>
@@ -21093,11 +21095,15 @@ function sceneDark() {
 }
 /* the snail and the possum walk from room to room and pass in front of Mite, so they're drawn after Mite,
    without the clip (Midnightcat stays behind, drawScene, unless she's out on the floor) */
+/* the snail along the skirting is behind Mite: drawn before it (it used to be drawn over Mite, e.g. at the chalk
+   circle; jot mvtqoi0zz6sz1). Out on the rug it's drawn after, in drawAnimals */
+function drawSnailBehind() {
+    if (!(snailZ > R * .15))
+        withRoomLight(snailRoom, () => drawSnail(sceneDark()));
+}
 function drawAnimals(now) {
     const k = sceneDark(), out = R * .15, snailOut = snailZ > out, possumOut = possum.fy > GY + out;
     // by the wall first, then today's pile of boxes (always in front of those), then whoever's out on the rug
-    if (!snailOut)
-        withRoomLight(snailRoom, () => drawSnail(k));
     if (!possumUp() && !possumOut)
         withRoomLight(possum.room, () => drawPossum(k, now));
     withRoom("room", () => drawPile(now)); // (draw-world.js)
@@ -28751,6 +28757,11 @@ let eventsHeldWas = false;
 function eventsHeld() {
     return !document.hidden && (talkHeld() || document.body.classList.contains("desking"));
 }
+/* a conversation on screen: the dialogue box, or a resident's bubble */
+function convoNow() {
+    const b2 = $("bubble2");
+    return floorTaken() || !!b2 && !b2.hidden;
+}
 function eventsHoldTick(dt) {
     const h = eventsHeld();
     if (h !== eventsHeldWas) {
@@ -28789,19 +28800,24 @@ function frame(now) {
     const held = eventsHoldTick(dt); // (and so do the events: anomalies, the golden firefly, drifters, ...)
     // economy
     decayMom(dt * 1000);
-    // pet logic
-    if (!pet.beh || pet.bt >= pet.dur) {
+    // pet logic (held: Mite and the residents stand still where they are, so nothing walks off or starts behind a menu;
+    // the Mite menu doesn't hold. Owner's jots mvs7elhcf6tg2, mvs73b1cy7zf5, mvs7a1hn1p4vm, 29-10-2026)
+    const sdt = held ? 0 : dt;
+    const free = !held || !pet.beh; // (the very first frame always picks something)
+    if (free && (!pet.beh || pet.bt >= pet.dur) && convoNow() && !(pet.b && pet.b.door)) // (in a conversation: Mite stays on screen, jot mvs77gapma3j4)
+        pet.start("idle");
+    else if (free && (!pet.beh || pet.bt >= pet.dur)) {
         const nx = pet.b && pet.b.next;
         if (nx && BEH[nx])
             pet.start(nx, pet.b.nextExtra);
         else
             chooseBeh();
     }
-    pet.bt += dt;
+    pet.bt += sdt;
     objTick(now);
     const po = {};
     resetOA();
-    BEH[pet.beh].step(pet.b, pet, pet.bt, po, dt);
+    BEH[pet.beh].step(pet.b, pet, pet.bt, po, sdt);
     if (performance.now() < pointAt.until && !po.reach && !po.walk && !po.prop && !(pet.ground > 0)) { // pointing, for a line in a conversation (conversations.js)
         pet.dir = pointAt.dir;
         po.reach = { x: pet.x + pointAt.dir * R * 1.7, y: GY - R * 1.2 };
@@ -28811,7 +28827,7 @@ function frame(now) {
         po.ground = LOFT_OK.has(pet.beh) ? pet.ground : 0;
     pet.ground = po.ground;
     shimmerTick(dt, po); // (after a snack or a game: care.js)
-    if (po.walk)
+    if (po.walk && !held)
         pet.step += dt;
     // eyes follow mouse / wander
     pet.lookT -= dt;
@@ -28876,10 +28892,10 @@ function frame(now) {
     if (W > 0) {
         cx = pcx;
         cx.setTransform(DPR, 0, 0, DPR, 0, 0);
-        catTick(dt, now); // Midnightcat moves between the rooms whichever one is on screen (cat.js)
-        possumTick(dt, now); // and so does the possum (possum.js)
-        guestTick(dt, now); // and a visitor (visitors.js; drawn with the wagon or by drawAnimals)
-        snailTick(dt); // and the snail, slowly (snail.js)
+        catTick(sdt, now); // Midnightcat moves between the rooms whichever one is on screen (cat.js)
+        possumTick(sdt, now); // and so does the possum (possum.js)
+        guestTick(sdt, now); // and a visitor (visitors.js; drawn with the wagon or by drawAnimals)
+        snailTick(sdt); // and the snail, slowly (snail.js)
         animalTalkTick(now); // and now and then two of them have a little chat (conversations.js)
         observeTick(now); // or one of them sits and looks at something, and talks about it (observe.js)
         postTick(now); // has a reply come for one of Mite's letters? (post.js)
@@ -28898,6 +28914,7 @@ function frame(now) {
         if (!onNook)
             withRoom("garden", () => drawLoftFront("garden"));
         drawPastimesBehind(); // (the sticky note being written, behind Mite: pastimes.js)
+        drawSnailBehind(); // (the snail by the wall, behind Mite: camera.js)
         if (po.inside && po.inside.k >= .97) { } // (gone into the closet: deeper.js)
         else if (po.inside) // going into the closet, or coming out: smaller and fainter, down the corridor
             withRoomLight(view, () => {
