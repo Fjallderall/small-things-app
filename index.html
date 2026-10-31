@@ -17422,11 +17422,16 @@ function anomalyInterval() {
         k *= .75;
     return Math.max(s === 2 ? 4 * 60e3 : 9 * 60e3, rnd(600e3, 1500e3) * k); // never bunched up (jot, 25-10-2026: three in 15 min)
 }
-function anomX(lo, hi) {
-    let x = rnd(W * lo, W * hi);
-    for (let k = 0; k < 8 && Math.abs(x - pet.x) < R * 1.8; k++)
-        x = rnd(W * lo, W * hi);
-    return x;
+function anomX(lo, hi) { // away from Mite, and from Midnightcat when she's in this room (else her hit box takes the tap)
+    const catX = cat.ready && cat.room === view ? cat.x : null;
+    const room = x => Math.min(Math.abs(x - pet.x) / 1.8, catX === null ? 1e9 : Math.abs(x - catX) / 1.6) / R; // >= 1: clear of both
+    let best = rnd(W * lo, W * hi);
+    for (let k = 0; k < 16 && room(best) < 1; k++) { // (if nowhere is clear of both, the roomiest spot tried)
+        const x = rnd(W * lo, W * hi);
+        if (room(x) > room(best))
+            best = x;
+    }
+    return best;
 }
 function spawnAnom(dark, force) { // (force: this kind, for tests)
     const w = [["door", 1], ["phone", 1], ["tentacle", 1], ["chair", 1], ["ghost", 1 + (dark > .45 ? 1.5 : 0)], ["letter", .8], ["cloud", raining() ? 1.6 : .8]];
@@ -29239,7 +29244,7 @@ function frame(now) {
         requestAnimationFrame(frame);
         return;
     }
-    const dt = Math.min(.1, (now - last) / 1000);
+    const dt = Math.min(window.__dtCap || .1, (now - last) / 1000); // (__dtCap: the tests only, tests/run.js)
     last = now;
     speechHoldTick(now, dt); // (a menu or card open: the lines on screen wait for it, speech.js)
     const held = eventsHoldTick(dt); // (and so do the events: anomalies, the golden firefly, drifters, ...)
