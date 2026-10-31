@@ -4352,7 +4352,7 @@ const DEF = {
             "Lovely. I'll see myself out. I always do."
         ],
         penpals: ["Bramble, the heron by the canal", "a mole two burrows over", "Great-aunt Lichen", "the lighthouse keeper's cat", "someone called Figs who never writes back", "the Bureau's mailroom", "a very old tortoise", "the moth who lives in the lamp", "a hedgehog with excellent taste", "the night door's landlord"],
-        ffnames: ["Pip", "Mabel", "Lumen", "Wick", "Juniper", "Biscuit", "Theodora", "Flicker", "Ember", "Clementine", "Gus", "Penny", "Sprocket", "Nell", "Ottoline", "Bean", "Halley", "Marigold", "Sir Glowsalot", "Dot", "Fig", "Wren", "Tuesday", "Hattie", "Ozzie", "Toast", "Bartholomew", "Mothball", "Sparrow", "Nimbus", "Crumpet", "Bramble", "Velma", "Twig"],
+        ffnames: ["Mabel", "Lumen", "Wick", "Theodora", "Flicker", "Ember", "Penny", "Sprocket", "Nell", "Ottoline", "Bean", "Halley", "Marigold", "Sir Glowsalot", "Dot", "Fig", "Wren", "Tuesday", "Hattie", "Ozzie", "Toast", "Bartholomew", "Sparrow", "Nimbus", "Velma", "Twig"],
         fireflies: [
             "That's {name}. The brightest one. Very aware of it.",
             "{name} and {name2} aren't speaking. Something about who glowed first. I'm staying out of it.",
@@ -5066,7 +5066,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
 , "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t", "mvqi4h680yovh", "mvru6yetlxofd", "mvrujk91xqygh", "mvqp9s8512wxa", "mvshqinq5llx4", "mvs75jof0hcot", "mvs76pjhzxzxr", "mvs76f3yi73yg", "mvs7bjqxpz1ra", "mvs7cugkj3fhe", "mvs7cya26weun", "mvscobidynjkr", "mvruau0k2yd2j", "mvre03nu4ozba", "mvrzzeedlnxq4", "mvte8rmm57470",
     // group 33 (31-10-2026)
-    "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq"];
+    "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq", "mvwv30z3gw8ln"];
 
 </script>
 <script>/* js/core/state.js */
@@ -6408,6 +6408,36 @@ function clearance() {
     return c;
 }
 const REDACT = [2, 3, 4, 6, 8, 10, 12];
+/* Names already given to someone (group 36): one name, one character. `but` leaves out one kind, so a character
+   doesn't clash with itself ("possum", "snail", "raccoon", "ff", "guest"). Pen pals count by the part before the
+   comma ("Bramble, the heron by the canal" → Bramble). Compared in lower case */
+function namesTaken(but) {
+    const out = new Set(), add = n => n && out.add(String(n).trim().toLowerCase());
+    add(S.settings && S.settings.pet);
+    add(typeof CAT_NAME === "string" ? CAT_NAME : "");
+    if (but !== "possum") add(S.possumName);
+    if (but !== "snail") add(S.snailName);
+    if (but !== "raccoon") add(S.raccoonName);
+    if (but !== "ff") (Array.isArray(S.ff) ? S.ff : []).forEach(add);
+    if (but !== "guest") {
+        (Array.isArray(S.mice) ? S.mice : []).forEach(m => m && add(m.n));
+        pool("visitors").forEach(v => add(String(v).split("|")[0]));
+    }
+    pool("penpals").forEach(p => /^[A-Z]/.test(String(p).trim()) && add(String(p).split(",")[0]));
+    return out;
+}
+/* a name from a list that nobody has yet; when every one is taken, the first of the list that isn't, else the fallback
+   (if that's free), else the fallback with a number */
+function freeName(list, fallback, but) {
+    const taken = namesTaken(but), opts = list.map(x => String(x).trim()).filter(x => x && !taken.has(x.toLowerCase()));
+    if (opts.length)
+        return choice(opts);
+    if (!taken.has(String(fallback).toLowerCase()))
+        return fallback;
+    for (let i = 2;; i++)
+        if (!taken.has((fallback + " " + i).toLowerCase()))
+            return fallback + " " + i;
+}
 function fillNames(t) {
     return String(t).replace(/\{pet\}/g, S.settings.pet).replace(/\{you\}/g, youN());
 }
@@ -13433,10 +13463,19 @@ function fireflyCount() {
 }
 function nameFireflies(announce) {
     S.ff = Array.isArray(S.ff) ? S.ff : [];
+    const others = namesTaken("ff"), seenFf = new Set(); // (a firefly that shares a name with someone else, or with
+    S.ff = S.ff.map(n => { // another firefly, gets a free one in its place, quietly: group 36)
+        const k = String(n).toLowerCase();
+        if (!others.has(k) && !seenFf.has(k)) { seenFf.add(k); return n; }
+        const used = namesTaken(), opts = pool("ffnames").map(x => x.trim()).filter(x => x && x.length <= 30 && !used.has(x.toLowerCase()) && !seenFf.has(x.toLowerCase()));
+        const m = opts.length ? choice(opts) : "Firefly " + (seenFf.size + 1);
+        seenFf.add(m.toLowerCase());
+        return m;
+    });
     const want = fireflyCount();
     let added = null;
     while (S.ff.length < want) {
-        const used = new Set(S.ff), opts = pool("ffnames").map(x => x.trim()).filter(x => x && !used.has(x) && x.length <= 30);
+        const used = namesTaken(), opts = pool("ffnames").map(x => x.trim()).filter(x => x && !used.has(x.toLowerCase()) && x.length <= 30); // (S.ff and every other character's name: group 36)
         const n = opts.length ? choice(opts) : "Firefly " + (S.ff.length + 1);
         S.ff.push(n);
         added = n;
@@ -16614,8 +16653,7 @@ function snailPos() {
 }
 function snailName() {
     if (!S.snailName) {
-        const n = pool("snailnames").map(x => x.trim()).filter(Boolean);
-        S.snailName = n.length ? choice(n) : "Dorothy";
+        S.snailName = freeName(pool("snailnames"), "Dorothy", "snail");
         saveSoon();
     }
     return S.snailName;
@@ -16739,8 +16777,7 @@ function guestScarf(name) {
 }
 function raccoonName() {
     if (!S.raccoonName) {
-        const n = pool("raccoonnames").map(x => x.trim()).filter(Boolean);
-        S.raccoonName = n.length ? choice(n) : "Bramwell";
+        S.raccoonName = freeName(pool("raccoonnames"), "Bramwell", "raccoon");
         saveSoon();
     }
     return S.raccoonName;
@@ -16757,7 +16794,8 @@ function spawnRaccoon() {
     saveSoon();
 }
 function spawnGuest() {
-    const list = pool("visitors").map(x => x.split("|").map(y => y.trim())).filter(x => x[0]);
+    const taken = namesTaken("guest"), all = pool("visitors").map(x => x.split("|").map(y => y.trim())).filter(x => x[0]);
+    const free = all.filter(x => !taken.has(x[0].toLowerCase())), list = free.length ? free : all; // (not a name someone else has: group 36)
     const pick = list.length ? choice(list) : ["Pip", "mouse"];
     const kind = /rat/i.test(pick[1] || "") ? "rat" : "mouse", side = Math.random() < .5 ? -1 : 1;
     let tx = W * rnd(.28, .72);
@@ -23702,8 +23740,7 @@ const POSSUM_POOL = "possum";
 /* its name, picked once from the possumnames lines (like the snail's) */
 function possumName() {
     if (!S.possumName) {
-        const n = pool("possumnames").map(x => String(x).trim()).filter(Boolean);
-        S.possumName = n.length ? choice(n) : "Crumpet";
+        S.possumName = freeName(pool("possumnames"), "Crumpet", "possum"); // (a name nobody else has: group 36)
         S.possumAt = Date.now();
         saveSoon();
     }
