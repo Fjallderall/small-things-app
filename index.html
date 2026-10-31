@@ -5096,7 +5096,7 @@ function defaultState() {
     return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [] }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
-        mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
+        mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
 }
 let S = defaultState();
 /* the Log keeps the last 50 things said and the last 50 that popped up (S.heard, oldest first) */
@@ -5441,7 +5441,7 @@ function sanitizeState(raw) {
             if (dkey(k))
                 o.selfcare[k] = numMap(s.selfcare[k]);
         });
-    o.gamesDay = { d: dkey(s.gamesDay && s.gamesDay.d), n: num(s.gamesDay && s.gamesDay.n) };
+    o.gamesDay = { d: dkey(s.gamesDay && s.gamesDay.d), n: num(s.gamesDay && s.gamesDay.n), g: num(s.gamesDay && s.gamesDay.g) }; // (g: glimmers games paid that day)
     o.mess = arr(s.mess, 14).map(m => ({ room: ["room", "garden", "archive"].includes(m.room) ? m.room : "room", x: clamp(num(m.x, .5), 0, 1), y: clamp(num(m.y, .5), 0, 1), t: ["dust", "leaf", "paper", "crumb"].includes(m.t) ? m.t : "dust", r: clamp(num(m.r, 1), .5, 2), rot: num(m.rot) }));
     o.plan = { d: dkey(s.plan && s.plan.d), ids: (s.plan && Array.isArray(s.plan.ids) ? s.plan.ids : []).slice(0, 3).map(sid) };
     o.rit = { morning: dkey(s.rit && s.rit.morning), evening: dkey(s.rit && s.rit.evening) };
@@ -8043,6 +8043,17 @@ const PAY = { task: { 1: 1, 3: 3, 8: 6 }, pick: 1, fixDone: 1, rested: 3, selfca
    firefly gives 1 to 3 glimmers or a small thing, never both, at most AMB_GLIM glimmers a day. Small things found
    without a task (a firefly past the cap, the floor, the hand, the raccoon) are at most AMB_FINDS a day. */
 const AMB_GLIM = 10, AMB_FINDS = 3;
+/* games pay again (owner, 01-11-2026; group 15 and 24 had made them free): 0 to 3 glimmers by how well it went, at most
+   GAME_GLIM a day from games (S.gamesDay.g) */
+const GAME_GLIM = 10;
+function gameGlim(score) {
+    gamesToday();
+    const n = Math.min(Math.round(clamp(score, 0, 1) * 3), GAME_GLIM - num(S.gamesDay.g));
+    if (n <= 0)
+        return 0;
+    S.gamesDay.g = num(S.gamesDay.g) + n;
+    return addG(n);
+}
 function ambToday() {
     if (!S.amb || S.amb.d !== actDay())
         S.amb = { d: actDay(), g: 0, f: 0 };
@@ -34059,11 +34070,11 @@ setInterval(() => {
     }
     checkRested();
 }, 60e3);
-/* games: just for fun, no glimmers (owner, 24-10-2026); Mite likes them, and shimmers afterwards. S.gamesDay counts
-   today's, for the tray */
+/* games: 0–3 glimmers each again, 10 a day at most (gameGlim, economy.js; owner, 01-11-2026); Mite likes them, and
+   shimmers afterwards. S.gamesDay counts today's games (n) and their glimmers (g) */
 function gamesToday() {
     if (S.gamesDay.d !== actDay())
-        S.gamesDay = { d: actDay(), n: 0 };
+        S.gamesDay = { d: actDay(), n: 0, g: 0 };
     return S.gamesDay.n;
 }
 function startGame(id) {
@@ -34179,12 +34190,12 @@ $("gameBox").addEventListener("click", e => {
     }
 });
 function endGame(score, label) {
-    // (no glimmers for games: owner, 24-10-2026; they're for fun)
+    const g = gameGlim(score); // (0–3, 10 a day at most: owner, 01-11-2026)
     S.care.games++;
     game = null;
     $("gameBox").hidden = true;
     pet.start(score >= .66 ? "celebrate" : "hop");
-    toast(label);
+    toast(g ? `${label} · +${g} ◆` : label);
     shimmer();
     setTimeout(() => say("game_end"), 1200);
     afterChange();
@@ -34275,7 +34286,7 @@ function renderTray(level) {
         }, String(today[x.id] || 0)));
     }
     if (level === "games")
-        info(`Just for fun, no glimmers: ${S.settings.pet} loves these, and shimmers afterwards. Played today: ${gamesToday()}.`);
+        info(`${S.settings.pet} loves these, and shimmers afterwards. Up to 3 ◆ a game, ${GAME_GLIM} a day${gamesToday() ? ` (${num(S.gamesDay.g)} so far, ${gamesToday()} played)` : ""}.`);
     if (level === "games")
         GAMES.forEach(g => add(g.name, () => startGame(g.id)));
     if (level === "talk") // what you can say to Mite (talk.js)
