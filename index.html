@@ -1157,7 +1157,7 @@ const POOL_INFO = {
     look_jarshelf: "Tapping the shelf the jar stands on, in the archive (what it's for, no spoilers; {thejar}: the jar or the jars, {itthem}: it or them)", look_capplank: "Tapping the plank under it, for the time capsules (what it's for)",
     world_letters: "Letters to you from the world, every couple of weeks (use / for a new paragraph; sign it from the world)",
     greet: "When you open the page", return_short: "Back after 20 min – 4 h", return_long: "Back after 4 h+ (uses {away})",
-    away: "Things Mite did while you were away (fills {away})", idle: "Random remarks", observation: "Remarks built on your stats",
+    away: "Things Mite did while you were away (fills {away})", idle: "Random remarks", workshop: "Remarks about the workshop: a place out of sight where some things are kept instead of the wagon", observation: "Remarks built on your stats",
     pat: "When patted", pat_many: "Patted a lot quickly", task_added: "New task ({task})", task_done: "Task finished ({task})",
     task_done_big: "Big task finished ({task})", task_done_old: "Long-waiting task finished ({task}, {age})", all_done: "List empty",
     late: "After bedtime", after_work: "After work hours on a workday", day_off: "On non-workdays",
@@ -1339,6 +1339,22 @@ const DEF = {
             "invented a new kind of nap",
             "{#pastverb} {n} {#things} {#place}",
             "had a long chat with a {#creature} about {#topic}"
+        ],
+        workshop: [
+            "The big ladder isn't in the wagon. It's in the workshop. It likes the high ceiling there.",
+            "If you're looking for the good scissors: workshop. Not the wagon. Never the wagon.",
+            "The spare glue's in the workshop. Everything sticky lives in the workshop. House rule.",
+            "I left the half-built birdhouse in the workshop. It's not ready to be seen yet.",
+            "The sawdust stays in the workshop. That's the agreement. Mostly it keeps to it.",
+            "The varnish is in the workshop, not here. It needs air, and it has opinions.",
+            "[evening] I can hear the workshop from here, sometimes. Just the clock. It runs a little slow.",
+            "The toolbox isn't in the wagon. It's in the workshop, with the other toolbox. They keep each other company.",
+            "There's a jar of odd screws in the workshop. None of them fit anything here. I keep them anyway.",
+            "[strange] Something in the workshop rearranged the chisels again. By size, this time. Very helpful of it.",
+            "[rainy] The workshop roof drips in one spot. I put a bucket there. The bucket is in the workshop too.",
+            "The paint for the shutters is in the workshop. Not in the wagon. Paint gets ideas in small rooms.",
+            "[rare] The workshop has a door I haven't opened. It's not that kind of door. I think.",
+            "The broken lamp went to the workshop to be mended. It's taking its time. So am I."
         ],
         idle: [
             "[darkearly] Dark already. The lamps were ready for it.",
@@ -5066,7 +5082,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
 , "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t", "mvqi4h680yovh", "mvru6yetlxofd", "mvrujk91xqygh", "mvqp9s8512wxa", "mvshqinq5llx4", "mvs75jof0hcot", "mvs76pjhzxzxr", "mvs76f3yi73yg", "mvs7bjqxpz1ra", "mvs7cugkj3fhe", "mvs7cya26weun", "mvscobidynjkr", "mvruau0k2yd2j", "mvre03nu4ozba", "mvrzzeedlnxq4", "mvte8rmm57470",
     // group 33 (31-10-2026)
-    "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq", "mvwv30z3gw8ln"];
+    "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq", "mvwv30z3gw8ln", "mvwrlugp7vure"];
 
 </script>
 <script>/* js/core/state.js */
@@ -29469,8 +29485,8 @@ function ambientTalk() {
         }
         return;
     }
-    if (r < .8)
-        say("idle");
+    if (r < .8) // (now and then a remark about the workshop out of sight, where some things are kept instead: group 36)
+        (Math.random() < .08 && say("workshop")) || say("idle");
 }
 function inventWord() {
     const syl = ["flim", "bor", "quo", "snu", "ber", "lin", "dra", "mo", "ket", "vy", "pel", "ziff", "ow", "gren", "tash", "mu", "pim", "wob", "lo", "fen", "drib", "sil", "nok", "ul"];
