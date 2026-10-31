@@ -29660,15 +29660,16 @@ function catchGold() {
  * p is in the coordinates of room rm ("room" = the wagon, "garden" = the nook, "archive").
  * TAP_ORDER: per room, which targets are tried, in order. The first one that takes the tap wins; nothing after it
  * hears about it. Small things go before the big things they sit on or in front of.
- * The rooms' orders differ on purpose in places (in the archive the journal goes before Midnightcat, who sits beside
- * it); keep that in mind when moving an id.
+ * Every room starts the same: the golden firefly, seasonal things, an anomaly, a drifter (group 37). After that the
+ * orders differ on purpose in places (in the archive the journal goes before Midnightcat, who sits beside it); keep
+ * that in mind when moving an id.
  *
  * Adding something tappable: add a target here and put its id in the room's list.
  */
 
-/* the wagon checks most things only when the tap isn't on Mite; the nook and the archive never did */
+/* the residents take a tap only when it isn't on Mite, in every room (group 37: the nook and the archive didn't) */
 function clearOfMite(p, rm) {
-    return rm !== "room" || notOnMite(p);
+    return view !== rm || Math.hypot(p.x - pet.x, (p.y - (GY - R - (pet.ground || 0))) * .9) > R * .85;
 }
 /* a tap on Mite itself, in the room on screen */
 function onMite(p, rm) {
@@ -29836,13 +29837,13 @@ const TAP_TARGETS = {
 };
 
 const TAP_ORDER = {
-    room: ["gold", "seasonal", "anomaly", "dream", "origami", "festival", "drifter", "calendar", "postit", "splurge",
+    room: ["gold", "seasonal", "anomaly", "drifter", "dream", "origami", "festival", "calendar", "postit", "splurge",
         "possum", "cat", "guest", "snail", "vault", "easel", "sill", "jar", "cabinet", "hearth", "wall", "oven", "kettle",
         "books", "scope", "pet", "sweep", "pile", "shelfbox", "look", "floor"],
-    garden: ["gold", "seasonal", "shade", "splurge", "drifter", "anomaly", "possum", "cat", "snail", "pet", "plants",
+    garden: ["gold", "seasonal", "anomaly", "drifter", "shade", "splurge", "possum", "cat", "snail", "pet", "plants",
         "gramophone", "givejar", "letters", "pinboard", "vase", "flowerbook", "tenants", "drawers", "chair", "desk",
         "postit", "sweep", "look", "floor"],
-    archive: ["gold", "seasonal", "archiveSeen", "journal", "cat", "drifter", "anomaly", "postit", "sweep", "circle",
+    archive: ["archiveSeen", "gold", "seasonal", "anomaly", "drifter", "journal", "cat", "postit", "sweep", "circle",
         "possum", "snail", "archwall", "keepsakes", "pet", "archbox", "look", "floor"]
 };
 
@@ -29864,16 +29865,11 @@ function tapRoom(p, rm) {
     return "";
 }
 
-/* a tap on nothing in particular, low enough to be the floor: Mite comes to look. The rooms differ: the wagon
-   and the archive call Mite over from another room, the nook doesn't; only the wagon lets a sleeping Mite be */
+/* a tap on nothing in particular, low enough to be the floor: Mite comes to look, or comes over from another room.
+   The same in every room (group 37): a sleeping Mite is let be ("five more minutes", half the time) */
 function floorTap(p, rm) {
     const low = p.y > H * .35, here = view === rm;
-    if (rm === "garden") {
-        if (here && low && pet.beh !== "sleep")
-            pet.start("curious", { tx: clamp(p.x, W * .1, W * .9) });
-        return true;
-    }
-    if (rm === "room" && pet.beh === "sleep") {
+    if (pet.beh === "sleep") {
         if (Math.random() < .5)
             speak("mm? ...five more minutes.");
         return true;
