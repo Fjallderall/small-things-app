@@ -161,7 +161,6 @@ details summary{cursor:pointer;color:var(--muted);font-size:13.5px}
 .sw input{width:20px;height:20px;accent-color:var(--leaf);margin:0}
 .owned{font-family:var(--f-mono);font-size:12.5px;color:var(--leaf);min-width:64px;text-align:right}
 @media (max-width:520px){.bld{grid-template-columns:1fr}.bacts{justify-content:flex-end}}
-.ups{display:flex;flex-wrap:wrap;gap:6px}
 .up{border:1px solid var(--line);border-radius:9px;padding:6px 9px;background:transparent;text-align:left;font-size:12.5px;max-width:100%}
 .up b{display:block;font-size:13px}
 .up:disabled{opacity:.45;cursor:default}
@@ -333,18 +332,12 @@ body.game .toasts.stay,body.game.sheet .toasts.stay{top:calc(env(safe-area-inset
 @media (prefers-reduced-motion: reduce){body.game .panel,body.game.sheet .panel{transition:none}}
 .hud .fed{background:rgba(79,125,66,.7)}
 .inline-in{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 10px}
-.care-grid{display:flex;flex-wrap:wrap;gap:6px}
-.care-grid .btn .sync{margin-left:4px}
-.tray,.talkbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 122px);z-index:6;display:flex;gap:7px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:calc(100vw - 24px);padding:10px;border-radius:18px;background:rgba(250,248,238,.97);color:#22281f;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.tray{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 122px);z-index:6;display:flex;gap:7px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:calc(100vw - 24px);padding:10px;border-radius:18px;background:rgba(250,248,238,.97);color:#22281f;box-shadow:0 6px 20px rgba(0,0,0,.3)}
 .tray button{border:1px solid #cdd3bf;background:#fff;border-radius:999px;padding:8px 13px;font-weight:700;font-size:14px;color:#22281f}
 .tray button:disabled{opacity:.45}
 .tray button small{font-family:var(--f-mono);font-weight:400;font-size:11.5px;color:#5f6857;margin-left:6px}
 .tray button.back{background:transparent}
 .tray .trayinfo{flex-basis:100%;margin:0 2px 2px;font-size:13px;line-height:1.35;color:#4a5242;text-align:center}
-.talkbar{width:min(calc(100vw - 24px),540px);flex-wrap:nowrap}
-.talkbar input{flex:1;min-width:0;border:1px solid #cdd3bf;border-radius:10px;padding:9px 11px;background:#fff;color:#22281f}
-.talkbar .btn{background:#fff;color:#22281f;border-color:#cdd3bf}
-.talkbar .btn.primary{background:#4f7d42;color:#fff;border-color:#4f7d42}
 body.traying .nextup{display:none}
 .gamebox{position:absolute;left:50%;top:22%;transform:translateX(-50%);z-index:5;background:rgba(250,248,238,.96);color:#22281f;border-radius:16px;padding:12px 14px;box-shadow:0 6px 20px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:9px;align-items:center;max-width:calc(100% - 24px)}
 .gamebox.thin{pointer-events:none;padding:7px 12px;flex-direction:row}
@@ -357,20 +350,10 @@ body.traying .nextup{display:none}
 .mcard{aspect-ratio:4/3;border-radius:8px;border:0;background:#4f7d42;color:transparent;font-size:11px;font-weight:700;padding:4px;overflow:hidden;line-height:1.15}
 .mcard.up{background:#fff;color:#22281f;outline:1px solid #cdd3bf}
 .mcard.done{background:#d6e4c8;color:#3f5f35}
-.chatlog{list-style:none;margin:0;padding:4px 0;display:flex;flex-direction:column;gap:6px;max-height:46vh;overflow:auto}
 .msg{max-width:86%;padding:7px 11px;border-radius:12px;font-size:14px;overflow-wrap:anywhere}
 .msg.u{align-self:flex-end;background:var(--leaf);color:var(--bg)}
 .msg.m{align-self:flex-start;background:var(--sunk)}
 .msg .meta{display:block;font-family:var(--f-mono);font-size:10.5px;color:var(--muted);margin-top:3px}
-.msg .tsug{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.memlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-.memlist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;font-size:13.5px;padding:6px 8px;border:1px solid var(--line);border-radius:8px}
-.memlist li span{overflow-wrap:anywhere}
-.usage{overflow-x:auto}
-.usage table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;min-width:420px}
-.usage th,.usage td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line)}
-.usage th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
-.usage td.num,.usage th.num{text-align:right;font-family:var(--f-mono)}
 /* ---------- UX pass ---------- */
 .subtabs{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px 0}
 .subtabs[hidden]{display:none}
@@ -448,7 +431,6 @@ a.mini{text-decoration:none;display:inline-block}
 .btn.ai,.mini.ai{border-style:dashed;border-color:var(--accent);color:var(--ink);background:transparent}
 .btn.ai:disabled,.mini.ai:disabled{opacity:.4;cursor:default}
 .btn.ai .cost,.tray .cost{font-family:var(--f-mono);font-weight:400;font-size:11.5px;color:var(--muted);margin-left:5px}
-.talkbar .btn.ai{background:#fff;color:#22281f}
 /* ---------- pixel art skin ---------- */
 body.pixel{--f-display:"VT323",ui-monospace,monospace;--f-read:"DotGothic16","Atkinson Hyperlegible",system-ui,sans-serif;--px-ink:#2a1f18}
 body.pixel .stage canvas{image-rendering:pixelated;image-rendering:crisp-edges}
@@ -458,7 +440,7 @@ body.pixel .btn:active,body.pixel .chipbtn:active,body.pixel .mini:active{transf
 body.pixel .btn.primary{box-shadow:2px 2px 0 #2c4a25}
 body.pixel .btn.amber{box-shadow:2px 2px 0 #7a4c0f}
 body.pixel .panel,body.pixel .m,body.pixel .task,body.pixel .file,body.pixel .wk,body.pixel .drawer,body.pixel .bld,body.pixel .ritcard{border-width:2px}
-body.pixel .ritcard,body.pixel .nextup,body.pixel .tray,body.pixel .talkbar,body.pixel .gamebox{border:2px solid var(--px-ink);box-shadow:4px 4px 0 rgba(0,0,0,.35)}
+body.pixel .ritcard,body.pixel .nextup,body.pixel .tray,body.pixel .gamebox{border:2px solid var(--px-ink);box-shadow:4px 4px 0 rgba(0,0,0,.35)}
 body.pixel .bubble{border:2px solid var(--px-ink);box-shadow:3px 3px 0 rgba(0,0,0,.3);font-family:var(--f-read);font-size:16px;line-height:24px;padding:8px 12px;letter-spacing:0}
 body.pixel .bubble::after{width:9px;height:9px;bottom:-7px;border-right:2px solid var(--px-ink);border-bottom:2px solid var(--px-ink)}
 body.pixel .bubble.awayL:not(.more)::after{bottom:auto;border:0;border-left:2px solid var(--px-ink);border-bottom:2px solid var(--px-ink)}
@@ -550,7 +532,7 @@ body.pixel .cabglim{border-radius:0;font-family:var(--f-display);font-size:18px;
 .pressed{width:50px;height:60px;flex:0 0 auto;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .eyepic{width:72px;height:48px;flex:0 0 auto;image-rendering:pixelated;image-rendering:crisp-edges;background:#2f2420;border-radius:4px}
 .fbooklist{list-style:none;margin:0;padding:0;max-height:52vh;overflow:auto}.fbooklist li{padding:8px 0;border-bottom:1px dashed rgba(58,44,34,.25)}
-.fdot{display:inline-block;width:10px;height:10px;margin-right:6px;border:2px solid #3a2c22;vertical-align:-1px}.fbook.odd b{color:#6b4a84}
+.fbook.odd b{color:#6b4a84}
 .pinadd{border:0;cursor:pointer;color:#ffe9a8}
 .pinpager{display:flex;align-items:center;gap:10px;margin-top:4px;color:#ffe9a8;font-family:var(--f-mono);font-size:13px}
 .pinpager .cabglim{border:0;cursor:pointer;color:#ffe9a8;margin:6px 0 0;min-height:36px}
@@ -628,7 +610,7 @@ body.pixel .desk .desk-h,.desk .desk-h{font-family:var(--f-body);font-size:14px;
   body.game.sheet .panel{transform:none}
   body.game.sheet .scrim{display:none}
   body.game .grab{visibility:hidden}
-  body.game .dock,body.game .tray,body.game .talkbar{left:calc((100vw - var(--side)) / 2)}
+  body.game .dock,body.game .tray{left:calc((100vw - var(--side)) / 2)}
   body.game.sheet .toasts{right:var(--side)}
   body.game.sheet .toasts.stay{right:auto;left:calc((100vw - var(--side)) / 2)}
 }
@@ -676,7 +658,6 @@ body.pixel .jot{border:2px solid #3a3420;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
 .jcount{align-self:flex-end;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
 .jname{cursor:pointer;text-decoration:underline dotted 2px;text-underline-offset:6px}
 .jname:focus-visible{outline:2px solid var(--accent,#c2453a);outline-offset:3px}
-.kswatch{display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-2px;border:1px solid rgba(0,0,0,.35)}
 /* the paternoster (paternoster.js): the window, the turning buttons, the months as one scrolling row of keys */
 .pncv{display:block;width:100%;max-width:420px;margin:0 auto 8px;aspect-ratio:160/100;image-rendering:pixelated;image-rendering:crisp-edges}
 .deepmap{font:12px/1.35 ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow-x:auto;margin:0 0 10px;padding:8px 10px;border-radius:8px;background:var(--card2,rgba(0,0,0,.06))}
@@ -13209,10 +13190,6 @@ function dueCapsules() {
 function sealedCapsules() {
     const t = dayKey();
     return KEEP.caps.filter(c => !c.opened && c.open > t).sort((a, b) => a.open < b.open ? -1 : 1);
-}
-function weekRefl() {
-    const wk = weekKey(Date.now());
-    return KEEP.refl.filter(r => weekKey(r.at) === wk);
 }
 function fmtLong(ts) {
     return new Date(ts).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
@@ -26568,25 +26545,6 @@ function showTube() {
     openRitual("The filing tube", last.length ? "The last things that came through. Every box gets a capsule." : "Nothing has come through yet. Finish something and file the day's pile.", `<ul class="fbooklist">${rows}</ul>`, [["Close", "primary", closeRitual]]);
     sfx("card");
 }
-/* one month, in short */
-function showMonthKey(mk) {
-    const [y, m] = mk.split("-").map(Number), inM = ts => {
-        const d = new Date(ts);
-        return d.getFullYear() === y && d.getMonth() === m - 1;
-    };
-    const tasks = allDone().filter(t => t.d && inM(t.d)).length;
-    const letters = ((S.post && S.post.sent) || []).filter(l => inM(l.at)).length;
-    const flowers = (S.flowerBook || []).filter(f => f.at > 1e9 && inM(f.at)).map(f => f.n);
-    const paintings = allPaintings().filter(g => g.day && inM(new Date(g.day + "T12:00").getTime())).length;
-    const visitors = (S.notes || []).filter(n => inM(n.at) && /came by/.test(n.text)).length;
-    const origami = (S.origami || []).filter(o => inM(o.at)).length;
-    const name = new Date(y, m - 1, 15).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
-    const line = (n, one, many) => n ? `<li>${n} ${n === 1 ? one : many}</li>` : "";
-    const body = `<ul class="fbooklist">${line(tasks, "thing finished", "things finished")}${line(letters, "letter written", "letters written")}${flowers.length ? `<li>Flowers in the vase: ${flowers.map(esc).join(", ")}</li>` : ""}${line(paintings, "painting sent", "paintings sent")}${line(visitors, "visitor", "visitors")}${line(origami, "origami from the ghost", "origami from the ghost")}</ul>`;
-    const quiet = !tasks && !letters && !flowers.length && !paintings && !visitors && !origami;
-    openRitual(`The key for ${name}`, quiet ? "A quiet month. Those count too." : "What this month left behind.", quiet ? "" : body, [["Close", "primary", closeRitual]]);
-    sfx("card");
-}
 let shelfHits = null;
 /* a tap on the wall (archiveTap): true if it was a board, the eye jars, the capsule plank or the tube */
 function archWallTap(p) {
@@ -33654,9 +33612,6 @@ function addLines(k, lines, src) {
         S.aiLog.length = 300;
     return added;
 }
-function poolSpec(k) {
-    return k in SPECIAL_FMT ? SPECIAL_FMT[k] : `spoken line, max 25 words; variables allowed: ${allowedVars(k).map(v => "{" + v + "}").join(" ")}`;
-}
 function genPrompt(k, n) {
     const st = S.settings;
     const ex = pool(k).slice(-60).join("\n");
@@ -34650,34 +34605,6 @@ function offlineSplit(t) {
     afterChange();
 }
 const DAYW = { sunday: 0, sun: 0, zondag: 0, monday: 1, mon: 1, maandag: 1, tuesday: 2, tue: 2, tues: 2, dinsdag: 2, wednesday: 3, wed: 3, woensdag: 3, thursday: 4, thu: 4, thurs: 4, donderdag: 4, friday: 5, fri: 5, vrijdag: 5, saturday: 6, sat: 6, zaterdag: 6 };
-function findDay(low) {
-    const d = new Date();
-    d.setHours(12, 0, 0, 0);
-    let m;
-    if (/\b(today|tonight|vandaag|vanavond)\b/.test(low))
-        return { d: dayKey(d), w: "today" };
-    if (/\b(tomorrow|morgen)\b/.test(low)) {
-        d.setDate(d.getDate() + 1);
-        return { d: dayKey(d), w: "tomorrow" };
-    }
-    if (/\b(this weekend|weekend)\b/.test(low)) {
-        d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7));
-        return { d: dayKey(d), w: "this weekend" };
-    }
-    if (/\bnext week\b|\bvolgende week\b/.test(low)) {
-        d.setDate(d.getDate() + 7);
-        return { d: dayKey(d), w: "next week" };
-    }
-    if (m = low.match(/\b(sunday|monday|tuesday|wednesday|thursday|friday|saturday|zondag|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag)\b/)) {
-        const w = DAYW[m[1]];
-        d.setDate(d.getDate() + ((w - d.getDay() + 7) % 7));
-        return { d: dayKey(d), w: "on " + d.toLocaleDateString("en-GB", { weekday: "long" }) };
-    }
-    return null;
-}
-function toSecond(x) {
-    return x.replace(/\bI am\b/gi, "you are").replace(/\bI'm\b/gi, "you're").replace(/\bI've\b/gi, "you've").replace(/\bI'll\b/gi, "you'll").replace(/\bmyself\b/gi, "yourself").replace(/\bmine\b/gi, "yours").replace(/\bmy\b/gi, "your").replace(/\bme\b/gi, "you").replace(/\bI\b/g, "you").replace(/[.!?\s]+$/, "").trim();
-}
 /* ---------- days you tell Mite about: "friday off", "holiday 28-10-2026 to 01-11-2026", "working saturday",
    "friday isn't a day off after all". Read offline (never sent to AI), kept in S.sched, and they change the schedule
    for those days only (isWorkDay, speech.js). Every week's pattern stays in Settings ---------- */
@@ -34749,7 +34676,6 @@ function schedParse(text) {
 /* how a day is put in a reply: Friday 30-10-2026 */
 const schedName = k => { const d = new Date(k + "T12:00"); return d.toLocaleDateString("en-GB", { weekday: "long" }) + " " + dmy(d); };
 /* the message, acted on: the reply, or null when it isn't about the schedule */
-const SCHED_SAY = { off: "off", work: "working", home: "working from home", office: "at the office" };
 function schedTalk(text, why) {
     const P = schedParse(text);
     if (!P)
