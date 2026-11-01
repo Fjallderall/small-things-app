@@ -787,6 +787,8 @@ body.pixel .bubble.tagged{padding-top:12px}
 .bubble.hint::before{content:"?";display:inline-block;width:18px;height:18px;line-height:18px;margin-right:8px;vertical-align:-2px;text-align:center;font-style:normal;font-weight:700;font-size:14px;background:#c47f1c;color:#fffdf4;border-radius:3px}
 body.pixel .bubble.hint::before{font-family:var(--f-display);font-weight:400;font-size:18px}
 body.game:not(.sheet) .toasts:not(.stay){top:auto;left:16px;right:16px;max-width:440px;margin:0 auto;transform:none;align-items:stretch;bottom:calc(env(safe-area-inset-bottom,0px) + 118px)}
+/* the Mite card (or a tray) is open over the dock: the slips go to the top, not over its buttons (QA, 01-11-2026) */
+body.game.traying:not(.sheet) .toasts:not(.stay){bottom:auto;top:calc(env(safe-area-inset-top,0px) + 64px)}
 body.pixel .toast{background:#f3ead2;color:var(--px-ink);border:2px solid var(--px-ink);box-shadow:3px 3px 0 rgba(0,0,0,.3);font-family:var(--f-read);font-size:15px;line-height:22px}
 body.pixel .toast button{font-family:var(--f-display);font-size:19px;line-height:20px;border-width:2px}
 body.pixel .toast.ach{background:#f1c27a;color:var(--px-ink)}
@@ -5116,7 +5118,9 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 44 batch 1 (01-11-2026)
     "mvxuuy75j4ec4", "mvxuwe8xy4uj0",
     // group 44 batch 2 (01-11-2026)
-    "mvxujz21qeu6z", "mvxuknw3m6dbb", "mvxupxo6hv3vq"];
+    "mvxujz21qeu6z", "mvxuknw3m6dbb", "mvxupxo6hv3vq",
+    // group 44 lore check and group 45 (01-11-2026)
+    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy"];
 
 </script>
 <script>/* js/core/state.js */
@@ -8195,6 +8199,8 @@ function completeTask(id, src) {
         return;
     let line = null;
     t.d = Date.now();
+    if (typeof speakQ !== "undefined") // "Got it, <task>" still waiting under the menu: not said for a task that's done (QA, 01-11-2026)
+        speakQ = speakQ.filter(q => !q.opts || q.opts.task !== id);
     /* what this one finish changed, so its own Undo can take exactly that back (and stop what's still to come:
        the level-up, a lesson, the clearance, Mite's remarks) */
     const rec = { id, at: t.d, h: new Date(t.d).getHours(), timers: [], before: { flags: Object.assign({}, S.flags), ach: Object.assign({}, S.ach), streak: Object.assign({}, S.streak), paint: S.paint ? S.paint.prog : 0 } };
@@ -13147,8 +13153,8 @@ function requestObj(kind, fx, fy) {
         ovenJob.called = performance.now();
         kind = "ovenOut";
     }
-    if (kind === "look:closet" && pet.beh === "deepgo" && pet.b.e && pet.b.arr !== undefined) { // Mite's inside: it calls back how long (jot mvw5flosv9hue)
-        speak(closetCallBack(pet.dur - pet.bt), { ms: 4000 });
+    if (inCloset()) { // Mite's inside the closet: it calls back how long, whatever was tapped (jots mvw5flosv9hue, mvxxky61gpnib)
+        closetAnswer();
         return;
     }
     {
@@ -22821,7 +22827,7 @@ function yourLetterCard(delay) {
         const l = ((S.post && S.post.inbox) || []).find(x => x.you && !x.read);
         if (!l || hasDesk())
             return;
-        if (!booted || !$("ritual").hidden || talkHeld() || !$("dlg").hidden) {
+        if (!booted || !$("ritual").hidden || talkHeld() || !$("dlg").hidden || !$("desk").hidden) { // (and not over Settings: QA, 01-11-2026)
             yourCardTimer = setTimeout(tryCard, 3000);
             return;
         }
@@ -23787,6 +23793,19 @@ function deepTrip(t = Date.now()) {
     note(`${S.settings.pet} went into the closet, as far as ${deepPlace(lv)}.${e.f ? ` It brought back ${e.f.replace(/^(A|An|One|The) /, m => m.toLowerCase())}.` : ""}`);
     saveSoon();
     return e;
+}
+/* Mite's inside the closet on a trip (deepgo, past the door and not yet out): it isn't there to pat, and a tap on
+   the closet, the floor or anything else is answered from inside instead of calling it out (jot mvxxky61gpnib) */
+function inCloset() {
+    const b = pet.b;
+    if (pet.beh !== "deepgo" || !b || !b.e || b.arr === undefined)
+        return false;
+    const ta = pet.bt - b.arr;
+    return ta > 1.4 && ta < b.act - 2.2;
+}
+function closetAnswer() {
+    speak(closetCallBack(pet.dur - pet.bt), { ms: 4000 });
+    return true;
 }
 /* the closet tapped while Mite is in it: how long it'll be, called back from inside (seconds left) */
 function closetCallBack(left) {
@@ -29991,7 +30010,7 @@ function clearOfMite(p, rm) {
 }
 /* a tap on Mite itself, in the room on screen */
 function onMite(p, rm) {
-    return view === rm && Math.hypot(p.x - pet.x, (p.y - (GY - R - (pet.ground || 0))) * .9) < R * 1.25;
+    return view === rm && !inCloset() && Math.hypot(p.x - pet.x, (p.y - (GY - R - (pet.ground || 0))) * .9) < R * 1.25; // (inside the closet it's only a lantern far off: deeper.js)
 }
 /* a box in the room: the wagon's 3 px of slack around each one */
 function tapBoxIn(list, p) {
@@ -30187,6 +30206,8 @@ function tapRoom(p, rm) {
    The same in every room (group 37): a sleeping Mite is let be ("five more minutes", half the time) */
 function floorTap(p, rm) {
     const low = p.y > H * .35, here = view === rm;
+    if (inCloset())
+        return closetAnswer();
     if (pet.beh === "sleep") {
         if (Math.random() < .5)
             speak("mm? ...five more minutes.");
@@ -32650,7 +32671,7 @@ $("addForm").addEventListener("submit", e => {
     if (bits.length)
         toast(`Added: ${p.text} · ${bits.join(" · ")}`);
     resetAdd();
-    say("task_added", { task: p.text });
+    say("task_added", { task: p.text }, { task: nt && nt.id }); // (task: dropped from the queue if it's finished before it's said: completeTask)
     if (Math.random() < .5)
         pet.trigger("lookAround");
     afterChange();
