@@ -1030,7 +1030,7 @@ body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + va
         <label class="field">Weather location (lat, lon)<input id="setLoc" maxlength="30" placeholder="e.g. 48.86, 2.35" inputmode="decimal"></label>
         <label class="field">Talk speed<select id="setTalk"><option value="0">Slow</option><option value="1">Normal</option><option value="2">Fast</option></select></label>
         <label class="field">Backup reminder<select id="setBackup"><option value="1">Every morning</option><option value="2">Once a week</option><option value="0">Off</option></select></label>
-        <label class="field">Home<select id="setHome"><option value="wagon">A travelling wagon</option><option value="burrow">A burrow</option></select></label>
+        <label class="field">Home<select id="setHome"><option value="wagon">A travelling wagon</option><option value="burrow">A burrow</option><option value="bag">The inside of a bag</option></select></label>
       </div>
       <div class="field">Workdays<div class="days" id="setWork"></div></div>
       <div class="field">Office days<div class="days" id="setOffice"></div></div>
@@ -5114,7 +5114,9 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 43 (01-11-2026)
     "mvxuav405ic6w", "mvxub0z5ds7le", "mvxu544ixs17o", "mvxu3611tlhxt", "mvxu3nmd9cvxy",
     // group 44 batch 1 (01-11-2026)
-    "mvxuuy75j4ec4", "mvxuwe8xy4uj0"];
+    "mvxuuy75j4ec4", "mvxuwe8xy4uj0",
+    // group 44 batch 2 (01-11-2026)
+    "mvxujz21qeu6z", "mvxuknw3m6dbb", "mvxupxo6hv3vq"];
 
 </script>
 <script>/* js/core/state.js */
@@ -5515,7 +5517,7 @@ function sanitizeState(raw) {
     if ("backup" in st) // the backup reminder: 0 off, 1 every morning, 2 once a week
         o.settings.backup = clamp(Math.round(num(st.backup, 1)), 0, 2);
     if ("home" in st)
-        o.settings.home = st.home === "burrow" ? "burrow" : "wagon";
+        o.settings.home = ["burrow", "bag"].includes(st.home) ? st.home : "wagon";
     if ("wloc" in st) {
         const l = parseLoc(st.wloc);
         o.settings.wloc = l ? `${l.la}, ${l.lo}` : "";
@@ -6341,13 +6343,19 @@ function pool(k) {
     return Array.isArray(o) ? o : (DEF.pools[k] || []);
 }
 function homeKind() {
-    return S && S.settings && S.settings.home === "burrow" ? "burrow" : "wagon";
+    const h = S && S.settings && S.settings.home;
+    return h === "burrow" || h === "bag" ? h : "wagon";
 }
 /* {wagon} / {Wagon} in a text always says wagon, also in the burrow (the wheelwright's letter: post.js) */
 function homeTxt(t) {
     if (typeof t !== "string")
         return t;
-    if (homeKind() !== "burrow")
+    const k = homeKind();
+    if (k === "bag") // (the inside of a bag: group 44. Mite's idea of itself: a mossling under the desk, in a pocket or a bag)
+        return t.replace(/\{([wW])agon(s?)\}/g, "\u0001$1$2").replace(/a small travelling wagon that is always parked somewhere near \{you\}\. Sometimes it rolls on to somewhere new; mostly it stays put\./g, "a bag that goes wherever {you} goes.")
+            .replace(/a small travelling wagon that is always parked somewhere near ([^.]+)\. Sometimes it rolls on to somewhere new; mostly it stays put\./g, "a bag that goes wherever $1 goes.")
+            .replace(/the wagon wall/g, "the lining").replace(/wagon roof/g, "zip").replace(/under the wagon floor/g, "at the bottom of the bag").replace(/\bwagons\b/g, "bags").replace(/\bwagon\b/g, "bag").replace(/\bWagon\b/g, "Bag").replace(/\u0001([wW])(s?)/g, "$1agon$2");
+    if (k !== "burrow")
         return t.indexOf("{") < 0 ? t : t.replace(/\{([wW])agon(s?)\}/g, "$1agon$2");
     return t.replace(/\{([wW])agon(s?)\}/g, "\u0001$1$2").replace(/a small travelling wagon that is always parked somewhere near \{you\}\. Sometimes it rolls on to somewhere new; mostly it stays put\./g, "a burrow under {you}'s desk.")
         .replace(/a small travelling wagon that is always parked somewhere near ([^.]+)\. Sometimes it rolls on to somewhere new; mostly it stays put\./g, "a burrow under $1's desk.")
@@ -6358,11 +6366,11 @@ function burrowLocked() {
     return homeKind() === "burrow" && !num(S.flags.homeOk) && num(S.created) >= BURROW_AT;
 }
 function applyHomeLabels() {
-    const b = homeKind() === "burrow";
+    const k = homeKind();
     const h = document.querySelector("#tab-grow h2");
     if (h)
-        h.textContent = b ? "The burrow" : "The wagon";
-    $("scene").setAttribute("aria-label", b ? "Your mossling in its burrow" : "Your mossling in its wagon");
+        h.textContent = "The " + k;
+    $("scene").setAttribute("aria-label", "Your mossling in its " + k);
     for (const e of [document.querySelector("#tab-grow h2 + .sub"), $("deskHome")]) { // (static words in the page)
         if (!e)
             continue;
@@ -16085,6 +16093,7 @@ function drawArchiveRoom(now, dt) {
     {
         const aw = archWindow(g);
         drawWindow(aw, sky, d, d.getHours() + d.getMinutes() / 60, tsec, dt, dk, archWparts, false);
+        bagEyelet(aw, dk);
         cx.fillStyle = mix("#b07a48", "#33221a", dk); // a wooden ledge for the plants
         cx.fillRect(aw.wx - aw.wr * 1.25, aw.wy + aw.wr * .9, aw.wr * 2.5, Math.max(PX * 2, R * .12));
         cx.fillStyle = mix("#8a5a34", "#24170e", dk);
@@ -16961,11 +16970,33 @@ function guestStays(g, c) {
 /* how far out on the floor the visitor stands: where it chose (g.tz), but while a conversation's dialogue box is up
    (it covers the front of the floor) no lower than just above the box's top. After, it may go back out there */
 function guestZGoal(g) {
-    const z = g.tz || 0, el = $("dlg");
+    const z = guestLane(g, g.tz || 0), el = $("dlg");
     if (!el || el.hidden || view !== "room")
         return z;
     const top = el.getBoundingClientRect().top - cv.getBoundingClientRect().top; // (canvas coordinates are CSS pixels)
-    return Math.max(0, Math.min(z, top - GY - R * .25));
+    return Math.max(g.front ? LANE_FRONT * R : 0, Math.min(z, top - GY - R * .25)); // (in the front lane: still in front of Mite)
+}
+/* two lanes on the floor (jot mvxupxo6hv3vq, owner's choice 01-11-2026): a visitor and Mite don't stand in each other.
+   Within LANE_NEAR R of Mite, a visitor at the back wall steps out into the front lane (drawn after Mite: guestOut) to
+   get past, and back once it's clear (a little further, so it doesn't step to and fro on the line). If Mite is the one
+   out on the floor (pet.ground below 0), the visitor keeps to the back instead. Mite up on the loft: no clash */
+const LANE_NEAR = 2, LANE_CLEAR = 2.4, LANE_FRONT = .6;
+function guestLane(g, z) {
+    if (g.ph === "out" || view !== "room" || (pet.ground || 0) > 0) {
+        g.front = false;
+        return z;
+    }
+    const dx = Math.abs(g.x - pet.x);
+    if (dx >= R * (g.front ? LANE_CLEAR : LANE_NEAR)) {
+        g.front = false;
+        return z;
+    }
+    if (-(pet.ground || 0) >= R * .3) { // Mite is out front: the visitor waits at the back
+        g.front = false;
+        return 0;
+    }
+    g.front = true;
+    return Math.max(z, LANE_FRONT * R);
 }
 function guestTick(dt, now) {
     if (!guest) {
@@ -17149,8 +17180,8 @@ function guestNextAct(g) {
     }
     const t = res.length && Math.random() < .45 ? choice(res) : choice(all); // (someone to talk to, about half the time)
     let tx = t.x;
-    if (view === "room" && Math.abs(tx - pet.x) < R * 1.2) // not right on top of Mite
-        tx = pet.x + (tx < pet.x ? -1 : 1) * R * 1.2;
+    if (view === "room" && Math.abs(tx - pet.x) < R * LANE_NEAR) // not right on top of Mite: a step clear of it, in the back lane
+        tx = pet.x + (tx < pet.x ? -1 : 1) * R * LANE_NEAR;
     g.act = { id: t.id, who: t.who, tx: clamp(tx, R * .8, W - R * .8), ph: "walk", until: 0 };
     g.tx = g.act.tx;
     g.done.push(t.id);
@@ -28135,6 +28166,7 @@ function drawWorld(now, dt) {
     drawBackWall(dk, "room");
     // window to the real sky
     drawWindow(rm, sky, d, hf, tsec, dt, dk);
+    bagEyelet(rm, dk); // (in the bag: the round window is a brass eyelet)
     drawFrost(dk, tsec); // the frost-fern window, in winter (seasonal.js)
     drawSuncatchers(rm, sky, hf, tsec, dk);
     drawWall(rm, dk, tsec);
@@ -28160,6 +28192,8 @@ function drawWorld(now, dt) {
             cx.stroke();
         }
     }
+    else if (homeKind() === "bag")
+        drawBagTop(dk, "room");
     else // the curved wagon roof with its ribs and side posts
      {
         const rc = x => roofY(x, "room");
@@ -28360,6 +28394,8 @@ function drawWorld(now, dt) {
 /* the back wall: wooden planks, or packed earth in the burrow. Shade under the roof, and towards the two far
    ends of the whole wagon (not at the joins, so the rooms run on into each other) */
 function drawBackWall(dk, room) {
+    if (homeKind() === "bag")
+        return drawBagWall(dk, room);
     const wg = cx.createLinearGradient(0, 0, 0, GY);
     if (homeKind() === "burrow") { // packed earth
         wg.addColorStop(0, mix("#5e4634", "#1e1712", dk));
@@ -28781,7 +28817,8 @@ function roofY(x, room) {
 }
 /* where the ceiling is: under the roof, or the burrow's earth ceiling */
 function ceilY(x, room) {
-    return homeKind() === "burrow" ? Math.max(6, H * .025) : roofY(x, room);
+    const k = homeKind();
+    return k === "burrow" ? Math.max(6, H * .025) : k === "bag" ? bagTopH() : roofY(x, room);
 }
 /* the roof with its ribs, and a post at each far end of the wagon */
 function drawRoof(dk, room) {
@@ -28819,7 +28856,9 @@ function drawRoof(dk, room) {
 }
 /* roof (or the burrow's ceiling) for the side rooms; the wagon draws its own */
 function drawCeiling(dk, room) {
-    if (homeKind() === "burrow") {
+    if (homeKind() === "bag")
+        drawBagTop(dk, room);
+    else if (homeKind() === "burrow") {
         cx.fillStyle = mix("#3f2e22", "#140f0b", dk);
         cx.fillRect(0, 0, W, Math.max(6, H * .025));
     }
@@ -28889,6 +28928,8 @@ function drawRug(dk, col, colDark, trim, trimDark) {
     cx.stroke();
 }
 function drawPlankFloor(dk) {
+    if (homeKind() === "bag")
+        return drawBagFloor(dk);
     const fg = cx.createLinearGradient(0, GY, 0, H);
     fg.addColorStop(0, mix("#9a7552", "#3a2c20", dk));
     fg.addColorStop(1, mix("#7d5c40", "#2a2018", dk));
@@ -29192,6 +29233,143 @@ function drawMess(dk, room) {
                 cx.fillRect(x + Math.cos(i * 2.4 + m.rot) * sz, y + Math.sin(i * 1.9) * sz * .3, 2.5, 2.5);
         }
     }
+}
+
+/* ---------- the inside of a bag (Home: the bag, group 44; mockup and the owner's choices of 01-11-2026) ----------
+   Denim lining with a fine weave and seams sewn top to bottom (green hid Mite), the zip along the top, open a little
+   over the nook so light comes in, a patch pocket in the nook, the bag's heavier bottom with a coin and a
+   receipt, and the round windows as brass eyelets. The canvas is quantized to the palette afterwards (canvas.js) */
+const BAG = { a: "#52709c", ad: "#10142a", b: "#33456e", bd: "#10142a", f: "#1e2848", st: "#d4b083", std: "#3a281d", br: "#df8a3a", brd: "#55392a" };
+function bagTopH() {
+    return Math.max(10, H * .045);
+}
+function bagStitch(x0, y0, x1, y1, dk) { // a dashed seam, straight across or straight down
+    cx.fillStyle = mix(BAG.st, BAG.std, dk);
+    if (x0 === x1)
+        for (let y = y0; y < y1; y += 9)
+            cx.fillRect(Math.round(x0), Math.round(y), 2, 5);
+    else
+        for (let x = x0; x < x1; x += 9)
+            cx.fillRect(Math.round(x), Math.round(y0), 5, 2);
+}
+function bagRivet(x, y, dk) {
+    cx.fillStyle = mix(BAG.br, BAG.brd, dk);
+    cx.fillRect(Math.round(x) - 3, Math.round(y) - 3, 6, 6);
+    cx.fillStyle = mix("#fff0b8", BAG.brd, dk);
+    cx.fillRect(Math.round(x) - 2, Math.round(y) - 2, 2, 2);
+}
+const BAG_POCKET = { room: .035 }; // (the nook's open left wall: in the side rooms the loft and the stacks hid it)
+function drawBagWall(dk, room) {
+    cx.fillStyle = rugPattern(mix(BAG.a, BAG.ad, Math.round(dk * 10) / 10));
+    cx.fillRect(0, 0, W, GY);
+    const sh = cx.createLinearGradient(0, 0, 0, GY); // darker towards the top: the light comes in at the opening
+    sh.addColorStop(0, "rgba(0,0,0,.28)");
+    sh.addColorStop(.4, "rgba(0,0,0,0)");
+    cx.fillStyle = sh;
+    cx.fillRect(0, 0, W, GY);
+    for (const f of [.16, .84]) {
+        cx.fillStyle = mix(BAG.b, BAG.bd, dk);
+        cx.fillRect(Math.round(W * f) - 2, 0, 4, GY);
+        bagStitch(W * f - 7, H * .06, W * f - 7, GY, dk);
+        bagStitch(W * f + 5, H * .06, W * f + 5, GY, dk);
+    }
+    const pf = BAG_POCKET[room];
+    if (pf === undefined)
+        return;
+    const pw = R * 1.8, ph = R * 1.35, px = W * pf, py = GY - ph - R * .35; // a patch pocket: a pencil and a folded note in it
+    cx.fillStyle = mix("#73a24f", BAG.bd, dk);
+    cx.fillRect(Math.round(px + pw * .12), Math.round(py - R * .9), Math.round(R * .22), Math.round(R * 1.2));
+    cx.fillStyle = mix("#f2c14e", BAG.brd, dk);
+    cx.fillRect(Math.round(px + pw * .12), Math.round(py - R * .9), Math.round(R * .22), Math.round(R * .25));
+    cx.fillStyle = mix("#ecd6ad", "#241812", dk);
+    cx.fillRect(Math.round(px + pw * .45), Math.round(py - R * .55), Math.round(R * .9), Math.round(R * .8));
+    cx.fillStyle = rugPattern(mix(BAG.b, BAG.bd, Math.round(dk * 10) / 10));
+    cx.fillRect(Math.round(px), Math.round(py), Math.round(pw), Math.round(ph));
+    bagStitch(px + 5, py + 4, px + 5, py + ph - 4, dk);
+    bagStitch(px + pw - 7, py + 4, px + pw - 7, py + ph - 4, dk);
+    bagStitch(px + 5, py + ph - 7, px + pw - 5, py + ph - 7, dk);
+    cx.fillStyle = mix(BAG.f, "#0a0a0a", dk);
+    cx.fillRect(Math.round(px), Math.round(py), Math.round(pw), 4);
+    bagRivet(px + 4, py + 6, dk);
+    bagRivet(px + pw - 4, py + 6, dk);
+}
+/* the zip along the top; over the nook it's open a little: daylight, or the dark blue of the evening outside */
+const BAG_GAP = .62, BAG_GAPW = .26;
+function drawBagTop(dk, room) {
+    const th = bagTopH(), gx = W * BAG_GAP, gw = W * BAG_GAPW;
+    cx.fillStyle = mix(BAG.b, BAG.bd, dk);
+    cx.fillRect(0, 0, W, th);
+    if (room === "room") {
+        const g = cx.createLinearGradient(0, 0, 0, th * 1.6);
+        g.addColorStop(0, mix("#fff0b8", "#52709c", dk));
+        g.addColorStop(1, mix("#f2c14e", "#1e2848", dk));
+        cx.fillStyle = g;
+        cx.beginPath();
+        cx.ellipse(gx, th * .6, gw / 2, th * .9, 0, 0, 7);
+        cx.fill();
+        cx.fillStyle = `rgba(255,240,184,${(.09 * (1 - dk)).toFixed(3)})`; // a soft shaft of light into the bag
+        cx.beginPath();
+        cx.moveTo(gx - gw * .35, th);
+        cx.lineTo(gx + gw * .35, th);
+        cx.lineTo(gx + gw * .1, GY);
+        cx.lineTo(gx - gw * .7, GY);
+        cx.closePath();
+        cx.fill();
+    }
+    for (let x = 0; x < W; x += 6) { // the zip's teeth
+        if (room === "room" && Math.abs(x - gx) < gw / 2)
+            continue;
+        cx.fillStyle = mix(x % 12 ? "#c9c4b4" : "#8c8a80", "#3a281d", dk);
+        cx.fillRect(x, Math.round(th - 3), 4, 4);
+    }
+    if (room === "room") { // the pull, hanging where it stopped
+        const zx = Math.round(gx - gw / 2 - 6), zy = Math.round(th);
+        cx.fillStyle = mix(BAG.br, BAG.brd, dk);
+        cx.fillRect(zx, zy - 4, 10, 8);
+        cx.fillRect(zx + 3, zy + 4, 4, Math.round(R * .5));
+        cx.fillRect(zx, zy + 4 + Math.round(R * .5), 10, Math.round(R * .35));
+    }
+}
+function drawBagFloor(dk) {
+    const fg = cx.createLinearGradient(0, GY, 0, H);
+    fg.addColorStop(0, mix(BAG.b, BAG.bd, dk));
+    fg.addColorStop(1, mix(BAG.f, "#120c0a", dk));
+    cx.fillStyle = fg;
+    cx.fillRect(0, GY, W, H - GY);
+    cx.strokeStyle = "rgba(0,0,0,.22)"; // folds
+    cx.lineWidth = 2;
+    for (const [a, b] of [[.08, .3], [.55, .62], [.8, .95]]) {
+        cx.beginPath();
+        cx.moveTo(W * a, GY + (H - GY) * .25);
+        cx.quadraticCurveTo(W * (a + b) / 2, GY + (H - GY) * .55, W * b, GY + (H - GY) * .8);
+        cx.stroke();
+    }
+    bagStitch(0, GY + 3, W, GY + 3, dk); // where the side meets the bottom
+    cx.fillStyle = mix("#f2c14e", BAG.brd, dk); // a coin
+    cx.beginPath();
+    cx.ellipse(W * .12, GY + (H - GY) * .7, R * .2, R * .1, 0, 0, 7);
+    cx.fill();
+    cx.fillStyle = mix("#ecd6ad", "#241812", dk); // a crumpled receipt
+    cx.fillRect(Math.round(W * .86), Math.round(GY + (H - GY) * .55), Math.round(R * .5), Math.round(R * .3));
+    cx.fillStyle = mix("#c9c4b4", "#241812", dk);
+    cx.fillRect(Math.round(W * .86), Math.round(GY + (H - GY) * .55 + R * .08), Math.round(R * .4), 2);
+}
+/* a round window, as a brass eyelet in the bag's side (only in the bag) */
+function bagEyelet(w, dk) {
+    if (homeKind() !== "bag" || !w)
+        return;
+    const lw = Math.max(5, R * .22);
+    cx.strokeStyle = mix(BAG.br, BAG.brd, dk);
+    cx.lineWidth = lw;
+    cx.beginPath();
+    cx.arc(w.wx, w.wy, w.wr * 1.02, 0, 7);
+    cx.stroke();
+    cx.strokeStyle = mix("#f2c14e", BAG.brd, dk);
+    cx.lineWidth = 2;
+    cx.beginPath();
+    cx.arc(w.wx, w.wy, w.wr * 1.02 - lw / 3, Math.PI * 1.1, Math.PI * 1.6);
+    cx.stroke();
+    cx.lineWidth = 1;
 }
 
 </script>
@@ -32551,10 +32729,10 @@ function saveSettings() {
     }
     {
         const was = homeKind();
-        st.home = $("setHome").value === "burrow" ? "burrow" : "wagon";
+        st.home = ["burrow", "bag"].includes($("setHome").value) ? $("setHome").value : "wagon";
         if (st.home !== was) {
             applyHomeLabels();
-            setTimeout(() => speak(st.home === "burrow" ? "Back to the burrow. It smells of earth and tea. Home." : "All aboard. The wagon is ready when we are."), 400);
+            setTimeout(() => speak(st.home === "burrow" ? "Back to the burrow. It smells of earth and tea. Home." : st.home === "bag" ? choice(["Into the bag. Everything left for later is down here with me.", "The bag, then. Snug. Mind the zip."]) : "All aboard. The wagon is ready when we are."), 400);
         }
     }
     st.doneBy = clamp(+$("setDoneBy").value || 19, 12, 23);
