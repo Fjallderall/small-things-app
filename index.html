@@ -179,6 +179,9 @@ ul.drawers{list-style:none;padding:0;margin:6px 0}
 .achs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
 .achs li{font-size:13px;padding:7px 9px;border-radius:9px;border:1px solid var(--line)}
 .achs li.got{border-color:var(--accent)}
+.achs li.achhid{grid-column:1/-1;border:0;padding:0}
+.achs li.achhid summary{cursor:pointer;padding:7px 9px;color:var(--muted,inherit)}
+.achs li.achhid .achs{margin-top:6px}
 .achs li:not(.got){color:var(--muted)}
 .achs b{display:block}
 /* Notebook */
@@ -395,6 +398,7 @@ body.game .kbd{bottom:calc(env(safe-area-inset-bottom,0px) + 130px)}
 /* ---------- cozy pass ---------- */
 .ritual{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding-inline:16px;padding-block:16px calc(16px + var(--kb,0px));background:rgba(18,12,6,.5)}
 .ritual[hidden]{display:none}
+.ritual.top{place-items:start center;background:rgba(18,12,6,.3)}
 .ritcard{width:100%;max-width:440px;max-height:calc(100dvh - 32px - var(--kb,0px));overflow:auto;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
 .ritcard h2{font-size:22px}
 .ritline{margin:0;font-size:15px;max-width:52ch}
@@ -788,7 +792,7 @@ body.pixel .bubble.tagged{padding-top:12px}
 body.pixel .bubble.hint::before{font-family:var(--f-display);font-weight:400;font-size:18px}
 body.game:not(.sheet) .toasts:not(.stay){top:auto;left:16px;right:16px;max-width:440px;margin:0 auto;transform:none;align-items:stretch;bottom:calc(env(safe-area-inset-bottom,0px) + 118px)}
 /* the Mite card (or a tray) is open over the dock: the slips go to the top, not over its buttons (QA, 01-11-2026) */
-body.game.traying:not(.sheet) .toasts:not(.stay){bottom:auto;top:calc(env(safe-area-inset-top,0px) + 64px)}
+body.game.traying:not(.sheet) .toasts:not(.stay),body.game:not(.sheet):has(#dlg:not([hidden]),.bubble.boxed:not([hidden])) .toasts:not(.stay){bottom:auto;top:calc(env(safe-area-inset-top,0px) + 64px)}
 body.pixel .toast{background:#f3ead2;color:var(--px-ink);border:2px solid var(--px-ink);box-shadow:3px 3px 0 rgba(0,0,0,.3);font-family:var(--f-read);font-size:15px;line-height:22px}
 body.pixel .toast button{font-family:var(--f-display);font-size:19px;line-height:20px;border-width:2px}
 body.pixel .toast.ach{background:#f1c27a;color:var(--px-ink)}
@@ -870,14 +874,14 @@ body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + va
       <div id="evPane" role="tabpanel" aria-labelledby="tkEv" hidden>
         <p class="sub" id="evSub"></p>
         <ul class="tasks" id="evList"></ul>
-        <form class="addform bottom" id="evForm" autocomplete="off"><div class="row"><input type="text" id="evTitle" placeholder="Something you do every day…" aria-label="New thing for every day" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
+        <form class="addform bottom" id="evForm" autocomplete="off"><div class="row"><input type="text" id="evTitle" enterkeyhint="done" placeholder="Something you do every day…" aria-label="New thing for every day" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
       </div>
       <div id="buyPane" role="tabpanel" aria-labelledby="tkBuy" hidden>
         <p class="sub">What to get next time you're out. Tick things off in the shop; crossed-off ones stay until you remove them.</p>
         <ul class="tasks" id="buyList"></ul>
         <div class="row buyacts"><button class="btn ghost" type="button" id="buyClear" hidden>Remove crossed-off</button></div>
         <div class="row buyacts" id="buySendRow" hidden><button class="btn" type="button" id="buySend">Share list</button></div>
-        <form class="addform bottom" id="buyForm" autocomplete="off"><div class="row"><input type="text" id="buyTitle" placeholder="Something to buy…" aria-label="New thing to buy" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
+        <form class="addform bottom" id="buyForm" autocomplete="off"><div class="row"><input type="text" id="buyTitle" enterkeyhint="done" placeholder="Something to buy…" aria-label="New thing to buy" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
       </div>
       <div class="evecard bkcard" id="bkCard" hidden>
         <p><strong>Back up today?</strong> Everything in one small file. Send it to yourself (a messenger, email) or keep it in your files.</p>
@@ -895,7 +899,7 @@ body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + va
       <details id="doneBox"><summary id="doneSum">Done today</summary><ul class="donelist" id="doneList"></ul></details>
       <form class="addform bottom" id="addForm" autocomplete="off">
         <div class="row">
-          <input type="text" id="tTitle" placeholder="Add a task…" aria-label="New task" aria-describedby="addChips" maxlength="160" required>
+          <input type="text" id="tTitle" enterkeyhint="done" placeholder="Add a task…" aria-label="New task" aria-describedby="addChips" maxlength="160" required>
           <button class="btn primary" type="submit">Add</button>
           <button class="btn jotbtn" type="button" id="jotBtn" title="Just write it down: no date, no reminders, off the list">Jot</button>
         </div>
@@ -6373,7 +6377,7 @@ function applyHomeLabels() {
     const k = homeKind();
     const h = document.querySelector("#tab-grow h2");
     if (h)
-        h.textContent = "The " + k;
+        h.textContent = "Shop"; // (was "The <home>"; the line under it names the home)
     $("scene").setAttribute("aria-label", "Your mossling in its " + k);
     for (const e of [document.querySelector("#tab-grow h2 + .sub"), $("deskHome")]) { // (static words in the page)
         if (!e)
@@ -31867,7 +31871,11 @@ function renderCabinet() {
         };
         $("hats").appendChild(b);
     });
-    $("achs").innerHTML = ACH.map(([id, n, d]) => `<li class="${S.ach[id] ? "got" : ""}"><b>${S.ach[id] ? esc(n) : "Hidden"}</b>${esc(d)}</li>`).join("");
+    { // earned ones first; the hidden ones fold away under one line (46, 01-11-2026)
+        const hid = ACH.filter(a => !S.ach[a[0]]), row = ([id, n, d]) => `<li class="${S.ach[id] ? "got" : ""}"><b>${S.ach[id] ? esc(n) : "Hidden"}</b>${esc(d)}</li>`;
+        const open = !!($("achHid") && $("achHid").open);
+        $("achs").innerHTML = ACH.filter(a => S.ach[a[0]]).map(row).join("") + (hid.length ? `<li class="achhid"><details id="achHid"${open ? " open" : ""}><summary>${hid.length} still hidden</summary><ul class="achs">${hid.map(row).join("")}</ul></details></li>` : "");
+    }
     { // how many of each, on the headings
         const oc = new Set(origamiOut().map(o => o.k)), set = (k, t) => { const e = $("cnt-" + k); if (e) e.textContent = t; };
         set("cab-small", `${trinketList().filter(t => S.trinkets[t.name]).length}/${trinketList().length}`);
@@ -32428,6 +32436,8 @@ function showPane(name) {
         return;
     curTab = name;
     lastSub[g] = name;
+    if (name === "grow" && !num(S.flags.shopSeen))
+        S.flags.shopSeen = 1;
     document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x.dataset.group === g));
     const st = $("subtabs");
     const subs = GROUPS[g];
@@ -32647,10 +32657,13 @@ $("jotBtn").onclick = () => {
     else
         $("tTitle").focus();
 };
-// Enter in the form's fields posts nothing: only the Add and Jot buttons do (owner, 24-10-2026)
+// Enter in the form's fields posts nothing: only the Add and Jot buttons do (owner, 24-10-2026); it closes the
+// keyboard, as its "done" key says (46, 01-11-2026)
 $("addForm").addEventListener("keydown", e => {
-    if (e.key === "Enter" && e.target.tagName === "INPUT")
+    if (e.key === "Enter" && e.target.tagName === "INPUT") {
         e.preventDefault();
+        e.target.blur();
+    }
 });
 $("addForm").addEventListener("submit", e => {
     e.preventDefault();
@@ -33992,6 +34005,7 @@ function askName() {
                 done();
             }]], () => {
     });
+    $("ritual").classList.add("top"); // (the card sits high, so Mite stays in sight below it: 46, 01-11-2026)
     $("nameForm").onsubmit = e => {
         e.preventDefault();
         done();
@@ -35473,6 +35487,7 @@ function openRitual(title, line, bodyHTML, buttons, onClose) {
         };
         bb.appendChild(b);
     });
+    $("ritual").classList.remove("top"); // (askName sets it again after this)
     $("ritual").hidden = false;
     if (line)
         blip("a");
@@ -35692,7 +35707,7 @@ document.addEventListener("fullscreenchange", () => {
     $("fsBtn").textContent = document.fullscreenElement ? "⤡" : "⛶";
     requestAnimationFrame(resize);
 });
-$("dJournal").onclick = () => openSheet(lastSub.journal || "cabinet");
+$("dJournal").onclick = () => openSheet(lastSub.journal || (num(S.flags.shopSeen) ? "cabinet" : "grow")); // (a new game opens on the Shop: 46, 01-11-2026)
 $("dTasks").onclick = () => {
     openSheet("tasks");
     if (matchMedia("(pointer: fine)").matches)
