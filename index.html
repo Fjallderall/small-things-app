@@ -5103,7 +5103,9 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
 , "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t", "mvqi4h680yovh", "mvru6yetlxofd", "mvrujk91xqygh", "mvqp9s8512wxa", "mvshqinq5llx4", "mvs75jof0hcot", "mvs76pjhzxzxr", "mvs76f3yi73yg", "mvs7bjqxpz1ra", "mvs7cugkj3fhe", "mvs7cya26weun", "mvscobidynjkr", "mvruau0k2yd2j", "mvre03nu4ozba", "mvrzzeedlnxq4", "mvte8rmm57470",
     // group 33 (31-10-2026)
-    "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq", "mvwv30z3gw8ln", "mvwrlugp7vure", "mvozqqzy8cs68", "mvozrqn0x85fg", "mvozs8jzkfmlb", "mvp1uya2e0ksy", "mvp1v8rtxpcjo", "mvx291pak6jhp"];
+    "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq", "mvwv30z3gw8ln", "mvwrlugp7vure", "mvozqqzy8cs68", "mvozrqn0x85fg", "mvozs8jzkfmlb", "mvp1uya2e0ksy", "mvp1v8rtxpcjo", "mvx291pak6jhp",
+    // group 41 (01-11-2026)
+    "mvx3zd1iq9npo"];
 
 </script>
 <script>/* js/core/state.js */
@@ -29561,6 +29563,9 @@ function inventWord() {
  * its room (which object a tap hits is decided in taps.js).
  * The screen can show two rooms side by side (camera.js): a tap goes to the room under the finger, in that
  * room's coordinates. A sideways swipe pans the view along the wagon.
+ * One finger at a time (jot of 01-11-2026): a second finger while one is down does nothing. It used to restart the
+ * swipe from its own spot, so the two fingers' moves pulled the view to two places by turns (the glitch), and it
+ * counted as a second tap.
  */
 function evPos(e) {
     const r = cv.getBoundingClientRect();
@@ -29571,6 +29576,12 @@ function toWagon(sp) {
     return { x: sp.x - roomOff("room"), y: sp.y };
 }
 let swipe = null;
+/* the finger (pointer) the scene is following; another one is ignored until it lifts. heldAt guards against a lost
+   pointerup: after 5 s without news from the held finger, a new one is taken */
+let heldId = null, heldAt = 0;
+function otherFinger(e) {
+    return heldId !== null && e.pointerId !== heldId && performance.now() - heldAt < 5000;
+}
 /* a tap that isn't on Mite (Mite might not even be in this room) */
 function notOnMite(p) {
     return view !== "room" || Math.hypot(p.x - pet.x, (p.y - (GY - R - (pet.ground || 0))) * .9) > R * .85;
@@ -29582,6 +29593,10 @@ function setMouse(sp) {
     mouse.t = performance.now();
 }
 cv.addEventListener("pointermove", e => {
+    if (otherFinger(e))
+        return;
+    if (e.pointerId === heldId)
+        heldAt = performance.now();
     const sp = evPos(e);
     setMouse(sp);
     if (!(e.buttons & 1))
@@ -29603,7 +29618,10 @@ cv.addEventListener("pointermove", e => {
             swipe.swept = true; // sweeping the floor, not swiping
     }
 });
-function swipeEnd() {
+function swipeEnd(e) {
+    if (e && otherFinger(e))
+        return;
+    heldId = null;
     if (swipe && swipe.on) {
         camAt = performance.now(); // it stays where you left it for a while
         camDrag = false;
@@ -29612,9 +29630,11 @@ function swipeEnd() {
 }
 cv.addEventListener("pointerup", swipeEnd);
 cv.addEventListener("pointercancel", swipeEnd);
-cv.addEventListener("pointerleave", () => {
+cv.addEventListener("pointerleave", e => {
+    if (otherFinger(e))
+        return;
     mouse.in = false;
-    swipeEnd();
+    swipeEnd(e);
 });
 /* a tap on the scene acts on pointerdown. If it opens a card or a view, the click that the same tap makes a moment
    later lands on that card instead (its backdrop: "tap outside to close"), and it closed again at once. That one
@@ -29629,6 +29649,10 @@ document.addEventListener("click", e => {
     sceneTapAt = -1e9;
 }, true);
 cv.addEventListener("pointerdown", e => {
+    if (otherFinger(e))
+        return;
+    heldId = e.pointerId;
+    heldAt = performance.now();
     sceneTapAt = performance.now();
     sceneTapXY = [e.clientX, e.clientY];
     const sp = evPos(e);
