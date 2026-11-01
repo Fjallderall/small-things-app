@@ -32657,14 +32657,15 @@ $("jotBtn").onclick = () => {
     else
         $("tTitle").focus();
 };
-// Enter in the form's fields posts nothing: only the Add and Jot buttons do (owner, 24-10-2026); it closes the
-// keyboard, as its "done" key says (46, 01-11-2026)
-$("addForm").addEventListener("keydown", e => {
-    if (e.key === "Enter" && e.target.tagName === "INPUT") {
-        e.preventDefault();
-        e.target.blur();
-    }
-});
+// Enter in an add field posts nothing, in Tasks, The everyday and Shopping alike: only the Add (and Jot) buttons do
+// (owner, 24-10-2026 and 01-11-2026); it closes the keyboard, as its "done" key says
+for (const id of ["addForm", "evForm", "buyForm"])
+    $(id).addEventListener("keydown", e => {
+        if (e.key === "Enter" && e.target.tagName === "INPUT") {
+            e.preventDefault();
+            e.target.blur();
+        }
+    });
 $("addForm").addEventListener("submit", e => {
     e.preventDefault();
     if (/(^|\s)#(jot|todo)(?=\s|$)/i.test($("tTitle").value) || parseShort($("tTitle").value).jot) {
