@@ -792,6 +792,27 @@ body.pixel .bubble.snailb{font-style:normal}
 .tape p { margin: 0 0 .7em; line-height: 1.45; }
 .tape p.tapenew { border-left: 3px solid var(--accent); padding-left: .5em; }
 
+/* group 40: what Mite and the residents say sits in a box at the bottom of the scene, like a conversation, with the
+   speaker's name on a tag; it fades by itself. Emotes and thinking stay small over the speaker */
+.bubble.boxed{left:12px;right:12px;top:auto;bottom:calc(12px + var(--stack,0px));width:auto;max-width:620px;margin:0 auto;transform:none;z-index:4;text-align:left;font-style:normal;font-size:15px;line-height:1.45;color:#25291f;background:#fffdf4;border:3px solid #3a2c22;border-radius:10px;box-shadow:inset 0 0 0 3px #fffdf4,inset 0 0 0 5px #c9b48f,0 4px 16px rgba(0,0,0,.3);padding:14px 16px 12px}
+.bubble.boxed::after{content:none}
+.bubble.boxed.more::after{content:"▾";position:absolute;left:auto;right:12px;bottom:6px;top:auto;width:auto;height:auto;background:none;border:0;transform:none;color:#8a6a48;font-size:11px;opacity:1;animation:dlgbob 1s steps(2) infinite}
+#bubble.boxed::before{content:attr(data-who);position:absolute;top:-14px;left:12px;width:auto;height:auto;margin:0;vertical-align:baseline;background:#3a2c22;color:#fffdf4;font-size:13px;font-weight:700;line-height:18px;padding:2px 10px;border-radius:6px;letter-spacing:.02em}
+#bubble.boxed.hint::before{content:"Tip";background:#c47f1c}
+.bubble.boxed .btag{top:-14px;left:12px;font-size:13px;line-height:18px;padding:2px 10px;border-radius:6px;max-width:calc(100% - 24px)}
+.bubble.snailb.boxed,body.game .bubble.boxed:not(.snailb){max-width:620px;font-size:15px}
+.bubble.boxed.tagged,body.pixel .bubble.boxed.tagged{padding-top:14px}
+.bubble.snailb.boxed.catb{border-color:#4a3a66}.bubble.snailb.boxed.catb .btag{background:#4a3a66}
+.bubble.snailb.boxed.possumb{border-color:#5a5a52}.bubble.snailb.boxed.possumb .btag{background:#5a5a52}
+.bubble.snailb.boxed.guestb{border-color:#7a4a4a}.bubble.snailb.boxed.guestb .btag{background:#7a4a4a}
+.bubble.snailb.boxed:not(.catb):not(.possumb):not(.guestb){border-color:#6b4a2a}.bubble.snailb.boxed:not(.catb):not(.possumb):not(.guestb) .btag{background:#6b4a2a}
+body.pixel .bubble.boxed{border-radius:0;border-width:3px;font-family:var(--f-read);font-size:16px;line-height:24px;box-shadow:inset 0 0 0 3px #fffdf4,inset 0 0 0 5px #c9b48f,4px 4px 0 rgba(0,0,0,.35)}
+body.pixel #bubble.boxed::before,body.pixel .bubble.boxed .btag{border-radius:0;font-family:var(--f-display);font-weight:400;font-size:20px;line-height:20px;top:-16px}
+body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + var(--stack,0px))}
+/* the chalk circle: the box goes in the upper half, clear of the circle on the archive floor (group 40) */
+.dlg.up,body.game .dlg.up{top:calc(env(safe-area-inset-top,0px) + 70px);bottom:auto}
+.bubble.boxed.up,body.game .bubble.boxed.up{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 70px + var(--stack,0px))}
+
 </style>
 <div class="app">
   <section class="world" aria-label="Pet">
@@ -7079,6 +7100,8 @@ function speak(text, opts = {}) {
     b.classList.toggle("emote", !!emote);
     b.classList.toggle("hint", !!opts.hint && !small); // a tip, not a remark: marked with a small ? (group 26)
     b.classList.remove("pinned");
+    b.classList.toggle("boxed", !small); // words go in the box at the bottom; emotes and thinking stay over Mite (group 40)
+    b.dataset.who = S && S.settings ? S.settings.pet : "Mite";
     bubbleW = b.offsetWidth;
     if (emote) {
         bubbleUntil = performance.now() + (ms || 2500);
@@ -16465,6 +16488,7 @@ function snailSay(text, ms, who, emote, fromQ, name) { // name: who said it, kep
     }
     b2.appendChild(document.createTextNode(said));
     b2.classList.toggle("tagged", !emote);
+    b2.classList.toggle("boxed", !emote); // (group 40: words at the bottom, emotes over the speaker)
     b2.hidden = false;
     snail2Until = now + ms;
     b2ReadUntil = emote ? 0 : now + Math.min(ms, clamp(1000 + said.length * 50, 1800, 8000) / readF());
@@ -16524,6 +16548,7 @@ function runConvo(line, onEnd) {
     if (beats.some(b => b.who === "M")) // (Mite's in it: it introduces whoever you haven't met yet)
         beats = [...new Set(beats.map(b => b.who))].filter(w => w !== "M").map(introBeat).filter(Boolean).concat(beats);
     const id = ++convoId, cid = Date.now();
+    dlgUp = beats.some(b => b.who === "F" || b.who === "A") || circleUp(); // (the whole conversation stays in one place)
     convoWho = beats.map(b => b.who); // (a tap on the dialogue box brings the view to them)
     lastCid = cid;
     let i = 0, total = 0;
@@ -16584,10 +16609,16 @@ function emoteFor(t, who) {
         return choice(["o_o", "-_-", ":/"]);
     return who === "C" ? choice(["=^.^=", "…", "~", "prr"]) : who === "P" ? choice(["hhh", "…", "^^", "*sniff*"]) : who === "S" ? choice(["~", "…", ":)"]) : who === "V" ? choice([":3", "^^", "~"]) : choice([":)", "♪", "^^", "~"]);
 }
+/* in the chalk circle (a voice through it, or the cat's ritual on screen), what's said goes in the upper half so it
+   doesn't cover the circle (owner, 01-11-2026, group 40) */
+let dlgUp = false;
+function circleUp() {
+    return own("circle") > 0 && typeof roomOnScreen === "function" && roomOnScreen("archive") && catInCircle();
+}
 function dlgShow(name, txt, kind, id, next) {
     const el = $("dlg");
     el.hidden = false;
-    el.className = "dlg" + (kind ? " " + kind : "");
+    el.className = "dlg" + (kind ? " " + kind : "") + (dlgUp ? " up" : "");
     $("dlgName").textContent = name;
     $("dlgText").textContent = "";
     if (dlgState && dlgState.timer)
@@ -29390,6 +29421,10 @@ function frame(now) {
         if (now > snail2Until || (b2Who === "snail" && !own("snail")) || (b2Who === "guest" && !guest) || !roomVisible(r2)) {
             b2.hidden = true;
         }
+        else if (b2.classList.contains("boxed")) { // at the bottom (group 40); above Mite's box when both are showing
+            b2.style.left = b2.style.top = "";
+            b2.style.setProperty("--stack", (b.hidden || !b.classList.contains("boxed") ? 0 : bH + 22) + "px");
+        }
         else {
             const sp0 = b2Who === "guest" ? guestPos() : b2Who === "cat" ? catPos() : b2Who === "possum" ? possumPos() : snailPos(), sp = { x: sp0.x + roomOff(r2), y: sp0.y }, half = b2W / 2 + 8;
             b2.style.left = clamp(sp.x, half, W - half) + "px";
@@ -29403,11 +29438,16 @@ function frame(now) {
     }
     roomArrows(); // the arrows to look into the other room (garden.js)
     speakPump(now); // a line that waited for Mite to finish the last one (speech.js)
+    { const up = (!b.hidden || !b2.hidden) && circleUp(); b.classList.toggle("up", up); b2.classList.toggle("up", up); } // (the chalk circle: boxes go up, group 40)
     b.classList.toggle("more", speakQ.some(q => q.who === "mite") && (!bubbleType || bubbleType.done)); // ▾: tap for the next line
     if (!b.hidden) {
         if (now > bubbleUntil && !(bubbleType && !bubbleType.done)) { // never while it's still typing
             b.hidden = true;
             b.classList.remove("pinned");
+        }
+        else if (b.classList.contains("boxed")) { // words: in the box at the bottom (group 40)
+            b.style.left = b.style.top = "";
+            b.classList.remove("awayL", "awayR");
         }
         else {
             const half = (bubbleW || 220) / 2 + 8, px = pet.x + roomOff(view); // where Mite is on screen
