@@ -5105,7 +5105,9 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 33 (31-10-2026)
     "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq", "mvwv30z3gw8ln", "mvwrlugp7vure", "mvozqqzy8cs68", "mvozrqn0x85fg", "mvozs8jzkfmlb", "mvp1uya2e0ksy", "mvp1v8rtxpcjo", "mvx291pak6jhp",
     // group 41 (01-11-2026)
-    "mvx3zd1iq9npo"];
+    "mvx3zd1iq9npo",
+    // group 43 (01-11-2026)
+    "mvxuav405ic6w", "mvxub0z5ds7le", "mvxu544ixs17o"];
 
 </script>
 <script>/* js/core/state.js */
@@ -6528,6 +6530,53 @@ function isWorkHours(c) {
 function areaRank(t, wh) {
     return !t.tag ? 1 : wh ? (t.tag === "work" ? 0 : 2) : (t.tag === "work" ? 2 : 0); // (no area: in between)
 }
+/* typed text not sent yet (a time capsule, the journal's line) is kept on this device as it's typed, so a reload or
+   the app being closed doesn't lose it: it's back in the field the next time it opens, until it's sealed or saved
+   (jot of 01-11-2026: "not drafts, just not an empty field"). Only on this device; Start over clears it */
+const TYPED_KEY = "mossling.typed";
+function typedAll() {
+    try {
+        const o = JSON.parse(localStorage.getItem(TYPED_KEY) || "{}");
+        return o && typeof o === "object" ? o : {};
+    }
+    catch (e) {
+        return {};
+    }
+}
+function typedGet(k) {
+    const v = typedAll()[k];
+    return typeof v === "string" ? v : "";
+}
+function typedSet(k, v) {
+    try {
+        const o = typedAll();
+        if (v && String(v).trim())
+            o[k] = String(v).slice(0, 5000);
+        else
+            delete o[k];
+        localStorage.setItem(TYPED_KEY, JSON.stringify(o));
+    }
+    catch (e) { }
+}
+function typedClear(k) {
+    try {
+        if (k === undefined)
+            localStorage.removeItem(TYPED_KEY);
+        else
+            typedSet(k, "");
+    }
+    catch (e) { }
+}
+/* fill the field from what was typed before (if anything) and keep it up to date while typing */
+function keepTyped(el, k) {
+    if (!el)
+        return;
+    const v = typedGet(k);
+    if (v)
+        el.value = v.slice(0, el.maxLength > 0 ? el.maxLength : 5000);
+    el.addEventListener("input", () => typedSet(k, el.value));
+}
+
 
 </script>
 <script>/* js/core/speech.js */
@@ -13403,6 +13452,7 @@ function openCapsule() {
                     $("capInfo").textContent = !$("capIn").value.trim() ? "Write something first." : "Pick a day after today.";
                     return;
                 }
+                typedClear("cap");
                 closeRitual();
                 sfx("soft");
                 pet.start("tidy");
@@ -13410,6 +13460,7 @@ function openCapsule() {
                 renderArchive();
                 afterChange();
             }], ["Not now", "ghost", closeRitual]]);
+    keepTyped($("capIn"), "cap");
     const upd = () => {
         const d = $("capDate").value || (document.querySelector('#capWhen [aria-pressed="true"]') || { dataset: {} }).dataset.d;
         $("capInfo").textContent = d ? `Opens on ${new Date(d + "T12:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}.` : "";
@@ -21339,8 +21390,11 @@ let camX = 0, camTarget = 0, camAt = -1e9, camDrag = false, drawingRoom = "room"
 const LOOK_HOLD = 40000; // how long the view stays where you swiped it before it goes back to Mite
 const LOOK_JOIN = 5000; // how long you look at another room before Mite comes over
 let lookRoom = null, lookSince = 0;
+/* rooms sit on whole art pixels and always meet exactly: the camera is snapped once (in art pixels, DPR), and each
+   room is a whole room width from it. Rounding each room on its own left a gap or overlap of up to a pixel on screens
+   whose width isn't a multiple of PX (412 px wide, PX 3), seen as seams while the view moved (jot of 01-11-2026) */
 function roomOff(room) {
-    return Math.round((ROOM_X[room] * W - camX) / PX) * PX;
+    return ROOM_X[room] * W - Math.round(camX * DPR) / DPR;
 }
 function roomVisible(room) {
     return Math.abs(ROOM_X[room] * W - camX) < W - .5;
@@ -32753,6 +32807,7 @@ function eraseAll() {
     saveArchLocal();
     KEEP = { refl: [], caps: [], cat: [], tcat: [], corr: [], del: {}, wipe: Date.now() }; // the keepsakes go too (wipe: so another copy can't bring them back)
     saveKeep();
+    typedClear(); // (text typed but not sent goes too)
     S = defaultState();
     S.settings.home = "burrow"; // (back to the burrow: the wagon comes by letter again)
     S.g = S.gTotal = RESTART_G; // the starting gift again, so the shop isn't empty-handed on day one
@@ -33046,6 +33101,8 @@ function showJournal(off = 0) {
     });
     if (inp) {
         const cnt = $("jCount");
+        keepTyped(inp, "j:" + inp.dataset.day);
+        cnt.textContent = `${inp.value.length}/${inp.maxLength}`;
         inp.oninput = () => cnt.textContent = `${inp.value.length}/${inp.maxLength}`;
         inp.onkeydown = e => {
             e.stopPropagation();
@@ -33062,6 +33119,7 @@ function journalSave() {
     if (!inp)
         return;
     const day = inp.dataset.day, r = journalWrite(day, inp.value);
+    typedClear("j:" + day);
     jEdit = "";
     if (r) {
         sfx("soft");
