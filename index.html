@@ -812,12 +812,6 @@ body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + va
 /* the chalk circle: the box goes in the upper half, clear of the circle on the archive floor (group 40) */
 .dlg.up,body.game .dlg.up{top:calc(env(safe-area-inset-top,0px) + 70px);bottom:auto}
 .bubble.boxed.up,body.game .bubble.boxed.up{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 70px + var(--stack,0px))}
-/* speaker portraits (group 43, faces.js): a small face in the name tag, live from the scene; pixel-sharp */
-canvas.face{position:absolute;left:3px;top:-4px;display:block;image-rendering:pixelated;background:#2a1e18;box-shadow:0 0 0 2px #fffdf4;pointer-events:none}
-.btag.hasface,.dlg b.hasface{padding-left:31px!important;overflow:visible}
-#bubble.boxed.hasface::before{padding-left:31px}
-#bubble.boxed>canvas.face{left:15px;top:-20px;z-index:1}
-#bubble:not(.boxed)>canvas.face,#bubble.hint>canvas.face{display:none}
 
 </style>
 <div class="app">
@@ -7159,7 +7153,6 @@ function speak(text, opts = {}) {
     b.classList.remove("pinned");
     b.classList.toggle("boxed", !small); // words go in the box at the bottom; emotes and thinking stay over Mite (group 40)
     b.dataset.who = S && S.settings ? S.settings.pet : "Mite";
-    faceSet(b, small || opts.hint ? "" : "mite"); // (a small face in the name tag, group 43; tips have none)
     bubbleW = b.offsetWidth;
     if (emote) {
         bubbleUntil = performance.now() + (ms || 2500);
@@ -16545,7 +16538,6 @@ function snailSay(text, ms, who, emote, fromQ, name) { // name: who said it, kep
         tag.className = "btag";
         tag.textContent = name || b2Name(who);
         b2.appendChild(tag);
-        faceSet(tag, who); // (the speaker's face in the tag, live from the scene: group 43)
     }
     b2.appendChild(document.createTextNode(said));
     b2.classList.toggle("tagged", !emote);
@@ -16635,7 +16627,7 @@ function runConvo(line, onEnd) {
         const bt = beats[i++], txt = fill(bt.t);
         const name = bt.who === "S" ? snailName() : bt.who === "V" ? (guest ? guest.name : "Visitor") : bt.who === "C" ? CAT_NAME : bt.who === "P" ? possumName() : (bt.who === "F" || bt.who === "A") && convoFar[bt.who] ? convoFar[bt.who] : S.settings.pet, em = emoteFor(txt, bt.who);
         heard(name, txt, cid);
-        dlgShow(name, txt, bt.who === "F" || bt.who === "A" ? "circle" : WHO_KIND[bt.who] || "", id, next, faceOfBeat(bt.who)); // (first: from now on the conversation has the floor)
+        dlgShow(name, txt, bt.who === "F" || bt.who === "A" ? "circle" : WHO_KIND[bt.who] || "", id, next); // (first: from now on the conversation has the floor)
         if (bt.who === "F" || bt.who === "A") // (a voice through the chalk circle: nobody here to show a little look)
             ;
         else if (bt.who === "M") {
@@ -16676,12 +16668,11 @@ let dlgUp = false;
 function circleUp() {
     return own("circle") > 0 && typeof roomOnScreen === "function" && roomOnScreen("archive") && catInCircle();
 }
-function dlgShow(name, txt, kind, id, next, face) {
+function dlgShow(name, txt, kind, id, next) {
     const el = $("dlg");
     el.hidden = false;
     el.className = "dlg" + (kind ? " " + kind : "") + (dlgUp ? " up" : "");
     $("dlgName").textContent = name;
-    faceSet($("dlgName"), face || "");
     $("dlgText").textContent = "";
     if (dlgState && dlgState.timer)
         clearTimeout(dlgState.timer);
@@ -16856,7 +16847,7 @@ function patronTalk(now) {
         return false;
     const hold = now + 40e3;
     Object.assign(cat, { ph: "sit", until: hold, dir: eyeJarHit ? Math.sign(eyeJarHit.cx - cat.x) || 1 : cat.dir });
-    convoFar = { F: e.name.replace(/'s eye$/, "").replace(/^A /, "The "), eye: 1 }; // (eye: its face in the tag is an eye, faces.js)
+    convoFar = { F: e.name.replace(/'s eye$/, "").replace(/^A /, "The ") };
     runConvo(rest.join("|").trim(), () => {
         convoFar = {};
         if (cat.until === hold)
@@ -16868,145 +16859,6 @@ $("bubble2").addEventListener("click", e => { // a tap on an animal's (or a visi
     e.stopPropagation();
     lookAtSpeaker(b2Who);
 });
-
-</script>
-<script>/* js/scene/faces.js */
-"use strict";
-/*
- * faces.js - Speaker portraits (group 43, owner's pick C, 01-11-2026): a small face in the name tag of whatever is
- * said in a box (Mite's box, the second box, the dialogue box). Live from the scene: every frame a square of art
- * pixels around the speaker's head is copied from the art buffer (pc), so it blinks, moves and wears its hat. With
- * no body on screen (a voice through the chalk circle, a patron's eye, a speaker in a room you can't see) a small
- * pixel symbol stands in. Tips have no face.
- */
-const FACE_CSS = 24; // how big a face is shown, in CSS px (a whole number of CSS px per art pixel)
-/* the symbols, 8×8: "#" is drawn */
-const FACE_SYM = {
-    eye: ["........", "..####..", ".#....#.", "#..##..#", "#..##..#", ".#....#.", "..####..", "........"],
-    voice: ["..####..", ".#....#.", "#..##..#", "#.#..#.#", "#.#..#.#", "#..##..#", ".#....#.", "..####.."],
-    away: [".######.", ".#....#.", ".#....#.", ".#...##.", ".#....#.", ".#....#.", ".#....#.", ".######."]
-};
-/* the face canvas inside host (made once; a host whose content is rewritten gets it back from faceSet) */
-function faceSet(host, who) {
-    if (!host)
-        return;
-    let c = host.querySelector(":scope > canvas.face");
-    if (!who) {
-        if (c)
-            c.remove();
-        host.classList.remove("hasface");
-        return;
-    }
-    if (!c) {
-        c = document.createElement("canvas");
-        c.className = "face";
-        c.setAttribute("aria-hidden", "true");
-        host.prepend(c);
-    }
-    c.dataset.who = who;
-    host.classList.add("hasface");
-    faceDraw(c);
-}
-/* what to copy for a speaker: the head's middle (room coordinates, CSS px), its room and how many art pixels
-   square (k: the head's size in Mite-sizes). Null: no body to show */
-function faceSpot(who) {
-    const head = (sp, u, x0, y0, flip, fromBottom) => { // the middle of a sprite's head: its top (or bottom) rows
-        const rows = sp.length, cols = sp[0].length, on = r => [...(sp[r] || "")].some(ch => ch !== "." && ch !== " ");
-        let r0 = 0;
-        if (fromBottom)
-            for (r0 = rows - 1; r0 > 0 && !on(r0); r0--)
-                ;
-        else
-            for (; r0 < rows - 1 && !on(r0); r0++)
-                ;
-        let lo = cols, hi = -1;
-        for (let i = 0; i < 6; i++) {
-            const row = sp[fromBottom ? r0 - i : r0 + i] || "";
-            for (let c = 0; c < row.length; c++)
-                if (row[c] !== "." && row[c] !== " ") {
-                    lo = Math.min(lo, c);
-                    hi = Math.max(hi, c);
-                }
-        }
-        if (hi < 0)
-            lo = hi = cols / 2;
-        const mid = flip ? cols - 1 - (lo + hi) / 2 : (lo + hi) / 2;
-        return { x: x0 + (mid + .5) * u, edge: y0 + (fromBottom ? r0 + 1 : r0) * u };
-    };
-    if (who === "mite")
-        return { room: view, x: pet.x, y: GY - (pet.ground || 0) - R * 1.05 - (S.hat ? R * .12 : 0), k: 1.4 };
-    if (who === "cat") {
-        if (cat.ph === "through")
-            return null;
-        const b = catBox(), h = head(b.sp, b.u, b.x0, b.y0, cat.dir < 0);
-        return { room: cat.room, x: h.x, top: h.edge, k: .8 };
-    }
-    if (who === "possum") {
-        if (typeof possumHere === "function" && !possumHere())
-            return null;
-        const b = possumBox(), hang = b.sp === POSSUM_SPRITES.hang, h = head(b.sp, b.u, b.x0, b.y0, possum.dir < 0 && !hang, hang);
-        return hang ? { room: possum.room, x: h.x, bottom: h.edge, k: .8 } : { room: possum.room, x: h.x, top: h.edge, k: .8 };
-    }
-    if (who === "snail") {
-        if (!own("snail") || snailAsleep)
-            return null;
-        const p = snailPos();
-        return { room: snailRoom, x: p.x, y: p.y - R * .26, k: .8 };
-    }
-    if (who === "guest") {
-        if (!guest)
-            return null;
-        const s = guest.s, big = guest.kind === "raccoon";
-        return { room: "room", x: guest.x + (guest.dir || 1) * s * (big ? .1 : .35), y: GY + (guest.z || 0) - s * (big ? 1.1 : .45), k: big ? 1 : .7 };
-    }
-    return null;
-}
-/* one face, this frame */
-function faceDraw(c) {
-    const who = c.dataset.who, g = c.getContext("2d");
-    const sym = FACE_SYM[who] ? who : null, spot = sym ? null : faceSpot(who);
-    const art = spot ? R * DPR * spot.k : 8; // the head in art pixels
-    const s = Math.max(1, Math.round(FACE_CSS / art)), n = Math.round(FACE_CSS / s);
-    if (c.width !== n) {
-        c.width = c.height = n;
-        c.style.width = c.style.height = n * s + "px";
-    }
-    g.imageSmoothingEnabled = false;
-    let away = !spot && !sym;
-    if (spot) {
-        const sx = Math.round((spot.x + roomOff(spot.room)) * DPR - n / 2);
-        const sy = Math.round(spot.top !== undefined ? spot.top * DPR - 2 : spot.bottom !== undefined ? spot.bottom * DPR + 2 - n : spot.y * DPR - n / 2);
-        if (!roomVisible(spot.room) || sx + n * .5 < 0 || sx + n * .5 > pc.width || sy + n * .5 < 0 || sy + n * .5 > pc.height)
-            away = true; // (its head isn't on screen)
-        else {
-            g.clearRect(0, 0, n, n);
-            g.drawImage(pc, sx, sy, n, n, 0, 0, n, n);
-            return;
-        }
-    }
-    const map = FACE_SYM[sym || "away"], q = Math.max(1, Math.floor(n / 8)), o = Math.floor((n - 8 * q) / 2);
-    g.fillStyle = "#2a1e18";
-    g.fillRect(0, 0, n, n);
-    g.fillStyle = "#f3ecd8";
-    for (let r = 0; r < 8; r++)
-        for (let k = 0; k < 8; k++)
-            if (map[r][k] === "#")
-                g.fillRect(o + k * q, o + r * q, q, q);
-    c.dataset.away = away ? 1 : "";
-}
-/* every frame, after the scene is drawn: the faces that are showing follow their speakers */
-function faceTick() {
-    for (const id of ["bubble", "bubble2", "dlgName"]) {
-        const host = $(id), c = host && host.querySelector("canvas.face");
-        if (c && !(id === "dlgName" ? $("dlg").hidden : host.hidden))
-            faceDraw(c);
-    }
-}
-/* who a conversation line's face is: M Mite, S the snail, V a visitor, C Midnightcat, P the possum; F and A come
-   through the chalk circle (a patron's eye when it's one of those talking) */
-function faceOfBeat(w) {
-    return w === "M" ? "mite" : w === "F" || w === "A" ? (convoFar.eye ? "eye" : "voice") : WHO_KIND[w] || "";
-}
 
 </script>
 <script>/* js/scene/visitors.js */
@@ -29640,7 +29492,6 @@ function frame(now) {
             b2.style.setProperty("--tail", clamp(50 + (sp.x - clamp(sp.x, half, W - half)) / b2W * 100, 12, 88) + "%");
         }
     }
-    faceTick(); // the faces in the name tags follow their speakers (faces.js)
     roomArrows(); // the arrows to look into the other room (garden.js)
     speakPump(now); // a line that waited for Mite to finish the last one (speech.js)
     { const up = (!b.hidden || !b2.hidden) && circleUp(); b.classList.toggle("up", up); b2.classList.toggle("up", up); } // (the chalk circle: boxes go up, group 40)
