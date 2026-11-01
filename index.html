@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 31-10-2026 -->
+<!-- Small Things, shared build of 01-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -5082,7 +5082,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvofkviashe6c", "mvp6huo5cu26b", "mvp6iyqqpo2ps"
 , "mvofv9gayg23f", "mvp1qjs64lw2q", "mvpkafvhifcbl", "mvqbmpbb9xe96", "mvrv5c67azfcb", "mvtbzesyt9flz", "mvte80gqsvwjx", "mvthycq59jwea", "mvscpxellq69y", "mvs7elhcf6tg2", "mvs73b1cy7zf5", "mvs7a1hn1p4vm", "mvs73kjfcwjv8", "mvs741sbeod4l", "mvs77gapma3j4", "mvs7hxx4z76h3", "mvtqoi0zz6sz1", "mvsh2u71ioc47", "mvsrq4wytkwef", "mvty02zflaj45", "mvrubrll6cwuq", "mvru5yp0zjj9f", "mvruplqmued06", "mvtylvt7sge6t", "mvqi4h680yovh", "mvru6yetlxofd", "mvrujk91xqygh", "mvqp9s8512wxa", "mvshqinq5llx4", "mvs75jof0hcot", "mvs76pjhzxzxr", "mvs76f3yi73yg", "mvs7bjqxpz1ra", "mvs7cugkj3fhe", "mvs7cya26weun", "mvscobidynjkr", "mvruau0k2yd2j", "mvre03nu4ozba", "mvrzzeedlnxq4", "mvte8rmm57470",
     // group 33 (31-10-2026)
-    "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq", "mvwv30z3gw8ln", "mvwrlugp7vure"];
+    "mvw5656z7fn69", "mvw579gsdihvv", "mvw5856p16z3e", "mvw599ixhx2co", "mvw5aog8ovqp8", "mvw5flosv9hue", "mvw5h095d4nzq", "mvwv30z3gw8ln", "mvwrlugp7vure", "mvozqqzy8cs68", "mvozrqn0x85fg", "mvozs8jzkfmlb", "mvp1uya2e0ksy", "mvp1v8rtxpcjo", "mvx291pak6jhp"];
 
 </script>
 <script>/* js/core/state.js */
@@ -6478,6 +6478,8 @@ function findAltered() {
     S.altered[it.name] = (S.altered[it.name] || 0) + 1;
     return it.name;
 }
+/* where Settings is, for lines that send you there (jot mvx291pak6jhp) */
+const SET_WHERE = "Settings is the button at the top left when you open Tasks or the Satchel";
 function youN() {
     return (S && S.settings && S.settings.you) || "you";
 }
@@ -22708,7 +22710,7 @@ function showYourLetter(l) {
         return showDeckCard(l);
     if (l.from === WHEELWRIGHT) { // the wagon, offered
         const b = homeKind() === "burrow", desk = hasDesk();
-        openRitual("A letter from the wheelwright", b ? "About a {wagon}. It's for you and me both." : "The letter that brought the {wagon}.", `<div class="letter">${esc(homeTxt(l.text)).replace(/\n/g, "<br>")}</div>${b ? `<p class="ritmeta">Not yet is fine: Settings, under Preferences, has a Home setting now, whenever you're ready.</p>` : ""}`,
+        openRitual("A letter from the wheelwright", b ? "About a {wagon}. It's for you and me both." : "The letter that brought the {wagon}.", `<div class="letter">${esc(homeTxt(l.text)).replace(/\n/g, "<br>")}</div>${b ? `<p class="ritmeta">Not yet is fine: Settings, under Preferences, has a Home setting now, whenever you're ready. (${SET_WHERE}.)</p>` : ""}`,
             b ? [["Move into the {wagon}", "primary", moveToWagon], ["Not yet", "ghost", () => {
                 closeRitual();
                 setTimeout(() => speak(choice(["Not yet, then. The burrow is cosy. The {wagon} will keep.", "The burrow it is, for now. I'll keep the letter."])), 500);
@@ -22752,7 +22754,7 @@ function moveToWagon() {
     applyHomeLabels();
     renderContent();
     note("Moved into the wagon. Everything came along, even the dust.");
-    setTimeout(() => speak("We live in a wagon now. Everything came along, even the dust. If we ever miss the burrow, Settings, under Preferences, can take us back."), 600);
+    setTimeout(() => speak(`We live in a wagon now. Everything came along, even the dust. If we ever miss the burrow, Settings, under Preferences, can take us back. ${SET_WHERE}.`, { ms: 9000 }), 600);
     saveSoon();
     afterChange();
 }
@@ -33648,7 +33650,7 @@ function askName() {
         speak(`${v ? `Hello, ${v}. ` : "Hello. "}I'm ${S.settings.pet}. I live here now. Add something to the list and I'll keep you company while you do it.`);
         afterChange();
     };
-    openRitual("Hello.", `I'm ${S.settings.pet}. This is my wagon. You're welcome any time. What should I call you?`, `<form id="nameForm" class="row" autocomplete="off"><input class="inline-in" id="ritName" maxlength="30" placeholder="Your name" aria-label="Your name"></form><p class="ritmeta">You can change it later in Settings.</p>`, [["That's me", "primary", done], ["Skip", "ghost", () => {
+    openRitual("Hello.", `I'm ${S.settings.pet}. This is my wagon. You're welcome any time. What should I call you?`, `<form id="nameForm" class="row" autocomplete="off"><input class="inline-in" id="ritName" maxlength="30" placeholder="Your name" aria-label="Your name"></form><p class="ritmeta">You can change it later in Settings. ${esc(SET_WHERE)}.</p>`, [["That's me", "primary", done], ["Skip", "ghost", () => {
                 $("ritName").value = "";
                 done();
             }]], () => {
@@ -33693,7 +33695,7 @@ function welcome(prevSeen, isNew) {
         if (ch)
             S.contentAt = Date.now();
         if (!isNew && doneCount() > 0) // (a save from before the wagon; a new game just starts in it)
-            setTimeout(() => speak("Did you notice? We're in a wagon now. Settings, under Preferences, can change that."), 3500);
+            setTimeout(() => speak(`Did you notice? We're in a wagon now. Settings, under Preferences, can change that. ${SET_WHERE}.`, { ms: 9000 }), 3500);
         saveSoon();
     }
     fetchWeather();
@@ -34643,7 +34645,7 @@ function schedTalk(text, why) {
     if (!P)
         return null;
     if (P.every)
-        return "Every week is a Settings thing: Preferences, Workdays. I keep single days and stretches, like \"friday off\" or \"holiday 28-10-2026 to 01-11-2026\".";
+        return `Every week is a Settings thing: Preferences, Workdays (${SET_WHERE}). I keep single days and stretches, like \"friday off\" or \"holiday 28-10-2026 to 01-11-2026\".`;
     if (!P.days.length)
         return P.was === "pause" ? "Pause the streak when? Tell me like \"pause the streak friday to sunday\", or \"pause the streak until 01-11-2026\"."
             : P.was === "home" || P.was === "office" ? `Which day? Like "${P.was === "home" ? "from home" : "at the office"} friday".`
