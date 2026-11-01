@@ -1048,7 +1048,7 @@ body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + va
     <div class="pane" id="tab-lines" role="tabpanel" hidden>
       <div><h2>Lines</h2><p class="sub">Every pool is one entry per line. Add as many as you like; your pet picks lines that fit the moment and avoids repeating itself.</p></div>
       <div class="poolfind">
-        <input type="search" id="poolFind" placeholder="Find a pool or a line" aria-label="Find a pool or a line" aria-controls="poolSel" aria-describedby="poolFindN" autocomplete="off" spellcheck="false" enterkeyhint="search">
+        <input type="search" id="poolFind" placeholder="Find a pool or a line" aria-label="Find a pool or a line" aria-controls="poolSel" aria-describedby="poolFindN" autocomplete="off" spellcheck="false" enterkeyhint="done">
         <span class="sync" id="poolFindN" aria-live="polite"></span>
       </div>
       <div class="row poolrow">
@@ -25957,9 +25957,7 @@ function pinSaveNote(e) {
 }
 $("pinSave").addEventListener("click", pinSaveNote);
 $("pinInput").addEventListener("keydown", e => {
-    e.stopPropagation(); // (typing here is typing, not shortcuts)
-    if (e.key === "Enter")
-        pinSaveNote(e);
+    e.stopPropagation(); // (typing here is typing, not shortcuts; Enter pins nothing: tabs.js)
 });
 $("pinDown").addEventListener("click", e => {
     e.stopPropagation();
@@ -32657,15 +32655,23 @@ $("jotBtn").onclick = () => {
     else
         $("tTitle").focus();
 };
-// Enter in an add field posts nothing, in Tasks, The everyday and Shopping alike: only the Add (and Jot) buttons do
-// (owner, 24-10-2026 and 01-11-2026); it closes the keyboard, as its "done" key says
-for (const id of ["addForm", "evForm", "buyForm"])
-    $(id).addEventListener("keydown", e => {
-        if (e.key === "Enter" && e.target.tagName === "INPUT") {
-            e.preventDefault();
-            e.target.blur();
-        }
-    });
+/* Enter is not "go", anywhere (owner, 24-10-2026 and 01-11-2026): in a one-line field it saves, adds, sends or
+   searches nothing. It only closes the keyboard, and the key says "done". Buttons do the rest. (Textareas keep their
+   new line; a key pressed to finish typing in a language with composed characters is left alone.) */
+const ENTER_INERT = /^(|text|search|email|url|tel|number|password|date|time|datetime-local|month|week)$/;
+const enterInert = el => !!el && el.tagName === "INPUT" && ENTER_INERT.test(String(el.getAttribute("type") || "").toLowerCase());
+window.addEventListener("keydown", e => {
+    if (e.key !== "Enter" || e.isComposing || e.keyCode === 229 || !enterInert(e.target))
+        return;
+    e.preventDefault();
+    e.stopPropagation(); // (before any field's own handler)
+    e.target.blur();
+}, true);
+document.addEventListener("focusin", e => {
+    if (enterInert(e.target))
+        e.target.setAttribute("enterkeyhint", "done");
+});
+document.querySelectorAll("input").forEach(el => enterInert(el) && el.setAttribute("enterkeyhint", "done"));
 $("addForm").addEventListener("submit", e => {
     e.preventDefault();
     if (/(^|\s)#(jot|todo)(?=\s|$)/i.test($("tTitle").value) || parseShort($("tTitle").value).jot) {
@@ -32800,12 +32806,7 @@ function saveSettings() {
 }
 $("poolFind").oninput = () => poolFilter();
 $("poolFind").onkeydown = e => {
-    if (e.key === "Enter") {
-        e.preventDefault();
-        if (!poolShowHit(true) && !$("poolSel").disabled)
-            $("poolSel").focus();
-    }
-    else if (e.key === "Escape" && $("poolFind").value) {
+    if (e.key === "Escape" && $("poolFind").value) {
         e.preventDefault();
         e.stopPropagation(); // (only the search, not the panel)
         $("poolFind").value = "";
@@ -33333,13 +33334,7 @@ function showJournal(off = 0) {
         $("jSave").onclick = journalSave;
         cnt.textContent = `${inp.value.length}/${inp.maxLength}`;
         inp.oninput = () => cnt.textContent = `${inp.value.length}/${inp.maxLength}`;
-        inp.onkeydown = e => {
-            e.stopPropagation();
-            if (e.key === "Enter") {
-                e.preventDefault();
-                journalSave();
-            }
-        };
+        inp.onkeydown = e => e.stopPropagation(); // (Enter saves nothing: "Write it down" does; tabs.js)
         setTimeout(() => inp.focus({ preventScroll: true }), 80);
     }
 }
