@@ -74,9 +74,9 @@ button{cursor:pointer}
 /* conversations: a dialogue box at the bottom of the scene, game style */
 .dlg{position:absolute;left:12px;right:12px;bottom:12px;z-index:4;display:block;text-align:left;font:inherit;color:#25291f;background:#fffdf4;border:3px solid #3a2c22;border-radius:10px;box-shadow:inset 0 0 0 3px #fffdf4,inset 0 0 0 5px #c9b48f,0 4px 16px rgba(0,0,0,.3);padding:14px 16px 12px;min-height:4.9em;cursor:pointer;max-width:620px;margin:0 auto}
 .dlg b{position:absolute;top:-14px;left:12px;background:#3a2c22;color:#fffdf4;font-size:13px;font-weight:700;padding:2px 10px;border-radius:6px;letter-spacing:.02em}
-.dlg span{display:block;font-size:15px;line-height:1.45;min-height:2.9em}
+.dlg>span{display:block;font-size:15px;line-height:1.45;min-height:2.9em}
 .dlg .dlgnext{position:absolute;right:12px;bottom:6px;font-style:normal;font-size:11px;color:#8a6a48;opacity:0}
-.dlg.done .dlgnext{opacity:1;animation:dlgbob 1s steps(2) infinite}
+.dlg.done.more .dlgnext{opacity:1;animation:dlgbob 1s steps(2) infinite}
 @keyframes dlgbob{50%{transform:translateY(2px)}}
 .dlg.cat{border-color:#4a3a66}.dlg.cat b{background:#4a3a66}
 .dlg.circle{border-color:#3e5a6a}.dlg.circle b{background:#3e5a6a}
@@ -85,7 +85,7 @@ button{cursor:pointer}
 body.game .dlg{bottom:calc(env(safe-area-inset-bottom,0px) + 128px)}
 body.pixel .dlg{border-radius:0;font-family:var(--f-read);box-shadow:inset 0 0 0 3px #fffdf4,inset 0 0 0 5px #c9b48f,4px 4px 0 rgba(0,0,0,.35)}
 body.pixel .dlg b{border-radius:0;font-family:var(--f-display);font-weight:400;font-size:20px;line-height:20px;top:-16px}
-body.pixel .dlg span{font-size:16px;line-height:24px;min-height:48px}
+body.pixel .dlg>span{font-size:16px;line-height:24px;min-height:48px}
 @media (prefers-reduced-motion: reduce){.dlg.done .dlgnext{animation:none}}
 .bubble.snailb{background:#f1ead8;font-style:italic;font-size:13.5px;max-width:min(60%,240px)}
 .bubble.snailb::after{background:#f1ead8}
@@ -161,9 +161,6 @@ details summary{cursor:pointer;color:var(--muted);font-size:13.5px}
 .sw input{width:20px;height:20px;accent-color:var(--leaf);margin:0}
 .owned{font-family:var(--f-mono);font-size:12.5px;color:var(--leaf);min-width:64px;text-align:right}
 @media (max-width:520px){.bld{grid-template-columns:1fr}.bacts{justify-content:flex-end}}
-.up{border:1px solid var(--line);border-radius:9px;padding:6px 9px;background:transparent;text-align:left;font-size:12.5px;max-width:100%}
-.up b{display:block;font-size:13px}
-.up:disabled{opacity:.45;cursor:default}
 .lessons{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px}
 .lessons li{border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13px}
 .lessons li.got{background:var(--leaf-soft);border-color:transparent}
@@ -351,7 +348,7 @@ body.traying .nextup{display:none}
 .gtitle span{font-family:var(--f-mono);font-weight:400;font-size:12px;color:#5f6857;margin-left:6px}
 .mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:min(340px,78vw)}
 .mcard{aspect-ratio:4/3;border-radius:8px;border:0;background:#4f7d42;color:transparent;font-size:11px;font-weight:700;padding:4px;overflow:hidden;line-height:1.15}
-.mcard.up{background:#fff;color:#22281f;outline:1px solid #cdd3bf}
+.mcard.up{background:#fff;color:#22281f;outline:1px solid #cdd3bf;text-align:left}
 .mcard.done{background:#d6e4c8;color:#3f5f35}
 .msg{max-width:86%;padding:7px 11px;border-radius:12px;font-size:14px;overflow-wrap:anywhere}
 .msg.u{align-self:flex-end;background:var(--leaf);color:var(--bg)}
@@ -439,7 +436,7 @@ a.mini{text-decoration:none;display:inline-block}
 body.pixel{--f-display:"VT323",ui-monospace,monospace;--f-read:"DotGothic16","Atkinson Hyperlegible",system-ui,sans-serif;--px-ink:#2a1f18}
 body.pixel .stage canvas{image-rendering:pixelated;image-rendering:crisp-edges}
 body.pixel :is(*,*::before,*::after){border-radius:0!important}
-body.pixel .btn,body.pixel .chipbtn,body.pixel .mini,body.pixel .up,body.pixel .tray button,body.pixel .nu-skip{border-width:2px;box-shadow:2px 2px 0 var(--line)}
+body.pixel .btn,body.pixel .chipbtn,body.pixel .mini,body.pixel .mcard.up,body.pixel .tray button,body.pixel .nu-skip{border-width:2px;box-shadow:2px 2px 0 var(--line)}
 body.pixel .btn:active,body.pixel .chipbtn:active,body.pixel .mini:active{transform:translate(2px,2px);box-shadow:none}
 body.pixel .btn.primary{box-shadow:2px 2px 0 #2c4a25}
 body.pixel .btn.amber{box-shadow:2px 2px 0 #7a4c0f}
@@ -548,7 +545,7 @@ body.pixel .cabglim{border-radius:0;font-family:var(--f-display);font-size:18px;
 .pindown{display:block;margin-top:8px}.pindown[hidden],.pinform[hidden]{display:none}
 @media (prefers-reduced-motion: reduce){.cabview{animation:none}}
 .srOnly{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.bubble .tr{visibility:hidden}
+.bubble .tr,.dlg .tr{visibility:hidden}
 
 /* calendar card: the day's meta */
 .calsheet{margin:0;display:flex;flex-direction:column;gap:2px}
@@ -807,7 +804,7 @@ body.pixel .bubble.snailb{font-style:normal}
    speaker's name on a tag; it fades by itself. Emotes and thinking stay small over the speaker */
 .bubble.boxed{left:12px;right:12px;top:auto;bottom:calc(12px + var(--stack,0px));width:auto;max-width:620px;margin:0 auto;transform:none;z-index:4;text-align:left;font-style:normal;font-size:15px;line-height:1.45;color:#25291f;background:#fffdf4;border:3px solid #3a2c22;border-radius:10px;box-shadow:inset 0 0 0 3px #fffdf4,inset 0 0 0 5px #c9b48f,0 4px 16px rgba(0,0,0,.3);padding:14px 16px 12px}
 .bubble.boxed::after{content:none}
-.bubble.boxed.more::after{content:"▾";position:absolute;left:auto;right:12px;bottom:6px;top:auto;width:auto;height:auto;background:none;border:0;transform:none;color:#8a6a48;font-size:11px;opacity:1;animation:dlgbob 1s steps(2) infinite}
+.bubble.boxed.more::after{content:"▼";position:absolute;left:auto;right:12px;bottom:6px;top:auto;width:auto;height:auto;background:none;border:0;transform:none;color:#8a6a48;font-size:11px;opacity:1;animation:dlgbob 1s steps(2) infinite}
 #bubble.boxed::before{content:attr(data-who);position:absolute;top:-14px;left:12px;width:auto;height:auto;margin:0;vertical-align:baseline;background:#3a2c22;color:#fffdf4;font-size:13px;font-weight:700;line-height:18px;padding:2px 10px;border-radius:6px;letter-spacing:.02em}
 #bubble.boxed.hint::before{content:"Tip";background:#c47f1c}
 .bubble.boxed .btag{top:-14px;left:12px;font-size:13px;line-height:18px;padding:2px 10px;border-radius:6px;max-width:calc(100% - 24px)}
@@ -823,6 +820,15 @@ body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + va
 /* the chalk circle: the box goes in the upper half, clear of the circle on the archive floor (group 40) */
 .dlg.up,body.game .dlg.up{top:calc(env(safe-area-inset-top,0px) + 70px);bottom:auto}
 .bubble.boxed.up,body.game .bubble.boxed.up{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 70px + var(--stack,0px))}
+/* group 49: every words box is the same size, three lines (the Game Boy's); a longer line goes in pages (boxPages,
+   speech.js). #boxRuler is an invisible box of the same width and font, for measuring */
+:root{--boxlh:22px;--boxfs:15px}
+body.pixel{--boxlh:24px;--boxfs:16px}
+#dlg,#bubble.boxed,#bubble2.boxed,#boxRuler{box-sizing:border-box;padding:14px 24px 12px 16px;font-size:var(--boxfs);line-height:var(--boxlh)}
+#dlg,#bubble.boxed,#bubble2.boxed{height:calc(var(--boxlh)*3 + 32px);min-height:0}
+#dlg>span,#boxRuler>span{font-size:var(--boxfs);line-height:var(--boxlh);min-height:0}
+#dlg>span{height:calc(var(--boxlh)*3)}
+#boxRuler{visibility:hidden;pointer-events:none;top:0;bottom:auto;min-height:0;z-index:-1}
 
 </style>
 <div class="app">
@@ -848,6 +854,7 @@ body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + va
       </div>
       <div id="bubble2" class="bubble snailb" hidden aria-hidden="true"></div>
       <button type="button" id="dlg" class="dlg" hidden aria-live="polite" aria-label="Conversation. Tap to continue."><b id="dlgName"></b><span id="dlgText"></span><i class="dlgnext" aria-hidden="true">▼</i></button>
+      <div id="boxRuler" class="dlg" aria-hidden="true"><span></span></div>
       <div class="gamebox" id="gameBox" hidden></div>
       <button type="button" class="scopeview brewview paintview" id="paintView" hidden aria-label="Close"><canvas id="paintCv" width="220" height="168"></canvas><span id="paintCap"></span></button>
       <button type="button" class="scopeview brewview" id="bakeView" hidden aria-label="Close"><canvas id="bakeCv" width="150" height="150"></canvas><span id="bakeCap"></span></button>
@@ -7005,12 +7012,12 @@ function cardCap(el, html) {
     // no speech on top of a card: what Mite was saying waits, and comes back once the card is closed
     const b = $("bubble");
     if (!b.hidden) {
-        const t = bubbleType && bubbleType.text || b.textContent;
+        const left = bubblePg && bubblePg.i < bubblePg.pages.length, t = left ? bubblePg.pages.slice(bubblePg.i).join(" ") : bubbleType && bubbleType.text || b.textContent, told = left && bubblePg.i > 0;
         b.hidden = true;
         speakReadUntil = lineReadUntil = 0;
         speakWhole = false;
         if (t && !b.classList.contains("thinking") && !b.classList.contains("emote"))
-            talkQueue("mite", t, Object.assign({ asked: 1 }, b.classList.contains("hint") ? { hint: 1 } : {}), true); // (it was being said: it gets its turn back)
+            talkQueue("mite", t, Object.assign({ asked: 1 }, told ? { told: 1 } : {}, b.classList.contains("hint") ? { hint: 1 } : {}), true); // (it was being said: it gets its turn back)
     }
     $("bubble2").hidden = true;
 }
@@ -7088,6 +7095,90 @@ function typeF() {
 let speakQ = [], speakReadUntil = 0, lineReadUntil = 0, lastInput = -1e9, speakWhole = false, speakReply = false, b2ReadUntil = 0, lineDoneAt = 0; // lineDoneAt: when the line showing was all there // speakReply: said in answer to a tap (it goes first) // speakWhole: the line showing may not be cut short
 /* a line that answers something you just did (a tap, a key, a purchase) goes first */
 ["pointerdown", "keydown", "click"].forEach(ev => document.addEventListener(ev, () => lastInput = performance.now(), true));
+/* group 49: every words box is the same three lines, like a Game Boy's. boxPages cuts a line into what fits in three
+   lines at the box's width (measured on #boxRuler, which has the boxes' width and font), at a word boundary, and at
+   the end of a sentence when one falls in the second half of the page. Cut lines are kept for a moment: conversations
+   ask for their length before they're shown */
+const BOX_LINES = 3;
+let boxCache = new Map();
+if (document.fonts && document.fonts.addEventListener)
+    document.fonts.addEventListener("loadingdone", () => boxCache.clear());
+function boxPages(text) {
+    text = String(text).trim();
+    const ruler = $("boxRuler"), sp = ruler && ruler.firstChild, w = ruler ? ruler.clientWidth : 0;
+    const words = text.split(/\s+/);
+    if (words.length < 2)
+        return [text];
+    const key = w + "|" + document.body.className.includes("pixel") + "|" + text;
+    if (boxCache.has(key))
+        return boxCache.get(key);
+    let fits;
+    if (w > 60) {
+        const lh = parseFloat(getComputedStyle(sp).lineHeight) || 24;
+        fits = t => {
+            sp.textContent = t;
+            return sp.offsetHeight <= lh * BOX_LINES + 2;
+        };
+    }
+    else // (the scene isn't laid out, under a full-screen menu: about what fits on a phone)
+        fits = t => t.length <= 110;
+    const pages = [];
+    let rest = words;
+    while (rest.length) {
+        if (fits(rest.join(" "))) {
+            pages.push(rest.join(" "));
+            break;
+        }
+        let lo = 1, hi = rest.length - 1;
+        while (lo < hi) {
+            const m = Math.ceil((lo + hi) / 2);
+            if (fits(rest.slice(0, m).join(" ")))
+                lo = m;
+            else
+                hi = m - 1;
+        }
+        for (let k = lo; k > lo / 2; k--)
+            if (/[.!?…]["”')]?$/.test(rest[k - 1])) {
+                lo = k;
+                break;
+            }
+        pages.push(rest.slice(0, lo).join(" "));
+        rest = rest.slice(lo);
+    }
+    if (boxCache.size > 80)
+        boxCache.clear();
+    boxCache.set(key, pages);
+    return pages;
+}
+/* how long a page of a longer line stays up, once it's all there, if nobody taps */
+function pageMs(t) {
+    return clamp(3400 + t.length * 75, 4400, 16000) / readF();
+}
+/* Mite's line, when it runs over more than one page: { pages, i, voice }. bubbleFull is the whole line */
+let bubblePg = null, bubbleFull = "";
+function bubblePagesLeft() {
+    return !!bubblePg && bubblePg.i + 1 < bubblePg.pages.length && !$("bubble").hidden;
+}
+/* the next page of Mite's line, if there is one (a tap, or its time ran out) */
+function bubbleNextPage() {
+    if (!bubblePagesLeft())
+        return false;
+    const b = $("bubble"), t = bubblePg.pages[++bubblePg.i], typed = !reduced && t.length > 2;
+    b.classList.remove("pinned");
+    if (typed)
+        typeInto(b, t, bubblePg.voice);
+    else {
+        if (bubbleType)
+            typeFinish();
+        b.textContent = t;
+        lineDoneAt = performance.now();
+    }
+    const typeMs = typed ? t.length / (TYPE_CPS * typeF()) * 1000 : 0, now = performance.now();
+    bubbleUntil = now + pageMs(t) + typeMs;
+    speakReadUntil = now + typeMs + clamp(800 + t.length * 25, 1200, 3500) / readF();
+    lineReadUntil = now + typeMs + readMs(t) * .7;
+    return true;
+}
 function floorTaken() { // a conversation is playing in the dialogue box
     const d = $("dlg");
     return !!d && !d.hidden;
@@ -7117,10 +7208,10 @@ function replyReady(now) {
 /* is this speaker's bubble free for a new line? */
 function laneFree(who, now, reply) {
     if (who === "mite") {
-        const b = $("bubble");
-        return !talkHeld() && (b.hidden || now >= speakReadUntil && (reply || now >= lineReadUntil) || b.classList.contains("thinking") || reply && replyReady(now));
+        const b = $("bubble"), left = bubblePagesLeft(); // (more pages of the line: only a reply may cut in, and not into a whole one)
+        return !talkHeld() && (b.hidden || now >= speakReadUntil && (reply ? !(left && speakWhole) : now >= lineReadUntil && !left) || b.classList.contains("thinking") || reply && replyReady(now));
     }
-    return !talkHeld() && ($("bubble2").hidden || now >= b2ReadUntil);
+    return !talkHeld() && ($("bubble2").hidden || now >= b2ReadUntil && !b2PagesLeft());
 }
 /* how long a queued line keeps: an answer to a tap, or what an interaction you asked for says, 15 s; a remark
    nobody asked for 5 s (owner: remarks stacked up and waited for her to come back, jot mvo7ftgm4eox3) */
@@ -7162,7 +7253,7 @@ function speak(text, opts = {}) {
         talkQueue("mite", text, Object.assign({}, opts, reply ? { reply: 1 } : {}, askedNow() ? { asked: 1 } : {}), reply); // (still a reply when it comes)
         return;
     }
-    if (!opts.fromQ && !b.hidden && now < (reply ? speakReadUntil : Math.max(speakReadUntil, lineReadUntil)) && !b.classList.contains("thinking") && !(reply && !small && replyReady(now))) {
+    if (!opts.fromQ && !b.hidden && (now < (reply ? speakReadUntil : Math.max(speakReadUntil, lineReadUntil)) || bubblePagesLeft() && (!reply || speakWhole)) && !b.classList.contains("thinking") && !(reply && !small && replyReady(now))) {
         if (small)
             return;
         if (reply)
@@ -7170,18 +7261,21 @@ function speak(text, opts = {}) {
         talkQueue("mite", text, Object.assign({}, opts, reply ? { reply: 1 } : {}, askedNow() ? { asked: 1 } : {}), reply);
         return;
     }
-    const typed = !thinking && !emote && !reduced && text.length > 2;
+    const pages = small ? [text] : boxPages(text), page = pages[0];
+    bubblePg = pages.length > 1 ? { pages, i: 0, voice } : null;
+    bubbleFull = text;
+    const typed = !thinking && !emote && !reduced && page.length > 2;
     if (typed)
-        typeInto(b, text, voice);
+        typeInto(b, page, voice);
     else {
         if (bubbleType)
             typeFinish();
-        b.textContent = text;
+        b.textContent = page;
         lineDoneAt = now;
         if (emote)
             blip("a", voice);
     }
-    if (!thinking && !emote) {
+    if (!thinking && !emote && !opts.told) {
         const live = $("sayLive");
         if (live)
             live.textContent = text;
@@ -7199,16 +7293,16 @@ function speak(text, opts = {}) {
         speakReadUntil = lineReadUntil = 0;
         return;
     }
-    const f = talkF(), typeMs = typed ? text.length / (TYPE_CPS * typeF()) * 1000 : 0;
-    bubbleUntil = performance.now() + (ms ? ms / f : clamp(3400 + text.length * 75, 4400, 16000) / readF()) + typeMs;
-    speakReadUntil = thinking ? 0 : performance.now() + typeMs + clamp(800 + text.length * 25, 1200, 3500) / readF(); // (a reply to a tap may follow after this)
-    lineReadUntil = thinking ? 0 : performance.now() + typeMs + readMs(text) * .7; // (anything else waits until the line could be read: jot, 25-10-2026)
+    const f = talkF(), typeMs = typed ? page.length / (TYPE_CPS * typeF()) * 1000 : 0;
+    bubbleUntil = performance.now() + (ms && !bubblePg ? ms / f : pageMs(page)) + typeMs; // (a line in pages: each page gets its own time)
+    speakReadUntil = thinking ? 0 : performance.now() + typeMs + clamp(800 + page.length * 25, 1200, 3500) / readF(); // (a reply to a tap may follow after this)
+    lineReadUntil = thinking ? 0 : performance.now() + typeMs + readMs(page) * .7; // (anything else waits until the line could be read: jot, 25-10-2026)
     // { whole: true }: a line that's finished and read before anything else is said, even a reply to a tap
     // (a new word, say). Tapping the bubble still moves on
     speakWhole = !!opts.whole && !thinking;
     if (speakWhole)
-        speakReadUntil = performance.now() + typeMs + readMs(text) * .8;
-    if (!thinking && text !== "…" && S) {
+        speakReadUntil = performance.now() + typeMs + readMs(page) * .8;
+    if (!thinking && text !== "…" && S && !opts.told) { // (told: the rest of a line that came back after a card; the Log has it)
         if (!emote && typeof heard === "function")
             heard(S.settings.pet, text, Date.now()); // (the Log, in the Satchel: the last 50 things on screen)
     }
@@ -16563,11 +16657,11 @@ function snailSay(text, ms, who, emote, fromQ, name) { // name: who said it, kep
     ms = ms || 5000;
     if (emote && talkHeld())
         return;
-    if (!emote && (talkHeld() || !fromQ && (floorTaken() || !b2.hidden && now < b2ReadUntil))) {
+    if (!emote && (talkHeld() || !fromQ && (floorTaken() || !b2.hidden && (now < b2ReadUntil || b2PagesLeft())))) {
         talkQueue(who, guestFill(text), { ms, name: b2Name(who), asked: who === "guest" && performance.now() - lastInput < 1500 ? 1 : 0 });
         return;
     }
-    if (emote && !floorTaken() && !b2.hidden && now < b2ReadUntil) // (a little look doesn't cut a line short)
+    if (emote && !floorTaken() && !b2.hidden && (now < b2ReadUntil || b2PagesLeft())) // (a little look doesn't cut a line short)
         return;
     b2Who = who;
     b2.classList.toggle("guestb", b2Who === "guest");
@@ -16582,15 +16676,34 @@ function snailSay(text, ms, who, emote, fromQ, name) { // name: who said it, kep
         tag.textContent = name || b2Name(who);
         b2.appendChild(tag);
     }
-    b2.appendChild(document.createTextNode(said));
+    const pages = emote ? [said] : boxPages(said); // (group 49: three lines; a longer line in pages)
+    b2Pg = pages.length > 1 ? { pages, i: 0 } : null;
+    b2.appendChild(document.createTextNode(pages[0]));
     b2.classList.toggle("tagged", !emote);
     b2.classList.toggle("boxed", !emote); // (group 40: words at the bottom, emotes over the speaker)
     b2.hidden = false;
+    if (b2Pg)
+        ms = pageMs(pages[0]);
     snail2Until = now + ms;
-    b2ReadUntil = emote ? 0 : now + Math.min(ms, clamp(1000 + said.length * 50, 1800, 8000) / readF());
+    b2ReadUntil = emote ? 0 : now + Math.min(ms, clamp(1000 + pages[0].length * 50, 1800, 8000) / readF());
     blip("o", ["guest", "cat", "possum"].includes(b2Who) ? b2Who : "snail");
     if (!emote)
         heard(name || b2Name(b2Who), said, Date.now());
+}
+/* the second bubble's line, when it runs over more than one page: { pages, i } */
+let b2Pg = null;
+function b2PagesLeft() {
+    return !!b2Pg && b2Pg.i + 1 < b2Pg.pages.length && !$("bubble2").hidden;
+}
+function b2NextPage() {
+    if (!b2PagesLeft())
+        return false;
+    const t = b2Pg.pages[++b2Pg.i], now = performance.now(), ms = pageMs(t);
+    $("bubble2").lastChild.nodeValue = t;
+    snail2Until = now + ms;
+    b2ReadUntil = now + Math.min(ms, clamp(1000 + t.length * 50, 1800, 8000) / readF());
+    blip("o", ["guest", "cat", "possum"].includes(b2Who) ? b2Who : "snail");
+    return true;
 }
 /* the name over a second-bubble line in Overheard */
 function b2Name(who) {
@@ -16670,7 +16783,7 @@ function runConvo(line, onEnd) {
         const bt = beats[i++], txt = fill(bt.t);
         const name = bt.who === "S" ? snailName() : bt.who === "V" ? (guest ? guest.name : "Visitor") : bt.who === "C" ? CAT_NAME : bt.who === "P" ? possumName() : (bt.who === "F" || bt.who === "A") && convoFar[bt.who] ? convoFar[bt.who] : S.settings.pet, em = emoteFor(txt, bt.who);
         heard(name, txt, cid);
-        dlgShow(name, txt, bt.who === "F" || bt.who === "A" ? "circle" : WHO_KIND[bt.who] || "", id, next); // (first: from now on the conversation has the floor)
+        dlgShow(name, txt, bt.who === "F" || bt.who === "A" ? "circle" : WHO_KIND[bt.who] || "", id, next, i < beats.length); // (first: from now on the conversation has the floor)
         if (bt.who === "F" || bt.who === "A") // (a voice through the chalk circle: nobody here to show a little look)
             ;
         else if (bt.who === "M") {
@@ -16685,10 +16798,11 @@ function runConvo(line, onEnd) {
     next();
     return total + .5;
 }
-/* the dialogue box: text types out, a tap finishes the line or moves on, otherwise it moves on by itself */
+/* the dialogue box: text types out, a tap finishes the page, then goes to the next page or line; otherwise it moves on
+   by itself after each page's reading time (group 49) */
 let dlgState = null;
 function dlgTime(txt) {
-    return txt.length / DLG_CPS / typeF() + clamp(1.6 + txt.length * .045, 2.6, 8) / readF();
+    return boxPages(txt).reduce((s, p) => s + p.length / DLG_CPS / typeF() + clamp(1.6 + p.length * .045, 2.6, 8) / readF(), 0);
 }
 const DLG_CPS = 34;
 function emoteFor(t, who) {
@@ -16724,21 +16838,22 @@ function floorUnder(top) {
 function circleUp() {
     return own("circle") > 0 && typeof roomOnScreen === "function" && roomOnScreen("archive") && catInCircle();
 }
-function dlgShow(name, txt, kind, id, next) {
-    const el = $("dlg");
+function dlgShow(name, txt, kind, id, next, moreBeats) {
+    const el = $("dlg"), te = $("dlgText");
     el.hidden = false;
     el.className = "dlg" + (kind ? " " + kind : "") + (dlgUp ? " up" : "");
     $("dlgName").textContent = name;
-    $("dlgText").textContent = "";
     if (dlgState && dlgState.timer)
         clearTimeout(dlgState.timer);
-    const st = { txt, shown: 0, id, next, t0: performance.now(), timer: 0, done: false };
+    const st = { pages: boxPages(txt), p: 0, txt, shown: 0, id, next, t0: 0, timer: 0, done: false };
     dlgState = st;
+    let ty, tr; // (the rest of the page is laid out but invisible, so words don't jump to the next line while they type)
     const hold = () => {
         st.done = true;
         el.classList.add("done");
-        $("dlgText").textContent = txt;
-        const read = clamp(1600 + txt.length * 45, 2600, 8000) / readF();
+        el.classList.toggle("more", st.p + 1 < st.pages.length || !!moreBeats);
+        te.textContent = st.txt;
+        const read = clamp(1600 + st.txt.length * 45, 2600, 8000) / readF();
         const after = () => { // (covered by a menu or card: the line waits, and gets its reading time again once it's visible)
             if (dlgState !== st || convoId !== id)
                 return;
@@ -16752,28 +16867,47 @@ function dlgShow(name, txt, kind, id, next) {
                 st.timer = setTimeout(after, read);
                 return;
             }
-            next();
+            st.go();
         };
         st.timer = setTimeout(after, read);
     };
-    if (reduced) {
-        hold();
-        return;
-    }
     const tick = () => {
         if (dlgState !== st || st.done)
             return;
         const was = st.shown;
-        st.shown = Math.min(txt.length, Math.floor((performance.now() - st.t0) / 1000 * DLG_CPS * typeF()));
+        st.shown = Math.min(st.txt.length, Math.floor((performance.now() - st.t0) / 1000 * DLG_CPS * typeF()));
         if (st.shown > was && st.shown % 2 === 1)
-            blip(txt[st.shown - 1], ["snail", "guest", "cat", "possum"].includes(kind) ? kind : "mite");
-        $("dlgText").textContent = txt.slice(0, st.shown);
-        if (st.shown >= txt.length)
+            blip(st.txt[st.shown - 1], ["snail", "guest", "cat", "possum"].includes(kind) ? kind : "mite");
+        ty.textContent = st.txt.slice(0, st.shown);
+        tr.textContent = st.txt.slice(st.shown);
+        if (st.shown >= st.txt.length)
             hold();
         else
             st.timer = setTimeout(tick, 30);
     };
-    tick();
+    const page = () => {
+        st.txt = st.pages[st.p];
+        st.shown = 0;
+        st.done = false;
+        st.t0 = performance.now();
+        el.classList.remove("done", "more");
+        if (reduced)
+            return hold();
+        te.innerHTML = '<span class="ty"></span><span class="tr" aria-hidden="true"></span>';
+        ty = te.firstChild;
+        tr = te.lastChild;
+        tick();
+    };
+    st.finish = hold;
+    st.go = () => { // the next page, or the next line
+        if (st.p + 1 < st.pages.length) {
+            st.p++;
+            page();
+        }
+        else
+            next();
+    };
+    page();
 }
 function dlgClose(id) {
     if (dlgState && dlgState.id !== id)
@@ -16793,17 +16927,10 @@ $("dlg").addEventListener("click", e => {
         return;
     }
     clearTimeout(st.timer);
-    if (!st.done) {
-        st.done = true;
-        $("dlg").classList.add("done");
-        $("dlgText").textContent = st.txt;
-        st.timer = setTimeout(() => {
-            if (dlgState === st && convoId === st.id)
-                st.next();
-        }, clamp(1600 + st.txt.length * 45, 2600, 8000) / readF());
-    }
+    if (!st.done)
+        st.finish();
     else if (convoId === st.id)
-        st.next();
+        st.go();
 });
 let snailCarry = false, snailPause = false, snail2Until = 0, convoId = 0, convoWho = [];
 /* the room a speaker is in (M Mite, S the snail, C Midnightcat, P the possum, V a visitor) */
@@ -16837,7 +16964,7 @@ function animalTalkTick(now) {
     animalTalkAt = now + rnd(45e3, 120e3) * paceK();
     if (!$("dlg").hidden || objQ.cur || !$("bubble2").hidden || S.lightsOut)
         return;
-    if (talkHeld() || speakQ.length || !$("bubble").hidden && now < Math.max(speakReadUntil, lineReadUntil) + 1500) { // Mite is talking (or you can't read it now): a little later (owner, 24-10)
+    if (talkHeld() || speakQ.length || !$("bubble").hidden && (bubblePagesLeft() || now < Math.max(speakReadUntil, lineReadUntil) + 1500)) { // Mite is talking (or you can't read it now): a little later (owner, 24-10)
         animalTalkAt = now + rnd(6e3, 12e3);
         return;
     }
@@ -16911,9 +17038,13 @@ function patronTalk(now) {
     });
     return true;
 }
-$("bubble2").addEventListener("click", e => { // a tap on an animal's (or a visitor's) bubble: go and look
+$("bubble2").addEventListener("click", e => { // a tap on an animal's (or a visitor's) bubble: go and look; and on to the next page, or a line that's waiting
     e.stopPropagation();
     lookAtSpeaker(b2Who);
+    if (!b2NextPage() && speakQ.some(q => q.who !== "mite")) {
+        snail2Until = b2ReadUntil = 0;
+        speakPump(performance.now());
+    }
 });
 
 </script>
@@ -29744,7 +29875,7 @@ function frame(now) {
         boxGap = H - b.offsetTop - bH - (parseFloat(b.style.getPropertyValue("--stack")) || 0); // how far above the bottom the box sits when it's down (the dock, the safe area)
     {
         const r2 = b2Who === "cat" ? cat.room : b2Who === "possum" ? possum.room : b2Who === "snail" ? snailRoom : "room";
-        if (now > snail2Until || (b2Who === "snail" && !own("snail")) || (b2Who === "guest" && !guest) || !roomVisible(r2)) {
+        if ((b2Who === "snail" && !own("snail")) || (b2Who === "guest" && !guest) || !roomVisible(r2) || now > snail2Until && !b2NextPage()) {
             b2.hidden = true;
         }
         else if (b2.classList.contains("boxed")) { // at the bottom (group 40); above Mite's box when both are showing
@@ -29775,9 +29906,9 @@ function frame(now) {
         if (!dl.hidden)
             dl.classList.toggle("up", dlgUp || fl);
     }
-    b.classList.toggle("more", speakQ.some(q => q.who === "mite") && (!bubbleType || bubbleType.done)); // ▾: tap for the next line
+    b.classList.toggle("more", (bubblePagesLeft() || speakQ.some(q => q.who === "mite")) && (!bubbleType || bubbleType.done)); // ▼: tap for the next page or line
     if (!b.hidden) {
-        if (now > bubbleUntil && !(bubbleType && !bubbleType.done)) { // never while it's still typing
+        if (now > bubbleUntil && !(bubbleType && !bubbleType.done) && !bubbleNextPage()) { // never while it's still typing; the next page, if there is one
             b.hidden = true;
             b.classList.remove("pinned");
         }
@@ -34063,7 +34194,7 @@ function playChatter(text, { action } = {}) {
         if (id !== chatterSeq)
             return;
         const b = $("bubble");
-        if (i > 0 && b.textContent !== beats[i - 1])
+        if (i > 0 && (b.hidden || bubbleFull !== beats[i - 1]))
             return;
         const t = beats[i++];
         const ms = clamp(1800 + t.length * 55, 2600, 7000);
@@ -35759,17 +35890,19 @@ function closeSheet() {
     if (sheetOpener && sheetOpener.focus)
         sheetOpener.focus();
 }
-/* tapping Mite's bubble, like a game: the first tap shows the whole line and keeps it up; the next tap
-   closes it, and a line that was waiting (speech.js, speakQ) comes straight after */
+/* tapping Mite's bubble, like a game: a tap while it types shows the whole page and keeps it up; the next tap goes
+   to the next page, or closes it, and a line that was waiting (speech.js, speakQ) comes straight after */
 $("bubble").addEventListener("click", () => {
     const b = $("bubble");
     camFollow(); // the view goes to Mite, so you can watch what it's doing
-    if (!b.classList.contains("pinned")) {
+    if (bubbleType && !bubbleType.done) {
         typeFinish();
         b.classList.add("pinned");
         bubbleUntil = speakReadUntil = performance.now() + 30000; // stays until you tap again (or half a minute)
         return;
     }
+    if (bubbleNextPage())
+        return;
     b.classList.remove("pinned", "more");
     b.hidden = true;
     bubbleUntil = speakReadUntil = lineReadUntil = 0;
