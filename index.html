@@ -77,6 +77,7 @@ button{cursor:pointer}
 .dlg>span{display:block;font-size:15px;line-height:1.45;min-height:2.9em}
 .dlg .dlgnext{position:absolute;right:12px;bottom:6px;font-style:normal;font-size:11px;color:#8a6a48;opacity:0}
 .dlg.done.more .dlgnext{opacity:1;animation:dlgbob 1s steps(2) infinite}
+.dlg.done.cut .dlgnext{opacity:1;animation:none;font-size:18px;color:#3a2c22}
 @keyframes dlgbob{50%{transform:translateY(2px)}}
 .dlg.cat{border-color:#4a3a66}.dlg.cat b{background:#4a3a66}
 .dlg.circle{border-color:#3e5a6a}.dlg.circle b{background:#3e5a6a}
@@ -800,7 +801,7 @@ body.pixel .bubble.snailb{font-style:normal}
 
 /* group 40: what Mite and the residents say sits in a box at the bottom of the scene, like a conversation, with the
    speaker's name on a tag; it fades by itself. Emotes and thinking stay small over the speaker */
-.bubble.boxed{left:12px;right:12px;top:auto;bottom:calc(12px + var(--stack,0px));width:auto;max-width:620px;margin:0 auto;transform:none;z-index:4;text-align:left;font-style:normal;font-size:15px;line-height:1.45;color:#25291f;background:#fffdf4;border:3px solid #3a2c22;border-radius:10px;box-shadow:inset 0 0 0 3px #fffdf4,inset 0 0 0 5px #c9b48f,0 4px 16px rgba(0,0,0,.3);padding:14px 16px 12px}
+.bubble.boxed{left:12px;right:12px;top:auto;bottom:12px;width:auto;max-width:620px;margin:0 auto;transform:none;z-index:4;text-align:left;font-style:normal;font-size:15px;line-height:1.45;color:#25291f;background:#fffdf4;border:3px solid #3a2c22;border-radius:10px;box-shadow:inset 0 0 0 3px #fffdf4,inset 0 0 0 5px #c9b48f,0 4px 16px rgba(0,0,0,.3);padding:14px 16px 12px}
 .bubble.boxed::after{content:none}
 .bubble.boxed.more::after{content:"▼";position:absolute;left:auto;right:12px;bottom:6px;top:auto;width:auto;height:auto;background:none;border:0;transform:none;color:#8a6a48;font-size:11px;opacity:1;animation:dlgbob 1s steps(2) infinite}
 #bubble.boxed::before{content:attr(data-who);position:absolute;top:-14px;left:12px;width:auto;height:auto;margin:0;vertical-align:baseline;background:#3a2c22;color:#fffdf4;font-size:13px;font-weight:700;line-height:18px;padding:2px 10px;border-radius:6px;letter-spacing:.02em}
@@ -814,10 +815,10 @@ body.pixel .bubble.snailb{font-style:normal}
 .bubble.snailb.boxed:not(.catb):not(.possumb):not(.guestb){border-color:#6b4a2a}.bubble.snailb.boxed:not(.catb):not(.possumb):not(.guestb) .btag{background:#6b4a2a}
 body.pixel .bubble.boxed{border-radius:0;border-width:3px;font-family:var(--f-read);font-size:16px;line-height:24px;box-shadow:inset 0 0 0 3px #fffdf4,inset 0 0 0 5px #c9b48f,4px 4px 0 rgba(0,0,0,.35)}
 body.pixel #bubble.boxed::before,body.pixel .bubble.boxed .btag{border-radius:0;font-family:var(--f-display);font-weight:400;font-size:20px;line-height:20px;top:-16px}
-body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + var(--stack,0px))}
+body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px)}
 /* the chalk circle: the box goes in the upper half, clear of the circle on the archive floor (group 40) */
 .dlg.up,body.game .dlg.up{top:calc(env(safe-area-inset-top,0px) + 70px);bottom:auto}
-.bubble.boxed.up,body.game .bubble.boxed.up{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 70px + var(--stack,0px))}
+.bubble.boxed.up,body.game .bubble.boxed.up{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 70px)}
 /* group 49: every words box is the same size, three lines (the Game Boy's); a longer line goes in pages (boxPages,
    speech.js). #boxRuler is an invisible box of the same width and font, for measuring */
 :root{--boxlh:22px;--boxfs:15px}
@@ -5149,7 +5150,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 44 batch 2 (01-11-2026)
     "mvxujz21qeu6z", "mvxuknw3m6dbb", "mvxupxo6hv3vq",
     // group 44 lore check and group 45 (01-11-2026)
-    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x"];
+    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x", "mvzb1io3poh4t"];
 
 </script>
 <script>/* js/core/state.js */
@@ -6274,10 +6275,10 @@ function syncBaseSet(c) {
     catch (e) {
     }
 }
-function adoptAccount(r) {
+function adoptAccount(r, blank) { // blank: nothing was saved in this browser: the account's glimmers and pantry are the only real ones
     const a = S, b = merge(defaultState(), r), m = merge(defaultState(), mergeStates(JSON.parse(JSON.stringify(a)), b));
     if (num(a.wiped) === num(b.wiped)) { // (started over on one side: mergeStates has taken that side, as it is)
-        const same = num(a.savedAt) === num(b.savedAt), base = same ? syncCounts(b) : syncBase, nw = num(b.savedAt) > num(a.savedAt) ? b : a; // (no base yet: the copy saved last)
+        const same = num(a.savedAt) === num(b.savedAt), base = same ? syncCounts(b) : blank ? null : syncBase, nw = blank || num(b.savedAt) > num(a.savedAt) ? b : a; // (no base yet: the copy saved last)
         m.g = base ? Math.max(0, num(a.g) + num(b.g) - num(base.g)) : num(nw.g);
         const pa = a.pantry || {}, pb = b.pantry || {}, p0 = base ? base.pantry || {} : null;
         m.pantry = {};
@@ -7004,7 +7005,7 @@ function fillText(t, c) {
         return x == null ? "" : x;
     }));
 }
-let bubbleUntil = 0, bubbleW = 0;
+let smallUntil = 0, small2Until = 0, bubbleW = 0; // how long the little emotes and thinking dots over Mite and over the others stay
 /* say a line from a pool (compose picks it: only lines whose [conditions] fit the moment, specific lines
    preferred, recent ones rarely repeated) */
 function say(key, extra, opts = {}) {
@@ -7013,29 +7014,152 @@ function say(key, extra, opts = {}) {
         speak(t, opts);
     return t;
 }
-let bubbleType = null;
-const TYPE_CPS = 38;
-/* letters appear one by one (with blips); the rest of the line is laid out but invisible, so the bubble keeps its size */
-function typeInto(b, text, voice) {
-    if (bubbleType && bubbleType.timer)
-        clearTimeout(bubbleType.timer);
-    b.innerHTML = '<span class="ty"></span><span class="tr" aria-hidden="true"></span>';
-    const ty = b.firstChild, tr = b.lastChild, st = { text, n: 0, timer: 0, done: false, ty, tr };
-    tr.textContent = text;
-    bubbleType = st;
+/* ---------- the words box (group 52) ----------
+   One box of words at a time, ever: a conversation (#dlg), Mite (#bubble) or a resident (#bubble2). `box` is what's on
+   screen: { kind "convo"|"mite"|"other", who, el, te (where the letters go), pages, i, full, voice, ms, whole, done,
+   doneAt, end, more, id }. Everything waits or is dropped behind it (speakQ below); little emotes and thinking dots
+   over a speaker aren't boxes.
+   All boxes type, and one clock runs them: doneAt, when the page on screen was all there. From there a reply may take
+   over after REPLY_GAP, anything else after boxRead, and the page moves on (or the box closes) after boxShow. A menu
+   or card pushes doneAt along, so the time stands still under it (speechHoldTick). */
+let box = null;
+const TYPE_CPS = 38, REPLY_GAP = 900;
+/* what's on screen (something else may have hidden the box: a card, the pinboard) */
+function boxOn() {
+    if (box && box.el.hidden)
+        boxDrop();
+    return box;
+}
+function boxDrop() {
+    if (box)
+        clearTimeout(box.timer);
+    box = null;
+}
+function boxClose() {
+    if (!boxOn())
+        return;
+    box.el.hidden = true;
+    box.el.classList.remove("more");
+    boxDrop();
+}
+function boxOpen(o) {
+    if (box && box.el !== o.el)
+        box.el.hidden = true;
+    boxDrop();
+    box = Object.assign({ i: 0, done: false, doneAt: Infinity, timer: 0 }, o);
+    boxPage();
+}
+function boxPagesLeft() {
+    return !!boxOn() && box.i + 1 < box.pages.length;
+}
+/* how long a page takes to type (the same pauses as boxPage) */
+function typeMs(t) {
+    const k = 1000 / (TYPE_CPS * typeF());
+    return (t.length + (t.match(/[.,!?…]/g) || []).length * (typeF() > 2 ? 1 : 3)) * k;
+}
+/* the page on screen types out: the rest of it is laid out but invisible, so words don't jump to the next line */
+function boxPage() {
+    const st = box, text = st.pages[st.i], c = st.el.classList;
+    st.done = false;
+    st.doneAt = Infinity;
+    c.remove("done", "more");
+    st.ty = null;
+    if (reduced || text.length <= 2) {
+        typeFinish();
+        return;
+    }
+    st.te.innerHTML = '<span class="ty"></span><span class="tr" aria-hidden="true"></span>';
+    const ty = st.ty = st.te.firstChild, tr = st.tr = st.te.lastChild;
+    st.n = 0;
     const tick = () => {
-        if (bubbleType !== st || st.done)
+        if (box !== st || st.done)
             return;
         st.n++;
         ty.textContent = text.slice(0, st.n);
         tr.textContent = text.slice(st.n);
         if (st.n % 2 === 1)
-            blip(text[st.n - 1], voice);
-        if (st.n >= text.length)
+            blip(text[st.n - 1], st.voice);
+        if (st.n >= text.length || document.hidden) // (no frames in a hidden tab: nobody to type for)
             return typeFinish();
         st.timer = setTimeout(tick, 1000 / (TYPE_CPS * typeF()) * (/[.,!?…]/.test(text[st.n - 1]) ? (typeF() > 2 ? 2 : 4) : 1)); // (fast: shorter pauses at commas and full stops too)
     };
     tick();
+}
+function typeFinish() {
+    const st = box;
+    if (!st || st.done)
+        return false;
+    st.done = true;
+    st.doneAt = performance.now();
+    clearTimeout(st.timer);
+    if (st.ty) {
+        st.ty.textContent = st.pages[st.i];
+        st.tr.textContent = "";
+    }
+    else
+        st.te.textContent = st.pages[st.i];
+    st.el.classList.add("done");
+    boxMark();
+    return true;
+}
+/* ▼: there's more after this page */
+function boxMark() {
+    const st = box;
+    st.el.classList.toggle("more", st.done && !st.cut && (st.i + 1 < st.pages.length || (st.kind === "convo" ? !!st.more : speakQ.length > 0)));
+}
+/* how long the page on screen stays, once it's all there, if nobody taps */
+function boxShow(st) {
+    const t = st.pages[st.i];
+    return st.kind === "convo" ? convoRead(t) : st.ms && st.pages.length === 1 ? Math.max(st.ms, readMs(t)) : pageMs(t);
+}
+/* when something else may take its place: it could be read by then */
+function boxRead(st) {
+    return Math.min(boxShow(st), readMs(st.pages[st.i]) * (st.whole ? .8 : .7));
+}
+/* a tap, or its time ran out: the next page, or the end */
+function boxGo() {
+    const st = box;
+    if (st.i + 1 < st.pages.length) {
+        st.i++;
+        boxPage();
+    }
+    else if (st.end)
+        st.end();
+    else
+        boxClose();
+}
+/* a tap on a box: finishes the typing, then the next page. False when there's nothing more on this line */
+function boxAdvance() {
+    if (typeFinish())
+        return true;
+    if (!boxPagesLeft())
+        return false;
+    boxGo();
+    return true;
+}
+/* every frame: the page's time, a speaker who's gone, and a conversation waiting behind Mite's answer */
+function boxTick(now) {
+    const st = boxOn();
+    if (!st) {
+        if (convo && convo.id !== convoId)
+            convo = null;
+        else if (convo && convo.paused && !talkHeld() && (convo.answered || !speakQ.some(q => q.who === "mite" && q.opts.reply)))
+            convoResume();
+        return;
+    }
+    if (st.kind === "convo" && st.id !== convoId)
+        return dlgClose(st.id);
+    if (st.kind === "other" && b2Gone())
+        return boxClose();
+    boxMark();
+    if (!st.done || talkHeld())
+        return;
+    if (st.cut) {
+        if (now >= st.cutAt + REPLY_GAP)
+            convoPause(st);
+    }
+    else if (now >= st.doneAt + boxShow(st))
+        boxGo();
 }
 /* captions on room things (telescope, oven, kettle, painting) are cards, not speech: the text is there at once,
    with one soft card sound. Takes trusted, already-escaped markup. */
@@ -7043,15 +7167,15 @@ function cardCap(el, html) {
     el.innerHTML = html;
     sfx("card");
     // no speech on top of a card: what Mite was saying waits, and comes back once the card is closed
-    const b = $("bubble");
-    if (!b.hidden) {
-        const left = bubblePg && bubblePg.i < bubblePg.pages.length, t = left ? bubblePg.pages.slice(bubblePg.i).join(" ") : bubbleType && bubbleType.text || b.textContent, told = left && bubblePg.i > 0;
-        b.hidden = true;
-        speakReadUntil = lineReadUntil = 0;
-        speakWhole = false;
-        if (t && !b.classList.contains("thinking") && !b.classList.contains("emote"))
-            talkQueue("mite", t, Object.assign({ asked: 1 }, told ? { told: 1 } : {}, b.classList.contains("hint") ? { hint: 1 } : {}), true); // (it was being said: it gets its turn back)
+    const b = $("bubble"), st = boxOn();
+    if (st && st.kind === "mite") {
+        const t = st.pages.slice(st.i).join(" "), told = st.i > 0, tip = b.classList.contains("hint");
+        boxClose();
+        talkQueue("mite", t, Object.assign({ asked: 1 }, told ? { told: 1 } : {}, tip ? { hint: 1 } : {}), true); // (it was being said: it gets its turn back)
     }
+    else if (st && st.kind === "other")
+        boxClose();
+    b.hidden = true;
     $("bubble2").hidden = true;
 }
 /* a card is open (the painting, a bake, a brew, the telescope) */
@@ -7064,40 +7188,26 @@ function talkHeld() {
     const r = $("ritual");
     return cardOpen() || [...document.querySelectorAll(".cabview")].some(e => !e.hidden) || document.body.classList.contains("sheet") && !matchMedia("(min-width: 960px)").matches || !!r && !r.hidden; // (on a wide screen the menu sits beside the scene)
 }
-/* while speech is held (talkHeld), the lines on screen don't run out: their time stands still, and once the menu or
-   card closes they stay up a little longer, so nothing said is missed under it (owner, 25-10-2026) */
-let speechHeldWas = false;
-function speechHoldTick(now, dt) {
-    const h = talkHeld(), ms = dt * 1000;
+/* while speech is held (talkHeld), the words on screen don't run out: their time stands still, and once the menu or
+   card closes they stay up a little longer, so nothing said is missed under it (owner, 25-10-2026). A conversation's
+   line gets its whole reading time again */
+let speechHeldWas = false, speechHoldAt = 0;
+function speechHoldTick(now) {
+    const h = talkHeld(), ms = now - speechHoldAt, st = boxOn();
+    speechHoldAt = now;
     if (h) {
-        bubbleUntil += ms;
-        speakReadUntil += ms;
-        lineReadUntil += ms;
-        snail2Until += ms;
-        b2ReadUntil += ms;
+        if (st && st.done)
+            st.doneAt += ms;
+        smallUntil += ms;
+        small2Until += ms;
     }
     else if (speechHeldWas) {
-        if (!$("bubble").hidden)
-            bubbleUntil = Math.max(bubbleUntil, now + 2500);
-        if (!$("bubble2").hidden)
-            snail2Until = Math.max(snail2Until, now + 2500);
+        if (st && st.done)
+            st.doneAt = st.kind === "convo" ? now : Math.max(st.doneAt, now + 2500 - boxShow(st));
+        smallUntil = Math.max(smallUntil, now + 2500);
+        small2Until = Math.max(small2Until, now + 2500);
     }
     speechHeldWas = h;
-}
-function typeFinish() {
-    const st = bubbleType;
-    if (!st || st.done)
-        return false;
-    st.done = true;
-    lineDoneAt = performance.now();
-    clearTimeout(st.timer);
-    st.ty.textContent = st.text;
-    st.tr.textContent = "";
-    // however long the typing took, the whole line then stays up long enough to read
-    const now = performance.now();
-    bubbleUntil = Math.max(bubbleUntil, now + readMs(st.text));
-    speakReadUntil = Math.max(speakReadUntil, now + clamp(800 + st.text.length * 25, 1200, 3500) / readF()); // (finished by a tap: a reply can follow soon)
-    return true;
 }
 /* how long a whole line stays readable once it's all there */
 function readMs(text) {
@@ -7116,16 +7226,16 @@ function typeF() {
     return [.7, 1, 3][S && S.settings ? S.settings.talk ?? 1 : 1] || 1;
 }
 /* ---------- one speech system ----------
-   Everyone's lines go through one queue (speakQ: { who, text, opts, at }): who is "mite" (the big bubble) or the
-   one other speaker (snail, cat, possum, guest: the second bubble). At most two bubbles; a line that's showing is
-   never replaced before it has been readable for a moment (speakReadUntil, b2ReadUntil). A reply to a tap goes to
-   the front of the queue: the line showing finishes typing at once and stays up just under a second more (REPLY_GAP),
-   then the reply takes its place.
-   A conversation (the dialogue box) has the floor: other lines wait until it ends, then come in order. A card on
-   screen holds Mite's lines too. Little emotes and the thinking dots are skipped rather than queued. Queued lines go
-   stale: an answer or what an interaction you asked for says after 15 s, a remark nobody asked for after 5 s (and
-   it is not queued at all under a menu or behind a conversation; STALE_MS). Floating labels, cards and notes are separate. */
-let speakQ = [], speakReadUntil = 0, lineReadUntil = 0, lastInput = -1e9, speakWhole = false, speakReply = false, b2ReadUntil = 0, lineDoneAt = 0; // lineDoneAt: when the line showing was all there // speakReply: said in answer to a tap (it goes first) // speakWhole: the line showing may not be cut short
+   Everyone's lines go through one queue (speakQ: { who, text, opts, at }): who is "mite" or one of the others (snail,
+   cat, possum, guest). There's one box (above), and a line waits for it: it's never replaced before it has been
+   readable for a moment. A reply to a tap goes to the front of the queue: the line showing finishes typing at once and
+   stays up just under a second more (REPLY_GAP), then the reply takes its place.
+   A conversation has the floor: other lines wait until it ends, then come in order. Only a reply from Mite gets in, by
+   interrupting (convoCut, conversations.js). A card on screen holds Mite's lines too. Little emotes and the thinking
+   dots are skipped rather than queued. Queued lines go stale: an answer or what an interaction you asked for says
+   after 15 s, a remark nobody asked for after 5 s (and it is not queued at all under a menu, behind a conversation or
+   behind another remark; STALE_MS). Floating labels, cards and notes are separate. */
+let speakQ = [], lastInput = -1e9, speakReply = false; // speakReply: said in answer to a tap (it goes first)
 /* a line that answers something you just did (a tap, a key, a purchase) goes first */
 ["pointerdown", "keydown", "click"].forEach(ev => document.addEventListener(ev, () => lastInput = performance.now(), true));
 /* group 49: every words box is the same three lines, like a Game Boy's. boxPages cuts a line into what fits in three
@@ -7187,40 +7297,17 @@ function boxPages(text) {
 function pageMs(t) {
     return clamp(3400 + t.length * 75, 4400, 16000) / readF();
 }
-/* Mite's line, when it runs over more than one page: { pages, i, voice }. bubbleFull is the whole line */
-let bubblePg = null, bubbleFull = "";
-function bubblePagesLeft() {
-    return !!bubblePg && bubblePg.i + 1 < bubblePg.pages.length && !$("bubble").hidden;
-}
-/* the next page of Mite's line, if there is one (a tap, or its time ran out) */
-function bubbleNextPage() {
-    if (!bubblePagesLeft())
-        return false;
-    const b = $("bubble"), t = bubblePg.pages[++bubblePg.i], typed = !reduced && t.length > 2;
-    if (typed)
-        typeInto(b, t, bubblePg.voice);
-    else {
-        if (bubbleType)
-            typeFinish();
-        b.textContent = t;
-        lineDoneAt = performance.now();
-    }
-    const typeMs = typed ? t.length / (TYPE_CPS * typeF()) * 1000 : 0, now = performance.now();
-    bubbleUntil = now + pageMs(t) + typeMs;
-    speakReadUntil = now + typeMs + clamp(800 + t.length * 25, 1200, 3500) / readF();
-    lineReadUntil = now + typeMs + readMs(t) * .7;
-    return true;
-}
-function floorTaken() { // a conversation is playing in the dialogue box
+/* a conversation is on: in the dialogue box, or waiting behind Mite's answer */
+function floorTaken() {
     const d = $("dlg");
-    return !!d && !d.hidden;
+    return !!d && !d.hidden || !!convo && convo.id === convoId && !!convo.paused;
 }
 function talkQueue(who, text, opts, first) {
     const now = performance.now();
     if (speakQ.some(q => q.who === who && q.text === text))
         return;
     opts = opts || {};
-    if (!opts.asked && !opts.reply && !opts.whole && (talkHeld() || floorTaken() || speakQ.some(q => q.who === who && !q.opts.asked && !q.opts.reply)))
+    if (!opts.asked && !opts.reply && !opts.whole && (talkHeld() || floorTaken() || speakQ.some(q => !q.opts.asked && !q.opts.reply)))
         return; // a remark nobody asked for isn't kept for later: under a menu, behind a conversation, or behind another one, it's let go (jot mvo7ftgm4eox3)
     const it = { who, text, opts, at: now };
     if (first)
@@ -7231,19 +7318,23 @@ function talkQueue(who, text, opts, first) {
     if (mine.length > 3)
         speakQ.splice(speakQ.lastIndexOf(mine[first ? 3 : 0]), 1);
 }
-const REPLY_GAP = 900;
-/* can a reply to a tap go up now? (the line showing has been all there for a moment) */
-function replyReady(now) {
-    const b = $("bubble");
-    return b.hidden || b.classList.contains("thinking") || !speakWhole && (!bubbleType || bubbleType.done) && now >= lineDoneAt + REPLY_GAP / talkF();
+/* does the box leave room for a new line? (not whether it can be shown: a menu can be in the way too, boxFree) */
+function boxClear(now, reply) {
+    const st = boxOn();
+    if (!st)
+        return true;
+    if (st.kind === "convo" || !st.done)
+        return false;
+    if (reply && !st.whole)
+        return now >= st.doneAt + REPLY_GAP; // (a reply may cut into a line in pages)
+    return !boxPagesLeft() && now >= st.doneAt + boxRead(st);
 }
-/* is this speaker's bubble free for a new line? */
-function laneFree(who, now, reply) {
-    if (who === "mite") {
-        const b = $("bubble"), left = bubblePagesLeft(); // (more pages of the line: only a reply may cut in, and not into a whole one)
-        return !talkHeld() && (b.hidden || now >= speakReadUntil && (reply ? !(left && speakWhole) : now >= lineReadUntil && !left) || b.classList.contains("thinking") || reply && replyReady(now));
-    }
-    return !talkHeld() && ($("bubble2").hidden || now >= b2ReadUntil && !b2PagesLeft());
+function boxFree(now, reply) {
+    return !talkHeld() && boxClear(now, reply);
+}
+/* a resident's line is up that's still being read */
+function boxSays(who) {
+    return !!boxOn() && box.who === who && !boxClear(performance.now(), false);
 }
 /* how long a queued line keeps: an answer to a tap, or what an interaction you asked for says, 15 s; a remark
    nobody asked for 5 s (owner: remarks stacked up and waited for her to come back, jot mvo7ftgm4eox3) */
@@ -7258,85 +7349,79 @@ function speakPump(now) {
     if (floorTaken()) { // (waiting for a conversation doesn't count towards going stale, for what was asked for)
         speakQ.forEach(q => { if (STALE_MS(q) > 5000) q.at = Math.max(q.at, now); });
         speakQ = speakQ.filter(q => now - q.at <= STALE_MS(q));
+        if (convo && convo.paused && !convo.answered && !boxOn() && !talkHeld()) { // the conversation stopped for this
+            const i = speakQ.findIndex(q => q.who === "mite" && q.opts.reply);
+            if (i >= 0) {
+                convo.answered = 1;
+                const q = speakQ.splice(i, 1)[0];
+                speak(q.text, Object.assign({}, q.opts, { fromQ: 1, reply: 0 }));
+            }
+        }
         return;
     }
     if (!talkHeld()) // (waiting behind a line that's still being read is its turn coming, not going stale)
-        speakQ.forEach(q => { if (!laneFree(q.who, now, q.opts.reply)) q.at = Math.max(q.at, now); });
+        speakQ.forEach(q => { if (!boxClear(now, q.opts.reply)) q.at = Math.max(q.at, now); });
     speakQ = speakQ.filter(q => now - q.at <= STALE_MS(q) && (!q.opts.still || q.opts.still())); // (still: a line about something that may have gone meanwhile, an anomaly say)
-    for (const who of ["mite", "other"]) {
-        const i = speakQ.findIndex(q => (q.who === "mite") === (who === "mite"));
-        if (i < 0 || !laneFree(speakQ[i].who, now, speakQ[i].opts.reply))
-            continue;
-        const q = speakQ.splice(i, 1)[0];
-        if (q.who === "mite")
-            speak(q.text, Object.assign({}, q.opts, { fromQ: 1, reply: 0 }));
-        else
-            snailSay(q.text, q.opts.ms, q.who, false, true, q.opts.name);
-    }
+    if (!speakQ.length || !boxFree(now, speakQ[0].opts.reply))
+        return;
+    const q = speakQ.shift();
+    if (q.who === "mite")
+        speak(q.text, Object.assign({}, q.opts, { fromQ: 1, reply: 0 }));
+    else
+        snailSay(q.text, q.opts.ms, q.who, false, true, q.opts.name);
+}
+/* the little emote or thinking dots over Mite: never over Mite's own words while they're being read */
+function speakSmall(text, { ms, thinking, emote, voice }, now) {
+    const b = $("bubble"), st = boxOn();
+    if (talkHeld() || st && st.el === b && !boxClear(now, false))
+        return;
+    if (st && st.el === b)
+        boxDrop();
+    b.textContent = text;
+    b.hidden = false;
+    b.classList.toggle("thinking", !!thinking);
+    b.classList.toggle("emote", !!emote);
+    b.classList.remove("hint", "boxed", "more");
+    if (emote)
+        blip("a", voice);
+    bubbleW = b.offsetWidth;
+    smallUntil = now + (emote ? ms || 2500 : ms || pageMs(text));
 }
 function speak(text, opts = {}) {
-    const { ms, thinking, emote, voice } = opts, now = performance.now();
+    const now = performance.now(), b = $("bubble");
     text = homeTxt(text);
-    const b = $("bubble"), small = emote || thinking;
-    const reply = !opts.fromQ && !speakWhole && (speakReply || now - lastInput <= 700);
-    if (small && talkHeld() && !opts.convo)
-        return;
-    if (!small && (talkHeld() || floorTaken() && !opts.convo)) { // a menu or card, or a conversation: the line waits for it
-        talkQueue("mite", text, Object.assign({}, opts, reply ? { reply: 1 } : {}, askedNow() ? { asked: 1 } : {}), reply); // (still a reply when it comes)
+    if (opts.emote || opts.thinking)
+        return speakSmall(text, opts, now);
+    const reply = !opts.fromQ && !(boxOn() && box.whole) && (speakReply || now - lastInput <= 700);
+    const wait = () => talkQueue("mite", text, Object.assign({}, opts, reply ? { reply: 1 } : {}, askedNow() ? { asked: 1 } : {}), reply); // (still a reply when it comes)
+    if (!opts.fromQ && (talkHeld() || floorTaken())) { // a menu or card, or a conversation: the line waits for it
+        wait();
+        if (reply)
+            convoCut(); // (a tap: Mite's answer gets in)
         return;
     }
-    if (!opts.fromQ && !b.hidden && (now < (reply ? speakReadUntil : Math.max(speakReadUntil, lineReadUntil)) || bubblePagesLeft() && (!reply || speakWhole)) && !b.classList.contains("thinking") && !(reply && !small && replyReady(now))) {
-        if (small)
-            return;
+    if (!opts.fromQ && !boxClear(now, reply)) {
         if (reply)
             typeFinish(); // (the line showing is finished at once: the reply follows it a moment later)
-        talkQueue("mite", text, Object.assign({}, opts, reply ? { reply: 1 } : {}, askedNow() ? { asked: 1 } : {}), reply);
+        wait();
         return;
     }
-    const pages = small ? [text] : boxPages(text), page = pages[0];
-    bubblePg = pages.length > 1 ? { pages, i: 0, voice } : null;
-    bubbleFull = text;
-    const typed = !thinking && !emote && !reduced && page.length > 2;
-    if (typed)
-        typeInto(b, page, voice);
-    else {
-        if (bubbleType)
-            typeFinish();
-        b.textContent = page;
-        lineDoneAt = now;
-        if (emote)
-            blip("a", voice);
-    }
-    if (!thinking && !emote && !opts.told) {
+    if (!opts.told) {
         const live = $("sayLive");
         if (live)
             live.textContent = text;
     }
     b.hidden = false;
-    b.classList.toggle("thinking", !!thinking);
-    b.classList.toggle("emote", !!emote);
-    b.classList.toggle("hint", !!opts.hint && !small); // a tip, not a remark: marked with a small ? (group 26)
-    b.classList.toggle("boxed", !small); // words go in the box at the bottom; emotes and thinking stay over Mite (group 40)
+    b.classList.remove("thinking", "emote", "awayL", "awayR");
+    b.classList.toggle("hint", !!opts.hint); // a tip, not a remark: marked with a small ? (group 26)
+    b.classList.add("boxed"); // words go in the box at the bottom; emotes and thinking stay over Mite (group 40)
+    b.style.left = b.style.top = "";
     b.dataset.who = S && S.settings ? S.settings.pet : "Mite";
-    bubbleW = b.offsetWidth;
-    if (emote) {
-        bubbleUntil = performance.now() + (ms || 2500);
-        speakReadUntil = lineReadUntil = 0;
-        return;
-    }
-    const f = talkF(), typeMs = typed ? page.length / (TYPE_CPS * typeF()) * 1000 : 0;
-    bubbleUntil = performance.now() + (ms && !bubblePg ? ms / f : pageMs(page)) + typeMs; // (a line in pages: each page gets its own time)
-    speakReadUntil = thinking ? 0 : performance.now() + typeMs + clamp(800 + page.length * 25, 1200, 3500) / readF(); // (a reply to a tap may follow after this)
-    lineReadUntil = thinking ? 0 : performance.now() + typeMs + readMs(page) * .7; // (anything else waits until the line could be read: jot, 25-10-2026)
     // { whole: true }: a line that's finished and read before anything else is said, even a reply to a tap
-    // (a new word, say). Tapping the bubble still moves on
-    speakWhole = !!opts.whole && !thinking;
-    if (speakWhole)
-        speakReadUntil = performance.now() + typeMs + readMs(page) * .8;
-    if (!thinking && text !== "…" && S && !opts.told) { // (told: the rest of a line that came back after a card; the Log has it)
-        if (!emote && typeof heard === "function")
-            heard(S.settings.pet, text, Date.now()); // (the Log, in the Satchel: the last 50 things on screen)
-    }
+    // (a new word, say). Tapping the box still moves on
+    boxOpen({ kind: "mite", who: "mite", el: b, te: b, pages: boxPages(text), full: text, voice: opts.voice, ms: opts.ms, whole: !!opts.whole });
+    if (text !== "…" && S && !opts.told && typeof heard === "function") // (told: the rest of a line that came back after a card; the Log has it)
+        heard(S.settings.pet, text, Date.now()); // (the Log, in the Satchel: the last 50 things on screen)
 }
 function hint(key, text, ms = 7500) {
     if (!S.hints)
@@ -10010,7 +10095,7 @@ const BEH = {
             po.lookOverride = { x: p.dir * .7, y: .4 };
             po.sy = -.04;
             po.feet = ta < .5;
-            if (!b.started && ta < 8 && ((b2Who === "guest" && !$("bubble2").hidden && performance.now() < b2ReadUntil) || speakQ.some(q => q.who === "guest")))
+            if (!b.started && ta < 8 && (boxSays("guest") || speakQ.some(q => q.who === "guest")))
                 return; // (its hello first: the conversation waits till that's been read, jot mvp1q2yngsaff)
             if (!b.started) {
                 b.started = 1;
@@ -10036,7 +10121,7 @@ const BEH = {
         } },
     /* Mite visits Midnightcat: walks over, pets her (the arm stretches if she's up on the desk), then they talk
        (pool catconvo). About once every few minutes when she's sitting or napping in the same room. */
-    catvisit: { d: [60, 60], w: c => $("dlg").hidden && cat.ready && cat.room === view && (cat.ph === "sit" || cat.ph === "nap") && cat.x > R && cat.x < W - R && performance.now() - catVisitAt > 180e3 ? .9 : 0, init(b, p) {
+    catvisit: { d: [60, 60], w: c => !floorTaken() && cat.ready && cat.room === view && (cat.ph === "sit" || cat.ph === "nap") && cat.x > R && cat.x < W - R && performance.now() - catVisitAt > 180e3 ? .9 : 0, init(b, p) {
             catVisitAt = performance.now();
             const st = standBy(cat.x, cat.g > 0 ? R * 1.15 : R * 1.05 + catBox().w * .5, p.x > cat.x ? 1 : -1); // close enough for the paw to reach her head
             b.tx = st.x;
@@ -10093,7 +10178,7 @@ const BEH = {
                 p.bt = p.dur;
         } },
     snailchat: { d: [60, 60], w: c => {
-            if (!own("snail") || snailAsleep || snailRoom !== view || !$("dlg").hidden) // (not in the middle of someone else's chat)
+            if (!own("snail") || snailAsleep || snailRoom !== view || floorTaken()) // (not in the middle of someone else's chat)
                 return 0;
             const sp = snailPos();
             return sp.x > R * 1.2 && sp.x < W - R * 1.2 ? .4 : 0;
@@ -10144,7 +10229,7 @@ const BEH = {
             }
         } },
     /* a chat with the possum: Mite goes over (the possum waits, possum.chat) and they talk (pool possumtalk) */
-    possumchat: { d: [60, 60], w: c => $("dlg").hidden && possum.ready && !possum.arriving && possum.room === view && ["sit", "walk"].includes(possum.ph) && !possumCookies() ? .3 : 0, init(b, p) {
+    possumchat: { d: [60, 60], w: c => !floorTaken() && possum.ready && !possum.arriving && possum.room === view && ["sit", "walk"].includes(possum.ph) && !possumCookies() ? .3 : 0, init(b, p) {
             possum.chat = true;
             const st = standBy(possum.x, R * 1.35, p.x > possum.x ? 1 : -1);
             b.tx = st.x;
@@ -16680,62 +16765,52 @@ let b2Who = "snail";
 /* voices from somewhere else, through the chalk circle (F the friend, A the friend's aunt): their names, for the
    conversation that's on (circleCall, possum.js) */
 let convoFar = {};
-/* the second bubble (the snail, Midnightcat, the possum, a visitor): one line at a time, through the same queue as
-   Mite's (speech.js). A line waits while the one showing isn't readable yet, or while a conversation has the floor;
-   the conversation's own emotes (emote) always show */
+/* the others' words (the snail, Midnightcat, the possum, a visitor) go in #bubble2, through the same box and queue as
+   Mite's (speech.js). The conversation's own emotes (emote) always show, over the speaker */
 function snailSay(text, ms, who, emote, fromQ, name) { // name: who said it, kept from when it was queued (a visitor may have left since)
     const now = performance.now(), b2 = $("bubble2");
     who = who || "snail";
     ms = ms || 5000;
-    if (emote && talkHeld())
+    if (emote && (talkHeld() || boxOn() && box.el === b2 && !boxClear(now, false))) // (a little look doesn't cut a line short)
         return;
-    if (!emote && (talkHeld() || !fromQ && (floorTaken() || !b2.hidden && (now < b2ReadUntil || b2PagesLeft())))) {
+    if (emote && boxOn() && box.el === b2)
+        boxDrop();
+    if (!emote && (talkHeld() || !fromQ && (floorTaken() || !boxClear(now, false)))) {
         talkQueue(who, guestFill(text), { ms, name: b2Name(who), asked: who === "guest" && performance.now() - lastInput < 1500 ? 1 : 0 });
         return;
     }
-    if (emote && !floorTaken() && !b2.hidden && (now < b2ReadUntil || b2PagesLeft())) // (a little look doesn't cut a line short)
-        return;
     b2Who = who;
     b2.classList.toggle("guestb", b2Who === "guest");
     b2.classList.toggle("catb", b2Who === "cat");
     b2.classList.toggle("possumb", b2Who === "possum");
     b2.classList.toggle("emote", !!emote);
-    const said = homeTxt(guestFill(String(text).replace(/\{snail\}/g, snailName()).replace(/\{possum\}/g, possumName())));
-    b2.textContent = "";
-    if (!emote) { // a name tag on the bubble says who's talking, not only its tint (group 26, owner 30-10-2026)
-        const tag = document.createElement("b");
-        tag.className = "btag";
-        tag.textContent = name || b2Name(who);
-        b2.appendChild(tag);
-    }
-    const pages = emote ? [said] : boxPages(said); // (group 49: three lines; a longer line in pages)
-    b2Pg = pages.length > 1 ? { pages, i: 0 } : null;
-    b2.appendChild(document.createTextNode(pages[0]));
     b2.classList.toggle("tagged", !emote);
     b2.classList.toggle("boxed", !emote); // (group 40: words at the bottom, emotes over the speaker)
+    const said = homeTxt(guestFill(String(text).replace(/\{snail\}/g, snailName()).replace(/\{possum\}/g, possumName())));
+    const voice = ["guest", "cat", "possum"].includes(b2Who) ? b2Who : "snail";
+    b2.textContent = "";
     b2.hidden = false;
-    if (b2Pg)
-        ms = pageMs(pages[0]);
-    snail2Until = now + ms;
-    b2ReadUntil = emote ? 0 : now + Math.min(ms, clamp(1000 + pages[0].length * 50, 1800, 8000) / readF());
-    blip("o", ["guest", "cat", "possum"].includes(b2Who) ? b2Who : "snail");
-    if (!emote)
-        heard(name || b2Name(b2Who), said, Date.now());
+    if (emote) {
+        b2.textContent = said;
+        small2Until = now + ms;
+        blip("o", voice);
+        return;
+    }
+    b2.classList.remove("more");
+    b2.style.left = b2.style.top = "";
+    const tag = document.createElement("b"), te = document.createElement("span"); // a name tag on the box says who's talking, not only its tint (group 26, owner 30-10-2026)
+    tag.className = "btag";
+    tag.textContent = name || b2Name(who);
+    b2.append(tag, te);
+    boxOpen({ kind: "other", who, el: b2, te, pages: boxPages(said), full: said, voice, ms }); // (group 49: three lines; a longer line in pages)
+    heard(name || b2Name(b2Who), said, Date.now());
 }
-/* the second bubble's line, when it runs over more than one page: { pages, i } */
-let b2Pg = null;
-function b2PagesLeft() {
-    return !!b2Pg && b2Pg.i + 1 < b2Pg.pages.length && !$("bubble2").hidden;
+/* the room of whoever's in the second bubble, and whether they've gone from view */
+function b2Room() {
+    return b2Who === "cat" ? cat.room : b2Who === "possum" ? possum.room : b2Who === "snail" ? snailRoom : "room";
 }
-function b2NextPage() {
-    if (!b2PagesLeft())
-        return false;
-    const t = b2Pg.pages[++b2Pg.i], now = performance.now(), ms = pageMs(t);
-    $("bubble2").lastChild.nodeValue = t;
-    snail2Until = now + ms;
-    b2ReadUntil = now + Math.min(ms, clamp(1000 + t.length * 50, 1800, 8000) / readF());
-    blip("o", ["guest", "cat", "possum"].includes(b2Who) ? b2Who : "snail");
-    return true;
+function b2Gone() {
+    return (b2Who === "snail" && !own("snail")) || (b2Who === "guest" && !guest) || !roomVisible(b2Room());
 }
 /* the name over a second-bubble line in Overheard */
 function b2Name(who) {
@@ -16776,15 +16851,17 @@ function introBeat(who) {
     return t ? { who: "M", t } : null;
 }
 let pointAt = { until: 0, dir: -1 }; // Mite pointing, for a line in a conversation (loop.js)
-/* one conversation at a time: the next waits for the one on screen instead of cutting through (jot mvzb0nh9t1h6x).
+/* one conversation at a time: the next waits for the box instead of cutting through (jot mvzb0nh9t1h6x).
    One waits, 30 s at most; a third isn't had. A card waits for Mite's line too (floorBusy) */
 let convoEndAt = 0, convoNext = null;
 function floorBusy() {
-    const b = $("bubble");
-    return floorTaken() || !b.hidden && b.classList.contains("boxed") && performance.now() < bubbleUntil;
+    return floorTaken() || !!boxOn();
 }
+const convoWait = () => floorTaken() || !boxClear(performance.now(), false);
 function runConvo(line, onEnd) {
-    if (floorTaken()) {
+    if (box && box.kind === "convo" && box.id !== convoId) // (called off, convoId moved on: it's gone, whatever the frame says)
+        dlgClose(box.id);
+    if (convoWait()) {
         if (convoNext) {
             onEnd && onEnd();
             return .5;
@@ -16792,18 +16869,20 @@ function runConvo(line, onEnd) {
         const t0 = performance.now(), w = { line, onEnd };
         convoNext = w;
         const tick = () => {
-            if (floorTaken() && performance.now() - t0 < 30e3) {
+            if (convoWait() && performance.now() - t0 < 30e3) {
                 setTimeout(tick, 400);
                 return;
             }
             convoNext = null;
-            if (floorTaken())
+            if (convoWait())
                 onEnd && onEnd();
             else
                 runConvo(line, onEnd);
         };
         setTimeout(tick, 400);
-        return Math.max(0, (convoEndAt - t0) / 1000) + dlgTime(String(line));
+        const box0 = boxOn(), left = box0 && box0.kind !== "convo" ? (box0.done ? Math.max(0, box0.doneAt + boxRead(box0) - t0) : typeMs(box0.pages[box0.i]) + boxRead(box0)) / 1000 : 0; // (the line on screen, then the one ahead of it)
+        const intros = [...new Set(String(line).match(/\b[SVCP](?=:)/g) || [])].filter(w => /\bM:/.test(line) && WHO_KIND[w] && !S.flags["met_" + WHO_KIND[w]]).length;
+        return Math.max(0, (convoEndAt - t0) / 1000) + left + dlgTime(String(line)) + intros * 12;
     }
     let beats = String(line).split(/\s+\/\s+/).map(x => x.trim()).filter(Boolean).map(x => {
         const m = x.match(/^([MSVCPFA]):\s*(.*)$/), b = m ? { who: m[1], t: m[2] } : { who: "M", t: x };
@@ -16823,7 +16902,8 @@ function runConvo(line, onEnd) {
     let i = 0, total = 0;
     const fill = t => homeTxt(fillText(guestFill(t.replace(/\{snail\}/g, snailName())), ctx()));
     let heldSince = 0;
-    const next = () => {
+    const c = convo = { id, paused: 0, answered: 0, cutLine: 0, pre: "", rest: null, name: "", kind: "", more: false, next: null };
+    const next = c.next = () => {
         if (id !== convoId)
             return;
         if (i < beats.length && talkHeld()) { // a menu or card is open: the conversation waits for it, a minute at most, then ends quietly (owner 25-10-2026: was a quarter of an hour, too long)
@@ -16842,8 +16922,13 @@ function runConvo(line, onEnd) {
         }
         const bt = beats[i++], txt = fill(bt.t);
         const name = bt.who === "S" ? snailName() : bt.who === "V" ? (guest ? guest.name : "Visitor") : bt.who === "C" ? CAT_NAME : bt.who === "P" ? possumName() : (bt.who === "F" || bt.who === "A") && convoFar[bt.who] ? convoFar[bt.who] : S.settings.pet, em = emoteFor(txt, bt.who);
-        heard(name, txt, cid);
-        dlgShow(name, txt, bt.who === "F" || bt.who === "A" ? "circle" : WHO_KIND[bt.who] || "", id, next, i < beats.length); // (first: from now on the conversation has the floor)
+        heard(name, txt, cid); // (the Log has the line as it was written, without an interruption's "…")
+        c.cutLine = 0;
+        c.name = name;
+        c.kind = bt.who === "F" || bt.who === "A" ? "circle" : WHO_KIND[bt.who] || "";
+        c.more = i < beats.length;
+        dlgShow(name, c.pre + txt, c.kind, id, next, c.more); // (first: from now on the conversation has the floor)
+        c.pre = "";
         if (bt.who === "F" || bt.who === "A") // (a voice through the chalk circle: nobody here to show a little look)
             ;
         else if (bt.who === "M") {
@@ -16859,13 +16944,14 @@ function runConvo(line, onEnd) {
     next();
     return total + .5;
 }
-/* the dialogue box: text types out, a tap finishes the page, then goes to the next page or line; otherwise it moves on
-   by itself after each page's reading time (group 49) */
-let dlgState = null;
-function dlgTime(txt) {
-    return boxPages(txt).reduce((s, p) => s + p.length / DLG_CPS / typeF() + clamp(1.6 + p.length * .045, 2.6, 8) / readF(), 0);
+/* the dialogue box: words type out, a tap finishes the page, then goes to the next page or line; otherwise it moves on
+   by itself after each page's reading time (group 49). The box itself is speech.js's */
+function convoRead(t) {
+    return clamp(1600 + t.length * 45, 2600, 8000) / readF();
 }
-const DLG_CPS = 34;
+function dlgTime(txt) {
+    return boxPages(txt).reduce((s, p) => s + (typeMs(p) + convoRead(p)) / 1000, 0);
+}
 function emoteFor(t, who) {
     t = String(t).trim();
     if (/\?["”']?$/.test(t))
@@ -16900,100 +16986,84 @@ function circleUp() {
     return own("circle") > 0 && typeof roomOnScreen === "function" && roomOnScreen("archive") && catInCircle();
 }
 function dlgShow(name, txt, kind, id, next, moreBeats) {
-    const el = $("dlg"), te = $("dlgText");
+    const el = $("dlg");
     el.hidden = false;
     el.className = "dlg" + (kind ? " " + kind : "") + (dlgUp ? " up" : "");
+    el.querySelector(".dlgnext").textContent = "▼";
     $("dlgName").textContent = name;
-    if (dlgState && dlgState.timer)
-        clearTimeout(dlgState.timer);
-    const st = { pages: boxPages(txt), p: 0, txt, shown: 0, id, next, t0: 0, timer: 0, done: false };
-    dlgState = st;
-    let ty, tr; // (the rest of the page is laid out but invisible, so words don't jump to the next line while they type)
-    const hold = () => {
-        st.done = true;
-        el.classList.add("done");
-        el.classList.toggle("more", st.p + 1 < st.pages.length || !!moreBeats);
-        te.textContent = st.txt;
-        const read = clamp(1600 + st.txt.length * 45, 2600, 8000) / readF();
-        const after = () => { // (covered by a menu or card: the line waits, and gets its reading time again once it's visible)
-            if (dlgState !== st || convoId !== id)
-                return;
-            if (talkHeld()) {
-                st.held = 1;
-                st.timer = setTimeout(after, 500);
-                return;
-            }
-            if (st.held) {
-                st.held = 0;
-                st.timer = setTimeout(after, read);
-                return;
-            }
-            st.go();
-        };
-        st.timer = setTimeout(after, read);
-    };
-    const tick = () => {
-        if (dlgState !== st || st.done)
-            return;
-        const was = st.shown;
-        st.shown = Math.min(st.txt.length, Math.floor((performance.now() - st.t0) / 1000 * DLG_CPS * typeF()));
-        if (st.shown > was && st.shown % 2 === 1)
-            blip(st.txt[st.shown - 1], ["snail", "guest", "cat", "possum"].includes(kind) ? kind : "mite");
-        ty.textContent = st.txt.slice(0, st.shown);
-        tr.textContent = st.txt.slice(st.shown);
-        if (st.shown >= st.txt.length)
-            hold();
-        else
-            st.timer = setTimeout(tick, 30);
-    };
-    const page = () => {
-        st.txt = st.pages[st.p];
-        st.shown = 0;
-        st.done = false;
-        st.t0 = performance.now();
-        el.classList.remove("done", "more");
-        if (reduced)
-            return hold();
-        te.innerHTML = '<span class="ty"></span><span class="tr" aria-hidden="true"></span>';
-        ty = te.firstChild;
-        tr = te.lastChild;
-        tick();
-    };
-    st.finish = hold;
-    st.go = () => { // the next page, or the next line
-        if (st.p + 1 < st.pages.length) {
-            st.p++;
-            page();
-        }
-        else
-            next();
-    };
-    page();
+    boxOpen({ kind: "convo", who: "convo", el, te: $("dlgText"), pages: boxPages(txt), full: txt, id, end: next, more: !!moreBeats, voice: ["snail", "guest", "cat", "possum"].includes(kind) ? kind : "mite" });
 }
 function dlgClose(id) {
-    if (dlgState && dlgState.id !== id)
-        return;
-    const st = dlgState;
-    if (st && st.timer)
-        clearTimeout(st.timer);
-    dlgState = null;
+    if (box && box.kind === "convo") {
+        if (box.id !== id)
+            return;
+        boxDrop();
+    }
     $("dlg").hidden = true;
+    if (convo && convo.id === id)
+        convo = null;
+}
+/* the conversation on screen: { id, paused, answered, cutLine, pre, rest, name, kind, more, next } */
+let convo = null;
+/* a tap during a conversation (group 52): Mite answers. With more of it to come, the page on screen finishes typing and
+   the box shows "…" where the ▼ goes; Mite answers in the box; the conversation goes on with what comes next, starting
+   with "…". On the last line no "…": it ends and Mite answers. One interruption per line: a second tap's answer waits
+   for the end, like any other line. */
+function convoCut() {
+    const c = convo, st = boxOn();
+    if (!c || c.id !== convoId || c.paused || c.cutLine || !st || st.kind !== "convo" || talkHeld())
+        return;
+    c.cutLine = 1;
+    typeFinish();
+    st.cut = 1;
+    st.cutAt = performance.now();
+    if (st.i + 1 < st.pages.length || st.more) {
+        st.el.classList.add("cut");
+        st.el.querySelector(".dlgnext").textContent = "…";
+    }
+    boxMark();
+}
+function convoPause(st) {
+    const c = convo, left = st.i + 1 < st.pages.length;
+    if (!c || !left && !st.more) { // the last line: it ends here
+        st.cut = 0;
+        boxGo();
+        return;
+    }
+    c.pre = "…";
+    c.rest = left ? st.pages.slice(st.i + 1).join(" ") : null; // (the rest of a line in pages isn't lost)
+    c.more = st.more;
+    c.paused = 1;
+    c.answered = 0;
+    boxClose();
+}
+function convoResume() {
+    const c = convo;
+    c.paused = 0;
+    if (c.rest === null) {
+        c.next();
+        return;
+    }
+    const t = c.pre + c.rest;
+    c.pre = "";
+    c.rest = null;
+    dlgShow(c.name, t, c.kind, c.id, c.next, c.more); // (cutLine stays: it's the same line)
 }
 $("dlg").addEventListener("click", e => {
     e.stopPropagation();
     lookAtSpeaker(convoWho);
-    const st = dlgState;
-    if (!st) {
+    lastInput = -1e9; // (moving a conversation on isn't something to answer)
+    const st = boxOn();
+    if (!st || st.kind !== "convo") {
         $("dlg").hidden = true;
         return;
     }
-    clearTimeout(st.timer);
-    if (!st.done)
-        st.finish();
-    else if (convoId === st.id)
-        st.go();
+    if (st.cut)
+        st.cutAt = -1e9;
+    else if (!typeFinish() && convoId === st.id)
+        boxGo();
 });
-let snailCarry = false, snailPause = false, snail2Until = 0, convoId = 0, convoWho = [];
+let snailCarry = false, snailPause = false, convoId = 0, convoWho = [];
 /* the room a speaker is in (M Mite, S the snail, C Midnightcat, P the possum, V a visitor) */
 function whoRoom(w) {
     return w === "S" || w === "snail" ? snailRoom : w === "C" || w === "cat" ? cat.room : w === "P" || w === "possum" ? possum.room : w === "F" || w === "A" ? "archive" : w === "M" ? view : "room";
@@ -17023,9 +17093,9 @@ function animalTalkTick(now) {
     if (now < animalTalkAt || !evWait(now, t => animalTalkAt = t))
         return;
     animalTalkAt = now + rnd(45e3, 120e3) * paceK();
-    if (!$("dlg").hidden || objQ.cur || !$("bubble2").hidden || S.lightsOut)
+    if (floorTaken() || objQ.cur || !$("bubble2").hidden || S.lightsOut)
         return;
-    if (talkHeld() || speakQ.length || !$("bubble").hidden && (bubblePagesLeft() || now < Math.max(speakReadUntil, lineReadUntil) + 1500)) { // Mite is talking (or you can't read it now): a little later (owner, 24-10)
+    if (talkHeld() || speakQ.length || boxOn()) { // Mite is talking (or you can't read it now): a little later (owner, 24-10)
         animalTalkAt = now + rnd(6e3, 12e3);
         return;
     }
@@ -17099,11 +17169,12 @@ function patronTalk(now) {
     });
     return true;
 }
-$("bubble2").addEventListener("click", e => { // a tap on an animal's (or a visitor's) bubble: go and look; and on to the next page, or a line that's waiting
+$("bubble2").addEventListener("click", e => { // a tap on a resident's box: go and look; the typing, the next page, or a line that's waiting (a tap to see who's talking doesn't take the words away)
     e.stopPropagation();
     lookAtSpeaker(b2Who);
-    if (!b2NextPage() && speakQ.some(q => q.who !== "mite")) {
-        snail2Until = b2ReadUntil = 0;
+    lastInput = -1e9;
+    if (!boxOn() || box.el !== $("bubble2") || !boxAdvance() && speakQ.length) {
+        boxClose();
         speakPump(performance.now());
     }
 });
@@ -17298,7 +17369,7 @@ function guestTick(dt, now) {
         g.eaten = Math.min(1, g.eaten + dt / 40);
         if (Math.random() < dt * .5)
             addP({ type: "text", text: "z", x: g.x + g.dir * g.s * .5, y: GY + g.z - g.s * .9, vy: -12, vx: 6 * g.dir, max: 2, col: "#dfe7ff", size: 10 + Math.random() * 3, room: "room" }); // (the wagon's: made outside drawing, it took the room on screen and floated over nothing there, owner 25-10-2026)
-        if (Math.random() < dt * .012 && now > snail2Until)
+        if (Math.random() < dt * .012 && !boxOn())
             snailSay(choice(["…more crumbs…", "…not the cat…", "…left at the big oak…", "…mm. Thursday.", "…the moon's in the jar…"]), 2600, "guest");
         if (now > g.napUntil && g.willStay && !g.stayed && !g.napped2) { // too dark or too wet to go home: stays on, asleep on the floor
             g.stayed = true;
@@ -22770,7 +22841,7 @@ function snailNext(room, dir) { // the room next door that way, or null at the e
 }
 /* the first time it's here (bought after 26-10-2026: S.flags.snailNew), it introduces itself (pool snailhello) */
 function snailHelloTick() {
-    if (!S.flags.snailNew || S.flags.met_snail || snailAsleep || pet.beh === "sleep" || S.lightsOut || talkHeld() || floorTaken() || !roomVisible(snailRoom))
+    if (!S.flags.snailNew || S.flags.met_snail || snailAsleep || pet.beh === "sleep" || S.lightsOut || talkHeld() || convoWait() || !roomVisible(snailRoom))
         return;
     S.flags.met_snail = 1; // (it says who it is: Mite doesn't need to)
     delete S.flags.snailNew;
@@ -22794,7 +22865,7 @@ function snailCosyNow() {
 /* it has watched Mite finish a piece (S.flags.cosyWant, knitting.js): once it sees Mite at the knitting again, or
    still tidying the yarn, it asks for a cosy; the next project is one (S.flags.cosyAsk) */
 function snailCosyTick() {
-    if (!S.flags.cosyWant || snailAsleep || pet.beh !== "knit" || snailRoom !== view || !roomVisible(view) || talkHeld() || floorTaken() || !$("dlg").hidden)
+    if (!S.flags.cosyWant || snailAsleep || pet.beh !== "knit" || snailRoom !== view || !roomVisible(view) || talkHeld() || floorTaken())
         return;
     delete S.flags.cosyWant;
     S.flags.cosyAsk = 1;
@@ -22876,7 +22947,7 @@ function snailTick(dt) {
         if (Math.abs(d) < .004 && snailPicnicB !== pet.b && snailZ < 1) {
             snailPicnicB = pet.b;
             const line = compose("snail_picnic");
-            if (line && roomVisible(snailRoom) && $("dlg").hidden) {
+            if (line && roomVisible(snailRoom) && !floorTaken()) {
                 snailSay(line, clamp(3500 + line.length * 45, 4500, 9000), "snail");
                 snailTalkUntil = now + 3000;
             }
@@ -22890,7 +22961,7 @@ function snailTick(dt) {
         return;
     }
     // where it wanted to be: up and down the skirting (in the archive it stops to study the chalk circle)
-    if (snailRoom === "archive" && own("circle") && now > snailCircleAt && snailTalkUntil < now && $("dlg").hidden) {
+    if (snailRoom === "archive" && own("circle") && now > snailCircleAt && snailTalkUntil < now && !floorTaken()) {
         snailCircleAt = now + rnd(4, 9) * 60e3;
         const line = compose("snailcircle");
         if (line && roomVisible("archive")) {
@@ -23037,7 +23108,7 @@ function snailPostTick(dt, now, stop) {
             snailDir = 1; // (facing the rack)
             const inbox = ((S.post && S.post.inbox) || []).filter(l => !l.read);
             const line = giveTakeJar() || compose(inbox.length ? "snail_post_new" : "snail_post"); // (a full jar goes with it: giving.js)
-            if (line && roomVisible("garden") && $("dlg").hidden) {
+            if (line && roomVisible("garden") && !floorTaken()) {
                 snailSay(line, clamp(3500 + line.length * 45, 4500, 9000), "snail");
                 snailTalkUntil = now + 3000;
             }
@@ -23089,7 +23160,7 @@ function yourLetterCard(delay) {
         const l = ((S.post && S.post.inbox) || []).find(x => x.you && !x.read);
         if (!l || hasDesk())
             return;
-        if (!booted || !$("ritual").hidden || talkHeld() || !$("dlg").hidden || !$("desk").hidden) { // (and not over Settings: QA, 01-11-2026)
+        if (!booted || !$("ritual").hidden || talkHeld() || floorTaken() || !$("desk").hidden) { // (and not over Settings: QA, 01-11-2026)
             yourCardTimer = setTimeout(tryCard, 3000);
             return;
         }
@@ -25793,7 +25864,7 @@ function obsWho() {
         out.push({ k: "S", kind: "snail", room: snailRoom, x: snailX * W });
     return out;
 }
-const obsBusy = () => !$("dlg").hidden || objQ.cur || S.lightsOut || document.hidden || !$("ritual").hidden || !$("bubble2").hidden || (anom && !anom.resolved);
+const obsBusy = () => floorTaken() || objQ.cur || S.lightsOut || document.hidden || !$("ritual").hidden || !$("bubble2").hidden || (anom && !anom.resolved);
 function observeTick(now) {
     if (obs)
         return obsStep(now);
@@ -29715,7 +29786,7 @@ function frame(now) {
     }
     const dt = Math.min(window.__dtCap || .1, (now - last) / 1000); // (__dtCap: the tests only, tests/run.js)
     last = now;
-    speechHoldTick(now, dt); // (a menu or card open: the lines on screen wait for it, speech.js)
+    speechHoldTick(now); // (a menu or card open: the lines on screen wait for it, speech.js)
     const held = eventsHoldTick(dt); // (and so do the events: anomalies, the golden firefly, drifters, ...)
     // economy
     decayMom(dt * 1000);
@@ -29941,24 +30012,16 @@ function frame(now) {
         drawTextQueue();
         cx = vcx;
     }
-    // bubble position
-    if (dlgState && dlgState.id !== convoId)
-        dlgClose(dlgState.id);
-    // both bubbles' sizes are read first and only then moved: reading a size after moving something makes the
-    // browser lay the page out again, twice a frame
-    const b = $("bubble"), b2 = $("bubble2"), bH = b.hidden ? 0 : b.offsetHeight, b2W = b2.hidden ? 160 : b2.offsetWidth || 160, b2H = b2.hidden ? 0 : b2.offsetHeight;
-    const dl = $("dlg"), dlH0 = dl.hidden ? 0 : dl.offsetHeight, dlH = dlH0 && dl.classList.contains("up") === b.classList.contains("up") ? dlH0 : 0; // (dlH: only when it's where the boxes are)
-    if (!b.hidden && b.classList.contains("boxed") && !b.classList.contains("up"))
-        boxGap = H - b.offsetTop - bH - (parseFloat(b.style.getPropertyValue("--stack")) || 0); // how far above the bottom the box sits when it's down (the dock, the safe area)
-    {
-        const r2 = b2Who === "cat" ? cat.room : b2Who === "possum" ? possum.room : b2Who === "snail" ? snailRoom : "room";
-        if ((b2Who === "snail" && !own("snail")) || (b2Who === "guest" && !guest) || !roomVisible(r2) || now > snail2Until && !b2NextPage()) {
+    // the words box's time; then the little emotes over the speakers, placed. Sizes are read first and only then moved:
+    // reading a size after moving something makes the browser lay the page out again, twice a frame
+    boxTick(now);
+    const b = $("bubble"), b2 = $("bubble2"), st = boxOn(), bx = st && st.el, boxH = bx ? bx.offsetHeight : 0, bH = b.hidden ? 0 : b.offsetHeight, b2W = b2.hidden ? 160 : b2.offsetWidth || 160, b2H = b2.hidden ? 0 : b2.offsetHeight;
+    if (bx && !bx.classList.contains("up"))
+        boxGap = H - bx.offsetTop - boxH; // how far above the bottom the box sits when it's down (the dock, the safe area)
+    if (!b2.hidden && bx !== b2) {
+        const r2 = b2Room();
+        if (b2.classList.contains("boxed") || b2Gone() || now > small2Until)
             b2.hidden = true;
-        }
-        else if (b2.classList.contains("boxed")) { // at the bottom (group 40); above Mite's box when both are showing
-            b2.style.left = b2.style.top = "";
-            b2.style.setProperty("--stack", (dlH ? dlH + 22 : 0) + (b.hidden || !b.classList.contains("boxed") ? 0 : bH + 22) + "px");
-        }
         else {
             const sp0 = b2Who === "guest" ? guestPos() : b2Who === "cat" ? catPos() : b2Who === "possum" ? possumPos() : snailPos(), sp = { x: sp0.x + roomOff(r2), y: sp0.y }, half = b2W / 2 + 8;
             b2.style.left = clamp(sp.x, half, W - half) + "px";
@@ -29971,39 +30034,29 @@ function frame(now) {
         }
     }
     roomArrows(); // the arrows to look into the other room (garden.js)
-    speakPump(now); // a line that waited for Mite to finish the last one (speech.js)
-    { // the boxes go up for the chalk circle (group 40), and while someone on the floor would be under them (group 47)
-        const bB = !b.hidden && b.classList.contains("boxed"), b2B = !b2.hidden && b2.classList.contains("boxed");
-        const tall = [bB ? bH : 0, b2B ? b2H : 0, dlH0].filter(Boolean).reduce((x, y, i) => x + y + (i ? 22 : 0), 0);
-        if (tall && floorUnder(H - boxGap - tall))
+    speakPump(now); // a line that waited for the box (speech.js)
+    { // the box goes up for the chalk circle (group 40), and while someone on the floor would be under it (group 47)
+        if (boxH && floorUnder(H - boxGap - boxH))
             floorUpUntil = now + 3000; // (stays up a moment, so it doesn't hop while someone walks along the edge)
-        const fl = !!tall && now < floorUpUntil, up = ((!b.hidden || !b2.hidden) && circleUp()) || fl;
+        const fl = !!boxH && now < floorUpUntil, up = circleUp() || floorTaken() && dlgUp || fl; // (an answer inside a raised conversation stays where it is)
         b.classList.toggle("up", up);
         b2.classList.toggle("up", up);
-        if (!dl.hidden)
-            dl.classList.toggle("up", dlgUp || fl);
+        $("dlg").classList.toggle("up", dlgUp || fl);
     }
-    b.classList.toggle("more", (bubblePagesLeft() || speakQ.some(q => q.who === "mite")) && (!bubbleType || bubbleType.done)); // ▼: tap for the next page or line
-    if (!b.hidden) {
-        if (now > bubbleUntil && !(bubbleType && !bubbleType.done) && !bubbleNextPage()) { // never while it's still typing; the next page, if there is one
+    if (!b.hidden && boxOn()?.el !== b) { // (asked again: a line may just have come up, speakPump)
+        if (b.classList.contains("boxed") || now > smallUntil)
             b.hidden = true;
-        }
-        else if (b.classList.contains("boxed")) { // words: in the box at the bottom (group 40); above a conversation's box when both show (jot, 02-11-2026: it fell under Midnightcat's)
-            b.style.left = b.style.top = "";
-            b.style.setProperty("--stack", (dlH ? dlH + 22 : 0) + "px");
-            b.classList.remove("awayL", "awayR");
-        }
         else {
             const half = (bubbleW || 220) / 2 + 8, px = pet.x + roomOff(view); // where Mite is on screen
-            const bx = W > half * 2 ? clamp(px, half, W - half) : W / 2;
-            b.style.left = bx + "px";
+            const bx0 = W > half * 2 ? clamp(px, half, W - half) : W / 2;
+            b.style.left = bx0 + "px";
             // the bubble hangs above Mite; if it's too tall for that, it moves down so it never slides under the top controls
             const bh = bH || b.offsetHeight, safe = bubbleSafeTop(); // (just shown this frame: measured now)
             let top = Math.max(54, GY - (pet.ground || 0) - R * 2.5 - (S.hat ? R * .5 : 0));
             if (top - bh < safe)
                 top = safe + bh;
             b.style.top = top + "px";
-            b.style.setProperty("--tail", clamp(50 + (px - bx) / (bubbleW || 220) * 100, 10, 90) + "%");
+            b.style.setProperty("--tail", clamp(50 + (px - bx0) / (bubbleW || 220) * 100, 10, 90) + "%");
             // Mite is in the next room, off screen: the tail moves to that side of the bubble and points that way
             b.classList.toggle("awayL", px < -R);
             b.classList.toggle("awayR", px > W + R);
@@ -34276,8 +34329,7 @@ function playChatter(text, { action } = {}) {
     const next = () => {
         if (id !== chatterSeq)
             return;
-        const b = $("bubble");
-        if (i > 0 && (b.hidden || bubbleFull !== beats[i - 1]))
+        if (i > 0 && (!boxOn() || box.full !== beats[i - 1]))
             return;
         const t = beats[i++];
         const ms = clamp(1800 + t.length * 55, 2600, 7000);
@@ -34467,7 +34519,7 @@ function easelArrive(quiet) {
 function soundHint() {
     if ((S.hints && S.hints.sound) || sndMode())
         return;
-    if (!$("ritual").hidden || ($("dlg") && !$("dlg").hidden) || document.body.classList.contains("sheet") || document.hidden) {
+    if (!$("ritual").hidden || floorTaken() || document.body.classList.contains("sheet") || document.hidden) {
         setTimeout(soundHint, 5000);
         return;
     }
@@ -35973,21 +36025,19 @@ function closeSheet() {
     if (sheetOpener && sheetOpener.focus)
         sheetOpener.focus();
 }
-/* tapping Mite's bubble, like a game: a tap while it types shows the whole page; the next tap goes to the next page,
+/* tapping Mite's box, like a game: a tap while it types shows the whole page; the next tap goes to the next page,
    or closes it, and a line that was waiting (speech.js, speakQ) comes straight after */
 $("bubble").addEventListener("click", () => {
     const b = $("bubble");
     camFollow(); // the view goes to Mite, so you can watch what it's doing
-    if (bubbleType && !bubbleType.done) {
-        typeFinish();
-        return;
+    lastInput = -1e9; // (moving on isn't something to answer)
+    if (boxOn() && box.el === b) {
+        if (boxAdvance())
+            return;
+        boxClose();
     }
-    if (bubbleNextPage())
-        return;
-    b.classList.remove("more");
-    b.hidden = true;
-    bubbleUntil = speakReadUntil = lineReadUntil = 0;
-    speakWhole = false;
+    else
+        b.hidden = true;
     speakPump(performance.now());
 });
 $("kPat").onclick = () => patPet();
@@ -36258,7 +36308,7 @@ async function connect(prevSeen) {
             else if (remote)
                 S.flags.starter = 1; // an existing game: no starting gift
             if (remote) {
-                adoptAccount(remote);
+                adoptAccount(remote, firstStart);
                 setSync("synced with your account");
             }
             await pullArch();
