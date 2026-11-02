@@ -829,6 +829,8 @@ body.pixel{--boxlh:24px;--boxfs:16px}
 #dlg>span,#boxRuler>span{font-size:var(--boxfs);line-height:var(--boxlh);min-height:0}
 #dlg>span{height:calc(var(--boxlh)*3)}
 #boxRuler{visibility:hidden;pointer-events:none;top:0;bottom:auto;min-height:0;z-index:-1}
+/* QA 02-11-2026: on a phone the slips sat over the add form (the Add button, Medium, Big); with the sheet up they go in the strip above it */
+@media (max-width:959px){body.game.sheet .toasts:not(.stay){top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto}}
 
 </style>
 <div class="app">
