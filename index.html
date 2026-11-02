@@ -385,7 +385,6 @@ body.traying .nextup{display:none}
 @keyframes rise{0%{opacity:0;transform:translateY(calc(-100% + 8px))}10%{opacity:1;transform:translateY(-100%)}75%{opacity:1}100%{opacity:0;transform:translateY(calc(-100% - 28px))}}
 .bubble{pointer-events:auto;cursor:pointer}
 .bubble.more::after{content:"▾";display:inline-block;margin-left:6px;font-size:.8em;opacity:.7;animation:dlgbob 1s steps(2) infinite}
-.bubble.pinned{outline:2px solid #c47f1c}
 .kbd{position:absolute;left:8px;bottom:8px;z-index:6;display:flex;gap:6px;flex-wrap:wrap}
 .kbd:not(:focus-within){clip-path:inset(50%);width:1px;height:1px;overflow:hidden}
 .kbd button{border:0;border-radius:999px;padding:6px 12px;background:#fffdf4;color:#22281f;font-weight:700;font-size:13px}
@@ -447,7 +446,6 @@ body.pixel .bubble::after{width:9px;height:9px;bottom:-7px;border-right:2px soli
 body.pixel .bubble.awayL:not(.more)::after{bottom:auto;border:0;border-left:2px solid var(--px-ink);border-bottom:2px solid var(--px-ink)}
 body.pixel .bubble.awayR:not(.more)::after{bottom:auto;border:0;border-top:2px solid var(--px-ink);border-right:2px solid var(--px-ink)}
 body.pixel .bubble.below::after{bottom:auto;top:-7px;border:0;border-left:2px solid var(--px-ink);border-top:2px solid var(--px-ink)}
-body.pixel .bubble.pinned{outline:2px dashed #c47f1c;outline-offset:2px}
 body.pixel h2,body.pixel .m strong,body.pixel .reward b,body.pixel .ritcard h2,body.pixel .wk-h,body.pixel .dockbtn .lbl,body.pixel .nu-text small{font-family:var(--f-display);font-weight:400;letter-spacing:.03em}
 body.pixel h2{font-size:32px;line-height:32px}
 body.pixel .m strong{font-size:32px;line-height:32px}
@@ -824,10 +822,12 @@ body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + va
    speech.js). #boxRuler is an invisible box of the same width and font, for measuring */
 :root{--boxlh:22px;--boxfs:15px}
 body.pixel{--boxlh:24px;--boxfs:16px}
-#dlg,#bubble.boxed,#bubble2.boxed,#boxRuler{box-sizing:border-box;padding:14px 24px 12px 16px;font-size:var(--boxfs);line-height:var(--boxlh)}
-#dlg,#bubble.boxed,#bubble2.boxed{height:calc(var(--boxlh)*3 + 32px);min-height:0}
+#dlg,#bubble.boxed,#bubble2.boxed,#boxRuler{box-sizing:border-box;padding:14px 24px 18px 16px;font-size:var(--boxfs);line-height:var(--boxlh)}
+#dlg,#bubble.boxed,#bubble2.boxed{height:calc(var(--boxlh)*3 + 38px);min-height:0}
 #dlg>span,#boxRuler>span{font-size:var(--boxfs);line-height:var(--boxlh);min-height:0}
 #dlg>span{height:calc(var(--boxlh)*3)}
+#glimpseList h4{margin:14px 0 4px;font-family:var(--f-display);font-size:14px;color:var(--muted)}
+#glimpseList h4:first-child{margin-top:4px}
 #boxRuler{visibility:hidden;pointer-events:none;top:0;bottom:auto;min-height:0;z-index:-1}
 /* QA 02-11-2026: on a phone the slips sat over the add form (the Add button, Medium, Big); with the sheet up they go in the strip above it */
 @media (max-width:959px){body.game.sheet .toasts:not(.stay){top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto}}
@@ -5149,7 +5149,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 44 batch 2 (01-11-2026)
     "mvxujz21qeu6z", "mvxuknw3m6dbb", "mvxupxo6hv3vq",
     // group 44 lore check and group 45 (01-11-2026)
-    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz"];
+    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x"];
 
 </script>
 <script>/* js/core/state.js */
@@ -6258,8 +6258,37 @@ async function pullBeforeSave() {
     const r = await getDoc("mossling");
     if (!r || num(r.savedAt) === lastPut || num(r.savedAt) === num(S.savedAt))
         return false;
-    S = merge(defaultState(), mergeStates(JSON.parse(JSON.stringify(S)), merge(defaultState(), r)));
+    adoptAccount(r);
     return true;
+}
+/* glimmers and the pantry go down as well as up, so neither "the highest" nor "the newest" merges them: spending
+   came back, bought tapes went (jots mvzb5nbv4d6s9, mvzb4gx0wcv8d). syncBase is what this copy and the account last
+   agreed on; each side's change since then counts, once. It belongs to this browser, not to the save */
+let syncBase = (() => { try { return JSON.parse(localStorage.getItem(LS_KEY + ".sync")) || null; } catch (e) { return null; } })();
+const syncCounts = s => ({ g: num(s.g), pantry: Object.assign({}, s.pantry || {}) });
+function syncBaseSet(c) {
+    syncBase = c;
+    try {
+        localStorage.setItem(LS_KEY + ".sync", JSON.stringify(c));
+    }
+    catch (e) {
+    }
+}
+function adoptAccount(r) {
+    const a = S, b = merge(defaultState(), r), m = merge(defaultState(), mergeStates(JSON.parse(JSON.stringify(a)), b));
+    if (num(a.wiped) === num(b.wiped)) { // (started over on one side: mergeStates has taken that side, as it is)
+        const same = num(a.savedAt) === num(b.savedAt), base = same ? syncCounts(b) : syncBase, nw = num(b.savedAt) > num(a.savedAt) ? b : a; // (no base yet: the copy saved last)
+        m.g = base ? Math.max(0, num(a.g) + num(b.g) - num(base.g)) : num(nw.g);
+        const pa = a.pantry || {}, pb = b.pantry || {}, p0 = base ? base.pantry || {} : null;
+        m.pantry = {};
+        for (const k of new Set([...Object.keys(pa), ...Object.keys(pb)])) {
+            const n = p0 ? num(pa[k]) + num(pb[k]) - num(p0[k]) : num((nw.pantry || {})[k]), max = (PANTRY.find(x => x.id === k) || {}).max || PANTRY_MAX;
+            if (n > 0)
+                m.pantry[k] = Math.min(max, n);
+        }
+    }
+    S = m;
+    syncBaseSet(syncCounts(b));
 }
 async function save() {
     let merged = false;
@@ -6286,8 +6315,10 @@ async function save() {
         safekeepMirror(); // (the Android app: a second copy in its own files, safekeep.js)
     if (db && uid) {
         try {
-            await putDoc("mossling", JSON.parse(j));
-            lastPut = num(S.savedAt);
+            const sent = JSON.parse(j);
+            await putDoc("mossling", sent);
+            syncBaseSet(syncCounts(sent));
+            lastPut = num(sent.savedAt);
             await pushArch();
             await pushKeep();
             setSync("Saved " + hhmm() + ((S.archPending || []).length ? " · archive pending" : ""));
@@ -7166,7 +7197,6 @@ function bubbleNextPage() {
     if (!bubblePagesLeft())
         return false;
     const b = $("bubble"), t = bubblePg.pages[++bubblePg.i], typed = !reduced && t.length > 2;
-    b.classList.remove("pinned");
     if (typed)
         typeInto(b, t, bubblePg.voice);
     else {
@@ -7286,7 +7316,6 @@ function speak(text, opts = {}) {
     b.classList.toggle("thinking", !!thinking);
     b.classList.toggle("emote", !!emote);
     b.classList.toggle("hint", !!opts.hint && !small); // a tip, not a remark: marked with a small ? (group 26)
-    b.classList.remove("pinned");
     b.classList.toggle("boxed", !small); // words go in the box at the bottom; emotes and thinking stay over Mite (group 40)
     b.dataset.who = S && S.settings ? S.settings.pet : "Mite";
     bubbleW = b.offsetWidth;
@@ -9288,7 +9317,8 @@ function doorWalk(o) {
                 enterRoom(o.room);
                 o.enter(p);
                 b.ph = "in";
-                return;
+                if (!b.then) // (on the way to something: straight there from the door, jot mvzfk57yjww73)
+                    return;
             }
             p.bt = p.dur;
             if (b.then) {
@@ -16746,7 +16776,35 @@ function introBeat(who) {
     return t ? { who: "M", t } : null;
 }
 let pointAt = { until: 0, dir: -1 }; // Mite pointing, for a line in a conversation (loop.js)
+/* one conversation at a time: the next waits for the one on screen instead of cutting through (jot mvzb0nh9t1h6x).
+   One waits, 30 s at most; a third isn't had. A card waits for Mite's line too (floorBusy) */
+let convoEndAt = 0, convoNext = null;
+function floorBusy() {
+    const b = $("bubble");
+    return floorTaken() || !b.hidden && b.classList.contains("boxed") && performance.now() < bubbleUntil;
+}
 function runConvo(line, onEnd) {
+    if (floorTaken()) {
+        if (convoNext) {
+            onEnd && onEnd();
+            return .5;
+        }
+        const t0 = performance.now(), w = { line, onEnd };
+        convoNext = w;
+        const tick = () => {
+            if (floorTaken() && performance.now() - t0 < 30e3) {
+                setTimeout(tick, 400);
+                return;
+            }
+            convoNext = null;
+            if (floorTaken())
+                onEnd && onEnd();
+            else
+                runConvo(line, onEnd);
+        };
+        setTimeout(tick, 400);
+        return Math.max(0, (convoEndAt - t0) / 1000) + dlgTime(String(line));
+    }
     let beats = String(line).split(/\s+\/\s+/).map(x => x.trim()).filter(Boolean).map(x => {
         const m = x.match(/^([MSVCPFA]):\s*(.*)$/), b = m ? { who: m[1], t: m[2] } : { who: "M", t: x };
         const pt = b.t.match(/^\(points\)\s*/); // "M: (points) …": Mite points towards the nook while it says it (the possum's beam)
@@ -16797,6 +16855,7 @@ function runConvo(line, onEnd) {
             snailSay(em, dlgTime(txt) * 1000, WHO_KIND[bt.who], true);
     };
     beats.forEach(b => total += dlgTime(fill(b.t)));
+    convoEndAt = performance.now() + total * 1000;
     next();
     return total + .5;
 }
@@ -17084,7 +17143,7 @@ function raccoonName() {
     }
     return S.raccoonName;
 }
-const guestSize = g => R * (g.kind === "raccoon" ? .82 : g.kind === "rat" ? .62 : .54) * 1.15;
+const guestSize = g => R * (g.kind === "raccoon" ? .943 : g.kind === "rat" ? .44 : .31); // (a rat and a mouse are smaller than the possum, 42 px long at R 50; jot mvzb325sjv6wm)
 function spawnRaccoon() {
     const side = Math.random() < .5 ? -1 : 1;
     let tx = W * rnd(.3, .7);
@@ -18246,10 +18305,17 @@ function resolveAnom() {
         incNote(`Incident ${no}, ${tm}: a kind report was filed about the wagon. It read: "${rep}" Filed by: unknown (see memo).`);
         setTimeout(() => { // the memo, a little later, like an envelope after a parcel
             incNote(`Incident ${no}, ${tm} (cont.): a memo came after the kind report. It read: "${memo}" Filed by, according to the Bureau: ${who}.`);
-            if ($("ritual").hidden && !reduced)
-                sfx("card");
-            openRitual("Memo from the Bureau", "Re: the kind report about your wagon.", `<div class="letter">${esc(homeTxt(memo))}</div><p class="ritmeta">Filed by: ${esc(homeTxt(who))}. Copied to the incident log.</p>`, [["File it", "primary", closeRitual]]);
-            afterChange();
+            const card = () => { // (it waits its turn: a conversation, a line being read, another card, jot mvzb0nh9t1h6x)
+                if (floorBusy() || talkHeld()) {
+                    setTimeout(card, 1000);
+                    return;
+                }
+                if (!reduced)
+                    sfx("card");
+                openRitual("Memo from the Bureau", "Re: the kind report about your wagon.", `<div class="letter">${esc(homeTxt(memo))}</div><p class="ritmeta">Filed by: ${esc(homeTxt(who))}. Copied to the incident log.</p>`, [["File it", "primary", closeRitual]]);
+                afterChange();
+            };
+            card();
         }, 9000);
         a.exit = a.t + .8;
         a.life = a.exit + 1.5;
@@ -27062,6 +27128,12 @@ function showGlimpse() {
     return 4;
 }
 /* the Cabinet: everything the circle has shown, by whose family it was */
+/* whose story it is: the heading it goes under in Collections */
+function glimpseKind(g) {
+    if (g.anom || /ghost|night door|Bureau/i.test(g.who))
+        return "Anomalies";
+    return g.mouse || /raccoon|visitors/i.test(g.who) ? "Visitors" : "Residents";
+}
 function renderGlimpses() {
     const el = $("glimpseList");
     if (!el)
@@ -27072,8 +27144,11 @@ function renderGlimpses() {
         if (g && !(by[g.who] || []).some(x => x.key === g.key))
             (by[g.who] = by[g.who] || []).push(g);
     }
-    const whos = Object.keys(by);
-    el.innerHTML = whos.length ? whos.map(w => `<details><summary>${esc(glimpseFill(w))} <span class="sync">${by[w].length}</span></summary>${by[w].map(g => `<p>${esc(glimpseFill(g.text))}</p>`).join("")}</details>`).join("")
+    const whos = Object.keys(by), fold = w => `<details><summary>${esc(glimpseFill(w))} <span class="sync">${by[w].length}</span></summary>${by[w].map(g => `<p>${esc(glimpseFill(g.text))}</p>`).join("")}</details>`;
+    el.innerHTML = whos.length ? ["Residents", "Visitors", "Anomalies"].map(h => { // (jot mvzb8jnpcjibh)
+        const l = whos.filter(w => glimpseKind(by[w][0]) === h);
+        return l.length ? `<h4>${h}</h4>${l.map(fold).join("")}` : "";
+    }).join("")
         : `<p class="sub">${own("circle") ? "Nothing yet. Tap the chalk circle in the archive and Mite will look back." : "The chalk circle (in the shop) can look back into the past."}</p>`;
 }
 
@@ -29912,7 +29987,6 @@ function frame(now) {
     if (!b.hidden) {
         if (now > bubbleUntil && !(bubbleType && !bubbleType.done) && !bubbleNextPage()) { // never while it's still typing; the next page, if there is one
             b.hidden = true;
-            b.classList.remove("pinned");
         }
         else if (b.classList.contains("boxed")) { // words: in the box at the bottom (group 40); above a conversation's box when both show (jot, 02-11-2026: it fell under Midnightcat's)
             b.style.left = b.style.top = "";
@@ -30285,7 +30359,12 @@ const TAP_TARGETS = {
         act: tapGoTo("calendar")
     },
     guest: {
-        hit: p => guest && hitIn(p, { x: guest.x - guest.s * .8, y: GY + (guest.z || 0) - guest.s * 1.2, w: guest.s * 1.6, h: guest.s * 1.2 }),
+        hit: p => { // (a mouse is small: the finger's target isn't)
+            if (!guest)
+                return false;
+            const s = Math.max(guest.s, R * .6);
+            return hitIn(p, { x: guest.x - s * .8, y: GY + (guest.z || 0) - s * 1.2, w: s * 1.6, h: s * 1.2 });
+        },
         act: () => guestTap()
     },
     vault: { hit: p => vaultHit && hitIn(p, vaultHit) && notOnMite(p) && vaultHit, act: tapGoTo("vault") },
@@ -32194,11 +32273,13 @@ function colItemTags() {
     for (const [k, el, d] of all) {
         if (seen.has(k))
             continue;
-        const tag = document.createElement("span");
-        tag.className = "itemnew";
-        tag.textContent = "new";
-        const lab = el.querySelector("b, figcaption");
-        (lab || el).appendChild(tag);
+        if (el.parentElement.closest("details") === d) { // (in a fold, the fold's heading says it: one "new", jot mvzb77nwhkajc)
+            const tag = document.createElement("span");
+            tag.className = "itemnew";
+            tag.textContent = "new";
+            const lab = el.querySelector("b, figcaption");
+            (lab || el).appendChild(tag);
+        }
         const nw = $("new-" + d.dataset.sec); // the section says so too
         if (nw)
             nw.hidden = false;
@@ -35892,20 +35973,18 @@ function closeSheet() {
     if (sheetOpener && sheetOpener.focus)
         sheetOpener.focus();
 }
-/* tapping Mite's bubble, like a game: a tap while it types shows the whole page and keeps it up; the next tap goes
-   to the next page, or closes it, and a line that was waiting (speech.js, speakQ) comes straight after */
+/* tapping Mite's bubble, like a game: a tap while it types shows the whole page; the next tap goes to the next page,
+   or closes it, and a line that was waiting (speech.js, speakQ) comes straight after */
 $("bubble").addEventListener("click", () => {
     const b = $("bubble");
     camFollow(); // the view goes to Mite, so you can watch what it's doing
     if (bubbleType && !bubbleType.done) {
         typeFinish();
-        b.classList.add("pinned");
-        bubbleUntil = speakReadUntil = performance.now() + 30000; // stays until you tap again (or half a minute)
         return;
     }
     if (bubbleNextPage())
         return;
-    b.classList.remove("pinned", "more");
+    b.classList.remove("more");
     b.hidden = true;
     bubbleUntil = speakReadUntil = lineReadUntil = 0;
     speakWhole = false;
@@ -36179,7 +36258,7 @@ async function connect(prevSeen) {
             else if (remote)
                 S.flags.starter = 1; // an existing game: no starting gift
             if (remote) {
-                S = merge(defaultState(), mergeStates(JSON.parse(JSON.stringify(S)), merge(defaultState(), remote)));
+                adoptAccount(remote);
                 setSync("synced with your account");
             }
             await pullArch();
@@ -36215,7 +36294,7 @@ document.addEventListener("visibilitychange", async () => {
         try {
             const r = await getDoc("mossling");
             if (r) {
-                S = merge(defaultState(), mergeStates(JSON.parse(JSON.stringify(S)), merge(defaultState(), r)));
+                adoptAccount(r);
                 setSync("synced with your account");
             }
         }
