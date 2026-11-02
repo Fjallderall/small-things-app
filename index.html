@@ -792,7 +792,7 @@ body.pixel .bubble.tagged{padding-top:12px}
 body.pixel .bubble.hint::before{font-family:var(--f-display);font-weight:400;font-size:18px}
 body.game:not(.sheet) .toasts:not(.stay){top:auto;left:16px;right:16px;max-width:440px;margin:0 auto;transform:none;align-items:stretch;bottom:calc(env(safe-area-inset-bottom,0px) + 118px)}
 /* the Mite card (or a tray) is open over the dock: the slips go to the top, not over its buttons (QA, 01-11-2026) */
-body.game.traying:not(.sheet) .toasts:not(.stay),body.game:not(.sheet):has(#dlg:not([hidden]),.bubble.boxed:not([hidden])) .toasts:not(.stay){bottom:auto;top:calc(env(safe-area-inset-top,0px) + 64px)}
+body.game.traying:not(.sheet) .toasts:not(.stay),body.game:not(.sheet):has(#dlg:not([hidden]):not(.up),.bubble.boxed:not([hidden]):not(.up)) .toasts:not(.stay){bottom:auto;top:calc(env(safe-area-inset-top,0px) + 64px)}
 body.pixel .toast{background:#f3ead2;color:var(--px-ink);border:2px solid var(--px-ink);box-shadow:3px 3px 0 rgba(0,0,0,.3);font-family:var(--f-read);font-size:15px;line-height:22px}
 body.pixel .toast button{font-family:var(--f-display);font-size:19px;line-height:20px;border-width:2px}
 body.pixel .toast.ach{background:#f1c27a;color:var(--px-ink)}
@@ -979,7 +979,7 @@ body.game .bubble.boxed{bottom:calc(env(safe-area-inset-bottom,0px) + 128px + va
         <div class="glimpses" id="glimpseList"></div></details>
       <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>The Deck</h3><span class="seccount" id="cnt-cab-cards"></span><span class="secnew" id="new-cab-cards" hidden>new</span></summary><p class="sub">Cards? They come one at a time, in wax-sealed mail.</p>
         <div class="cards" id="cardList"></div></details>
-      <details class="shopsec colsec" data-sec="cab-origami" open><summary><h3>Adorbigami</h3><span class="seccount" id="cnt-cab-origami"></span><span class="secnew" id="new-cab-origami" hidden>new</span></summary><p class="sub">Folded by the ghost at the window. They hang above it on a string this week; then <span class="pn">Mite</span> files them and the list starts over.</p>
+      <details class="shopsec colsec" data-sec="cab-origami" open><summary><h3>Adorbigami</h3><span class="seccount" id="cnt-cab-origami"></span><span class="secnew" id="new-cab-origami" hidden>new</span></summary><p class="sub">Folded by the ghost at the window. They hang on four strings until all are full (sixteen); a week after that, <span class="pn">Mite</span> files them and the strings start over.</p>
         <div class="words" id="origamiList"></div></details>
       <details class="shopsec colsec" data-sec="cab-fest" open><summary><h3>Festivals</h3><span class="seccount" id="cnt-cab-fest"></span><span class="secnew" id="new-cab-fest" hidden>new</span></summary><p class="sub">What <span class="pn">Mite</span> has learned about the festivals that came by. Tap one to read it again.</p>
         <div class="words" id="festList"></div></details>
@@ -5140,7 +5140,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 44 batch 2 (01-11-2026)
     "mvxujz21qeu6z", "mvxuknw3m6dbb", "mvxupxo6hv3vq",
     // group 44 lore check and group 45 (01-11-2026)
-    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m"];
+    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz"];
 
 </script>
 <script>/* js/core/state.js */
@@ -16708,6 +16708,19 @@ function emoteFor(t, who) {
 /* in the chalk circle (a voice through it, or the cat's ritual on screen), what's said goes in the upper half so it
    doesn't cover the circle (owner, 01-11-2026, group 40) */
 let dlgUp = false;
+/* the words box sits at the bottom, over the front of the floor: is anyone down there now, on screen, whose feet are
+   below its top edge (top, in pixels)? Then the box goes up (jot mvyhbf3k1rfh6: the possum playing dead under it) */
+let boxGap = 140, floorUpUntil = 0;
+function floorUnder(top) {
+    const on = (room, x) => roomVisible(room) && x + roomOff(room) > -R * .3 && x + roomOff(room) < W + R * .3, low = y => y > top + PX * 2;
+    if (possumHere() && !possumUp() && possum.ph !== "hang" && possum.ph !== "lower" && possum.ph !== "raise" && on(possum.room, possum.x) && low(possum.fy))
+        return true;
+    if (cat.ph !== "through" && on(cat.room, cat.x) && low(GY + cat.z - cat.g))
+        return true;
+    if (own("snail") && !snailAsleep && on(snailRoom, snailX * W) && low(GY + snailZ - snailUp))
+        return true;
+    return !!(guest && on("room", guest.x) && low(GY + (guest.z || 0)));
+}
 function circleUp() {
     return own("circle") > 0 && typeof roomOnScreen === "function" && roomOnScreen("archive") && catInCircle();
 }
@@ -18719,22 +18732,24 @@ const ANOM_DRAW = {
         });
     }
 };
-/* the origami garland across the top of the window: what the ghost has left this week. When the week ends Mite takes
-   it down and files it (in the month's book on the archive wall; the Cabinet list starts over); a note says so */
+/* the origami strings: what the ghost has left since Mite last took them down (S.flags.origWk: when that was). They
+   stay up until all four strings are full (ORIG_FULL), and a week after the last one went up Mite takes them down and
+   files them (in the month's book on the archive wall; the Cabinet list starts over); a note says so. Jot
+   mvz8fuytzgujz, group 48: before, they came down every Monday however many there were */
+const ORIG_FULL = 16, ORIG_HOLD = 7 * 864e5;
 function origamiFileWeek() {
-    const wk = new Date(weekKey(Date.now()) + "T12:00").getTime(), was = num(S.flags.origWk);
-    if (was >= wk)
+    const out = origamiOut();
+    if (out.length < ORIG_FULL || Date.now() - out[ORIG_FULL - 1].at < ORIG_HOLD)
         return;
-    S.flags.origWk = wk;
-    const n = (S.origami || []).filter(o => o.at < wk && (!was || o.at >= was)).length;
-    if (was && n)
-        note(`Took down last week's origami from the window (${n === 1 ? "one" : n}) and filed ${n === 1 ? "it" : "them"} away. Clean string for the ghost, and a clean page in the Cabinet.`);
+    S.flags.origWk = Date.now();
+    const n = out.length;
+    note(`Took the origami down from the strings (${n}, a full set) and filed them away. Clean strings for the ghost, and a clean page in the Cabinet.`);
     saveSoon();
 }
-/* what hangs now (this week's; filed weeks are in the month's book on the archive wall) */
+/* what hangs now (since the last time they came down; filed ones are in the month's book on the archive wall) */
 function origamiOut() {
-    const wk = weekKey(Date.now());
-    return (S.origami || []).filter(o => weekKey(o.at) === wk);
+    const cut = num(S.flags.origWk);
+    return (S.origami || []).filter(o => o.at >= cut);
 }
 /* the origami garland across the top of the window: everything the ghost has left */
 /* the adorbigami hang on strings from the ceiling at the right of the room, one under the other, two strings
@@ -18742,7 +18757,7 @@ function origamiOut() {
 let origHits = [], origSpin = {}, origFresh = 0; // origFresh: the one the ghost just left (it twirls and sparkles the first time you see it)
 function origamiStrands() {
     origamiFileWeek();
-    const wk = weekKey(Date.now()), list = (S.origami || []).filter(o => weekKey(o.at) === wk).slice(-16), top = Math.max(R * .7, H * .06), bottom = GY - R * 4.15; // the newest sixteen, four to a string
+    const list = origamiOut().slice(-ORIG_FULL), top = Math.max(R * .7, H * .06), bottom = GY - R * 4.15; // the newest sixteen, four to a string
     // four strings: two in the right corner, two in the left corner (clear of the lamp), so none of them gets too long
     const rm = room(), xs = [W - R * .55, R * .55, W - R * 1.2, R * 1.2];
     const low = Math.min(bottom, lampY(rm) - R * .55); // (and they all stop above the hanging lamp)
@@ -29724,6 +29739,9 @@ function frame(now) {
     // both bubbles' sizes are read first and only then moved: reading a size after moving something makes the
     // browser lay the page out again, twice a frame
     const b = $("bubble"), b2 = $("bubble2"), bH = b.hidden ? 0 : b.offsetHeight, b2W = b2.hidden ? 160 : b2.offsetWidth || 160, b2H = b2.hidden ? 0 : b2.offsetHeight;
+    const dl = $("dlg"), dlH0 = dl.hidden ? 0 : dl.offsetHeight, dlH = dlH0 && dl.classList.contains("up") === b.classList.contains("up") ? dlH0 : 0; // (dlH: only when it's where the boxes are)
+    if (!b.hidden && b.classList.contains("boxed") && !b.classList.contains("up"))
+        boxGap = H - b.offsetTop - bH - (parseFloat(b.style.getPropertyValue("--stack")) || 0); // how far above the bottom the box sits when it's down (the dock, the safe area)
     {
         const r2 = b2Who === "cat" ? cat.room : b2Who === "possum" ? possum.room : b2Who === "snail" ? snailRoom : "room";
         if (now > snail2Until || (b2Who === "snail" && !own("snail")) || (b2Who === "guest" && !guest) || !roomVisible(r2)) {
@@ -29731,7 +29749,7 @@ function frame(now) {
         }
         else if (b2.classList.contains("boxed")) { // at the bottom (group 40); above Mite's box when both are showing
             b2.style.left = b2.style.top = "";
-            b2.style.setProperty("--stack", (b.hidden || !b.classList.contains("boxed") ? 0 : bH + 22) + "px");
+            b2.style.setProperty("--stack", (dlH ? dlH + 22 : 0) + (b.hidden || !b.classList.contains("boxed") ? 0 : bH + 22) + "px");
         }
         else {
             const sp0 = b2Who === "guest" ? guestPos() : b2Who === "cat" ? catPos() : b2Who === "possum" ? possumPos() : snailPos(), sp = { x: sp0.x + roomOff(r2), y: sp0.y }, half = b2W / 2 + 8;
@@ -29746,15 +29764,26 @@ function frame(now) {
     }
     roomArrows(); // the arrows to look into the other room (garden.js)
     speakPump(now); // a line that waited for Mite to finish the last one (speech.js)
-    { const up = (!b.hidden || !b2.hidden) && circleUp(); b.classList.toggle("up", up); b2.classList.toggle("up", up); } // (the chalk circle: boxes go up, group 40)
+    { // the boxes go up for the chalk circle (group 40), and while someone on the floor would be under them (group 47)
+        const bB = !b.hidden && b.classList.contains("boxed"), b2B = !b2.hidden && b2.classList.contains("boxed");
+        const tall = [bB ? bH : 0, b2B ? b2H : 0, dlH0].filter(Boolean).reduce((x, y, i) => x + y + (i ? 22 : 0), 0);
+        if (tall && floorUnder(H - boxGap - tall))
+            floorUpUntil = now + 3000; // (stays up a moment, so it doesn't hop while someone walks along the edge)
+        const fl = !!tall && now < floorUpUntil, up = ((!b.hidden || !b2.hidden) && circleUp()) || fl;
+        b.classList.toggle("up", up);
+        b2.classList.toggle("up", up);
+        if (!dl.hidden)
+            dl.classList.toggle("up", dlgUp || fl);
+    }
     b.classList.toggle("more", speakQ.some(q => q.who === "mite") && (!bubbleType || bubbleType.done)); // ▾: tap for the next line
     if (!b.hidden) {
         if (now > bubbleUntil && !(bubbleType && !bubbleType.done)) { // never while it's still typing
             b.hidden = true;
             b.classList.remove("pinned");
         }
-        else if (b.classList.contains("boxed")) { // words: in the box at the bottom (group 40)
+        else if (b.classList.contains("boxed")) { // words: in the box at the bottom (group 40); above a conversation's box when both show (jot, 02-11-2026: it fell under Midnightcat's)
             b.style.left = b.style.top = "";
+            b.style.setProperty("--stack", (dlH ? dlH + 22 : 0) + "px");
             b.classList.remove("awayL", "awayR");
         }
         else {
