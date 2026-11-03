@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 02-11-2026 -->
+<!-- Small Things, shared build of 03-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -358,6 +358,8 @@ body.traying .nextup{display:none}
 /* ---------- UX pass ---------- */
 .subtabs{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px 0}
 .subtabs[hidden]{display:none}
+.gamectl #mapBtn{font-weight:800}
+.gamectl #mapBtn.on{background:#fff6c8;color:#1a120a}
 .gamectl .pauseg{width:42px;height:42px;border-radius:50%;background:rgba(14,18,14,.5);color:#f3f0e2;display:grid;place-items:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .gamectl .pauseg[hidden]{display:none}
 .gamectl .wide{width:auto;border-radius:999px;padding:0 13px;font-size:13.5px;font-weight:700;gap:5px;display:flex}
@@ -864,7 +866,7 @@ body.pixel{--boxlh:24px;--boxfs:16px}
       <button type="button" class="scopeview brewview" id="flowerView" hidden aria-label="Close"><canvas id="flowerCv" width="56" height="56"></canvas><span id="flowerCap"></span></button>
       <button type="button" class="scopeview brewview" id="brewView" hidden aria-label="Close"><canvas id="brewCv" width="150" height="150"></canvas><span id="brewCap"></span></button>
       <button type="button" class="scopeview" id="scopeView" hidden aria-label="Close the telescope view"><canvas id="scopeCv" width="150" height="150"></canvas><span id="scopeCap"></span></button>
-      <div class="gamectl"><span id="pauseG" class="pauseg" hidden role="img" aria-label="Paused while a menu is open" title="Paused while a menu is open"><svg viewBox="0 0 5 5" width="15" height="15" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 0h1v5H1zM3 0h1v5H3z" fill="currentColor"/></svg></span><button id="sndG" aria-label="Sound off" title="Sound">♪</button><button id="fsBtn" aria-label="Fullscreen" title="Fullscreen">⛶</button></div>
+      <div class="gamectl"><span id="pauseG" class="pauseg" hidden role="img" aria-label="Paused while a menu is open" title="Paused while a menu is open"><svg viewBox="0 0 5 5" width="15" height="15" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 0h1v5H1zM3 0h1v5H3z" fill="currentColor"/></svg></span><button id="mapBtn" aria-label="Show what can be tapped" aria-pressed="false" title="What can I tap?">?</button><button id="sndG" aria-label="Sound off" title="Sound">♪</button><button id="fsBtn" aria-label="Fullscreen" title="Fullscreen">⛶</button></div>
       <div class="kbd" id="kbd"><button id="kPat">Pat</button><button id="kGold" hidden>Catch the firefly</button><button id="kAnom" hidden>Deal with it</button><button id="kSweep" hidden>Sweep</button><button data-k="book" hidden>Read a book</button><button data-k="brew" hidden>Make tea</button><button data-k="oven" hidden>Bake something</button><button data-k="scope" hidden>Look through the telescope</button><button data-k="jar" hidden>Visit the fireflies</button><button data-k="hearth" hidden>Sit by the fire</button><button data-k="calendar">Check the calendar</button><button data-k="capsule" hidden>Time capsules</button></div>
     </div>
   </section>
@@ -5150,7 +5152,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 44 batch 2 (01-11-2026)
     "mvxujz21qeu6z", "mvxuknw3m6dbb", "mvxupxo6hv3vq",
     // group 44 lore check and group 45 (01-11-2026)
-    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x", "mvzb1io3poh4t"];
+    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x", "mvzb1io3poh4t", "mvzwe2wo1ppbo", "mvzwed65i2i61"];
 
 </script>
 <script>/* js/core/state.js */
@@ -29896,6 +29898,9 @@ function frame(now) {
         });
         withRoom("archive", () => drawTapHints(now / 1000, "archive"));
         withRoom("garden", () => drawTapHints(now / 1000, "garden"));
+        if (tapMapUntil)
+            for (const rm of ["room", "archive", "garden"])
+                withRoom(rm, () => drawTapMap(performance.now(), rm));
         const onBal = view === "room" && own("loft") && pet.ground >= loftGeo("room").rise - 1, onNook = view === "garden" && pet.ground >= nookLoftGeo().rise - 1;
         if (own("loft") && !onBal)
             withRoom("room", () => drawLoftFront("room"));
@@ -30336,6 +30341,7 @@ function catchGold() {
  * orders differ on purpose in places (in the archive the journal goes before Midnightcat, who sits beside it); keep
  * that in mind when moving an id.
  *
+ * A { tap } target also has boxes(rm), where it is, for the ? button (tapmap.js); a { hit } target needs nothing more.
  * Adding something tappable: add a target here and put its id in the room's list.
  */
 
@@ -30350,6 +30356,10 @@ function onMite(p, rm) {
 /* a box in the room: the wagon's 3 px of slack around each one */
 function tapBoxIn(list, p) {
     return list.find(r => p.x >= r.x - 3 && p.x <= r.x + r.w + 3 && p.y >= r.y - 3 && p.y <= r.y + r.h + 3);
+}
+/* a small thing at a point, for a target's boxes (tapmap.js) */
+function dotBox(x, y) {
+    return { x: x - 13, y: y - 13, w: 26, h: 26 };
 }
 /* a thing standing on the wagon floor at x: within dx either side, from top down to the floor */
 function standsAt(p, x, dx, top) {
@@ -30373,14 +30383,14 @@ const TAP_TARGETS = {
         hit: (p, rm) => gold && (gold.room || "room") === rm && Math.hypot(p.x - gold.x, p.y - gold.y) < R * .9,
         act: () => catchGold()
     },
-    seasonal: { tap: (p, rm) => seasTap(p, rm) }, // seasonal.js: small, so before the rooms' bigger things
+    seasonal: { tap: (p, rm) => seasTap(p, rm), boxes: rm => seasSpots(rm).filter(s => s.id !== "sfrost") }, // seasonal.js: small, so before the rooms' bigger things
     anomaly: {
         hit: (p, rm) => anom && (anom.room || "room") === rm && anomHit(p),
         act: () => resolveAnom()
     },
-    drifter: { tap: (p, rm) => drifterTap(p, rm) },
-    postit: { tap: (p, rm) => postitTap(p, rm) }, // a sticky note Mite put up (pastimes.js)
-    splurge: { tap: (p, rm) => splurgeTap(p, rm) }, // the day's treat (splurge.js)
+    drifter: { tap: (p, rm) => drifterTap(p, rm), boxes: rm => drifters.filter(q => (q.room || "room") === rm && isFinite(q.x)).map(q => dotBox(q.x, q.y)) },
+    postit: { tap: (p, rm) => postitTap(p, rm), boxes: rm => postits.filter(q => q.room === rm).map(q => dotBox(q.x, q.y)) }, // a sticky note Mite put up (pastimes.js)
+    splurge: { tap: (p, rm) => splurgeTap(p, rm), boxes: rm => splurgeHit && (splurgeHit.room || "room") === rm ? [splurgeHit] : [] }, // the day's treat (splurge.js)
     possum: {
         hit: (p, rm) => possumHit && possumHit.room === rm && hitIn(p, possumHit) && clearOfMite(p, rm),
         act: () => possumTap()
@@ -30399,14 +30409,14 @@ const TAP_TARGETS = {
         }
     },
     pet: { hit: onMite, act: () => patPet() },
-    sweep: { tap: (p, rm) => sweepAt(p.x, p.y, rm) }, // mess on the floor (care.js)
-    look: { tap: (p, rm) => lookTap(p, rm) }, // the lamp, the window, the ladder... (looks.js)
+    sweep: { tap: (p, rm) => sweepAt(p.x, p.y, rm), boxes: rm => (S.mess || []).filter(m => messRoom(m) === rm).map(m => dotBox(m.x * W, GY + 6 + m.y * (H - GY - 14))) }, // mess on the floor (care.js)
+    look: { tap: (p, rm) => lookTap(p, rm), boxes: rm => lookSpots(rm).filter(s => !/rug$/.test(s.pool)) }, // the lamp, the window, the ladder... (looks.js)
     floor: { tap: (p, rm) => floorTap(p, rm) }, // nothing else: Mite comes to look
 
     /* the wagon */
     dream: { hit: p => dreamOutHit(p), act: () => catchDream() },
-    origami: { tap: p => origamiTap(p) },
-    festival: { tap: p => festTap(p) },
+    origami: { tap: p => origamiTap(p), boxes: () => origHits },
+    festival: { tap: p => festTap(p), boxes: () => festHits },
     calendar: { // nothing on the wall covers it
         hit: p => calHit && hitIn(p, calHit) && notOnMite(p) && calHit,
         act: tapGoTo("calendar")
@@ -30504,8 +30514,8 @@ const TAP_TARGETS = {
         }
     },
     journal: { hit: tapBox(() => journalHit, 24), act: tapGoTo("journal") },
-    circle: { tap: p => circleTap(p) }, // the chalk circle (circle.js)
-    archwall: { tap: p => archWallTap(p) }, // the filing tube, the capsule plank, the eye jars (archive-wall.js)
+    circle: { tap: p => circleTap(p), boxes: () => own("circle") ? [circleHit] : [] }, // the chalk circle (circle.js)
+    archwall: { tap: p => archWallTap(p), boxes: () => [shelfHits && shelfHits.jars, shelfHits && shelfHits.caps, eyeJarHit, capPlankHit, tubeHit] }, // the filing tube, the capsule plank, the eye jars (archive-wall.js)
     keepsakes: { // the nearest of the time capsule and the journal
         hit: p => nearestHit(p, [...(capHit ? [Object.assign({ k: "capsule" }, capHit)] : []), ...(journalHit ? [Object.assign({ k: "journal" }, journalHit)] : [])]),
         act: (p, rm, h) => requestObj(h.k, h.cx, h.y)
@@ -30582,6 +30592,111 @@ function shelfBoxTap(bh) {
     speak(`Box ${shelfBoxes().indexOf(t) + 1}: ${t.t}. Finished ${dd.toLocaleDateString("en-GB", { weekday: "long" })} at ${hhmm(dd)}.`);
     if (view === "room")
         pet.start("curious", { tx: clamp(bh.x, W * .1, W * .9) });
+}
+
+</script>
+<script>/* js/scene/tapmap.js */
+"use strict";
+/*
+ * tapmap.js - "What can I tap?": the ? button marks everything that takes a tap in the rooms, for a few seconds.
+ * It asks taps.js rather than keeping a list of its own: every point of a coarse grid goes through the room's
+ * TAP_ORDER, the first target that would take it owns that point, and joined points of one target make one mark. So
+ * something new is marked as soon as it's a target. The scene carries on; things can be tapped while the marks are up.
+ * A target that is { tap } acts as it checks, so here it answers with boxes(rm) instead; without boxes it's left out
+ * (the floor, and the shadow at the night door, which is gone in moments).
+ *   tapMapToggle()         the ? button
+ *   tapMapMarks(rm)        the marks for a room now: [{ id, x, y, w, h }], in that room's coordinates
+ *   drawTapMap(now, rm)    every frame, from loop.js; does nothing while the marks are down
+ */
+const TAP_MAP_MS = 8000, TAP_MAP_EVERY = 250; // how long the marks stay up; how often they're worked out (residents move)
+let tapMapUntil = 0;
+const tapMapCache = {};
+function tapMapToggle() {
+    tapMapSet(!tapMapUntil);
+}
+function tapMapSet(on) {
+    tapMapUntil = on ? performance.now() + TAP_MAP_MS : 0;
+    const b = $("mapBtn");
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    if (on) {
+        sfx("tock");
+        for (const k in tapMapCache)
+            delete tapMapCache[k];
+    }
+}
+/* who would take a tap at p (no one: ""), with each { tap } target's boxes worked out once per pass */
+function tapMapOwner(p, rm, boxes) {
+    for (const id of TAP_ORDER[rm] || []) {
+        const t = TAP_TARGETS[id];
+        if (t.tap ? (boxes[id] || []).some(r => hitIn(p, r, 20)) : t.hit(p, rm))
+            return id;
+    }
+    return "";
+}
+function tapMapMarks(rm) {
+    if (inCloset())
+        return [];
+    const step = 14, cols = Math.ceil(W / step), rows = Math.ceil(H / step), grid = new Array(cols * rows), boxes = {}, out = [];
+    for (const id of TAP_ORDER[rm] || [])
+        if (TAP_TARGETS[id].boxes)
+            boxes[id] = TAP_TARGETS[id].boxes(rm).filter(Boolean);
+    for (let j = 0; j < rows; j++)
+        for (let i = 0; i < cols; i++)
+            grid[j * cols + i] = tapMapOwner({ x: i * step + step / 2, y: j * step + step / 2 }, rm, boxes);
+    for (let s = 0; s < grid.length; s++) { // joined points of one target: one mark
+        const id = grid[s];
+        if (!id)
+            continue;
+        const todo = [s];
+        let n = 0, x0 = cols, x1 = 0, y0 = rows, y1 = 0;
+        grid[s] = "";
+        while (todo.length) {
+            const c = todo.pop(), i = c % cols, j = (c - i) / cols;
+            n++;
+            x0 = Math.min(x0, i);
+            x1 = Math.max(x1, i);
+            y0 = Math.min(y0, j);
+            y1 = Math.max(y1, j);
+            for (const [ni, nj] of [[i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]]) {
+                const q = nj * cols + ni;
+                if (ni >= 0 && ni < cols && nj >= 0 && nj < rows && grid[q] === id) {
+                    grid[q] = "";
+                    todo.push(q);
+                }
+            }
+        }
+        if (n > 1) // (one point is the edge of something showing past what's in front of it)
+            out.push({ id, x: x0 * step, y: y0 * step, w: (x1 - x0 + 1) * step, h: (y1 - y0 + 1) * step });
+    }
+    return out;
+}
+function drawTapMap(now, rm) {
+    if (!tapMapUntil)
+        return;
+    if (now > tapMapUntil)
+        return tapMapSet(false);
+    const c = tapMapCache[rm] || (tapMapCache[rm] = { at: -1e9, list: [] });
+    if (now - c.at > TAP_MAP_EVERY) {
+        c.at = now;
+        c.list = tapMapMarks(rm);
+    }
+    const u = Math.max(3, Math.round(PX * .75)), a = reduced ? 1 : .85 + .15 * Math.sin(now / 260);
+    const corners = (m, col, o) => {
+        const len = Math.min(u * 4, m.w / 3, m.h / 3), x0 = Math.round(m.x) + o, y0 = Math.round(m.y) + o, x1 = Math.round(m.x + m.w) + o, y1 = Math.round(m.y + m.h) + o;
+        cx.fillStyle = col;
+        for (const [x, dx] of [[x0, 1], [x1, -1]])
+            for (const [y, dy] of [[y0, 1], [y1, -1]]) {
+                cx.fillRect(dx > 0 ? x : x - len, dy > 0 ? y : y - u, len, u);
+                cx.fillRect(dx > 0 ? x : x - u, dy > 0 ? y : y - len, u, len);
+            }
+    };
+    cx.globalAlpha = a;
+    for (const m of c.list) {
+        corners(m, "#1a120a", 1); // (a dark edge: some walls are as pale as the marks)
+        corners(m, "#fff6c8", 0);
+    }
+    cx.globalAlpha = 1;
 }
 
 </script>
@@ -35818,7 +35933,10 @@ function kbCover() {
     return c > 80 ? c : 0; // (less is a toolbar coming and going, not a keyboard)
 }
 function kbUpdate() {
-    const c = kbCover();
+    const c = kbCover(), a = document.activeElement;
+    if (kbWas && !c && typesText(a)) // (the phone's back key closes a keyboard and leaves the field focused)
+        a.blur();
+    kbWas = c;
     document.documentElement.style.setProperty("--kb", c + "px");
     document.body.classList.toggle("kbup", c > 0);
 }
@@ -35826,6 +35944,49 @@ if (window.visualViewport) {
     visualViewport.addEventListener("resize", kbUpdate);
     visualViewport.addEventListener("scroll", kbUpdate);
 }
+/* Typing on a phone: whatever the field is in moves up until the field is high on the screen, where no keyboard
+   reaches (group 53). --kb can't do this alone: in a frame or the Android app the keyboard may go unreported, so this
+   doesn't depend on knowing it's there. A field already high enough stays where it is. `translate`, not transform: the
+   sheet and the cards use that for themselves. */
+const TEXT_TYPES = /^(|text|search|number|email|url|tel|password)$/;
+function typesText(el) {
+    return !!el && (el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && TEXT_TYPES.test(String(el.getAttribute("type") || "").toLowerCase())));
+}
+let kbWas = 0, liftedHost = null;
+function liftHost(el) {
+    const c = el.closest(".ritcard,#pinDlg");
+    if (c)
+        return c;
+    for (let n = el.parentElement; n && n !== document.body; n = n.parentElement)
+        if (getComputedStyle(n).position === "fixed")
+            return n;
+    return null;
+}
+function liftDrop() {
+    if (liftedHost)
+        liftedHost.style.translate = "";
+    liftedHost = null;
+}
+function liftField(el) {
+    if (!matchMedia("(pointer: coarse)").matches || !el.isConnected || document.activeElement !== el)
+        return;
+    const host = liftHost(el);
+    if (host !== liftedHost)
+        liftDrop();
+    if (!host)
+        return;
+    const was = -parseFloat((host.style.translate || "0 0").split(" ")[1]) || 0, r = el.getBoundingClientRect(), y = r.top + was;
+    const vh = window.innerHeight, lift = y + r.height <= vh * .42 ? 0 : Math.max(0, Math.round(y - vh * .12));
+    host.style.translate = lift ? `0 ${-lift}px` : "";
+    liftedHost = lift ? host : null;
+}
+document.addEventListener("focusin", e => {
+    if (!typesText(e.target))
+        return;
+    liftField(e.target);
+    setTimeout(() => liftField(e.target), 320); // (a sheet may still be sliding in)
+});
+document.addEventListener("focusout", () => setTimeout(() => typesText(document.activeElement) || liftDrop(), 60));
 function openRitual(title, line, bodyHTML, buttons, onClose) {
     ritOpenedAt = performance.now();
     ritOpener = document.activeElement;
@@ -36059,6 +36220,7 @@ $("kSweep").onclick = () => {
     if (m)
         sweepAt(m.x * W, GY + 6 + m.y * (H - GY - 14), messRoom(m));
 };
+$("mapBtn").onclick = tapMapToggle;
 $("fsBtn").onclick = () => {
     if (document.fullscreenElement)
         document.exitFullscreen().catch(() => {
