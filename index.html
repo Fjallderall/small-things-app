@@ -502,7 +502,7 @@ body.pixel.game .stage{border:0}
 .evecard p{margin:0;font-size:15px;line-height:1.4}
 .evecard[hidden]{display:none}
 .bkcard{background:var(--leaf-soft);border-color:var(--leaf)}
-.addform.bottom{position:sticky;bottom:0;z-index:2;margin-top:4px;border-top:2px solid var(--line);box-shadow:0 -6px 12px rgba(0,0,0,.06)}
+.addform.bottom{position:sticky;bottom:0;z-index:2;margin-top:4px;border-top:2px solid var(--line);box-shadow:0 -6px 12px rgba(0,0,0,.06),0 14px 0 var(--sunk)}
 .addform.bottom input[type=text]{min-height:44px;font-size:16px}
 .addchips{display:flex;flex-wrap:wrap;gap:6px}
 .addchips:empty{display:none}
@@ -1182,6 +1182,7 @@ const POOL_INFO = {
     gramophone_stop: "Mite, lifting the gramophone's needle before the record's done",
     crochet: "Mite, now and then while knitting: on crochet (it can't; it isn't a moss skill)",
     nameplates: "What the archive's name plate says, one per day (short, at most 20 characters; shown in capitals; letters, commas and full stops only: the plate's font has no & or brackets)",
+    bowl_set: "Mite, putting a bowl of interdimensional kibble by the night door", bowl_empty: "Mite, finding the bowl by the night door eaten clean", bowl_glimmers: "Mite, finding the bowl eaten clean and four glimmers left in it", look_bowl: "Mite, when you tap the bowl by the night door",
     shade_hand: "Mite, when you tap the shadow hand from the night door and it waves back", shade_gramo: "Mite, when the shadow hand from the night door has put a record on the gramophone ({rec})",
     shade_tendrils: "Mite, when you tap the shadow tendrils from the night door and they slip back in, shy",
     catball: "Mite, when Midnightcat joins in with the ball",
@@ -2135,6 +2136,31 @@ const DEF = {
             "DO NOT REFILE",
             "PRESERVED",
             "BACK SOON"
+        ],
+        bowl_set: [
+            "One bowl, by the door. I don't wait to see. That's the arrangement.",
+            "There. It rattled when I poured it. Kibble shouldn't rattle upward.",
+            "Left it on the step. I knocked once, so nobody's surprised.",
+            "Dinner's out. For whom, I couldn't say. Polite either way.",
+            "I filled the bowl and walked away slowly, the way you do."
+        ],
+        bowl_empty: [
+            "The bowl's empty. Licked clean, from the inside, it looks like.",
+            "All gone. The bowl's been moved one plank to the left. A thank-you, maybe.",
+            "Empty. And warm. I'm washing that twice.",
+            "Nothing left. Whoever it was, they've got good table manners and no feet.",
+            "Eaten. It left the bowl upside down. I think that means seconds."
+        ],
+        bowl_glimmers: [
+            "Empty, except for four glimmers, stacked very neatly. It pays its way.",
+            "The kibble's gone. Four glimmers in the bottom of the bowl. I've no idea where it gets them.",
+            "Four glimmers where the kibble was. That's the nicest bill I've ever had."
+        ],
+        look_bowl: [
+            "That's the bowl. I don't look in it after dark. Nobody told me not to.",
+            "It's only a bowl. It's what comes to it that I'm careful about.",
+            "The door watches the bowl. I've stopped pretending it doesn't.",
+            "A tin bowl, slightly too heavy for a tin bowl."
         ],
         shade_hand: [
             "It waved back. I'm going to count that as a friend.",
@@ -5122,7 +5148,8 @@ const PANTRY = [
     { id: "tcat", k: "treat", who: "cat", name: "Pouch of catnip", price: 2, note: "Mite gives it to Midnightcat the next time it visits her." },
     { id: "tpossum", k: "treat", who: "possum", name: "Bin-day biscuit", price: 2, note: "For the possum, the next time Mite goes over to it." },
     { id: "tape", k: "tape", max: 3, name: "Blank tape", price: 6, note: "For the tape recorder in the archive. Holds one story, all its sides." },
-    { id: "tsnail", k: "treat", who: "snail", name: "Crisp lettuce leaf", price: 2, note: "For the snail, the next time Mite goes over to it." }
+    { id: "tsnail", k: "treat", who: "snail", name: "Crisp lettuce leaf", price: 2, note: "For the snail, the next time Mite goes over to it." },
+    { id: "kibble", k: "bowl", rare: 1, max: 2, price: 8, name: "Interdimensional kibble", note: "Here some weeks, gone others. Mite leaves a bowl by the night door after dark. Something eats it." } // (pantry.js, bowl*)
 ];
 const DAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 /* jotted notes (ids only) about building the app that were done by 24-10-2026, let go once on every device (boot.js) */
@@ -5152,7 +5179,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 44 batch 2 (01-11-2026)
     "mvxujz21qeu6z", "mvxuknw3m6dbb", "mvxupxo6hv3vq",
     // group 44 lore check and group 45 (01-11-2026)
-    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x", "mvzb1io3poh4t", "mvzwe2wo1ppbo", "mvzwed65i2i61"];
+    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x", "mvzb1io3poh4t", "mvzwe2wo1ppbo", "mvzwed65i2i61", "mw0htonoeuma0"];
 
 </script>
 <script>/* js/core/state.js */
@@ -5163,7 +5190,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [] }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [] }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -5353,6 +5380,10 @@ function sanitizeState(raw) {
     o.vase = s.vase === undefined ? defaultState().vase : fl(s.vase);
     o.flowerBook = Array.isArray(s.flowerBook) ? arr(s.flowerBook, 80).map(fl).filter(Boolean) : defaultState().flowerBook;
     o.ndoorFlowers = dkey(s.ndoorFlowers) || "";
+    { // the bowl by the night door (pantry.js)
+        const w = s.bowl && typeof s.bowl === "object" ? s.bowl : {}, day = dkey(w.day) || "", at = day ? num(w.at) : 0;
+        o.bowl = { at, day: at ? day : "", u: num(w.u) };
+    }
     o.possumSet = num(s.possumSet); // when you renamed it in Settings (a rename always wins)
     o.snailSet = num(s.snailSet); // the same for the snail
     o.possumAt = num(s.possumAt); // when it was named (two devices: the first name given is the one that stays)
@@ -5679,6 +5710,7 @@ function mergeStates(a, b) {
         }
         o.flowerBook = [...m.values()].sort((x, y) => x.at - y.at).slice(-80);
         o.ndoorFlowers = [a.ndoorFlowers, b.ndoorFlowers].filter(Boolean).sort().pop() || "";
+        o.bowl = num((a.bowl || {}).u) >= num((b.bowl || {}).u) ? a.bowl : b.bowl; // (the latest thing done to it)
     }
     { // the possum's name: the one given first (named at possumAt); without dates, the older save's
         const an = a.possumName && num(a.possumAt), bn = b.possumName && num(b.possumAt);
@@ -9266,9 +9298,9 @@ function zoomStop(id) {
  */
 /* behaviours Mite may do while up on the balcony; starting any other one up there walks Mite down first (see pet.start) */
 /* in the sleeping nook; anything else walks Mite back to the wagon first. GARDEN_ONLY: things that only happen there */
-const GARDEN_OK = new Set(["answerphone", "opendrawer", "armread", "readletter", "possumchat", "write", "snailchat", "idle", "wander", "curious", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "stare", "bow", "dizzy", "gwater", "catvisit", "fromGarden", "eat", "drink", "admire", "descend", "nookup", "gpin", "gpossum", "chairSit", "gsmell", "gfread", "fbookchair", "ghang", "ggramo", "ndoorlisten", "gbasket"]);
+const GARDEN_OK = new Set(["ndoorbowl", "answerphone", "opendrawer", "armread", "readletter", "possumchat", "write", "snailchat", "idle", "wander", "curious", "pat", "hop", "celebrate", "wave", "yawn", "stretch", "sneeze", "hiccup", "lookAround", "listen", "stare", "bow", "dizzy", "gwater", "catvisit", "fromGarden", "eat", "drink", "admire", "descend", "nookup", "gpin", "gpossum", "chairSit", "gsmell", "gfread", "fbookchair", "ghang", "ggramo", "ndoorlisten", "gbasket"]);
 const GARDEN_ONLY = new Set(["gwater", "write", "armread", "readletter", "opendrawer", "gsmell", "gfread", "fbookchair", "ggramo"]);
-const LOFT_OK = new Set(["ndoorlisten", "ghang", "ggramo", "gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow", "gbasket"]);
+const LOFT_OK = new Set(["ndoorbowl", "ndoorlisten", "ghang", "ggramo", "gwater", "nookup", "gpin", "gpossum", "stargaze", "pat", "hop", "celebrate", "wave", "dizzy", "yawn", "stretch", "sneeze", "hiccup", "lookout", "water", "descend", "listen", "stare", "lookAround", "idle", "bow", "gbasket"]);
 /*
  * Mite's live state.
  *   x, dir       where Mite is and which way it faces
@@ -10782,7 +10814,7 @@ function chooseGardenBeh() {
         return pet.start("sleep");
     if (performance.now() - gardenSince > rnd(70e3, 140e3))
         return pet.start("fromGarden");
-    const opts = [["idle", 3], ["wander", 1.4], ["floorwalk", .7], ["gwater", BEH.gwater.w(c)], ["write", BEH.write.w(c)], ["armread", BEH.armread.w(c)], ["readletter", BEH.readletter.w(c)], ["lookAround", .6], ["stretch", .3], ["yawn", c.dark > .5 ? .8 : .3], ["catvisit", BEH.catvisit.w(c) * 2], ["ndoorlisten", own("ndoor") ? BEH.listen.w(c) * 1.5 : 0], ["listen", BEH.listen.w(c) * .5], ["nookup", .5], ["fbookchair", BEH.fbookchair.w(c)]].filter(([k, w]) => BEH[k] && w > 0 && k !== pet.beh);
+    const opts = [["idle", 3], ["wander", 1.4], ["floorwalk", .7], ["gwater", BEH.gwater.w(c)], ["write", BEH.write.w(c)], ["armread", BEH.armread.w(c)], ["readletter", BEH.readletter.w(c)], ["lookAround", .6], ["stretch", .3], ["yawn", c.dark > .5 ? .8 : .3], ["catvisit", BEH.catvisit.w(c) * 2], ["ndoorlisten", own("ndoor") ? BEH.listen.w(c) * 1.5 : 0], ["ndoorbowl", bowlDue() ? 5 : 0], ["listen", BEH.listen.w(c) * .5], ["nookup", .5], ["fbookchair", BEH.fbookchair.w(c)]].filter(([k, w]) => BEH[k] && w > 0 && k !== pet.beh);
     let r = Math.random() * opts.reduce((a, o) => a + o[1], 0);
     for (const [k, w] of opts)
         if ((r -= w) <= 0)
@@ -11136,13 +11168,22 @@ Object.assign(BEH, {
             if (Math.random() < .006)
                 floatText(choice(["…footsteps?", "…knocking?", "…someone humming"]), p.x - R, GY - (p.ground || 0) - R * 1.8, "#fff");
         } }),
+    /* out to the night door with the bowl of kibble, or to see what's become of it (pantry.js) */
+    ndoorbowl: nookUp({ act: () => 3.5, at: () => ndoorX() + R * 1.05, face: -1, fn(b, p, ta, po) {
+            po.lookOverride = { x: -.9, y: .7 };
+            po.eyes = "half";
+            if (ta > 1 && !b.did) {
+                b.did = 1;
+                bowlAct();
+            }
+        } }),
     gpossum: nookUp({ act: () => 6, at: (b, p) => possum.x + (p.x > possum.x ? 1 : -1) * R * .95, fn(b, p, ta, po) {
             p.dir = possum.x > p.x ? 1 : -1;
             po.lookOverride = { x: p.dir * .6, y: -.9 }; // up at the possum, hanging asleep from its beam
             po.mouth = ta % 3 < 1.5 ? "o" : "smile";
         } }),
     // the wagon's left edge is the nook's right edge; the view goes along (camera.js)
-    toGarden: doorWalk({ w: c => view === "room" && !c.late ? .3 : 0, out: () => -R * .1, room: "garden", enter: p => {
+    toGarden: doorWalk({ w: c => view === "room" && !c.late ? (bowlDue() ? 1.5 : .3) : 0, out: () => -R * .1, room: "garden", enter: p => {
             gardenSince = performance.now();
             p.x += W;
         }, stop: () => W * .42 }),
@@ -16177,6 +16218,8 @@ function drawLoftFront(where = "room") {
         cx.fillStyle = wood;
         cx.fillRect(railL - lw, g.balY - R * .66, lw * 2, R * .66);
     }
+    if (where === "garden" && own("ndoor") && bowlOut()) // (in front of the railing: behind it, it would be lost)
+        drawKibbleBowl(nookDk);
 }
 /* walk a route of points [{x,g}], easing ground height between them; returns true when the route is done */
 function followRoute(b, p, po, dt) {
@@ -25212,6 +25255,8 @@ function lookSpots(rm) {
         add("beam", "look_beam", { x: 0, y: g.glassY - R * .3, w: W, h: R * .45 });
         if (own("ndoor"))
             add("ndoor", "look_ndoor", { x: ndoorX() - R * .3, y: nookLoftGeo().balY - R * 1.45, w: R * .6, h: R * 1.45 });
+        if (own("ndoor") && bowlOut())
+            add("bowl", "look_bowl", { x: ndoorX() + R * .3, y: nookLoftGeo().balY - R * .4, w: R * .5, h: R * .42 });
         { const lg = nookLoftGeo(); add("nooklanterns", "look_lanterns", { x: 0, y: lg.balY + R * .15, w: W, h: R * .45 }); } // (the lanterns under the platform)
         if (own("grug"))
             add("greenrug", "look_greenrug", rug, true);
@@ -28984,6 +29029,21 @@ function drawCloset(dk, x) {
     }
 }
 /* the night door, at x, standing on y (up on the nook's platform, left of the pinboard); it glows more the darker the sky */
+/* the bowl beside the night door, with the kibble in it until something has been (pantry.js) */
+function drawKibbleBowl(dk) {
+    const q = PX, x = Math.round((ndoorX() + R * .5) / q) * q, y = nookLoftGeo().balY;
+    cx.fillStyle = mix("#8f94a0", "#2c3038", dk * .6);
+    cx.fillRect(x - q * 3, y - q * 2, q * 6, q * 3);
+    cx.fillRect(x - q * 4, y - q * 3, q * 8, q);
+    cx.fillStyle = mix("#c4c8d0", "#4a4e58", dk * .6);
+    cx.fillRect(x - q * 4, y - q * 3, q * 8, q);
+    if (bowlEaten())
+        return;
+    ["#7a5cc8", "#56c8b8", "#e0b84a", "#7a5cc8", "#56c8b8"].forEach((c, i) => {
+        cx.fillStyle = mix(c, "#2a2438", dk * .3); // (they keep some of their own light)
+        cx.fillRect(x - q * 3 + i * q + (i > 1 ? q : 0), y - q * (i % 2 ? 5 : 4), q, q);
+    });
+}
 function drawNightDoor(dk, x, sky, y = GY) { // (y: what it stands on)
     const w = R * .55, h = R * 1.15;
     cx.fillStyle = "#120e16";
@@ -29898,9 +29958,6 @@ function frame(now) {
         });
         withRoom("archive", () => drawTapHints(now / 1000, "archive"));
         withRoom("garden", () => drawTapHints(now / 1000, "garden"));
-        if (tapMapUntil)
-            for (const rm of ["room", "archive", "garden"])
-                withRoom(rm, () => drawTapMap(performance.now(), rm));
         const onBal = view === "room" && own("loft") && pet.ground >= loftGeo("room").rise - 1, onNook = view === "garden" && pet.ground >= nookLoftGeo().rise - 1;
         if (own("loft") && !onBal)
             withRoom("room", () => drawLoftFront("room"));
@@ -29928,6 +29985,9 @@ function frame(now) {
             withRoomLight(view, () => drawPet(po)); // not clipped: Mite walks across from one room into the next
         drawPastimes(dt);
         drawAnomFront(now / 1000); // the indoor raincloud, in front of Mite (anomalies.js)
+        if (tapMapUntil)
+            for (const rm of ["room", "archive", "garden"])
+                withRoom(rm, () => drawTapMap(performance.now(), rm));
         withRoomLight("archive", () => drawCatEye(now / 1000)); // Midnightcat batting an eye from the jar about (eyes.js) // sticky notes, paper birds, the tiny things Mite's sorting (pastimes.js)
         if (anom && anom.held && anom.room === view) // the red phone's handset, at Mite's ear (anomalies.js)
             withRoomLight(view, () => drawLayered(() => drawHandset(anom)));
@@ -30629,8 +30689,9 @@ function tapMapSet(on) {
 function tapMapOwner(p, rm, boxes) {
     for (const id of TAP_ORDER[rm] || []) {
         const t = TAP_TARGETS[id];
-        if (t.tap ? (boxes[id] || []).some(r => hitIn(p, r, 20)) : t.hit(p, rm))
-            return id;
+        const i = t.tap ? (boxes[id] || []).findIndex(r => hitIn(p, r, 20)) : t.hit(p, rm) ? 0 : -1;
+        if (i >= 0) // (each box its own mark: the lanterns touch the door and the bowl, but they're three things)
+            return id + "#" + i;
     }
     return "";
 }
@@ -30667,7 +30728,7 @@ function tapMapMarks(rm) {
             }
         }
         if (n > 1) // (one point is the edge of something showing past what's in front of it)
-            out.push({ id, x: x0 * step, y: y0 * step, w: (x1 - x0 + 1) * step, h: (y1 - y0 + 1) * step });
+            out.push({ id: id.split("#")[0], x: x0 * step, y: y0 * step, w: (x1 - x0 + 1) * step, h: (y1 - y0 + 1) * step });
     }
     return out;
 }
@@ -32161,10 +32222,17 @@ function barterTrade(i) {
  * special one (pools pantry_<id>, the usual "Name | remark | look" lines). Treats: given to a resident the next
  * time Mite goes over to it (pools treat_cat, treat_possum, treat_snail). Stock in S.pantry {id: n}, at most
  * PANTRY_MAX of each.
+ * Interdimensional kibble (rare: in the shop one week in four): Mite puts a bowl out by the night door after dark;
+ * by the next day it's been eaten, and Mite goes to see what was left. S.bowl: { at, day, u }: when it went out (0:
+ * no bowl), that day, when this last changed.
  */
 /* PANTRY and PANTRY_MAX are in world.js (the save needs them early) */
 /* what an item needs before it can be bought: the oven, the kettle, the possum, the snail */
 function pantryNeeds(it) {
+    if (it.rare && !pantryWeek())
+        return "Gone again for now";
+    if (it.k === "bowl" && !S.b.ndoor)
+        return "Needs the night door";
     if (it.k === "bake" && !S.b.oven)
         return "Needs the oven";
     if (it.k === "brew" && !S.b.kettle)
@@ -32177,6 +32245,8 @@ function pantryNeeds(it) {
         return "Needs the tape recorder";
     return "";
 }
+/* the rare things are in the shop one week in four, the same week on every device */
+const pantryWeek = () => (weekNo(Date.now()) + 3) % 4 === 0;
 const pantryMax = it => (it && it.max) || PANTRY_MAX;
 function pantryN(id) {
     return num((S.pantry || {})[id]);
@@ -32189,7 +32259,7 @@ function buyPantry(it) {
     S.pantry = S.pantry || {};
     S.pantry[it.id] = pantryN(it.id) + 1;
     if (pantryN(it.id) === 1)
-        buySpeak(it.k === "tape" ? "A blank tape, for whoever has something to say. I'll leave it by the recorder." : it.k === "treat" ? `${it.name}. I'll take it over next time.` : `${it.name}, into the pantry. The next ${it.k === "bake" ? "bake" : "pot of tea"} will be a special one.`, { ms: 4000 });
+        buySpeak(it.k === "bowl" ? "Interdimensional kibble. I don't read the ingredients. They read back." : it.k === "tape" ? "A blank tape, for whoever has something to say. I'll leave it by the recorder." : it.k === "treat" ? `${it.name}. I'll take it over next time.` : `${it.name}, into the pantry. The next ${it.k === "bake" ? "bake" : "pot of tea"} will be a special one.`, { ms: 4000 });
     afterChange();
     renderShop();
 }
@@ -32247,6 +32317,40 @@ function treatGive(who) {
     saveSoon();
     return true;
 }
+/* the bowl by the night door: something for Mite to do? Out after dark with kibble in the pantry; the next day, go and look */
+const bowlOut = () => num(S.bowl.at) > 0;
+const bowlEaten = () => bowlOut() && S.bowl.day !== actDay();
+function bowlDue() {
+    if (!S.b.ndoor)
+        return false;
+    return bowlOut() ? bowlEaten() : pantryN("kibble") > 0 && sceneDark() > .35;
+}
+function bowlSet(at, day) {
+    S.bowl = { at, day, u: Date.now() };
+    saveSoon();
+}
+/* Mite's at the bowl (behaviours-nook.js, ndoorbowl) */
+function bowlAct() {
+    if (!bowlDue())
+        return;
+    if (!bowlOut()) {
+        S.pantry.kibble = pantryN("kibble") - 1;
+        bowlSet(Date.now(), actDay());
+        note("Left a bowl of kibble by the night door.");
+        return say("bowl_set");
+    }
+    bowlSet(0, "");
+    const r = Math.random();
+    note("The bowl by the night door was empty.");
+    if (r < .35 && hasVase() && oddFlowers("whatever ate the kibble"))
+        return;
+    if (r < .7) {
+        addG(4); // (half of it back: it's for the visit, not for the glimmers)
+        afterChange();
+        return say("bowl_glimmers");
+    }
+    say("bowl_empty");
+}
 function renderPantry() {
     const el = $("pantryShop");
     if (!el)
@@ -32254,6 +32358,8 @@ function renderPantry() {
     el.innerHTML = "";
     PANTRY.forEach(it => {
         const n = pantryN(it.id), need = pantryNeeds(it), row = document.createElement("div");
+        if (it.rare && !pantryWeek() && !n)
+            return;
         row.className = "bld";
         row.innerHTML = `<div style="min-width:0"><b>${esc(it.name)}</b><span class="own">${n ? n + " in the pantry" : ""}</span><p>${esc(it.note)}</p></div><span class="bacts">${need ? `<span class="owned">${esc(need)}</span>` : n >= pantryMax(it) ? `<span class="owned">The shelf is full</span>` : `<button class="btn amber" data-p="${it.id}" ${S.g < it.price ? "disabled" : ""} aria-label="Buy ${esc(it.name)} for ${it.price} glimmers">${it.price} ◆</button>`}</span>`;
         const bt = row.querySelector("[data-p]");
