@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 03-11-2026 -->
+<!-- Small Things, shared build of 04-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -522,14 +522,14 @@ body.pixel .cabglim{border-radius:0;font-family:var(--f-display);font-size:18px;
 #cabGlim{max-width:min(320px,90vw);text-align:center}#cabGlim .cabwhy{display:block;margin-top:4px;font-family:var(--f-body,inherit);font-size:13px;line-height:1.35;color:#f3e7c8;font-weight:400}
 .dlg.crystal{border-color:#4a3a66}.dlg.crystal b{background:#4a3a66}
 .pinbox{aspect-ratio:96/60}
-.eyelist li{display:flex;gap:10px;align-items:flex-start}
+.eyelist li{display:flex;gap:10px;align-items:flex-start;position:relative}
 .eyetap{all:unset;cursor:pointer;flex:none;line-height:0}
 .eyetap:focus-visible{outline:2px solid var(--accent,#c8862a);outline-offset:2px}
 /* what an eye's other eye sees: a little thought bubble, square-cornered like the speech bubbles, with two dots trailing up to it */
-.eyethink{display:block;position:relative;margin:10px 0 2px 8px;padding:6px 9px;background:#fffdf6;color:#2a1d10;border:2px solid #2a1d10;font-style:italic;box-shadow:3px 3px 0 rgba(42,29,16,.18)}
+.eyethink{display:block;position:absolute;z-index:2;left:96px;right:4px;top:6px;margin:0;cursor:pointer;padding:6px 9px;background:#fffdf6;color:#2a1d10;border:2px solid #2a1d10;font-style:italic;box-shadow:3px 3px 0 rgba(42,29,16,.18)}
 .eyethink::before,.eyethink::after{content:"";position:absolute;background:#fffdf6;border:2px solid #2a1d10}
-.eyethink::before{width:6px;height:6px;left:-6px;top:-9px}
-.eyethink::after{width:3px;height:3px;left:-12px;top:-15px}
+.eyethink::before{width:6px;height:6px;left:-11px;top:12px}
+.eyethink::after{width:3px;height:3px;left:-19px;top:18px}
 .pressedlist li{display:flex;gap:10px;align-items:flex-start}
 .pressed{width:50px;height:60px;flex:0 0 auto;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .eyepic{width:72px;height:48px;flex:0 0 auto;image-rendering:pixelated;image-rendering:crisp-edges;background:#2f2420;border-radius:4px}
@@ -5179,7 +5179,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 44 batch 2 (01-11-2026)
     "mvxujz21qeu6z", "mvxuknw3m6dbb", "mvxupxo6hv3vq",
     // group 44 lore check and group 45 (01-11-2026)
-    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x", "mvzb1io3poh4t", "mvzwe2wo1ppbo", "mvzwed65i2i61", "mw0htonoeuma0"];
+    "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x", "mvzb1io3poh4t", "mvzwe2wo1ppbo", "mvzwed65i2i61", "mw0htonoeuma0", "mw19k04dfn9un", "mw19okic2777s", "mw19pr6zq2mb1", "mw19qbvwf4mv0", "mw1b3306x5671", "mw1bd6ui024nj"];
 
 </script>
 <script>/* js/core/state.js */
@@ -12080,7 +12080,7 @@ function drawPet(po) {
             addP({ type: "steam", x: x + r * .48 * p.dir, y: y + by, vy: -14, vx: rnd(-4, 4), max: 2, size: r * .08 });
     }
     if (po.prop === "food") {
-        const col = { berry: "#8e2b48", tea: "#6f9a4a", cake: "#7aa35e", biscuit: "#c9a26b", shroom: "#bfe8ff", honey: "#e8a830" }[po.food] || "#c9a26b";
+        const col = { berry: "#8e2b48", tea: "#6f9a4a", cake: "#7aa35e", biscuit: "#c9a26b", shroom: "#bfe8ff", honey: "#e8a830", fern: "#5f9a58", pear: "#dfe2b0", ember: "#d9743a" }[po.food] || "#c9a26b";
         const pawAt = (px, py) => { // an arm from the side of the body, in front of it, ending in a paw at (px, py)
             const sd = Math.sign(px) || 1, ax = sd * r * .78 * sx, ay = by + r * .3;
             cx.strokeStyle = body;
@@ -17017,6 +17017,9 @@ let dlgUp = false;
 /* the words box sits at the bottom, over the front of the floor: is anyone down there now, on screen, whose feet are
    below its top edge (top, in pixels)? Then the box goes up (jot mvyhbf3k1rfh6: the possum playing dead under it) */
 let boxGap = 140, floorUpUntil = 0;
+/* the words box sits in the top half unless something asks otherwise (owner, jot mw19k04dfn9un: she'll say if it
+   disturbs). false: back to the bottom, going up only for the circle or for someone on the floor */
+let BOX_TOP = true;
 function floorUnder(top) {
     const on = (room, x) => roomVisible(room) && x + roomOff(room) > -R * .3 && x + roomOff(room) < W + R * .3, low = y => y > top + PX * 2;
     if (possumHere() && !possumUp() && possum.ph !== "hang" && possum.ph !== "lower" && possum.ph !== "raise" && on(possum.room, possum.x) && low(possum.fy))
@@ -17033,7 +17036,7 @@ function circleUp() {
 function dlgShow(name, txt, kind, id, next, moreBeats) {
     const el = $("dlg");
     el.hidden = false;
-    el.className = "dlg" + (kind ? " " + kind : "") + (dlgUp ? " up" : "");
+    el.className = "dlg" + (kind ? " " + kind : "") + (dlgUp || BOX_TOP ? " up" : "");
     el.querySelector(".dlgnext").textContent = "▼";
     $("dlgName").textContent = name;
     boxOpen({ kind: "convo", who: "convo", el, te: $("dlgText"), pages: boxPages(txt), full: txt, id, end: next, more: !!moreBeats, voice: ["snail", "guest", "cat", "possum"].includes(kind) ? kind : "mite" });
@@ -17318,7 +17321,7 @@ function guestStays(g, c) {
    (it covers the front of the floor) no lower than just above the box's top. After, it may go back out there */
 function guestZGoal(g) {
     const z = guestLane(g, g.tz || 0), el = $("dlg");
-    if (!el || el.hidden || view !== "room")
+    if (!el || el.hidden || view !== "room" || el.classList.contains("up"))
         return z;
     const top = el.getBoundingClientRect().top - cv.getBoundingClientRect().top; // (canvas coordinates are CSS pixels)
     return Math.max(g.front ? LANE_FRONT * R : 0, Math.min(z, top - GY - R * .25)); // (in the front lane: still in front of Mite)
@@ -17366,7 +17369,7 @@ function guestTick(dt, now) {
     g.t += dt;
     g.s = guestSize(g);
     const sp = R * 1.1;
-    { // out across the floor as it comes in; while the dialogue box is up it keeps above it (jot mvp75z72h288i)
+    if (g.ph === "in" || g.ph === "out" || g.ph === "roam" && g.act && g.act.ph === "walk") { // out across the floor as it comes in; while the dialogue box is up it keeps above it (jot mvp75z72h288i). Only on foot: sitting or asleep it stays put, tea and all (jot mw1b3306x5671)
         const zg = guestZGoal(g);
         g.z += Math.sign(zg - g.z) * Math.min(Math.abs(zg - g.z), sp * (zg < (g.tz || 0) && g.z > zg ? 2.4 : g.ph === "in" ? .6 : .9) * dt); // (out of the box's way briskly)
     }
@@ -28022,6 +28025,7 @@ function showEyeJars() {
     sfx("card");
     animateEyePics();
     document.querySelectorAll("#ritBody .eyetap").forEach(b => b.addEventListener("click", () => eyeThink(b)));
+    document.querySelectorAll("#ritBody .eyethink").forEach(th => th.addEventListener("click", () => th.hidden = true)); // (a tap on the balloon: gone)
 }
 /* a tapped eye on the card blinks (not the Sovereign's: it never does) and a thought bubble says what its other eye
    sees, a different one each tap where there are more (owner's jots mvs75jof0hcot, mvs76pjhzxzxr) */
@@ -28029,6 +28033,7 @@ function eyeThink(b) {
     const id = b.dataset.eye, e = EYES.find(x => x.id === id), li = b.closest("li"), th = li && li.querySelector(".eyethink");
     if (!e || !th)
         return;
+    document.querySelectorAll("#ritBody .eyethink").forEach(x => x !== th && (x.hidden = true)); // (one at a time)
     const pic = eyePicsLive.find(p => p.e === e);
     if (pic && !e.noblink)
         pic.blinkAt = pic.now;
@@ -30101,12 +30106,12 @@ function frame(now) {
     roomArrows(); // the arrows to look into the other room (garden.js)
     speakPump(now); // a line that waited for the box (speech.js)
     { // the box goes up for the chalk circle (group 40), and while someone on the floor would be under it (group 47)
-        if (boxH && floorUnder(H - boxGap - boxH))
+        if (!BOX_TOP && boxH && floorUnder(H - boxGap - boxH))
             floorUpUntil = now + 3000; // (stays up a moment, so it doesn't hop while someone walks along the edge)
-        const fl = !!boxH && now < floorUpUntil, up = circleUp() || floorTaken() && dlgUp || fl; // (an answer inside a raised conversation stays where it is)
+        const fl = !!boxH && now < floorUpUntil, up = BOX_TOP || circleUp() || floorTaken() && dlgUp || fl; // (an answer inside a raised conversation stays where it is)
         b.classList.toggle("up", up);
         b2.classList.toggle("up", up);
-        $("dlg").classList.toggle("up", dlgUp || fl);
+        $("dlg").classList.toggle("up", BOX_TOP || dlgUp || fl);
     }
     if (!b.hidden && boxOn()?.el !== b) { // (asked again: a line may just have come up, speakPump)
         if (b.classList.contains("boxed") || now > smallUntil)
@@ -34789,10 +34794,12 @@ async function aiCall(kind, input, { json = false, tier = "quick", onText } = {}
  * care.js - Care: snacks, the ball, washing, mess on the floor, lights out, self-care prompts and the
  * small games.
  */
-const SNACKS = [
-    { id: "biscuit", name: "Stale biscuit", base: 2, next: "sneeze" }, { id: "berry", name: "Berry", base: 5, next: "hop" },
-    { id: "tea", name: "Tea leaf", base: 12, next: "tea" }, { id: "honey", name: "Honey drop", base: 25, next: "celebrate" },
-    { id: "cake", name: "Moss cake", base: 40, next: "spin" }, { id: "shroom", name: "Glowing mushroom", base: 80, next: "stare", strange: true }
+const SNACKS = [ // free (owner, 03-11-2026); more turn up as Mite levels (lvl)
+    { id: "biscuit", name: "Stale biscuit", lvl: 1, next: "sneeze" }, { id: "berry", name: "Berry", lvl: 1, next: "hop" },
+    { id: "tea", name: "Tea leaf", lvl: 1, next: "tea" }, { id: "honey", name: "Honey drop", lvl: 3, next: "celebrate" },
+    { id: "fern", name: "Fern curl", lvl: 5, next: "hop" }, { id: "cake", name: "Moss cake", lvl: 7, next: "spin" },
+    { id: "pear", name: "Moon pear", lvl: 10, next: "celebrate" }, { id: "shroom", name: "Glowing mushroom", lvl: 12, next: "stare", strange: true },
+    { id: "ember", name: "Warm ember nut", lvl: 15, next: "spin" }
 ];
 const SELF = [{ id: "water", label: "Water", beh: "drink" }, { id: "ate", label: "Ate something", beh: "eat" }, { id: "cooked", label: "Cooked", beh: "cook" }, { id: "outside", label: "Went outside", beh: "outing" }, { id: "stretch", label: "Stretched", beh: "stretch" }, { id: "break", label: "Took a break", beh: "tea" }, { id: "rest", label: "Rested", beh: "sit" }];
 const GAMES = [{ id: "paws", name: "Which paw?" }, { id: "leaves", name: "Catch leaves" }, { id: "memory", name: "Drawer memory" }];
@@ -34816,10 +34823,6 @@ function shimmerTick(dt, po) {
         addP({ type: "glint", x: Math.round(pet.x + Math.cos(a) * r), y: Math.round(cy + Math.sin(a) * r * .8), vx: 0, vy: -rnd(4, 10), g: 0, max: rnd(.9, 1.5), rot: rnd(0, 6), col: choice(["#fff4c2", "#f2d38a", "#ffffff", "#f7e6a8"]), size: 1 });
     }
 }
-const SNACK_PRICE = { biscuit: 1, berry: 1, tea: 2, honey: 2, cake: 3, shroom: 4 };
-function snackCost(s) {
-    return SNACK_PRICE[s.id] || 1;
-}
 function snacks() {
     return SNACKS.filter(s => !s.strange || strangeness() > 0);
 }
@@ -34827,12 +34830,8 @@ function feed(id) {
     const s = SNACKS.find(x => x.id === id);
     if (!s)
         return;
-    const c = snackCost(s);
-    if (S.g < c) {
-        toast(`${s.name} costs ${fmt(c)} glimmers`);
+    if (level() < s.lvl)
         return;
-    }
-    S.g -= c;
     S.care.fed++;
     S.lastSnack = { n: s.name.toLowerCase(), at: Date.now() }; // (Mite can mention it for 12 hours: {snack}, jot mvozwa0az0gkw)
     sfx("munch");
@@ -35205,16 +35204,14 @@ function renderTray(level) {
             renderTray("hats");
         }, S.hat === h.id ? "wearing" : L >= h.lvl ? "" : "level " + h.lvl, S.hat === h.id ? "on" : "", L < h.lvl));
     }
-    if (level === "feed")
-        info(`A snack makes ${S.settings.pet} shimmer for a bit. You have ${fmt(S.g)} glimmer${S.g === 1 ? "" : "s"}.`);
-    if (level === "feed")
-        snacks().forEach(s => {
-            const c = snackCost(s);
-            add(s.name, () => {
-                feed(s.id);
-                closeTray();
-            }, fmt(c), "", S.g < c);
-        });
+    if (level === "feed") {
+        const L = window.level(); // ("level" is this function's parameter here)
+        info(`A snack makes ${S.settings.pet} shimmer for a bit. More turn up as ${S.settings.pet} grows.`);
+        snacks().forEach(s => add(s.name, () => {
+            feed(s.id);
+            closeTray();
+        }, L >= s.lvl ? "" : "level " + s.lvl, "", L < s.lvl));
+    }
     if (level === "me") {
         const today = S.selfcare[actDay()] || {};
         info(`Log it and ${S.settings.pet} does the same. The first ${PAY.selfcareMax} of each kind a day earn a glimmer.`);
