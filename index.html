@@ -7085,8 +7085,7 @@ function boxOpen(o) {
         box.el.hidden = true;
     boxDrop();
     box = Object.assign({ i: 0, done: false, doneAt: Infinity, timer: 0, low: boxLow() }, o);
-    if (BOX_TOP)
-        o.el.classList.toggle("up", !box.low);
+    o.el.classList.toggle("up", !box.low); // (the top half, unless Mite is up there: boxLow)
     boxPage();
 }
 function boxPagesLeft() {
@@ -7250,6 +7249,14 @@ function speechHoldTick(now) {
     speechHeldWas = h;
 }
 /* how long a whole line stays readable once it's all there */
+/* how long a line stays up at least, whatever says it: lineMs for something said, noteMs for something read out (a
+   letter, a memo, a label on a card). Long lines go in pages and follow pageMs */
+function lineMs(t) {
+    return clamp(3500 + String(t || "").length * 45, 4500, 9000) / readF();
+}
+function noteMs(t) {
+    return clamp(4000 + String(t || "").length * 50, 6000, 14000) / readF();
+}
 function readMs(text) {
     return clamp(2000 + text.length * 55, 2800, 12000) / readF();
 }
@@ -11527,7 +11534,7 @@ Object.assign(BEH, {
             po.eyes = ta > A - 1.6 ? "happy" : "open";
             once("s1", 1, () => floatText("further in…", cxl, GY - R * 2, "#ffe39a"));
             once("said", A - 1.5, () => {
-                speak(b.e.t, { ms: clamp(3500 + b.e.t.length * 50, 6000, 12000) });
+                speak(b.e.t, { ms: noteMs(b.e.t) });
                 if (b.e.f)
                     floatText(b.e.f, p.x, GY - R * 2.2, "#ffe39a");
             });
@@ -13383,11 +13390,8 @@ const SCOPE_CAP = {
 const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () => showGlimpse() }, gdrawers: { beh: "opendrawer", revealAt: .8, show: () => openDrawer() }, gchair: { beh: "armread", revealAt: 1.2, show: () => showBook() || 8 }, gletters: { beh: "readletter", revealAt: .6, show: () => readLetter() }, gjar: { beh: "readletter", revealAt: .5, show: () => showGiveCard() }, cat: { beh: "catvisit", revealAt: 0, show: () => (treatGive("cat"), 8) }, possum: { beh: "possumchat", revealAt: 0, show: () => (treatGive("possum"), 8) }, possumcookie: { beh: "givecookie", revealAt: 0, room: "room", show: () => 5 }, gdesk: { beh: "write", revealAt: .3, show: () => 6 }, gplants: { beh: "gwater", revealAt: .6, show: () => {
             const sp = pet.b && pet.b.sp, hp = sp && sp.id && PLANTS.find(x => x.id === sp.id);
             const pl = hp ? [hp] : sp && sp.k === "sill" ? sillPlants("garden") : []; // (the window sill's pots, or the hanging one: Mite says which)
-            if (pl.length) {
-                const p = choice(pl);
-                speak(Math.random() < .25 ? p.line : compose("plant_" + p.id) || p.line, { ms: 6500 });
+            if (plantSay(pl))
                 return 6.5;
-            }
             say("greenhouse");
             return 5;
         } }, gvase: { beh: "gsmell", revealAt: 1, show: () => showFlower() }, gfbook: { beh: "gfread", revealAt: .6, show: () => showFlowerBook() }, ghang: { beh: "ghang", revealAt: 0, show: () => 9 }, ggramo: { beh: "ggramo", revealAt: 2.2, show: () => gramoShow() }, gpin: { beh: "gpin", revealAt: .4, show: () => { // a snapshot on the pinboard, from up on the platform
@@ -13397,7 +13401,7 @@ const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () 
         } }, gpossum: { beh: "gpossum", revealAt: .6, show: () => { // the possum asleep on its beam: Mite goes up to say hello
             const line = compose("possumsleep");
             if (line && possum.ph === "hang")
-                snailSay(line, clamp(3000 + line.length * 45, 4000, 9000), "possum");
+                snailSay(line, lineMs(line), "possum");
             return 5;
         } }, guest: { beh: "guestchat", revealAt: 0, show: () => 8 }, snail: { beh: "snailchat", revealAt: 0, show: () => (treatGive("snail"), 8) }, oven: { beh: "bake", revealAt: 1.4, show: () => {
             startOvenJob();
@@ -13416,23 +13420,18 @@ const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () 
             return 6;
         } },
     sill: { beh: "water", revealAt: 2.2, show: () => {
-            const pl = PLANTS.filter(p => own(p.id) && !p.hang);
-            const p = choice(pl);
-            if (p)
-                speak(Math.random() < .25 ? p.line : compose("plant_" + p.id) || p.line, { ms: 6500 }); // (lines: plant_<id>)
+            plantSay(sillPlants("room"));
             return 6.5;
         } },
     archsill: { beh: "water", revealAt: 2.2, room: "archive", show: () => {
-            const p = choice(sillPlants("archive"));
-            if (p)
-                speak(Math.random() < .25 ? p.line : compose("plant_" + p.id) || p.line, { ms: 6500 });
+            plantSay(sillPlants("archive"));
             return 6.5;
         } },
     jar: { beh: "jarvisit", revealAt: 1, show: () => {
             const t = fireflyLine();
             if (t)
-                speak(t, { ms: clamp(3500 + t.length * 50, 5000, 11000) });
-            return clamp(3.5 + (t || "").length * .05, 5, 11);
+                speak(t, { ms: noteMs(t) });
+            return noteMs(t) / 1000;
         } }, journal: { beh: "journalsit", revealAt: 1.3, room: "archive", extra: null, show: () => {
             showJournal(0);
             return 1.5;
@@ -13447,6 +13446,13 @@ const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () 
                 addP({ type: "spark", x: hearthX() + rnd(-R * .2, R * .2), y: GY - R * .5, vx: rnd(-30, 30), vy: -rnd(40, 90), g: -5, max: 1.2, col: "#ffcf6a", size: 2.5 });
             return 6;
         } }, book: { beh: "read", revealAt: 1.4, show: () => showBook() }, brew: { beh: "tea", revealAt: 3, show: () => showBrew() }, scope: { beh: "stargaze", revealAt: .9, show: () => showScope() } };
+/* Mite says something about one of these plants (lines: plant_<id>). False if there are none */
+function plantSay(pl) {
+    const p = choice(pl);
+    if (p)
+        speak(Math.random() < .25 ? p.line : compose("plant_" + p.id) || p.line, { ms: 6500 });
+    return !!p;
+}
 /* the interaction queue: cur is running (or Mite is on the way), next waits its turn. userKinds: ones you
    asked for with a tap, so what Mite says on arrival counts as a reply and doesn't wait in line (speech.js) */
 const objQ = { cur: null, next: null }, userKinds = new Set();
@@ -13540,7 +13546,7 @@ function startObj(kind) {
                 }
                 if (sp.id === "puddle") { // the flowers' puddle: mopped (flowers.js)
                     const t = mopPuddle();
-                    speak(t, { ms: clamp(3500 + t.length * 45, 5000, 8000) });
+                    speak(t, { ms: lineMs(t) });
                     return 5;
                 }
                 if (sp.id === "desklamp") { // the Tiffany lamp: Mite swaps the shade for another (archive-room.js)
@@ -13550,8 +13556,8 @@ function startObj(kind) {
                     return 7;
                 }
                 const t = lookLine(sp);
-                speak(t, { ms: clamp(3500 + t.length * 45, 5000, 9000) });
-                return clamp(3.5 + t.length * .045, 5, 9);
+                speak(t, { ms: lineMs(t) });
+                return lineMs(t) / 1000;
             } };
     }
     if (kind === "anomphone") { // the red phone (anomalies.js): go over, pick it up, listen
@@ -13578,8 +13584,8 @@ function startObj(kind) {
             a = { beh: "admire", revealAt: .6, extra: { tx: h ? h.cx : pet.x }, show: () => {
                     const d = new Date(r.at);
                     const t = `From ${d.toLocaleDateString("en-GB", { weekday: "long" })}: “${r.text.length > 220 ? r.text.slice(0, 217) + "…" : r.text}”`;
-                    speak(t, { ms: clamp(4000 + t.length * 45, 5000, 13000) });
-                    return clamp(4 + t.length * .045, 5, 13);
+                    speak(t, { ms: noteMs(t) });
+                    return noteMs(t) / 1000;
                 } };
     }
     if (kind.startsWith("festbox:")) { // a festival's box on the pedestal: Mite goes over and unwraps it (festivals.js)
@@ -13594,7 +13600,7 @@ function startObj(kind) {
                         return 3;
                     sfx("tock");
                     const line = boxLine(h.t, h.week);
-                    speak(line, { ms: clamp(4000 + line.length * 40, 5000, 11000) });
+                    speak(line, { ms: noteMs(line) });
                     return 5;
                 } };
     }
@@ -13962,7 +13968,7 @@ function showBook() {
         recentBooks.shift();
     const [title, ...rest] = b.text.split("|");
     const note = rest.join("|").trim();
-    const ms = clamp(3800 + note.length * 55, 5000, 12000);
+    const ms = noteMs(note);
     sfx("tock");
     speak(`“${title.trim()}”${note ? ". " + note : "."}`, { ms });
     S.flags.book = (S.flags.book || 0) + 1;
@@ -14029,7 +14035,7 @@ function showBrew() {
     if (Math.random() < .25)
         note(`Tea from the kettle: ${d.name}.`);
     saveSoon();
-    const ms = clamp(5000 + d.note.length * 45, 6500, 11000);
+    const ms = noteMs(d.note);
     brew.to = setTimeout(closeBrew, ms);
     requestAnimationFrame(brewFrame);
     return ms / 1000;
@@ -15861,7 +15867,7 @@ function showBake() {
     if (Math.random() < .3)
         note(`Baked: ${d.name}.`);
     saveSoon();
-    const ms = clamp(5000 + d.note.length * 45, 6500, 11000);
+    const ms = noteMs(d.note);
     bake.to = setTimeout(closeBake, ms);
     requestAnimationFrame(bakeFrame);
     return ms / 1000;
@@ -16677,7 +16683,7 @@ function explainTerm() {
         saveSoon();
     }
     const line = `${t.k}: ${t.m}`;
-    speak(line, { ms: clamp(4000 + line.length * 50, 6000, 13000) });
+    speak(line, { ms: noteMs(line) });
     return true;
 }
 let archiveTaskLast = "";
@@ -17057,12 +17063,6 @@ function emoteFor(t, who) {
 /* in the chalk circle (a voice through it, or the cat's ritual on screen), what's said goes in the upper half so it
    doesn't cover the circle (owner, 01-11-2026, group 40) */
 let dlgUp = false;
-/* the words box sits at the bottom, over the front of the floor: is anyone down there now, on screen, whose feet are
-   below its top edge (top, in pixels)? Then the box goes up (jot mvyhbf3k1rfh6: the possum playing dead under it) */
-let boxGap = 140, floorUpUntil = 0;
-/* the words box sits in the top half unless something asks otherwise (owner, jot mw19k04dfn9un: she'll say if it
-   disturbs). false: back to the bottom, going up only for the circle or for someone on the floor */
-let BOX_TOP = true;
 /* Mite up on the wagon's balcony or the nook's platform, in the room on screen: the top box would sit on it, so the
    next box goes to the bottom (jots mw1zntkrf8yb9, mw1zo3la6zzlf). Settled when a box opens (boxOpen): it stays where it is
    until its line is finished, and the next one starts in the other place. The chalk circle needs the top */
@@ -17071,17 +17071,7 @@ function miteHigh() {
     return !!rise && pet.ground >= rise * .5 && roomOnScreen(view);
 }
 function boxLow() {
-    return BOX_TOP && miteHigh() && !circleUp();
-}
-function floorUnder(top) {
-    const on = (room, x) => roomVisible(room) && x + roomOff(room) > -R * .3 && x + roomOff(room) < W + R * .3, low = y => y > top + PX * 2;
-    if (possumHere() && !possumUp() && possum.ph !== "hang" && possum.ph !== "lower" && possum.ph !== "raise" && on(possum.room, possum.x) && low(possum.fy))
-        return true;
-    if (cat.ph !== "through" && on(cat.room, cat.x) && low(GY + cat.z - cat.g))
-        return true;
-    if (own("snail") && !snailAsleep && on(snailRoom, snailX * W) && low(GY + snailZ - snailUp))
-        return true;
-    return !!(guest && on("room", guest.x) && low(GY + (guest.z || 0)));
+    return miteHigh() && !circleUp() && !(floorTaken() && dlgUp); // (dlgUp: a conversation at the circle, and answers inside it)
 }
 function circleUp() {
     return own("circle") > 0 && typeof roomOnScreen === "function" && roomOnScreen("archive") && catInCircle();
@@ -17089,7 +17079,7 @@ function circleUp() {
 function dlgShow(name, txt, kind, id, next, moreBeats) {
     const el = $("dlg");
     el.hidden = false;
-    el.className = "dlg" + (kind ? " " + kind : "") + (dlgUp || BOX_TOP && !boxLow() ? " up" : "");
+    el.className = "dlg" + (kind ? " " + kind : "");
     el.querySelector(".dlgnext").textContent = "▼";
     $("dlgName").textContent = name;
     boxOpen({ kind: "convo", who: "convo", el, te: $("dlgText"), pages: boxPages(txt), full: txt, id, end: next, more: !!moreBeats, voice: ["snail", "guest", "cat", "possum"].includes(kind) ? kind : "mite" });
@@ -18095,7 +18085,7 @@ function answerPhone(a, side) {
     if (t)
         speak(t);
     incNote(`Incident ${c.no}, ${c.tm}: the phone rang. ${S.settings.pet} answered. Transcript: ${t || "[blank]"}${c.it ? " Something was left by the phone: " + c.it + "." : ""}`);
-    const secs = clamp(3 + t.length * .05, 5, 11);
+    const secs = noteMs(t) / 1000;
     setTimeout(() => hangUp(a), secs * 1000);
     return secs;
 }
@@ -18464,7 +18454,7 @@ function resolveAnom() {
         anomPay(a);
         pet.start("curious", { tx: clamp(a.x - R * .9, W * .1, W * .9) });
         const memo = anomLine("letter") || "MEMO: ████████.";
-        setTimeout(() => speak(`It's a memo. "${memo}"`, { ms: clamp(4000 + memo.length * 50, 6000, 12000) }), 1800);
+        setTimeout(() => speak(`It's a memo. "${memo}"`, { ms: noteMs(memo) }), 1800);
         incNote(`Incident ${no}, ${tm}: a memo slid under the archive door. It read: "${memo}" Sender: [REDACTED].`);
         return end();
     }
@@ -18473,7 +18463,7 @@ function resolveAnom() {
         pet.start("curious", { tx: clamp(a.x - R * 1.1, W * .1, W * .9) });
         const parts = (anomLine("report") || "the possum | They keep the bins very tidy for us. | The report was filed by the possum, in crayon.").split("|").map(x => x.trim());
         const [who, rep, memo] = parts.length >= 3 ? parts : ["[REDACTED]", parts[0], parts[1] || "Filer unknown. The report has been filed under 'nice'."];
-        setTimeout(() => speak(`Someone filed a report about us. It says: "${rep}" It's very kind.`, { ms: clamp(4500 + rep.length * 50, 6000, 12000) }), 1500);
+        setTimeout(() => speak(`Someone filed a report about us. It says: "${rep}" It's very kind.`, { ms: noteMs(rep) }), 1500);
         incNote(`Incident ${no}, ${tm}: a kind report was filed about the wagon. It read: "${rep}" Filed by: unknown (see memo).`);
         setTimeout(() => { // the memo, a little later, like an envelope after a parcel
             incNote(`Incident ${no}, ${tm} (cont.): a memo came after the kind report. It read: "${memo}" Filed by, according to the Bureau: ${who}.`);
@@ -20173,7 +20163,7 @@ function finishKnit() {
             if (t)
                 note(t);
             if (t && snailRoom === view && !snailAsleep && roomVisible(view))
-                snailSay(t, clamp(3500 + t.length * 45, 4500, 9000), "snail");
+                snailSay(t, lineMs(t), "snail");
         }, 6500);
     else if (own("snail") && snailCosies().length < 8 && dayNum() - num(S.flags.cosyAskDay) >= 2)
         S.flags.cosyWant = 1; // the snail would like one: it asks once it sees Mite at the knitting (snailCosyTick)
@@ -21617,7 +21607,7 @@ function catEyeGlow(k, now) {
 function catTap() {
     if (catInCircle()) { // busy: a warlock has called on her (she's somebody's patron, circle.js)
         const line = compose("catritual") || "Not now. A warlock is calling. I'll be right back.";
-        snailSay(line, clamp(3500 + line.length * 45, 4500, 9000), "cat");
+        snailSay(line, lineMs(line), "cat");
         heard(CAT_NAME, line, Date.now());
         return;
     }
@@ -21639,7 +21629,7 @@ function catTap() {
         cat.ph = "sit";
         cat.until = performance.now() + 6000;
     }
-    snailSay(line, clamp(3500 + line.length * 45, 4500, 10000), "cat");
+    snailSay(line, lineMs(line), "cat");
     heard(CAT_NAME, line, Date.now());
     if (!S.flags.tap_cat) {
         S.flags.tap_cat = 1;
@@ -22216,8 +22206,8 @@ function openDrawer() {
     if (left.length && (!ok.length || Math.random() < .4)) { // an empty drawer with a note from the last tenant in it
         const i = choice(left), n = drawerNote(i), text = `Drawer ${i + 1}, to let. ${n.from} left a note in it: "${n.t}"`;
         gardenDrawer = { i, until: performance.now() + 6000 };
-        speak(text, { whole: true, ms: clamp(4000 + text.length * 50, 6000, 14000) });
-        return clamp(4 + text.length * .05, 6, 14);
+        speak(text, { whole: true, ms: noteMs(text) });
+        return noteMs(text) / 1000;
     }
     if (!ok.length) {
         gardenDrawer = { i: ri(0, 3), until: performance.now() + 3000 };
@@ -22227,8 +22217,8 @@ function openDrawer() {
     const i = Math.random() < .6 ? ok[ok.length - 1] : choice(ok), d = dec[i];
     gardenDrawer = { i, until: performance.now() + 6000 };
     const text = `Drawer ${i + 1}, rented to ${d.label}. ${d.text}`;
-    speak(text, { whole: true, ms: clamp(4000 + text.length * 50, 6000, 14000) });
-    return clamp(4 + text.length * .05, 6, 14);
+    speak(text, { whole: true, ms: noteMs(text) });
+    return noteMs(text) / 1000;
 }
 /* the framed tenants' list above the chest: who has which drawer, and since when */
 function showTenants() {
@@ -23049,7 +23039,7 @@ function snailTick(dt) {
             snailPicnicB = pet.b;
             const line = compose("snail_picnic");
             if (line && roomVisible(snailRoom) && !floorTaken()) {
-                snailSay(line, clamp(3500 + line.length * 45, 4500, 9000), "snail");
+                snailSay(line, lineMs(line), "snail");
                 snailTalkUntil = now + 3000;
             }
         }
@@ -23066,7 +23056,7 @@ function snailTick(dt) {
         snailCircleAt = now + rnd(4, 9) * 60e3;
         const line = compose("snailcircle");
         if (line && roomVisible("archive")) {
-            snailSay(line, clamp(3500 + line.length * 45, 4500, 9000), "snail");
+            snailSay(line, lineMs(line), "snail");
             snailTalkUntil = now + 4000;
         }
     }
@@ -23210,7 +23200,7 @@ function snailPostTick(dt, now, stop) {
             const inbox = ((S.post && S.post.inbox) || []).filter(l => !l.read);
             const line = giveTakeJar() || compose(inbox.length ? "snail_post_new" : "snail_post"); // (a full jar goes with it: giving.js)
             if (line && roomVisible("garden") && !floorTaken()) {
-                snailSay(line, clamp(3500 + line.length * 45, 4500, 9000), "snail");
+                snailSay(line, lineMs(line), "snail");
                 snailTalkUntil = now + 3000;
             }
         }
@@ -23480,8 +23470,8 @@ function readLetter() {
     if (l.you) // (yours: handed over, not read out)
         return showYourLetter(l);
     const text = `${fresh ? "A letter from" : "An old one from"} ${l.from}. “${l.text}”`;
-    speak(text, { whole: true, ms: clamp(4000 + text.length * 50, 6000, 16000) });
-    return clamp(4 + text.length * .05, 6, 16);
+    speak(text, { whole: true, ms: noteMs(text) });
+    return noteMs(text) / 1000;
 }
 
 /* ---------- the correspondence: registered, kept at the desk, transferred to the archive ----------
@@ -23889,7 +23879,7 @@ function oralSaid(tp, last) {
     note(last ? `${who} finished recording "${tp.t}". The tape's with the others in Collections.` : `${who} recorded part ${tp.n} of "${tp.t}" on the tape recorder.`);
     const l = compose(last ? "oral_done" : "oral_new", { who, title: tp.t });
     if (l && typeof roomVisible === "function" && roomVisible("archive"))
-        speak(l, { ms: clamp(3500 + l.length * 45, 5000, 8000) });
+        speak(l, { ms: lineMs(l) });
 }
 /* a visitor on its way out: now and then it records a tape of its own (visitors.js) */
 function oralVisitor(g) {
@@ -24060,7 +24050,7 @@ function lostTick(t) {
             note(`Something turned up on the lost property shelf in the closet: ${lostLow(it.n)}. The tag says: "${it.tag}".`);
             const l = compose("lost_new", { item: lostLow(it.n), tag: it.tag });
             if (l && roomVisible("archive"))
-                speak(l, { ms: clamp(3500 + l.length * 45, 5000, 8000) });
+                speak(l, { ms: lineMs(l) });
             saveSoon();
             return true;
         }
@@ -24394,7 +24384,7 @@ function possumSummonEnd(p, now) {
     Object.assign(p, { ph: "sit", until: now + (ok ? 400 : 2500) });
     const line = compose(ok ? "possumsummonok" : "possumsummonno");
     if (line && roomVisible("archive"))
-        setTimeout(() => snailSay(line, clamp(3000 + line.length * 45, 4000, 8000), "possum"), 300);
+        setTimeout(() => snailSay(line, lineMs(line), "possum"), 300);
 }
 /* the ritual (owner, 27-10-2026): it doesn't stand still, it goes from point to point of the hexagram, stopping at
    each one up on its hind legs (a few sparks), then scurrying on to the next-but-one. True while it's moving */
@@ -24773,7 +24763,7 @@ function possumTick(dt, now) {
                     p.saidBasket = true;
                     const line = compose("possum_basket");
                     if (line)
-                        snailSay(line, clamp(3000 + line.length * 45, 4500, 9000), "possum");
+                        snailSay(line, lineMs(line), "possum");
                 }
                 if (basketN() && p.ate < 14) // another
                     p.until = now + rnd(1400, 2200);
@@ -24982,7 +24972,7 @@ function possumTick(dt, now) {
         possumSummonAt = now + rnd(3, 6) * 60e3;
         const line = compose("possum_catstyle");
         if (line && roomVisible("archive"))
-            snailSay(line, clamp(3000 + line.length * 45, 4000, 8000), "possum");
+            snailSay(line, lineMs(line), "possum");
         Object.assign(p, { ph: "sit", until: now + 4000 });
         return;
     }
@@ -25003,7 +24993,7 @@ function possumTick(dt, now) {
             const sass = Math.random() < (cat.room === "archive" ? .5 : .25);
             const line = (sass && compose("possum_catstyle")) || compose("possumsummon") || "Garbage of the deep, I call upon thee.";
             if (roomVisible("archive"))
-                snailSay(line, clamp(3000 + line.length * 45, 4000, 8000), "possum");
+                snailSay(line, lineMs(line), "possum");
             return;
         }
         p.summon = true;
@@ -25142,7 +25132,7 @@ function possumTap() {
     if (p.ph === "hang" || p.ph === "lower" || p.ph === "raise") {
         const line = compose("possumsleep");
         if (line)
-            snailSay(line, clamp(3000 + line.length * 45, 4000, 9000), "possum");
+            snailSay(line, lineMs(line), "possum");
         return;
     }
     if (p.ph === "fly" || p.ph === "flyup") {
@@ -25171,7 +25161,7 @@ function possumTap() {
         p.ph = "sit";
         p.until = now + 3500;
     }
-    snailSay(line, clamp(3500 + line.length * 45, 4500, 10000), "possum");
+    snailSay(line, lineMs(line), "possum");
     heard(possumName(), line, Date.now());
 }
 
@@ -26067,7 +26057,7 @@ function obsTalk(now) {
     const solo = obsLine("observe_solo", a.kind);
     if (solo) {
         const t = fill(solo), name = a.k === "C" ? CAT_NAME : a.k === "P" ? possumName() : snailName();
-        snailSay(t, clamp(2500 + t.length * 60, 4000, 9000), a.kind);
+        snailSay(t, lineMs(t), a.kind);
         heard(name, t, Date.now());
     }
     setTimeout(obsEnd, 4000);
@@ -26631,7 +26621,7 @@ function showFlower() {
     const from = v.from ? (v.from === "a walk" ? "Picked on a walk." : v.from === "the night door" ? "Left on the step of the night door." : `From ${v.from}.`) : "";
     cardCap($("flowerCap"), `<b>${esc(v.n)}</b>${v.note ? " " + esc(v.note) : ""}${from ? ` <i>${esc(from)}</i>` : ""}`);
     cardShow("flowerView");
-    const ms = clamp(5000 + (v.note || "").length * 45, 6500, 11000);
+    const ms = noteMs(v.note);
     flowerCard.to = setTimeout(closeFlower, ms);
     requestAnimationFrame(flowerFrame);
     return ms / 1000;
@@ -27108,7 +27098,7 @@ function patronAfterRitual() {
         return;
     if (view === "archive" && !talkHeld()) {
         const line = compose("catpatron_new", { eye: e.name }) || "A colleague left this. On loan. Indefinitely.";
-        snailSay(line, clamp(3000 + line.length * 45, 4000, 8000), "cat");
+        snailSay(line, lineMs(line), "cat");
         heard(CAT_NAME, line, Date.now());
     }
 }
@@ -27206,7 +27196,7 @@ function circleTurns() {
     cat.circleOff = now + 90e3;
     const go = !catInCircle() || Math.random() < .5; // (only passing through or just sitting down: she steps aside)
     const line = compose(go ? "cat_circle_go" : "cat_circle_wait") || (go ? "Go on. I'll keep the candles warm." : "In a moment. I'm on a call.");
-    snailSay(line, clamp(3000 + line.length * 45, 4000, 8000), "cat");
+    snailSay(line, lineMs(line), "cat");
     heard(CAT_NAME, line, Date.now());
     if (go) { // out of the middle, to one side, and Mite goes ahead
         const side = cat.x < c.x ? -1 : 1;
@@ -30138,9 +30128,7 @@ function frame(now) {
     // the words box's time; then the little emotes over the speakers, placed. Sizes are read first and only then moved:
     // reading a size after moving something makes the browser lay the page out again, twice a frame
     boxTick(now);
-    const b = $("bubble"), b2 = $("bubble2"), st = boxOn(), bx = st && st.el, boxH = bx ? bx.offsetHeight : 0, bH = b.hidden ? 0 : b.offsetHeight, b2W = b2.hidden ? 160 : b2.offsetWidth || 160, b2H = b2.hidden ? 0 : b2.offsetHeight;
-    if (bx && !bx.classList.contains("up"))
-        boxGap = H - bx.offsetTop - boxH; // how far above the bottom the box sits when it's down (the dock, the safe area)
+    const b = $("bubble"), b2 = $("bubble2"), st = boxOn(), bx = st && st.el, bH = b.hidden ? 0 : b.offsetHeight, b2W = b2.hidden ? 160 : b2.offsetWidth || 160, b2H = b2.hidden ? 0 : b2.offsetHeight;
     if (!b2.hidden && bx !== b2) {
         const r2 = b2Room();
         if (b2.classList.contains("boxed") || b2Gone() || now > small2Until)
@@ -30158,14 +30146,6 @@ function frame(now) {
     }
     roomArrows(); // the arrows to look into the other room (garden.js)
     speakPump(now); // a line that waited for the box (speech.js)
-    { // the box goes up for the chalk circle (group 40), and while someone on the floor would be under it (group 47)
-        if (!BOX_TOP && boxH && floorUnder(H - boxGap - boxH))
-            floorUpUntil = now + 3000; // (stays up a moment, so it doesn't hop while someone walks along the edge)
-        const fl = !!boxH && now < floorUpUntil, top = BOX_TOP && !(box && box.low), up = top || circleUp() || floorTaken() && dlgUp || fl; // (an answer inside a raised conversation stays where it is)
-        b.classList.toggle("up", up);
-        b2.classList.toggle("up", up);
-        $("dlg").classList.toggle("up", top || dlgUp || fl);
-    }
     if (!b.hidden && boxOn()?.el !== b) { // (asked again: a line may just have come up, speakPump)
         if (b.classList.contains("boxed") || now > smallUntil)
             b.hidden = true;
@@ -32432,7 +32412,7 @@ function specialSay(pick, kind, name) {
     setTimeout(() => {
         const t = compose(kind === "bake" ? "special_bake" : "special_brew", { item, thing: name, Thing: name });
         if (t)
-            speak(t, { ms: clamp(3500 + t.length * 45, 4500, 8000) });
+            speak(t, { ms: lineMs(t) });
     }, 1800);
 }
 function treatGive(who) {
@@ -32446,11 +32426,11 @@ function treatGive(who) {
     const p = who === "cat" ? { x: cat.x, y: catBox().y0, room: cat.room } : who === "possum" ? Object.assign(possumPos(), { room: possum.room }) : Object.assign(snailPos(), { room: snailRoom });
     for (let i = 0; i < 5; i++)
         addP({ type: "heart", room: p.room, x: p.x + rnd(-R * .2, R * .2), y: p.y - R * .2, vx: rnd(-20, 20), vy: -rnd(30, 60), g: -20, max: 1.3, col: "#e3a0b2", rot: 0, vr: 0, size: rnd(3, 5) });
-    speak(line, { ms: clamp(3000 + line.length * 45, 4000, 9000) });
+    speak(line, { ms: lineMs(line) });
     { // and the resident says something back
         const back = compose("treatback_" + who);
         if (back)
-            setTimeout(() => snailSay(back, clamp(3000 + back.length * 45, 4000, 8000), who), 2600);
+            setTimeout(() => snailSay(back, lineMs(back), who), 2600);
     }
     if (pet.b)
         pet.b.fed = 1;
