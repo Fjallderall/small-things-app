@@ -305,7 +305,7 @@ body.game .nextup{display:flex;position:fixed;left:50%;transform:translateX(-50%
 .nu-text{display:flex;flex-direction:column;min-width:0}
 .nu-text small{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#5f6857}
 .nu-text span{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body.game .panel{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:780px;max-height:86dvh;overflow:auto;z-index:20;border-radius:18px 18px 0 0;border-bottom:0;padding-bottom:env(safe-area-inset-bottom,0px);transform:translateY(105%);visibility:hidden;transition:transform .28s ease,visibility 0s linear .28s;box-shadow:0 -8px 30px rgba(0,0,0,.3)}
+body.game .panel{position:fixed;left:0;right:0;bottom:var(--kb,0px);margin:0 auto;max-width:780px;max-height:min(86dvh,calc(100dvh - var(--kb,0px) - env(safe-area-inset-top,0px) - 8px));overflow:auto;z-index:20;border-radius:18px 18px 0 0;border-bottom:0;padding-bottom:env(safe-area-inset-bottom,0px);transform:translateY(105%);visibility:hidden;transition:transform .28s ease,visibility 0s linear .28s;box-shadow:0 -8px 30px rgba(0,0,0,.3)}
 body.game.sheet .panel{transform:none;visibility:visible;transition:transform .28s ease}
 body.game .sheettop{position:sticky;top:0;z-index:3;background:var(--panel);border-bottom:1px solid var(--line);padding-bottom:8px}
 body.game .sheethead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:6px 10px 2px}
@@ -540,6 +540,7 @@ body.pixel .cabglim{border-radius:0;font-family:var(--f-display);font-size:18px;
 .pinpager .cabglim{border:0;cursor:pointer;color:#ffe9a8;margin:6px 0 0;min-height:36px}
 .pinpager .cabglim:disabled{opacity:.35;cursor:default}
 .pinpager span{margin-top:6px;text-shadow:0 1px 2px #000}
+body.kbup #pinDlg{bottom:calc(var(--kb) + 12px)}
 .dlg.pin{border-color:#6a4428}.dlg.pin b{background:#6a4428}
 .pinform{display:flex;gap:8px;margin-top:8px}.pinform input{flex:1;min-width:0;font:inherit;padding:6px 8px;border:2px solid #3a2c22;background:#fff;color:#25291f}
 .pinform button,.pindown{font:inherit;padding:6px 12px;border:2px solid #3a2c22;background:#ecd6ad;color:#25291f;cursor:pointer}
@@ -575,7 +576,7 @@ body.game .bubble:not(.snailb):not(.emote){max-width:min(90%,400px)}
 .tray button.on{background:#e7f1d2;border-color:#6f9a4a}
 
 /* the Desk: settings, lines and backup on their own screen */
-.desk{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.desk{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:env(safe-area-inset-top,0px) 0 calc(env(safe-area-inset-bottom,0px) + var(--kb,0px))}
 .desk-in{max-width:780px;margin:0 auto;padding:14px 16px 40px;display:flex;flex-direction:column;gap:14px}
 .desk-nav{align-self:flex-start;min-height:44px}
 .desk h1{margin:0;font-family:var(--f-display);font-size:34px;font-weight:400;line-height:1}
@@ -608,7 +609,7 @@ body.pixel .desk .desk-h,.desk .desk-h{font-family:var(--f-body);font-size:14px;
   body.game{--side:0px}
   body.game.sheet{--side:min(440px,40vw)}
   body.game .world{right:var(--side);transition:right .28s ease}
-  body.game .panel{left:auto;right:0;top:0;bottom:0;width:min(440px,40vw);max-width:none;max-height:none;margin:0;border-radius:0;border:0;border-left:1px solid var(--line);transform:translateX(105%)}
+  body.game .panel{left:auto;right:0;top:0;bottom:var(--kb,0px);width:min(440px,40vw);max-width:none;max-height:none;margin:0;border-radius:0;border:0;border-left:1px solid var(--line);transform:translateX(105%)}
   body.game.sheet .panel{transform:none}
   body.game.sheet .scrim{display:none}
   body.game .grab{visibility:hidden}
@@ -30773,6 +30774,62 @@ function drawTapMap(now, rm) {
 }
 
 </script>
+<script>/* js/ui/keyboard.js */
+"use strict";
+/*
+ * keyboard.js - A phone's on-screen keyboard, one rule for every text field: whatever the field is in sits on top of
+ * the keyboard. --kb (on the page) is how high that is; the sheet, the cards, Settings and the pinboard's note all
+ * use it. How we know the height, best first:
+ *   told    the browser reports it (kbCover), or the whole page got shorter (kbShrunk: then nothing is covered);
+ *   heard   what it reported the last time, so the sheet goes up with the keyboard, not after it;
+ *   guessed KB_GUESS of the screen: in a frame (the claude.ai artifact) nobody tells us, so we go by a usual height.
+ */
+const KB_GUESS = .44, TEXT_TYPES = /^(|text|search|number|email|url|tel|password)$/;
+let kbBaseH = window.innerHeight, kbHeard = null, kbWas = false;
+function typesText(el) {
+    return !!el && (el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && TEXT_TYPES.test(String(el.getAttribute("type") || "").toLowerCase())));
+}
+function kbCover() {
+    const v = window.visualViewport;
+    if (!v)
+        return 0;
+    const c = Math.round(window.innerHeight - v.height - v.offsetTop);
+    return c > 80 ? c : 0; // (less is a toolbar coming and going, not a keyboard)
+}
+function kbShrunk() {
+    return window.innerHeight < kbBaseH - 80;
+}
+function kbFit() {
+    const a = document.activeElement, typing = typesText(a), c = kbCover(), told = c > 0 || kbShrunk();
+    if (!typing)
+        kbBaseH = window.innerHeight;
+    if (kbWas && !told && typing) // (the phone's back key closes a keyboard and leaves the field focused)
+        a.blur();
+    kbWas = told;
+    if (told)
+        kbHeard = c;
+    const up = c || (!told && typing && matchMedia("(pointer: coarse)").matches ? kbHeard ?? Math.round(window.innerHeight * KB_GUESS) : 0);
+    document.documentElement.style.setProperty("--kb", up + "px");
+    document.body.classList.toggle("kbup", up > 0);
+}
+function kbShow(el) { // a field in the middle of a list or a page: into the part still in sight (the add forms stick to the bottom by themselves)
+    if (el.isConnected && document.activeElement === el && !el.closest(".addform.bottom"))
+        el.scrollIntoView({ block: "center" });
+}
+if (window.visualViewport) {
+    visualViewport.addEventListener("resize", kbFit);
+    visualViewport.addEventListener("scroll", kbFit);
+}
+window.addEventListener("resize", kbFit);
+document.addEventListener("focusin", e => {
+    if (!typesText(e.target))
+        return;
+    kbFit();
+    setTimeout(() => kbShow(e.target), 320); // (a sheet may still be sliding in, the keyboard coming up)
+});
+document.addEventListener("focusout", () => setTimeout(kbFit, 60));
+
+</script>
 <script>/* js/ui/render.js */
 "use strict";
 /*
@@ -36036,71 +36093,6 @@ function showIncidents() {
     });
 }
 let ritOpenedAt = 0;
-/* a phone's keyboard: how much of the bottom it covers (--kb on the page), so a card with a field shrinks to the part
-   still in sight and keeps its buttons there (group 44). Where the page sits in a frame the browser doesn't tell the
-   frame; the journal's save button sits by its field for that */
-function kbCover() {
-    const v = window.visualViewport;
-    if (!v)
-        return 0;
-    const c = Math.round(window.innerHeight - v.height - v.offsetTop);
-    return c > 80 ? c : 0; // (less is a toolbar coming and going, not a keyboard)
-}
-function kbUpdate() {
-    const c = kbCover(), a = document.activeElement;
-    if (kbWas && !c && typesText(a)) // (the phone's back key closes a keyboard and leaves the field focused)
-        a.blur();
-    kbWas = c;
-    document.documentElement.style.setProperty("--kb", c + "px");
-    document.body.classList.toggle("kbup", c > 0);
-}
-if (window.visualViewport) {
-    visualViewport.addEventListener("resize", kbUpdate);
-    visualViewport.addEventListener("scroll", kbUpdate);
-}
-/* Typing on a phone: whatever the field is in moves up until the field is high on the screen, where no keyboard
-   reaches (group 53). --kb can't do this alone: in a frame or the Android app the keyboard may go unreported, so this
-   doesn't depend on knowing it's there. A field already high enough stays where it is. `translate`, not transform: the
-   sheet and the cards use that for themselves. */
-const TEXT_TYPES = /^(|text|search|number|email|url|tel|password)$/;
-function typesText(el) {
-    return !!el && (el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && TEXT_TYPES.test(String(el.getAttribute("type") || "").toLowerCase())));
-}
-let kbWas = 0, liftedHost = null;
-function liftHost(el) {
-    const c = el.closest(".ritcard,#pinDlg");
-    if (c)
-        return c;
-    for (let n = el.parentElement; n && n !== document.body; n = n.parentElement)
-        if (getComputedStyle(n).position === "fixed")
-            return n;
-    return null;
-}
-function liftDrop() {
-    if (liftedHost)
-        liftedHost.style.translate = "";
-    liftedHost = null;
-}
-function liftField(el) {
-    if (!matchMedia("(pointer: coarse)").matches || !el.isConnected || document.activeElement !== el)
-        return;
-    const host = liftHost(el);
-    if (host !== liftedHost)
-        liftDrop();
-    if (!host)
-        return;
-    const was = -parseFloat((host.style.translate || "0 0").split(" ")[1]) || 0, r = el.getBoundingClientRect(), y = r.top + was;
-    const vh = window.innerHeight, lift = y + r.height <= vh * .42 ? 0 : Math.max(0, Math.round(y - vh * .12));
-    host.style.translate = lift ? `0 ${-lift}px` : "";
-    liftedHost = lift ? host : null;
-}
-document.addEventListener("focusin", e => {
-    if (!typesText(e.target))
-        return;
-    liftField(e.target);
-    setTimeout(() => liftField(e.target), 320); // (a sheet may still be sliding in)
-});
-document.addEventListener("focusout", () => setTimeout(() => typesText(document.activeElement) || liftDrop(), 60));
 function openRitual(title, line, bodyHTML, buttons, onClose) {
     ritOpenedAt = performance.now();
     ritOpener = document.activeElement;
