@@ -887,14 +887,14 @@ body.pixel{--boxlh:24px;--boxfs:16px}
       <div id="evPane" role="tabpanel" aria-labelledby="tkEv" hidden>
         <p class="sub" id="evSub"></p>
         <ul class="tasks" id="evList"></ul>
-        <form class="addform bottom" id="evForm" autocomplete="off"><div class="row"><input type="text" id="evTitle" enterkeyhint="done" placeholder="Something you do every day…" aria-label="New thing for every day" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
+        <form class="addform bottom" id="evForm" autocomplete="off" data-add="evTitle" data-max="120" data-hint="Something you do every day…" data-label="New thing for every day"></form>
       </div>
       <div id="buyPane" role="tabpanel" aria-labelledby="tkBuy" hidden>
         <p class="sub">What to get next time you're out. Tick things off in the shop; crossed-off ones stay until you remove them.</p>
         <ul class="tasks" id="buyList"></ul>
         <div class="row buyacts"><button class="btn ghost" type="button" id="buyClear" hidden>Remove crossed-off</button></div>
         <div class="row buyacts" id="buySendRow" hidden><button class="btn" type="button" id="buySend">Share list</button></div>
-        <form class="addform bottom" id="buyForm" autocomplete="off"><div class="row"><input type="text" id="buyTitle" enterkeyhint="done" placeholder="Something to buy…" aria-label="New thing to buy" maxlength="120" required><button class="btn primary" type="submit">Add</button></div></form>
+        <form class="addform bottom" id="buyForm" autocomplete="off" data-add="buyTitle" data-max="120" data-hint="Something to buy…" data-label="New thing to buy"></form>
       </div>
       <div class="evecard bkcard" id="bkCard" hidden>
         <p><strong>Back up today?</strong> Everything in one small file. Send it to yourself (a messenger, email) or keep it in your files.</p>
@@ -910,12 +910,7 @@ body.pixel{--boxlh:24px;--boxfs:16px}
       <details id="jotBox" open><summary id="jotSum">Jotted down</summary><p class="sub jot-sub">Off the list, out of your head. No dates, no reminders. Tick one off whenever, or let it go.</p><ul class="jots" id="jotList"></ul></details>
       <details id="aheadBox"><summary id="aheadSum">Planned ahead</summary><div id="aheadList" class="agenda"></div></details>
       <details id="doneBox"><summary id="doneSum">Done today</summary><ul class="donelist" id="doneList"></ul></details>
-      <form class="addform bottom" id="addForm" autocomplete="off">
-        <div class="row">
-          <input type="text" id="tTitle" enterkeyhint="done" placeholder="Add a task…" aria-label="New task" aria-describedby="addChips" maxlength="160" required>
-          <button class="btn primary" type="submit">Add</button>
-          <button class="btn jotbtn" type="button" id="jotBtn" title="Just write it down: no date, no reminders, off the list">Jot</button>
-        </div>
+      <form class="addform bottom" id="addForm" autocomplete="off" data-add="tTitle" data-max="160" data-hint="Add a task…" data-label="New task" data-desc="addChips" data-jot="1">
         <div class="addquick">
           <div class="seg seg-size" id="tSize" role="group" aria-label="Size">
             <button type="button" data-v="1" aria-pressed="true">Small</button>
@@ -30830,6 +30825,45 @@ document.addEventListener("focusin", e => {
 document.addEventListener("focusout", () => setTimeout(kbFit, 60));
 
 </script>
+<script>/* js/ui/add-forms.js */
+"use strict";
+/*
+ * add-forms.js - The add form at the bottom of Tasks, Everyday and Shopping: one piece, three places. In index.html
+ * each is a <form class="addform bottom"> with what makes it its own in data-: data-add (the field's id), data-max,
+ * data-hint, data-label, and for Tasks data-desc and data-jot. Anything else in the form (the Tasks options) stays in
+ * index.html, under the row built here.
+ */
+document.querySelectorAll("form[data-add]").forEach(f => {
+    const d = f.dataset, row = document.createElement("div"), input = document.createElement("input"), add = document.createElement("button");
+    row.className = "row";
+    Object.assign(input, { type: "text", id: d.add, placeholder: d.hint, maxLength: +d.max, required: true });
+    input.setAttribute("enterkeyhint", "done");
+    input.setAttribute("aria-label", d.label);
+    if (d.desc)
+        input.setAttribute("aria-describedby", d.desc);
+    Object.assign(add, { type: "submit", className: "btn primary", textContent: "Add" });
+    row.append(input, add);
+    if (d.jot) {
+        const jot = document.createElement("button");
+        Object.assign(jot, { type: "button", className: "btn jotbtn", id: "jotBtn", title: "Just write it down: no date, no reminders, off the list", textContent: "Jot" });
+        row.append(jot);
+    }
+    f.prepend(row);
+});
+/* a plain list's form (Everyday, Shopping): add(text) says whether it went in; if so the field empties, and either way it keeps the focus */
+function addFormSend(f, key, add) {
+    const input = $(f.dataset.add);
+    f.onsubmit = e => {
+        e.preventDefault();
+        if (add(input.value)) {
+            input.value = "";
+            typedClear(key);
+        }
+        input.focus();
+    };
+}
+
+</script>
 <script>/* js/ui/render.js */
 "use strict";
 /*
@@ -31290,14 +31324,7 @@ function listRow(x, o) {
             $(tabs[j][0]).focus();
         };
     }
-    f.onsubmit = k => {
-        k.preventDefault();
-        if (evAdd($("evTitle").value)) {
-            $("evTitle").value = "";
-            typedClear("ev");
-        }
-        $("evTitle").focus();
-    };
+    addFormSend(f, "ev", evAdd);
 })();
 
 </script>
@@ -31435,14 +31462,7 @@ function renderShopping() {
     const f = $("buyForm"), c = $("buyClear");
     if (!f)
         return;
-    f.onsubmit = k => {
-        k.preventDefault();
-        if (buyAdd($("buyTitle").value)) {
-            $("buyTitle").value = "";
-            typedClear("buy");
-        }
-        $("buyTitle").focus();
-    };
+    addFormSend(f, "buy", buyAdd);
     c.onclick = buyClear;
     $("buySend").onclick = buySend;
 })();
