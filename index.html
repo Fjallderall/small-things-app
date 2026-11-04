@@ -1175,6 +1175,7 @@ const POOL_INFO = {
     seas_smitten: "Mite, tapping the one knitted mitten pinned to the wall (with a note: waiting for the other one)",
     seas_sfrost: "Mite, tapping the frost ferns on the wagon's window (now and then they spell a word)",
     gramophone: "Mite, winding up the gramophone in the nook (the record starts)",
+    gramophone_xmas: "Mite, winding up the gramophone with the Christmas hat on: the hat's own record ({rec}), any time of year",
     gramophone_stop: "Mite, lifting the gramophone's needle before the record's done",
     crochet: "Mite, now and then while knitting: on crochet (it can't; it isn't a moss skill)",
     nameplates: "What the archive's name plate says, one per day (short, at most 20 characters; shown in capitals; letters, commas and full stops only: the plate's font has no & or brackets)",
@@ -2099,6 +2100,14 @@ const DEF = {
             "Somebody danced to this once. You can hear it in the scratches.",
             "It plays a bit slow. Or the evening's a bit fast. One of them.",
             "Midnightcat pretends not to listen. Her ear's turned this way."
+        ],
+        gramophone_xmas: [
+            "'{rec}'. It came with the hat. I don't argue with the hat.",
+            "Whatever month it is out there, this record thinks it's the 24th.",
+            "There's a bell on this hat. It keeps time. Badly, but it keeps it.",
+            "'{rec}'. It only comes out for the hat. They have an arrangement.",
+            "[night] A small song for a dark nook. The bell joins in a little late.",
+            "Midnightcat has left the room. She'll say that's a coincidence."
         ],
         gramophone_stop: [
             "Needle up. The record can rest a while.",
@@ -5106,7 +5115,9 @@ const LESSONS = [
     { n: 15, id: "tea", name: "Tea ceremony" }, { n: 22, id: "stargaze", name: "Stargazing" }, { n: 30, id: "moonwalk", name: "Moonwalking" },
     { n: 40, id: "tidy", name: "Filing leaves" }, { n: 55, id: "story", name: "Telling stories" }, { n: 75, id: "bow", name: "Taking a bow" }, { n: 100, id: "grand", name: "The grand dance" }
 ];
-const HATS = [{ id: "", name: "No hat", lvl: 1 }, { id: "acorn", name: "Acorn cap", lvl: 2 }, { id: "beret", name: "Beret", lvl: 4 }, { id: "leaves", name: "Leaf crown", lvl: 6 }, { id: "flower", name: "Flower", lvl: 8 }, { id: "postit", name: "Sticky note", lvl: 10 }, { id: "wizard", name: "Wizard hat", lvl: 12 }, { id: "crown", name: "Tiny crown", lvl: 16 }, { id: "party", name: "Party hat", lvl: 20 }];
+const HATS = [{ id: "", name: "No hat", lvl: 1 }, { id: "acorn", name: "Acorn cap", lvl: 2 }, { id: "beret", name: "Beret", lvl: 4 }, { id: "leaves", name: "Leaf crown", lvl: 6 }, { id: "flower", name: "Flower", lvl: 8 }, { id: "postit", name: "Sticky note", lvl: 10 }, { id: "wizard", name: "Wizard hat", lvl: 12 }, { id: "crown", name: "Tiny crown", lvl: 16 }, { id: "party", name: "Party hat", lvl: 20 }, { id: "xmas", name: "Christmas hat", lvl: 1, gift: "christmas" }];
+/* a hat with a gift comes out of that festival's box, the first time it's unwrapped (S.festBox), and stays; until then it isn't listed */
+const hatHeld = h => !h.gift || num((S.festBox || {})[h.gift]) > 0;
 const ACH = [
     ["first", "First thing", "Finish a task", s => s.done >= 1], ["t10", "Ten-ish", "Finish 10 tasks", s => s.done >= 10], ["t50", "Fifty", "Finish 50 tasks", s => s.done >= 50],
     ["t100", "Centurion", "Finish 100 tasks", s => s.done >= 100], ["t250", "Head archivist", "Finish 250 tasks", s => s.done >= 250],
@@ -5178,7 +5189,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x", "mvzb1io3poh4t", "mvzwe2wo1ppbo", "mvzwed65i2i61", "mw0htonoeuma0", "mw19k04dfn9un", "mw19okic2777s", "mw19pr6zq2mb1", "mw19qbvwf4mv0", "mw1b3306x5671", "mw1bd6ui024nj",
     // group 57 (04-11-2026)
     "mw1zfypifrryc", "mw1zmhgppsiot", "mw1zntkrf8yb9", "mw1zo3la6zzlf"
-];
+, "mw2ciqxb829vj"];
 
 </script>
 <script>/* js/core/state.js */
@@ -7804,6 +7815,12 @@ const RECORDS = [
         motif: [[[0, 76], [.66, 79], [1, 81], [2, 79], [3, 76]], [[0, 72], [1, 76], [1.66, 79], [2, 76], [3, 72]], [[0, 74], [.66, 77], [1, 81], [2, 77], [3, 74]], [[0, 71], [1, 74], [2, 77], [2.66, 79]]],
         motif2: [[[0, 81], [1, 79], [2, 76], [3, 72]], [[0, 80], [1, 76], [2, 71], [3, 74]], [[0, 76], [1, 79], [2, 84], [3, 81]], [[0, 79], [.66, 77], [1, 74], [2, 71], [3, 67]]] }
 ];
+/* the Christmas hat's record (jot mw2ciqxb829vj): not in the pick, only put on by Mite with the hat on (gramoShow).
+   Group 59: the tune of Christmas's "Feel the mood" (FEST_TUNES), grown into a record. Original */
+const XMAS_RECORD = { name: "small tree waltz", rec: 1, bpm: 76, meter: 3, bass: "walk", lead: "vibes", drums: "shaker",
+    prog: [[53, 57, 60, 64], [50, 53, 57, 60], [46, 50, 53, 57], [48, 52, 55, 58]], b: [[46, 50, 53, 57], [45, 48, 52, 55], [43, 46, 50, 53], [48, 52, 55, 58]],
+    motif: [[[0, 81], [1, 79], [2, 77]], [[0, 74], [2, 77]], [[0, 79], [1, 77], [2, 74]], [[0, 72], [2, 76]]],
+    motif2: [[[0, 77], [1, 81], [2, 86]], [[0, 84], [1, 81], [2, 76]], [[0, 82], [1, 77], [2, 74]], [[0, 76], [1, 79], [2, 84]]] };
 function pickRecord() { // (a different one from last time)
     const sg = choice(RECORDS.filter(x => x.name !== Gramo.last));
     Gramo.last = sg.name;
@@ -7959,11 +7976,11 @@ function songTick(t, dk) {
    off: then the record turns quietly). It plays one of its own RECORDS; it stops when the record ends, or after GRAMO_MAX */
 const GRAMO_MAX = 150e3;
 const Gramo = { on: false, at: 0, song: null, last: "", rec: null };
-function gramoPlay() {
+function gramoPlay(rec) { // (rec: that record, else one of RECORDS)
     Gramo.on = true;
     Gramo.at = performance.now();
     Gramo.song = null; // (one of its own records, from the start: the background song stops for it)
-    Gramo.rec = pickRecord();
+    Gramo.rec = rec || pickRecord();
     Snd.song = null;
     Snd.carry = 0;
 }
@@ -11933,7 +11950,7 @@ function drawPet(po) {
         cx.save();
         cx.rotate(Math.sin(w * .9) > .85 ? .06 : 0); // (thinking of the next word)
         drawHat(S.hat, 0, topB + r * .08, r);
-        drawSprout(0, topB - (S.hat ? (S.hat === "wizard" ? r * .85 : S.hat === "party" ? r * .6 : S.hat === "postit" ? 0 : r * .25) : 0) + r * .04, r, stageB);
+        drawSprout(0, topB - hatRise(r) + r * .04, r, stageB);
         cx.restore();
         cx.restore();
         return;
@@ -12071,7 +12088,7 @@ function drawPet(po) {
     drawHat(S.hat, 0, topY + r * .08, r);
     if (po.noteHat && S.hat !== "postit") // a sticky note it just wrote, stuck to its head for a moment (pastimes.js)
         drawHat("postit", 0, topY + r * .08, r, po.noteHat);
-    const hatLift = S.hat ? (S.hat === "wizard" ? r * .85 : S.hat === "party" ? r * .6 : S.hat === "postit" ? 0 : r * .25) : 0;
+    const hatLift = hatRise(r);
     drawSprout(0, topY - hatLift + r * .04, r, stage);
     // props (pixel mode: drawn on their own layer, then hardened and outlined so small things stay visible)
     const propHost = po.prop ? cx : null;
@@ -12593,6 +12610,8 @@ function drawSprout(x, y, r, stage) {
         cx.fill();
     }
 }
+/* how far the sprout sits up on the hat being worn */
+const hatRise = r => !S.hat ? 0 : r * ({ wizard: .85, party: .6, postit: 0, xmas: .5 }[S.hat] ?? .25);
 function drawHat(id, x, y, r, col) { // (col: the sticky note's colour, when it isn't the hat)
     if (!id)
         return;
@@ -12678,6 +12697,26 @@ function drawHat(id, x, y, r, col) { // (col: the sticky note's colour, when it 
         cx.beginPath();
         cx.arc(r * .3, -r * .18, r * .06, 0, 7);
         cx.fill();
+    }
+    if (id === "xmas") { // a red stocking cap flopped over to the right, a white band, a small brass bell on the tip
+        const hp = pts => {
+            cx.beginPath();
+            pts.forEach(([a, b], i) => i ? cx.lineTo(r * a, r * b) : cx.moveTo(r * a, r * b));
+            cx.closePath();
+            cx.fill();
+        };
+        cx.fillStyle = "#b6343c";
+        hp([[-.42, -.06], [-.24, -.44], [.08, -.62], [.4, -.54], [.68, -.3], [.56, -.22], [.38, -.36], [.42, -.06]]);
+        cx.fillStyle = "#d6545a"; // light along the top
+        hp([[-.24, -.44], [.08, -.62], [.4, -.54], [.34, -.48], [.06, -.54], [-.18, -.4]]);
+        cx.fillStyle = "#f4ecd8"; // the band
+        cx.fillRect(-r * .47, -r * .17, r * .94, r * .17);
+        cx.fillStyle = "#cfc4ae";
+        cx.fillRect(-r * .47, -r * .04, r * .94, r * .04);
+        cx.fillStyle = "#e7b93e"; // the bell
+        cx.fillRect(r * .56, -r * .28, r * .16, r * .14);
+        cx.fillStyle = "#8a6420";
+        cx.fillRect(r * .62, -r * .16, r * .05, r * .04);
     }
     if (id === "wizard") {
         cx.fillStyle = "#3c3f7a";
@@ -19858,6 +19897,7 @@ function festUnwrap(id) {
     if (!a || !festWrapped(a))
         return 0;
     S.festBox = S.festBox || {};
+    const hat = HATS.find(h => h.gift === id && !hatHeld(h)); // (in the box the first time, under the thing itself)
     S.festBox[id] = a.y;
     S.festSaid[id] = dayKey(); // (this is today's mention of it)
     festBoxAt = 0;
@@ -19868,8 +19908,10 @@ function festUnwrap(id) {
     }
     sfx("sparkle");
     const t = compose("festunwrap", { fest: a.f.name, thing: FEST_THING[id] || "the festival thing" }) || `It's ${FEST_THING[id] || "the festival thing"}. For ${a.f.name}. I'll put it on the pedestal.`;
-    speak(homeTxt(t), { ms: 7000 });
+    speak(homeTxt(t) + (hat ? " And under it, a hat with a bell on. It's with my other hats now." + (own("gramo") ? " The gramophone seems to know it." : "") : ""), { ms: hat ? 10000 : 7000 });
     note(`Unwrapped the box for ${a.f.name}.`);
+    if (hat)
+        note(`Found a ${hat.name} in the box.`);
     saveSoon();
     return 7;
 }
@@ -22874,9 +22916,10 @@ function gramoShow() {
         speak(compose("gramophone_stop") || "Needle up. The record can rest a while.", { ms: 4500 });
         return 4.5;
     }
-    gramoPlay();
+    const xmas = S.hat === "xmas"; // (the Christmas hat: its record, any time of year)
+    gramoPlay(xmas ? XMAS_RECORD : null);
     sndUnlock();
-    const line = compose("gramophone", { rec: Gramo.rec ? Gramo.rec.name : "" }) || "Wound up. Needle down. Listen: a little dust first, then the song.";
+    const line = compose(xmas ? "gramophone_xmas" : "gramophone", { rec: Gramo.rec ? Gramo.rec.name : "" }) || "Wound up. Needle down. Listen: a little dust first, then the song.";
     speak(sndMode() ? line : line + " (The sound's off, so it turns quietly.)", { ms: 6000 });
     return 6;
 }
@@ -32534,7 +32577,7 @@ function renderCabinet() {
     }
     const L = level();
     $("hats").innerHTML = "";
-    HATS.forEach(h => {
+    HATS.filter(hatHeld).forEach(h => {
         const b = document.createElement("button");
         b.className = "chipbtn";
         b.setAttribute("aria-pressed", S.hat === h.id);
@@ -32562,7 +32605,7 @@ function renderCabinet() {
         set("cab-glimpses", `${(S.glimpses || []).length}`);
         set("cab-cards", `${new Set((S.cards || []).map(c => c.k)).size} of ${cardList().length}`);
         set("cab-dreams", `${(S.dreams || []).length}`);
-        set("cab-hats", `${HATS.filter(h => h.id && L >= h.lvl).length}/${HATS.length - 1}`);
+        set("cab-hats", `${HATS.filter(h => h.id && hatHeld(h) && L >= h.lvl).length}/${HATS.filter(hatHeld).length - 1}`);
         set("cab-achs", `${ACH.filter(a => S.ach[a[0]]).length}/${ACH.length}`);
     }
     if (typeof renderTapes === "function")
@@ -32588,7 +32631,7 @@ const COL_HAS = {
     "cab-knit": () => (S.knits || []).length > 0 || !!S.knit,
     "cab-words": () => (S.words || []).length > 0,
     "cab-terms": () => (S.terms || []).length > 0,
-    "cab-hats": () => HATS.some(h => h.id && level() >= h.lvl),
+    "cab-hats": () => HATS.some(h => h.id && hatHeld(h) && level() >= h.lvl),
     "cab-achs": () => ACH.some(a => S.ach[a[0]])
 };
 const colShown = () => Object.keys(COL_HAS).filter(k => { try { return COL_HAS[k](); } catch (e) { return false; } });
@@ -35316,7 +35359,7 @@ function renderTray(level) {
     }
     if (level === "hats") {
         const L = window.level(); // "level" is this function's parameter here
-        HATS.forEach(h => add(h.name, () => {
+        HATS.filter(hatHeld).forEach(h => add(h.name, () => {
             S.hat = h.id;
             S.hatAt = Date.now();
             speak(h.id ? "How do I look? Don't answer." : "Hatless. Free.");
