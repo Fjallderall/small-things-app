@@ -30905,7 +30905,7 @@ document.addEventListener("focusout", () => setTimeout(kbFit, 60));
  * add-forms.js - The add form at the bottom of Tasks, Everyday and Shopping: one piece, three places. In index.html
  * each is a <form class="addform bottom"> with what makes it its own in data-: data-add (the field's id), data-max,
  * data-hint, data-label, and for Tasks data-desc and data-jot. Anything else in the form (the Tasks options) stays in
- * index.html, under the row built here.
+ * index.html, under the row built here. editRow, below, is the same idea for the edit form inside a list row.
  */
 document.querySelectorAll("form[data-add]").forEach(f => {
     const d = f.dataset, row = document.createElement("div"), input = document.createElement("input"), add = document.createElement("button");
@@ -30935,6 +30935,39 @@ function addFormSend(f, key, add) {
         }
         input.focus();
     };
+}
+/* the edit form inside a row (Tasks, The everyday, Shopping): one piece, three places. It fills li.
+   o: id, text, max, label (for the input), fields (HTML under it), more (HTML of the row of other actions), close()
+   (Cancel and Escape), save(text) (Save, with the field as typed), acts ({ data-act: function } for the buttons in more). */
+function editRow(li, o) {
+    li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="${o.id}" value="${esc(o.text)}" maxlength="${o.max}" aria-label="${esc(o.label)}">
+        ${o.fields || ""}
+        <span class="tedit-acts"><button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button></span>
+        <span class="tedit-more">${o.more}</span></form>`;
+    const f = li.querySelector("form");
+    f.onsubmit = e => {
+        e.preventDefault();
+        o.save($(o.id).value);
+    };
+    f.querySelector('[data-act="cancel"]').onclick = o.close;
+    for (const [act, fn] of Object.entries(o.acts)) {
+        const b = f.querySelector(`[data-act="${act}"]`);
+        if (b) // (a step has no Split)
+            b.onclick = fn;
+    }
+    f.onkeydown = e => {
+        if (e.key === "Escape") {
+            e.stopPropagation();
+            o.close();
+        }
+    };
+    setTimeout(() => {
+        const i = $(o.id);
+        if (i) {
+            i.focus();
+            i.select();
+        }
+    }, 0);
 }
 
 </script>
@@ -31073,6 +31106,65 @@ $("jotList").addEventListener("click", e => {
             afterChange();
         } });
 });
+/* the edit form of a task: the shared row (editRow, add-forms.js) with its size, area and dates, and what only a task can do */
+function taskEditRow(li, t, child) {
+    const close = () => {
+        editingId = null;
+        renderTasks();
+    };
+    const segVal = id => { const b = li.querySelector(`#${id} button[aria-pressed="true"]`); return b ? b.dataset.v : null; };
+    editRow(li, {
+        id: "eTitle", text: t.t, max: 160, label: "Task",
+        fields: `<span class="seg seg-size" id="eSize" role="group" aria-label="Size">${[[1, "Small"], [3, "Medium"], [8, "Big"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${t.s === v}">${l}</button>`).join("")}</span>
+        <span class="seg" id="eTag" role="group" aria-label="Area">${[["work", "Work"], ["life", "Life"], ["", "Other"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(t.tag || "") === v}">${l}</button>`).join("")}</span>
+        <span class="tedit-when"><label class="toggle">Due <input type="date" id="eDue" value="${esc(t.due)}"></label><label class="toggle">Plan for <input type="date" id="eOn" value="${esc(t.on || "")}"></label><label class="toggle">At <input type="time" id="eAt" value="${esc(t.at || "")}" step="300"></label><label class="toggle"><input type="checkbox" id="eWeek" ${t.wk ? "checked" : ""}> This week</label></span>`,
+        more: `<button class="btn" type="button" data-act="focus">Focus on this</button>${!child ? `<button class="btn" type="button" data-act="split">Split into steps</button>` : ""}<button class="btn danger" type="button" data-act="del">Delete</button>`,
+        close,
+        save: text => {
+            const v = text.trim();
+            t.u = Date.now();
+            if (v)
+                t.t = v;
+            t.s = +(segVal("eSize") || t.s);
+            t.tag = segVal("eTag") ?? t.tag;
+            t.due = $("eDue").value;
+            t.wk = $("eWeek").checked;
+            t.at = $("eAt").value || "";
+            t.on = $("eOn").value || (t.at ? dayKey() : "");
+            if (!t.on)
+                delete t.on;
+            if (!t.at)
+                delete t.at;
+            editingId = null;
+            afterChange();
+        },
+        acts: {
+            focus: () => { // (the timer, with this task: timer.js)
+                close();
+                timerFor(t.id);
+            },
+            split: () => {
+                editingId = null;
+                offlineSplit(t);
+            },
+            del: () => {
+                editingId = null;
+                const i = S.tasks.indexOf(t);
+                S.tasks.splice(i, 1);
+                tomb(t.id);
+                afterChange();
+                toast(`Deleted: ${t.t}`, { undo: () => {
+                        S.tasks.splice(i, 0, t);
+                        t.u = Date.now();
+                        delete S.del[t.id];
+                        afterChange();
+                    } });
+            }
+        }
+    });
+    for (const id of ["eSize", "eTag"]) // (buttons, one of each pressed)
+        li.querySelectorAll(`#${id} button`).forEach(b => b.onclick = () => li.querySelectorAll(`#${id} button`).forEach(x => x.setAttribute("aria-pressed", x === b)));
+}
 function renderTasks() {
     renderEveryday(); // (The everyday, its own tab: everyday.js)
     renderJots();
@@ -31098,79 +31190,7 @@ function renderTasks() {
         li.className = `task s${t.s}${child ? " child" : ""}${d && d.rank === 0 ? " overdue" : t.wk ? " week" : ""}`;
         const age = Date.now() - t.c;
         if (editingId === t.id) {
-            li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="eTitle" value="${esc(t.t)}" maxlength="160" aria-label="Task">
-        <span class="seg seg-size" id="eSize" role="group" aria-label="Size">${[[1, "Small"], [3, "Medium"], [8, "Big"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${t.s === v}">${l}</button>`).join("")}</span>
-        <span class="seg" id="eTag" role="group" aria-label="Area">${[["work", "Work"], ["life", "Life"], ["", "Other"]].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${(t.tag || "") === v}">${l}</button>`).join("")}</span>
-        <span class="tedit-when"><label class="toggle">Due <input type="date" id="eDue" value="${esc(t.due)}"></label><label class="toggle">Plan for <input type="date" id="eOn" value="${esc(t.on || "")}"></label><label class="toggle">At <input type="time" id="eAt" value="${esc(t.at || "")}" step="300"></label><label class="toggle"><input type="checkbox" id="eWeek" ${t.wk ? "checked" : ""}> This week</label></span>
-        <span class="tedit-acts"><button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button></span>
-        <span class="tedit-more"><button class="btn" type="button" data-act="focus">Focus on this</button>${!child ? `<button class="btn" type="button" data-act="split">Split into steps</button>` : ""}<button class="btn danger" type="button" data-act="del">Delete</button></span></form>`;
-            for (const id of ["eSize", "eTag"]) // (buttons, one of each pressed)
-                li.querySelectorAll(`#${id} button`).forEach(b => b.onclick = () => li.querySelectorAll(`#${id} button`).forEach(x => x.setAttribute("aria-pressed", x === b)));
-            const segVal = id => { const b = li.querySelector(`#${id} button[aria-pressed="true"]`); return b ? b.dataset.v : null; };
-            const f = li.querySelector("form");
-            f.onsubmit = e => {
-                e.preventDefault();
-                const v = $("eTitle").value.trim();
-                t.u = Date.now();
-                if (v)
-                    t.t = v;
-                t.s = +(segVal("eSize") || t.s);
-                t.tag = segVal("eTag") ?? t.tag;
-                t.due = $("eDue").value;
-                t.wk = $("eWeek").checked;
-                t.at = $("eAt").value || "";
-                t.on = $("eOn").value || (t.at ? dayKey() : "");
-                if (!t.on)
-                    delete t.on;
-                if (!t.at)
-                    delete t.at;
-                editingId = null;
-                afterChange();
-            };
-            f.querySelector('[data-act="cancel"]').onclick = () => {
-                editingId = null;
-                renderTasks();
-            };
-            f.querySelector('[data-act="focus"]').onclick = () => { // (the timer, with this task: timer.js)
-                editingId = null;
-                renderTasks();
-                timerFor(t.id);
-            };
-            {
-                const sp = f.querySelector('[data-act="split"]');
-                if (sp)
-                    sp.onclick = () => {
-                        editingId = null;
-                        offlineSplit(t);
-                    };
-                f.querySelector('[data-act="del"]').onclick = () => {
-                    editingId = null;
-                    const i = S.tasks.indexOf(t);
-                    S.tasks.splice(i, 1);
-                    tomb(t.id);
-                    afterChange();
-                    toast(`Deleted: ${t.t}`, { undo: () => {
-                            S.tasks.splice(i, 0, t);
-                            t.u = Date.now();
-                            delete S.del[t.id];
-                            afterChange();
-                        } });
-                };
-            }
-            f.onkeydown = e => {
-                if (e.key === "Escape") {
-                    e.stopPropagation();
-                    editingId = null;
-                    renderTasks();
-                }
-            };
-            setTimeout(() => {
-                const i = $("eTitle");
-                if (i) {
-                    i.focus();
-                    i.select();
-                }
-            }, 0);
+            taskEditRow(li, t, child);
             return li;
         }
         li.innerHTML = `<button class="check" aria-label="Done: ${esc(t.t)}"></button>
@@ -31337,38 +31357,25 @@ function listRow(x, o) {
     const li = document.createElement("li"), d = !!o.done;
     li.className = `task evitem${d ? " evdone" : ""}`;
     if (o.editing) {
-        li.innerHTML = `<form class="tedit" autocomplete="off"><input type="text" id="${o.inputId}" value="${esc(x.t)}" maxlength="120" aria-label="${esc(o.label)}">
-        <span class="tedit-acts"><button class="btn primary" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel">Cancel</button></span>
-        <span class="tedit-more"><button class="btn danger" type="button" data-act="del">Remove</button></span></form>`;
-        const f = li.querySelector("form"), close = () => {
+        const close = () => {
             o.edit(false);
             o.close();
         };
-        f.onsubmit = e => {
-            e.preventDefault();
-            const v = str($(o.inputId).value, 120).replace(/\s+/g, " ").trim();
-            if (v) {
-                x.t = v;
-                x.u = Date.now();
-            }
-            o.edit(false);
-            afterChange();
-        };
-        f.querySelector('[data-act="cancel"]').onclick = close;
-        f.querySelector('[data-act="del"]').onclick = () => o.del();
-        f.onkeydown = e => {
-            if (e.key === "Escape") {
-                e.stopPropagation();
-                close();
-            }
-        };
-        setTimeout(() => {
-            const i = $(o.inputId);
-            if (i) {
-                i.focus();
-                i.select();
-            }
-        }, 0);
+        editRow(li, {
+            id: o.inputId, text: x.t, max: 120, label: o.label,
+            more: `<button class="btn danger" type="button" data-act="del">Remove</button>`,
+            close,
+            save: text => {
+                const v = str(text, 120).replace(/\s+/g, " ").trim();
+                if (v) {
+                    x.t = v;
+                    x.u = Date.now();
+                }
+                o.edit(false);
+                afterChange();
+            },
+            acts: { del: () => o.del() }
+        });
     }
     else {
         li.innerHTML = `<button class="check${d ? " on" : ""}" role="checkbox" aria-checked="${d}" aria-label="${esc(x.t)}">${d ? `<svg viewBox="0 0 7 6" width="14" height="12" shape-rendering="crispEdges" aria-hidden="true"><path d="M6 0h1v2H6zM5 2h1v1H5zM4 3h1v1H4zM3 4h1v1H3zM2 5h1v1H2zM1 4h1v1H1zM0 3h1v1H0z" fill="currentColor"/></svg>` : ""}</button>
