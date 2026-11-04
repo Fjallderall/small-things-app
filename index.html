@@ -7816,11 +7816,20 @@ const RECORDS = [
         motif2: [[[0, 81], [1, 79], [2, 76], [3, 72]], [[0, 80], [1, 76], [2, 71], [3, 74]], [[0, 76], [1, 79], [2, 84], [3, 81]], [[0, 79], [.66, 77], [1, 74], [2, 71], [3, 67]]] }
 ];
 /* the Christmas hat's record (jot mw2ciqxb829vj): not in the pick, only put on by Mite with the hat on (gramoShow).
-   Group 59: the tune of Christmas's "Feel the mood" (FEST_TUNES), grown into a record. Original */
-const XMAS_RECORD = { name: "small tree waltz", rec: 1, bpm: 76, meter: 3, bass: "walk", lead: "vibes", drums: "shaker",
-    prog: [[53, 57, 60, 64], [50, 53, 57, 60], [46, 50, 53, 57], [48, 52, 55, 58]], b: [[46, 50, 53, 57], [45, 48, 52, 55], [43, 46, 50, 53], [48, 52, 55, 58]],
-    motif: [[[0, 81], [1, 79], [2, 77]], [[0, 74], [2, 77]], [[0, 79], [1, 77], [2, 74]], [[0, 72], [2, 76]]],
-    motif2: [[[0, 77], [1, 81], [2, 86]], [[0, 84], [1, 81], [2, 76]], [[0, 82], [1, 77], [2, 74]], [[0, 76], [1, 79], [2, 84]]] };
+   Stille Nacht (Gruber, 1818, public domain; the owner chose it over an original tune, 04-11-2026). full: played as
+   written, one line of prog and motif per bar, every note; a beat is an eighth note, a bar half of the 6/8 bar;
+   motif notes are [beat, note, beats]. Twice through (bars) */
+const XMAS_RECORD = { name: "Stille Nacht", rec: 1, full: 1, bars: 48, bpm: 100, meter: 3, lead: "vibes", drums: "none",
+    prog: (() => {
+        const F = [53, 57, 60, 65], C = [48, 52, 55, 58], B = [46, 50, 53, 58];
+        return [F, F, F, F, C, C, F, F, B, B, F, F, B, B, F, F, C, C, F, F, F, C, F, F];
+    })(),
+    motif: (() => {
+        const a = [[0, 72, 1.5], [1.5, 74, .5], [2, 72, 1]], b = [[0, 69, 3]], c = [[0, 74, 2], [2, 74, 1]], d = [[0, 77, 1.5], [1.5, 76, .5], [2, 74, 1]];
+        return [a, b, a, b, [[0, 79, 2], [2, 79, 1]], [[0, 76, 3]], [[0, 77, 2], [2, 77, 1]], [[0, 72, 3]], c, d, a, b, c, d, a, b,
+            [[0, 79, 2], [2, 79, 1]], [[0, 82, 1.5], [1.5, 79, .5], [2, 76, 1]], [[0, 77, 3]], [[0, 81, 3]],
+            [[0, 77, 1.5], [1.5, 72, .5], [2, 69, 1]], [[0, 72, 1.5], [1.5, 70, .5], [2, 67, 1]], [[0, 65, 3]], []];
+    })() };
 function pickRecord() { // (a different one from last time)
     const sg = choice(RECORDS.filter(x => x.name !== Gramo.last));
     Gramo.last = sg.name;
@@ -7867,7 +7876,7 @@ function songTick(t, dk) {
         if (!rec)
             Snd.lastSong = sg;
         const bpm = (sg.bpm || 70) - (night && !rec ? 8 : 0);
-        Snd.song = { sg, bar: 0, bars: (sg.meter === 3 ? 40 : 32), beat: bpm / 60, next: carry, drums: (sg.drums || "brush") !== "none" && !(night && !sg.drums) && (sg.rec || Math.random() < .9), last: (sg.mel || MEL)[2], first: !Snd.carry };
+        Snd.song = { sg, bar: 0, bars: sg.bars || (sg.meter === 3 ? 40 : 32), beat: bpm / 60, next: carry, drums: (sg.drums || "brush") !== "none" && !(night && !sg.drums) && (sg.rec || Math.random() < .9), last: (sg.mel || MEL)[2], first: !Snd.carry };
         if (Gramo.on && !Gramo.song)
             Gramo.song = Snd.song;
         const g = document.getElementById("sndG");
@@ -7880,7 +7889,7 @@ function songTick(t, dk) {
     const so = Snd.song, sg = so.sg, mb = sg.meter || 4, mel = sg.mel || MEL, keys = sg.keys || "ep", dr = sg.drums || "brush";
     if (so.next - t > 1.2)
         return;
-    const bt = 1 / so.beat, t0 = so.next, sec = Math.floor(so.bar / 8) % 4, ch = (sec === 2 ? sg.b : sg.prog)[so.bar % 4], fade = so.first && so.bar < 2 ? .5 + .25 * so.bar : 1, M = Snd.mus;
+    const bt = 1 / so.beat, t0 = so.next, sec = Math.floor(so.bar / 8) % 4, ch = sg.full ? sg.prog[so.bar % sg.prog.length] : (sec === 2 ? sg.b : sg.prog)[so.bar % 4], fade = so.first && so.bar < 2 ? .5 + .25 * so.bar : 1, M = Snd.mus;
     if (keys === "pad")
         ch.forEach(m => {
             tone(mtof(m), t0, bt * mb * 1.25, { vol: .016 * fade, atk: bt * .9, bus: M });
@@ -7923,7 +7932,10 @@ function songTick(t, dk) {
             tone(mtof(ch[0] - 12 + 7), t0 + bt * (mb === 3 ? 2 : 2.5), bt * .9, { vol: .05 * fade, bus: M });
     }
     const tune = sg.motif && (sec === 2 ? sg.motif2 : sg.motif);
-    if (tune && (sec > 0 || so.bar % 8 >= 4)) { // the record's own tune; in the intro its second half, softly and lower
+    if (sg.full)
+        for (const [pos, m, len] of sg.motif[so.bar % sg.motif.length])
+            playLead(sg.lead, m, t0 + bt * pos, bt * len, fade, M);
+    else if (tune && (sec > 0 || so.bar % 8 >= 4)) { // the record's own tune; in the intro its second half, softly and lower
         for (const [pos, m] of tune[so.bar % 4])
             if (sec === 0 || Math.random() > .06)
                 playLead(sg.lead, sec === 0 ? m - 12 : m, t0 + bt * pos, bt, sec === 0 ? fade * .6 : fade, M);
