@@ -942,7 +942,7 @@ body.pixel{--boxlh:24px;--boxfs:16px}
     <div class="pane" id="tab-grow" role="tabpanel" hidden>
       <div>
         <h2>The wagon</h2>
-        <p class="sub">Finished tasks earn glimmers: 1 for small, 3 for medium, 6 for big. Golden fireflies carry a few too, 10 a day at most. Spend them on things for the wagon; everything you buy shows up in the scene. <b id="shopBal"></b></p>
+        <p class="sub">Finished tasks earn glimmers: 1 for small, 3 for medium, 6 for big. Golden fireflies carry a few too, 10 a day at most, and so does sweeping up. Spend them on things for the wagon; everything you buy shows up in the scene. <b id="shopBal"></b></p>
       </div>
       <details class="shopsec" data-sec="furn" open><summary><h3>Furniture</h3><span class="seccount" id="cnt-furn"></span><span class="secnew" id="new-furn" hidden>new</span></summary>
         <div class="shop" id="shop"></div></details>
@@ -5190,7 +5190,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [] }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [] }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], followups: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -5466,7 +5466,7 @@ function sanitizeState(raw) {
         o.flags.shop5 = 1;
     }
     o.journal = { name: str(s.journal && s.journal.name, 40).replace(/\s+/g, " ").trim() || "Small journal", at: num(s.journal && s.journal.at) }; // the journal's name (journal.js)
-    o.amb = { d: s.amb && dkey(s.amb.d) ? dkey(s.amb.d) : "", g: clamp(num(s.amb && s.amb.g), 0, AMB_GLIM), f: clamp(num(s.amb && s.amb.f), 0, AMB_FINDS) }; // today's glimmers and finds from ambient things (economy.js)
+    o.amb = { d: s.amb && dkey(s.amb.d) ? dkey(s.amb.d) : "", g: clamp(num(s.amb && s.amb.g), 0, AMB_GLIM), f: clamp(num(s.amb && s.amb.f), 0, AMB_FINDS), s: clamp(num(s.amb && s.amb.s), 0, SWEEP_GLIM) }; // today's glimmers and finds from ambient things (economy.js)
     o.pantry = {}; // ingredients and treats in stock (pantry.js)
     for (const [k, v] of Object.entries(numMap(s.pantry)))
         if (PANTRY.some(it => it.id === k) && num(v) > 0)
@@ -5845,8 +5845,8 @@ function mergeStates(a, b) {
     o.kettleStyle = num((a.kettleStyle || {}).at) >= num((b.kettleStyle || {}).at) ? Object.assign({}, a.kettleStyle || { k: "copper", at: 0 }) : Object.assign({}, b.kettleStyle);
     o.journal = num((a.journal || {}).at) >= num((b.journal || {}).at) ? Object.assign({}, a.journal || { name: "Small journal", at: 0 }) : Object.assign({}, b.journal); // the newest name
     { // today's ambient glimmers and finds: the later day wins; the same day, the most of each
-        const x = a.amb || { d: "", g: 0, f: 0 }, y = b.amb || { d: "", g: 0, f: 0 };
-        o.amb = x.d === y.d ? { d: x.d, g: Math.max(num(x.g), num(y.g)), f: Math.max(num(x.f), num(y.f)) } : Object.assign({}, x.d > y.d ? x : y);
+        const x = a.amb || { d: "", g: 0, f: 0, s: 0 }, y = b.amb || { d: "", g: 0, f: 0, s: 0 };
+        o.amb = x.d === y.d ? { d: x.d, g: Math.max(num(x.g), num(y.g)), f: Math.max(num(x.f), num(y.f)), s: Math.max(num(x.s), num(y.s)) } : Object.assign({}, x.d > y.d ? x : y);
     }
     o.pantry = Object.assign({}, nw.pantry || {}); // (the newer save's stock: what was used up stays used up)
     o.splurge = num((a.splurge || {}).at) >= num((b.splurge || {}).at) ? Object.assign({}, a.splurge || { k: "", at: 0 }) : Object.assign({}, b.splurge); // the newest treat
@@ -8399,10 +8399,10 @@ function addG(x) {
 }
 /* rewards, in glimmers */
 const PAY = { task: { 1: 1, 3: 3, 8: 6 }, pick: 1, fixDone: 1, rested: 3, selfcare: 1, selfcareMax: 3, file: 1 };
-/* ambient things (owner, 24-10-2026): tasks are where glimmers come from. Sweeping and anomalies pay nothing; a golden
+/* ambient things (owner, 24-10-2026): tasks are where glimmers come from. Anomalies pay nothing, sweeping a little (SWEEP_GLIM); a golden
    firefly gives 1 to 3 glimmers or a small thing, never both, at most AMB_GLIM glimmers a day. Small things found
    without a task (a firefly past the cap, the floor, the hand, the raccoon) are at most AMB_FINDS a day. */
-const AMB_GLIM = 10, AMB_FINDS = 3;
+const AMB_GLIM = 10, AMB_FINDS = 3, SWEEP_GLIM = 10; // (sweeping: 1 a piece, SWEEP_GLIM a day at most, S.amb.s; owner, 04-11-2026)
 /* games pay again (owner, 01-11-2026; group 15 and 24 had made them free): 0 to 3 glimmers by how well it went, at most
    GAME_GLIM a day from games (S.gamesDay.g) */
 const GAME_GLIM = 10;
@@ -8416,7 +8416,7 @@ function gameGlim(score) {
 }
 function ambToday() {
     if (!S.amb || S.amb.d !== actDay())
-        S.amb = { d: actDay(), g: 0, f: 0 };
+        S.amb = { d: actDay(), g: 0, f: 0, s: 0 };
     return S.amb;
 }
 function ambGlim() { // a golden firefly's glimmers, or 0 once the day's are given
@@ -8425,6 +8425,13 @@ function ambGlim() { // a golden firefly's glimmers, or 0 once the day's are giv
         return 0;
     a.g += n;
     return addG(n);
+}
+function sweepGlim() { // a swept piece's glimmer, or 0 once the day's are given
+    const a = ambToday();
+    if (num(a.s) >= SWEEP_GLIM)
+        return 0;
+    a.s = num(a.s) + 1;
+    return addG(1);
 }
 function ambFind() { // a small thing found without a task, or null once the day's are found
     const a = ambToday();
@@ -34971,7 +34978,7 @@ let messHintQueued = false, sweepSaidAt = 0;
 function sweepAt(x, y, room = "room") {
     if (!S.mess || !S.mess.length)
         return false;
-    let any = false;
+    let any = false, paid = false;
     for (let i = S.mess.length - 1; i >= 0; i--) {
         const m = S.mess[i];
         if (messRoom(m) !== room)
@@ -34980,7 +34987,11 @@ function sweepAt(x, y, room = "room") {
         if (Math.hypot(mx - x, my - y) < Math.max(22, R * .5)) {
             S.mess.splice(i, 1);
             any = true;
-            S.care.swept++; // (no glimmers: owner, 24-10-2026)
+            S.care.swept++;
+            if (sweepGlim()) { // (1 a piece, 10 a day: owner, 04-11-2026; before, sweeping paid nothing)
+                paid = true;
+                floatText("+1", mx, my, "#ffd76a", room);
+            }
             basketAdd(m.t, room, mx, my); // up and into the possum's basket in the nook (basket.js)
             for (let j = 0; j < 4; j++)
                 addP({ type: "spark", x: mx, y: my, vx: rnd(-50, 50), vy: rnd(-70, -10), g: 160, max: .5, col: "#d8d2c0", size: 2, room });
@@ -34994,7 +35005,7 @@ function sweepAt(x, y, room = "room") {
         }
         else if (!S.mess.length)
             speak(choice(["Spotless.", "Clean floor. I'm going to lie on it.", "Swept. The wagon approves."]));
-        saveSoon();
+        paid ? afterChange() : saveSoon();
     }
     return any;
 }
@@ -35171,7 +35182,7 @@ function renderTray(level) {
     if (level === "root") {
         const n = (S.mess || []).length;
         if (n)
-            info(n === 1 ? "A bit of mess on the floor: tap it in the scene." : `${n} bits of mess on the floor: tap them, or drag across them, in the scene.`);
+            info(n === 1 ? "A bit of mess on the floor: tap it in the scene." : `${n} bits of mess on the floor: tap them, or drag across them, in the scene. The first ${SWEEP_GLIM} a day earn a glimmer each.`);
         add("Talk", () => renderTray("talk"));
         add("Feed", () => renderTray("feed"));
         add("Play", () => {
