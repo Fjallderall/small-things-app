@@ -1161,6 +1161,13 @@ const POOL_INFO = {
     eclipse_lunar: "Mite, on the day of a lunar eclipse",
     eclipse_now_solar: "Mite, while the sun in the window is eclipsed",
     eclipse_now_lunar: "Mite, while the moon in the window is red with the eclipse",
+    marktap: "Mite, on a mark an anomaly left, when you tap it: kind | line (kinds: door, phone, eyes, tentacle, chair, ghost, letter, cloud, figure, hand, drips, report, double, sheet, coat, lantern, moth, space, deep)",
+    marknew: "Mite, noticing that an anomaly nobody dealt with left something ({mark} is what)",
+    markidle: "Mite, out of nowhere, about a mark that's still there ({mark} is what)",
+    markscrub: "Mite, having scrubbed a mark away ({mark} is what)",
+    markobs: "A resident looking at a mark, with someone: who | A: / B: (who: cat, possum, snail or any; {thing} is the mark)",
+    markobs_solo: "A resident looking at a mark, alone: who | line ({thing} is the mark)",
+    markvisitor: "A visitor, noticing a mark ({mark} is what)",
     tenantpost: "A letter from a tenant who moved out: LABEL (as in the drawers pool) | what they write. Lines starting * | are for anyone ({label} is who)",
     snail_post_tenant: "The snail at the rack, when a former tenant has written ({label} is who)",
     drawerback: "Mite, when a former tenant moves back in ({label} is who, {drawer} which drawer)",
@@ -3378,6 +3385,119 @@ linesFor("Rooms and things", {
 "use strict";
 /* lines/strange.js - Anomalies, dreams, omens, eclipses, the Bureau, the closet's far side. */
 linesFor("The strange", {
+    marktap: [
+        "door | This is where the door was. I keep nearly knocking.",
+        "door | You can still see the edges. The wall hasn't quite shut.",
+        "door | There's a keyhole. It's only drawn on. I checked. I'm not going to check again.",
+        "phone | The red cord. It goes nowhere. I pulled it, and something pulled back, politely.",
+        "phone | It still rings a bit if you stand on it. Very faintly.",
+        "phone | Someone was on the line for a long time. This is how much of them is left.",
+        "eyes | They looked at the wall for so long that it took. I don't think it's looking back.",
+        "eyes | Two small burns, and two more. I've put my hand over them. They're warm.",
+        "eyes | That's where it watched from. It has a good view of the biscuits.",
+        "tentacle | It took the tea and left the ring. A very honest arrangement.",
+        "tentacle | There are little round marks beside it. Something was holding on, and not hurrying.",
+        "tentacle | It smells of a good cup of tea. It's been here for days.",
+        "chair | Four dents. It was a heavy chair for something that wasn't there.",
+        "chair | I stood in the middle. It's surprisingly comfortable, not sitting there.",
+        "chair | The floor remembers it. I think the floor misses it.",
+        "ghost | A curl of paper. It tried to make something and got shy.",
+        "ghost | I can't unfold it. It's not stuck. It just would rather not.",
+        "ghost | It's soft, like paper that's been in a pocket for a hundred years.",
+        "letter | Everything that mattered on this scrap is black. Even the black is redacted.",
+        "letter | Under the bar it says something. I held it to the light. The light went out a bit.",
+        "letter | I think I'm cleared to read this. I'm not cleared to know that.",
+        "cloud | It rained, indoors, on me, and nobody stopped it. This is the result.",
+        "cloud | The puddle hasn't shrunk. It rippled just now, and I hadn't touched it.",
+        "cloud | It's rainwater. From where, I don't know. It's very clean, and rather sad.",
+        "figure | The tall one stood here. It's gone. Most of it.",
+        "figure | Nothing casts that shadow. I've stood everywhere to check.",
+        "figure | It's a bit further along the wall than it was. I've measured. I won't say more.",
+        "hand | It came up through the floor and left this. It has longer fingers than I remembered.",
+        "hand | I put my paw on it. It's a very good fit, if I imagine a lot.",
+        "hand | It's dry now. It waved a bit before it went. Nobody waved back.",
+        "drips | The drips went up. They stopped at the ceiling. They're still deciding.",
+        "drips | I've wiped under it and over it. It's wet at the top.",
+        "drips | Water with very strong opinions about which way is down.",
+        "report | A corner of the form. It says 'kind' and then it stops being in any language.",
+        "report | It's torn, and it hasn't been filed. That'll bother me.",
+        "report | Page two of something. It says I'm doing well. It doesn't say at what.",
+        "double | Two prints. They're mine. I wasn't here.",
+        "double | They're damp, and a bit mossier than mine. I'm trying not to take it personally.",
+        "double | The other one stood here looking at the wagon. I'd like to know how long.",
+        "sheet | I counted them. I got to forty, and then I lost interest in knowing.",
+        "sheet | They go into the wall. They don't come back. All those feet.",
+        "sheet | Small, careful, and far too many. Whoever it was took off their shoes.",
+        "coat | A coat hook. It's holding its arm out. Nobody's coat is on it, but it's heavy.",
+        "coat | I hung my scarf on it. It was on the floor the next day, folded.",
+        "coat | It's well made. Nobody here put it up. I've asked.",
+        "lantern | The ring is where the lantern stood. The floor's still a bit warm.",
+        "lantern | Soot, in a perfect circle. A very tidy sort of dark.",
+        "lantern | The middle's clean. That's where they stood. There's nothing else I can tell you.",
+        "moth | It's a wing print, in fine dust. It left in a hurry, and very politely.",
+        "moth | You can see every scale. It's the size of a hat. I do mean that as a compliment.",
+        "moth | I blew on it. The dust came back. I think it wants to stay.",
+        "space | A few stars, stuck to the wall. They came in with us and missed the way back.",
+        "space | They're cold. They come out when the lamp goes off. I don't know how far away this is.",
+        "space | I tried to count them. There's one more when I do.",
+        "deep | The tide came up to here. It was a dry day. The wagon was never wet.",
+        "deep | It smells of salt, and of very deep water. There's a small shell in it.",
+        "deep | I've put my ear to it. It sounds like someone a long way down saying hello.",
+    ],
+    marknew: [
+        "Something's been left. {mark}. I didn't do it.",
+        "Oh. It's gone, but it left {mark}. We should have dealt with that.",
+        "Nobody saw to it, and now there's {mark}.",
+        "It went by itself. It didn't take everything with it. There's {mark}.",
+        "There's {mark} now. That wasn't there before.",
+        "[night] It's gone. It left {mark}. I'd rather look at it in the morning.",
+    ],
+    markidle: [
+        "{mark} is still there. I checked. I don't know why I checked.",
+        "I keep going past {mark}. I don't look at it. It's very noticeable, not looking.",
+        "I've been thinking about {mark}. I could scrub it. I could.",
+        "You know {mark}? I think it's settling in.",
+        "[night] I'd feel better if {mark} weren't there at night.",
+        "[rainy] {mark} looks different when it rains.",
+        "Should we do something about {mark}? There's no hurry. It isn't going anywhere.",
+        "[strange] {mark} was on the other side of the room this morning. Or it wasn't.",
+    ],
+    markscrub: [
+        "There. No more {mark}. It only wanted a firm hand.",
+        "Scrubbed. Where {mark} was, it's cleaner than the rest. Now I'll have to do the rest.",
+        "That's it, no more {mark}. I feel oddly bad about it.",
+        "All gone. The cloth's a bit heavier now.",
+        "That's {mark} done. It came away very easily. Too easily.",
+        "Clean. I told it thank you, in case.",
+    ],
+    markobs: [
+        "any | A: {Thing}. / B: I know. / A: Are we doing anything about it? / B: I'm looking at it. / A: Good.",
+        "any | A: Was {thing} always there? / B: No. / A: It looks as if it was. / B: That's how you can tell.",
+        "any | A: If you look at {thing} long enough, it stops being odd. / B: Does it? / A: No.",
+        "cat | A: Mrrp. {Thing} is not from here. / B: Where's it from? / A: Mrow. Further in. It's on its way back.",
+        "possum | A: Hhh. Can I eat {thing}? / B: Please don't. / A: I was only asking. I've started already.",
+        "snail | A: …I've been past {thing} twice. / B: Today? / A: This week. It's different both times.",
+        "cat | A: I know what left {thing}. / B: What? / A: Mew. Someone who didn't get an answer.",
+        "snail | A: …{Thing}. Would you say it's been delivered? / B: To whom? / A: …That's what I'd like to know.",
+    ],
+    markobs_solo: [
+        "any | {Thing}. Hm.",
+        "cat | Mrrp. {Thing}. So it's like that.",
+        "cat | {Thing} has a smell of elsewhere. Good.",
+        "possum | Hhh. {Thing}. I'm keeping an eye on it. With both eyes. One at a time.",
+        "snail | …{Thing}. I'll go round it. It'll take the afternoon.",
+        "any | Nobody saw to {thing}. It's all right. It doesn't mind.",
+    ],
+    markvisitor: [
+        "I don't want to pry, but {mark}? In a nice house like this?",
+        "Ah. {mark}. We had one of those at home. It's fine. You just don't turn your back.",
+        "Is that {mark}? Don't worry. I didn't see it. I've seen worse. I've seen it worse.",
+        "That's {mark}, isn't it. I knew someone who left one of those lying about. Once.",
+        "I wouldn't scrub {mark} on a Tuesday, that's all I'll say.",
+        "Is {mark} supposed to be there? I only ask. I'm only passing through.",
+        "I walked round {mark}. It seemed polite.",
+        "You've got {mark}. Everyone's got something.",
+    ],
     eclipse_solar: [
         "There's a solar eclipse today. Somewhere. The wagon's window always gets one anyway. Don't look straight at it.",
         "Eclipse day. The moon's going to sit in front of the sun for a bit. Very cheeky of the moon.",
@@ -5542,7 +5662,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -5849,6 +5969,7 @@ function sanitizeState(raw) {
     o.mice = arr(s.mice, 20).map(m => ({ n: str(m && m.n, 30).trim(), at: num(m && m.at), kin: m && m.kin ? 1 : 0, told: m && m.told ? 1 : 0 })).filter(m => m.n); // mice who've visited; kin: the circle has shown its found family, told: it knows Mite saw (visitors.js, circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
     // the chest of drawers for rent in the nook: when it arrived, and who Mite last knew was living in it (sig)
+    o.marks = arr(s.marks, 24).map(m => ({ id: str(m.id, 20), k: str(m.k, 12), room: ["room", "garden", "archive"].includes(m.room) ? m.room : "room", x: clamp(num(m.x), 0, 1), y: clamp(num(m.y), 0, 1), at: num(m.at), off: num(m.off) })).filter(m => m.id && m.k); // (what anomalies left: marks.js)
     o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240), notes: (Array.isArray(s.drawers && s.drawers.notes) ? s.drawers.notes : []).filter(n => n && [0, 1, 2, 3].includes(n.d)).map(n => ({ d: n.d, from: str(n.from, 40), t: noDash(str(n.t, 200)), at: num(n.at) })).filter(n => n.t).slice(-4), postAt: Math.max(0, num(s.drawers && s.drawers.postAt)) }; // (notes: what a tenant who moved out left in its drawer; postAt: up to where former tenants' post has come: garden.js)
     // the post: letters Mite wrote at the desk (to whom, when, whether a reply came: r) and the replies (read or not)
     {
@@ -6261,6 +6382,14 @@ function mergeStates(a, b) {
                 m.set(x.n, { n: x.n, at: Math.min(o2.at || num(x.at), num(x.at) || o2.at), kin: Math.max(o2.kin, x.kin ? 1 : 0), told: Math.max(o2.told, x.told ? 1 : 0) });
             }
         o.mice = [...m.values()].sort((x, y) => x.at - y.at).slice(-20);
+    }
+    { // marks: every one from either side; scrubbed on either side stays scrubbed
+        const m = new Map();
+        for (const x of [...(a.marks || []), ...(b.marks || [])]) {
+            const c = m.get(x.id);
+            m.set(x.id, c ? Object.assign({}, x, { off: Math.max(num(c.off), num(x.off)) }) : x);
+        }
+        o.marks = [...m.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-24);
     }
     { // the drawers: the earliest arrival counts (so both sides agree who lives there); the newer side's news
         const da = a.drawers || {}, db = b.drawers || {}, ats = [num(da.at), num(db.at)].filter(x => x > 0);
@@ -17975,6 +18104,14 @@ function guestThings(g) {
     if (wallHits.length) { const h = choice(wallHits); add("wall", h.cx); }
     add("sill", r.wx + rnd(-1, 1) * r.wr);
     add("floor", W * rnd(.2, .8));
+    { // something an anomaly left (marks.js): a visitor notices
+        const m = choice(marksHere(view));
+        if (m) {
+            add("mark", markPos(m).x);
+            if (out.length && out[out.length - 1].id === "mark")
+                out[out.length - 1].name = MARKS[m.k].name;
+        }
+    }
     // the furniture too (owner asked whether visitors look at the wagon's things, jot mvpk2otjj8pbe)
     if (easelHit)
         add("easel", easelHit.cx + R * .6);
@@ -17992,7 +18129,7 @@ function guestThings(g) {
         add("snail", snailX * W - R * .2 + (snailX > .5 ? -1 : 1) * (g.s + R * .6), "S");
     if (possumHere() && possum.room === "room")
         add("possum", possum.x, "P");
-    return out.filter(t => t.who ? pool("visitor" + G_RES[t.who]).length : pool("visitorlook").some(l => l.split("|")[0].trim() === t.id));
+    return out.filter(t => t.who ? pool("visitor" + G_RES[t.who]).length : t.id === "mark" || pool("visitorlook").some(l => l.split("|")[0].trim() === t.id));
 }
 function guestNextAct(g) {
     const all = guestThings(g), res = all.filter(t => t.who);
@@ -18004,7 +18141,7 @@ function guestNextAct(g) {
     let tx = t.x;
     if (view === "room" && Math.abs(tx - pet.x) < R * LANE_NEAR) // not right on top of Mite: a step clear of it, in the back lane
         tx = pet.x + (tx < pet.x ? -1 : 1) * R * LANE_NEAR;
-    g.act = { id: t.id, who: t.who, tx: clamp(tx, R * .8, W - R * .8), ph: "walk", until: 0 };
+    g.act = { id: t.id, who: t.who, name: t.name, tx: clamp(tx, R * .8, W - R * .8), ph: "walk", until: 0 };
     g.tx = g.act.tx;
     g.done.push(t.id);
     g.acts--;
@@ -18035,7 +18172,7 @@ function guestRoamTick(g, dt, now) {
                 a.until = Math.max(a.until, now + at + 1500);
             }
             else {
-                const lines = pool("visitorlook").map(l => l.split("|")).filter(l => l[0].trim() === a.id && l[1]);
+                const lines = a.id === "mark" ? pool("markvisitor").map(l => ["", " " + l.replace(/\{mark\}/g, a.name)]) : pool("visitorlook").map(l => l.split("|")).filter(l => l[0].trim() === a.id && l[1]);
                 if (lines.length && Math.random() < .7)
                     snailSay(choice(lines)[1].trim(), 4200, "guest");
                 if (a.id === "floor")
@@ -18933,8 +19070,10 @@ function resolveAnom() {
 }
 /* every frame, while an anomaly is here: anything it does on its own */
 function anomTick(a, dt, now) {
-    if (a.type === "chair" && !a.resolved && a.t > 4 && !objQ.cur && pet.ground === 0 && view === "room")
+    if (a.type === "chair" && !a.resolved && a.t > 4 && !objQ.cur && pet.ground === 0 && view === "room") {
+        markLeave(a); // (nobody tapped it: it leaves its dents, marks.js)
         resolveAnom(); // nobody tapped it; Mite can't resist a chair
+    }
     if (a.type === "ghost" && !a.gifted && a.t > a.life - 3)
         leaveOrigami(a);
     if (a.type === "ghost" && !a.said && a.t > 1.6) {
@@ -19649,6 +19788,117 @@ function drawOrigami(id, x, y, s) {
         poly([[0, -.9], [.3, -.2], [.9, -.4], [.5, .3], [0, .7], [-.5, .3], [-.9, -.4], [-.3, -.2]]);
     else
         poly([[.2, -.9], [-.5, -.5], [-.6, .3], [.1, .9], [-.1, .3], [-.05, -.3]]);
+}
+
+</script>
+<script>/* js/scene/marks.js */
+"use strict";
+/*
+ * marks.js - What an anomaly leaves behind if nobody dealt with it (group 65): a small pixel mark on the floor or wall of
+ * the room it was in, at most one new one a day and six at once. A mark stays until Mite scrubs it: tap it for a card
+ * with what Mite makes of it. S.marks: [{ id, k, room, x, y, at, off }] (x and y: 0 to 1, see markPos; off: when it was
+ * scrubbed, kept so a second device doesn't bring it back). Hidden while Strangeness is off.
+ * Lines: marktap ("kind | line"), marknew, markidle, markscrub, markobs, markobs_solo, markvisitor; {mark} is its name.
+ */
+const MARK_MAX = 6;
+/* each kind: where it goes, what it's called, its colours and its picture ('.': nothing) */
+const MARKS = {
+    door: { on: "wall", name: "the outline of a door", pal: { a: "#e8dcb8", b: "#a8905a" }, art: [".aaaaaaa.", "a.......a", "a.......a", "a.......a", "a.......a", "a.....b.a", "a.......a", "a.......a", "a.......a", "aaaaaaaaa"] },
+    phone: { on: "floor", name: "a length of red cord", pal: { a: "#c0392b", b: "#2a2a2a" }, art: [".aa..aa..aa..", "a..aa..aa..aa", "............b"] },
+    eyes: { on: "wall", name: "two pairs of small burns", pal: { a: "#2b1d16", b: "#d9c070" }, art: ["aa..aa..", "ab..ab..", "........", "..aa..aa", "..ab..ab"] },
+    tentacle: { on: "floor", name: "a tea ring", pal: { a: "#3f2412", b: "#d9b27a" }, art: ["..aaaa....", ".a....a..b", "a......a..", "a......a.b", ".a....a...", "..aaaa...b"] },
+    chair: { on: "floor", name: "four dents in the floor", pal: { a: "#3a2618" }, art: ["aa.....aa", ".........", ".........", ".aa...aa."] },
+    ghost: { on: "floor", name: "a curl of paper", pal: { a: "#b9b2a4", b: "#f4efe4" }, art: ["...aa.", "..abba", ".abbba", "abbaa.", ".aa..."] },
+    letter: { on: "floor", name: "a redacted scrap", pal: { a: "#141414", b: "#ece4d0" }, art: ["bbbbbbbbbb", "baaaaaaabb", "bbbbbbbbbb", "baaaaabbbb", "bbbbbbbbbb"] },
+    cloud: { on: "floor", name: "a small puddle", pal: { a: "#6f8fa6", b: "#9fc0d4", c: "#d6ecf5" }, art: ["...aaaaa....", ".aabbbbbaaa.", "aabbbcbbbbaa", ".aabbbbbbaa.", "...aaaaaa..."] },
+    figure: { on: "wall", name: "a tall thin shadow", pal: { a: "#241a22" }, art: [".aa.", "aaaa", ".aa.", ".aa.", ".aa.", ".aa.", ".aa.", ".aa.", ".aa.", ".aa.", ".aa.", ".aa.", "a..a"] },
+    hand: { on: "floor", name: "a handprint", pal: { a: "#d8d0c0" }, art: ["a.a.a.a..", "a.a.a.a..", "a.a.a.a.a", "aaaaaaa.a", "aaaaaaaa.", ".aaaaaa..", "..aaaa..."] },
+    drips: { on: "wall", name: "drip marks, going up", pal: { a: "#4a6a72", b: "#7fa3ab" }, art: ["a..a...a", "a..a...a", "a..a..aa", "a.aa..a.", "aaaa.aa.", "bbbbbbbb"] },
+    report: { on: "floor", name: "a torn corner of a form", pal: { a: "#ece4d0", b: "#5a5a6a" }, art: ["aaaaaaaa", "abbaabaa", "aaaaaaaa", "ababbaaa", "aa.a.a.a", "a.a.a.a."] },
+    double: { on: "floor", name: "two mossy prints", pal: { a: "#7fae5a", b: "#b8dc8a" }, art: [".aa....", "aaaa.b.", ".aa....", "....aa.", "...aaaa", "....aa."] },
+    sheet: { on: "floor", name: "far too many footprints", pal: { a: "#d8d0c0" }, art: ["a.a.a.a.a.a.a", ".............", ".a.a.a.a.a.a.", ".............", "a.a.a.a.a.a.a"] },
+    coat: { on: "wall", name: "a coat hook", pal: { a: "#c9a24a", b: "#4a3020" }, art: [".aaa.", "a...a", "....a", "...a.", "..a..", ".bbb."] },
+    lantern: { on: "floor", name: "a ring of soot", pal: { a: "#2a2420", b: "#e8d9a8" }, art: ["..aaaaaa..", ".a......a.", "a...bb...a", ".a......a.", "..aaaaaa.."] },
+    moth: { on: "wall", name: "a wing print in dust", pal: { a: "#c8bca0", b: "#efe6cc" }, art: ["aa....aa", "aba..aba", "abbaabba", ".abaaba.", "..a..a.."] },
+    space: { on: "wall", name: "a few stars on the wall", pal: { a: "#fff4c0", b: "#a8d0ff" }, art: ["a.....b.", "...a....", ".b.....a", "....a...", "a......."] },
+    deep: { on: "wall", name: "a tide line", pal: { a: "#d8d0b0", b: "#5a8a8e", c: "#f0c8b8" }, art: ["aaaaaaaaaaaa", "bbabbbbabbba", "b..b....bcc.", ".........cc."] }
+};
+const marksAll = () => (S.marks || []).filter(m => !m.off && MARKS[m.k]);
+const marksHere = rm => strangeness() ? marksAll().filter(m => m.room === rm) : [];
+/* where it sits: on the back of the floor, or low on the wall */
+function markPos(m) {
+    return { x: m.x * W, y: MARKS[m.k].on === "floor" ? GY + 6 + m.y * (H - GY - 14) * MESS_MAXY : GY - R * (.9 + m.y * .9) };
+}
+function markBox(m) {
+    const p = markPos(m), a = MARKS[m.k].art, u = Math.max(1, PX), w = a[0].length * u, h = a.length * u;
+    return { x: p.x - w / 2, y: p.y - h / 2, w, h, cx: p.x };
+}
+/* an anomaly that nobody dealt with is on its way out: it may leave something */
+function markLeave(a) {
+    const d = MARKS[a.type];
+    if (!d || !strangeness() || num(S.flags.markDay) === dayNum() || marksAll().length >= MARK_MAX)
+        return null;
+    const near = marksAll().filter(m => m.room === a.room).map(m => m.x);
+    let x = rnd(.12, .88);
+    for (let i = 0; i < 12 && near.some(o => Math.abs(o - x) < .14); i++)
+        x = rnd(.12, .88);
+    const m = { id: Date.now().toString(36) + ri(0, 999), k: a.type, room: a.room, x, y: Math.random(), at: Date.now() };
+    S.marks = (S.marks || []).concat([m]).slice(-24);
+    S.flags.markDay = dayNum();
+    note(`Something was left in the ${({ room: "wagon", garden: "nook", archive: "archive" })[a.room] || "wagon"}: ${d.name}.`);
+    say("marknew", { mark: d.name });
+    saveSoon();
+    return m;
+}
+function drawMarks(dk, room) {
+    for (const m of marksHere(room)) {
+        const d = MARKS[m.k], p = markPos(m), u = PX, x0 = Math.round((p.x - d.art[0].length * u / 2) / u) * u, y0 = Math.round((p.y - d.art.length * u / 2) / u) * u; // (on the scene's own pixel grid)
+        d.art.forEach((row, r) => {
+            for (let c = 0; c < row.length; c++) {
+                const col = d.pal[row[c]];
+                if (col) {
+                    cx.fillStyle = dk ? mix(col, "#1a1620", dk * .5) : col;
+                    cx.fillRect(x0 + c * u, y0 + r * u, u, u);
+                }
+            }
+        });
+    }
+}
+/* a line for this kind of mark, from the pool marktap */
+function markLine(k) {
+    const ls = pool("marktap").filter(l => l.split("|")[0].trim() === k && l.includes("|"));
+    if (!ls.length)
+        return "That wasn't there before.";
+    const raw = choice(ls);
+    lineCount("marktap", raw);
+    return fillText(raw.split("|").slice(1).join("|").trim(), ctx());
+}
+function markTap(p, rm) {
+    const m = marksHere(rm).find(x => hitIn(p, markBox(x), 30));
+    if (!m || !notOnMite(p))
+        return false;
+    const name = MARKS[m.k].name;
+    openRitual(name[0].toUpperCase() + name.slice(1), markLine(m.k), `<p class="sub">Here since ${esc(dmy(new Date(m.at)))}.</p>`, [["Scrub it", "primary", () => markScrub(m)], ["Leave it", "", closeRitual]]);
+    sfx("card");
+    return true;
+}
+function markScrub(m) {
+    closeRitual();
+    const p = markPos(m), name = MARKS[m.k].name;
+    m.off = Date.now();
+    sfx("sweep");
+    for (let i = 0; i < 10; i++)
+        addP({ type: "spark", room: m.room, x: p.x + rnd(-R * .3, R * .3), y: p.y + rnd(-R * .15, R * .15), vx: rnd(-14, 14), vy: rnd(-24, -6), g: 20, max: .8, col: "#f3e7c8", size: 2 });
+    if (m.room === view && !objQ.cur && !floorTaken())
+        pet.start("curious", { tx: clamp(p.x, W * .1, W * .9) });
+    say("markscrub", { mark: name });
+    note(`${S.settings.pet} scrubbed away ${name}.`);
+    saveSoon();
+}
+/* Mite, out of nowhere, about something that's still there */
+function markSay() {
+    const all = strangeness() ? marksAll() : [];
+    return all.length ? say("markidle", { mark: MARKS[choice(all).k].name }) : false;
 }
 
 </script>
@@ -26486,6 +26736,8 @@ function obsThings(rm) {
         add("eyes", (S.eyes || []).length ? "the eye jars" : "the empty jar", eyeJarHit); // (an eye jar only once there's an eye in it)
         add("tube", "the filing tube", tubeHit);
     }
+    for (const m of marksHere(rm))
+        add("mark", MARKS[m.k].name, markBox(m)); // (what an anomaly left: marks.js)
     return out.filter(t => t.name && t.cx > R * .6 && t.cx < W - R * .6);
 }
 /* who's free to have a look: sitting about, awake, in a room that's on screen */
@@ -26515,7 +26767,7 @@ function observeTick(now) {
     if (!things.length)
         return;
     // the cat goes and sits under something; the possum and the snail look at what's nearest
-    const near = things.slice().sort((a, b) => Math.abs(a.cx - who.x) - Math.abs(b.cx - who.x)), th = who.k === "C" ? choice(things) : near[0];
+    const near = things.slice().sort((a, b) => Math.abs(a.cx - who.x) - Math.abs(b.cx - who.x)), marks = things.filter(t => t.id === "mark"), th = marks.length && Math.random() < .4 ? choice(marks) : who.k === "C" ? choice(things) : near[0]; // (something an anomaly left gets looked at)
     obs = { who, th, t0: now, stage: "go", room: who.room };
     if (who.k === "C") {
         const tx = clamp(th.cx + (th.cx > W / 2 ? -1 : 1) * R * .5, R * .7, W - R * .7);
@@ -26570,7 +26822,7 @@ function obsTalk(now) {
     const others = obsWho().filter(x => x.k !== a.k && x.room === o.room), miteHere = view === o.room && pet.beh !== "sleep" && !objQ.cur;
     const partner = miteHere && Math.random() < .65 ? "M" : others.length ? others[0].k : miteHere ? "M" : "";
     if (partner) {
-        const line = obsLine("observe", a.kind);
+        const line = obsLine(o.th.id === "mark" ? "markobs" : "observe", a.kind);
         if (line) {
             if (partner === "M")
             { // Mite comes and stands beside them, on the far side, room enough that neither hides the other
@@ -26596,7 +26848,7 @@ function obsTalk(now) {
             return;
         }
     }
-    const solo = obsLine("observe_solo", a.kind);
+    const solo = obsLine(o.th.id === "mark" ? "markobs_solo" : "observe_solo", a.kind);
     if (solo) {
         const t = fill(solo), name = a.k === "C" ? CAT_NAME : a.k === "P" ? possumName() : snailName();
         snailSay(t, lineMs(t), a.kind);
@@ -30201,6 +30453,7 @@ function drawParts(dt, layer = "fg") {
 
 /* the mess on this room's floor */
 function drawMess(dk, room) {
+    drawMarks(dk, room); // (what anomalies left: marks.js)
     for (const m of (S.mess || [])) {
         if (messRoom(m) !== room)
             continue;
@@ -30502,6 +30755,8 @@ function frame(now) {
         anom.t += dt;
         anomTick(anom, dt, now);
         if (anom && anom.t > (anom.life || 24)) {
+            if (!anom.resolved) // (nobody dealt with it: marks.js)
+                markLeave(anom);
             if (anom.type === "space")
                 spaceEnd(anom); // back from the planeshift: a postcard (planeshift.js)
             else if (anom.type === "deep")
@@ -30781,7 +31036,7 @@ function ambientTalk() {
         return;
     }
     if (r < .8) // (now and then a remark about the workshop out of sight, where some things are kept instead: group 36)
-        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || say("idle");
+        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || (Math.random() < .04 && markSay()) || say("idle");
 }
 function inventWord() {
     const syl = ["flim", "bor", "quo", "snu", "ber", "lin", "dra", "mo", "ket", "vy", "pel", "ziff", "ow", "gren", "tash", "mu", "pim", "wob", "lo", "fen", "drib", "sil", "nok", "ul"];
@@ -31049,6 +31304,7 @@ const TAP_TARGETS = {
         }
     },
     pet: { hit: onMite, act: () => patPet() },
+    mark: { tap: (p, rm) => markTap(p, rm), boxes: rm => marksHere(rm).map(markBox) }, // what an anomaly left (marks.js): small, so before the rooms' bigger things
     sweep: { tap: (p, rm) => sweepAt(p.x, p.y, rm), boxes: rm => (S.mess || []).filter(m => messRoom(m) === rm).map(m => dotBox(m.x * W, GY + 6 + m.y * (H - GY - 14))) }, // mess on the floor (care.js)
     look: { tap: (p, rm) => lookTap(p, rm), boxes: rm => lookSpots(rm).filter(s => !/rug$/.test(s.pool)) }, // the lamp, the window, the ladder... (looks.js)
     floor: { tap: (p, rm) => floorTap(p, rm) }, // nothing else: Mite comes to look
@@ -31165,13 +31421,13 @@ const TAP_TARGETS = {
 };
 
 const TAP_ORDER = {
-    room: ["gold", "seasonal", "anomaly", "drifter", "dream", "origami", "festival", "calendar", "postit", "splurge",
+    room: ["gold", "seasonal", "anomaly", "drifter", "mark", "dream", "origami", "festival", "calendar", "postit", "splurge",
         "possum", "cat", "guest", "snail", "vault", "easel", "sill", "jar", "cabinet", "hearth", "wall", "oven", "kettle",
         "books", "scope", "pet", "sweep", "pile", "shelfbox", "look", "floor"],
-    garden: ["gold", "seasonal", "anomaly", "drifter", "shade", "splurge", "possum", "cat", "snail", "pet", "plants",
+    garden: ["gold", "seasonal", "anomaly", "drifter", "mark", "shade", "splurge", "possum", "cat", "snail", "pet", "plants",
         "gramophone", "givejar", "letters", "pinboard", "vase", "flowerbook", "tenants", "drawers", "chair", "desk",
         "postit", "sweep", "look", "floor"],
-    archive: ["archiveSeen", "gold", "seasonal", "anomaly", "drifter", "journal", "cat", "postit", "sweep", "circle",
+    archive: ["archiveSeen", "gold", "seasonal", "anomaly", "drifter", "mark", "journal", "cat", "postit", "sweep", "circle",
         "possum", "snail", "archsill", "archwall", "keepsakes", "pet", "archbox", "look", "floor"]
 };
 
