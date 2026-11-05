@@ -9370,16 +9370,27 @@ function resize() {
     if (bb && !bb.hidden)
         bubbleW = bb.offsetWidth;
 }
-/* "#rrggbb" or "rgb(r,g,b)" to [r, g, b], so mixed colours can be mixed again */
+/* "#rrggbb" or "rgb(r,g,b)" to [r, g, b], so mixed colours can be mixed again. Kept, because the same colours come by
+   hundreds of times a frame; the arrays are shared, so don't change them */
+const hexKept = new Map();
 function hex(c) {
+    let v = hexKept.get(c);
+    if (v)
+        return v;
     if (c[0] === "r")
-        return c.slice(c.indexOf("(") + 1, -1).split(",").slice(0, 3).map(Number);
-    c = c.replace("#", "");
-    return [parseInt(c.slice(0, 2), 16), parseInt(c.slice(2, 4), 16), parseInt(c.slice(4, 6), 16)];
+        v = c.slice(c.indexOf("(") + 1, -1).split(",").slice(0, 3).map(Number);
+    else {
+        const h = c.replace("#", "");
+        v = [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+    }
+    if (hexKept.size > 4000) // (mixed colours drift with the light, so this would otherwise only grow)
+        hexKept.clear();
+    hexKept.set(c, v);
+    return v;
 }
 function mix(a, b, t) {
     const A = hex(a), B = hex(b);
-    return "rgb(" + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(",") + ")";
+    return `rgb(${Math.round(A[0] + (B[0] - A[0]) * t)},${Math.round(A[1] + (B[1] - A[1]) * t)},${Math.round(A[2] + (B[2] - A[2]) * t)})`;
 }
 const SKY = [[0, "#121833", "#262a4d", 1], [5, "#2b2d55", "#b7826f", .8], [7, "#8fb8cf", "#f0dcb8", .15], [12, "#86bde0", "#dceee2", 0], [16.5, "#90b0cf", "#f1d1a1", .05], [19, "#4a4775", "#e48e6c", .45], [21, "#1b2142", "#3b3463", .9], [24, "#121833", "#262a4d", 1]];
 /* the sky and how dark it is at clock hour h: the fixed day, stretched to the real sunrise and sunset when there's
