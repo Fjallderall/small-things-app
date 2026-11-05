@@ -4050,7 +4050,23 @@ linesFor("Post", {
         "Mind the left corner, it creaks at night. That's only the drawer remembering things. Signed, {label}",
         "Took the dust. Left the smell of cloves. Fair trade. Signed, {label}",
         "Back in spring, maybe. Keep it dark for me. Signed, {label}",
-        "The rent was always fair and the neighbours were always quiet. Would rent again. Signed, {label}"
+        "The rent was always fair and the neighbours were always quiet. Would rent again. Signed, {label}",
+        "Returned the key. It may not be the key you gave me. Signed, {label}",
+        "Left the drawer as found, apart from the bit that was always like that. Signed, {label}",
+        "Gone somewhere with more shelves. No hard feelings. Signed, {label}",
+        "The deposit can go to the next tenant. They'll need it. Signed, {label}",
+        "Watered the dark twice a week, as agreed. Signed, {label}",
+        "Please forward any post. If it's ticking, keep it. Signed, {label}",
+        "Thank {pet} for the label. Nobody had ever spelled it right before. Signed, {label}",
+        "Best sleep in years. Didn't know it was years until just now. Signed, {label}",
+        "Apologies for the noise on Thursdays. It won't happen again here. Signed, {label}",
+        "Left a spare knob in the corner. It isn't from this chest. Signed, {label}",
+        "It was only ever meant to be a short stay. It was. Signed, {label}",
+        "[winter] Leaving before the cold gets into the runners. Keep them waxed. Signed, {label}",
+        "[spring] Spring's here, and the drawer was getting small. Signed, {label}",
+        "[strange] Something in the bottom drawer knocked all night. Knocked back. We're friends now. Say goodbye for me. Signed, {label}",
+        "[strange] Please don't open this drawer on the fourth night after moving out. Thank you. Signed, {label}",
+        "[night] Left after dark so nobody would have to say goodbye. Signed, {label}",
     ],
     replies: [
         "Dear Mite, your letter came on the one dry day this week, which I am taking as a sign. Everything here is the same, which is a kind of news. Yours, {penpal}",
@@ -22399,32 +22415,50 @@ let gardenSince = 0;
 let gardenDrawer = null; // the drawer Mite has pulled open: { i, until }
 /* the letters standing in the rack: only unread ones, so once tapped it stands empty till a new one comes (jot mvo7h91z3lzkl) */
 const rackLetters = () => ((S.post && S.post.inbox) || []).filter(l => !l.read).slice(-3);
+/* the order tenants come in: every line once, shuffled, the same for this chest every time, so everyone has had a
+   turn before anyone comes back (owner, 05-11-2026) */
+let drawerShuffle = { key: "", order: [] };
+function drawerOrder(at, n) {
+    const key = at + "|" + n;
+    if (drawerShuffle.key !== key) {
+        const o = Array.from({ length: n }, (_, i) => i);
+        for (let i = n - 1; i > 0; i--) {
+            const j = Math.floor(hash01(at + "o" + i) * (i + 1));
+            [o[i], o[j]] = [o[j], o[i]];
+        }
+        drawerShuffle = { key, order: o };
+    }
+    return drawerShuffle.order;
+}
 function drawerLabels(t = Date.now()) {
+    const out = [null, null, null, null];
     if (!S.drawers || !S.drawers.at)
-        return [null, null, null, null];
+        return out;
     const at = S.drawers.at, days = (t - at) / 864e5, lines = pool("drawers").filter(l => l.includes("|"));
-    const used = new Set(); // (no tenant in two drawers at once: a clash moves on to the next line)
-    return [0, 1, 2, 3].map(i => {
-        if (!lines.length)
-            return null;
+    if (!lines.length)
+        return out;
+    const stays = []; // every stay so far, in all four drawers
+    for (let i = 0; i < 4; i++) {
         let start = 1 + i * 2; // the first tenant moves in a day after the chest came, the next two days later...
-        for (let c = 0; c < 400; c++) {
+        for (let c = 0; c < 400 && days >= start; c++) {
             const stay = 5 + hash01(at + "s" + i + "_" + c) * 5, gap = 1 + hash01(at + "g" + i + "_" + c) * 2;
-            if (days < start)
-                return null; // to let
-            if (days < start + stay) {
-                let k = (Math.floor(hash01(at + "t" + i + "_" + c) * lines.length) + i * 3) % lines.length;
-                for (let n = 0; n < lines.length && used.has(lines[k].split("|")[0].trim()); n++)
-                    k = (k + 1) % lines.length;
-                const [label, ...rest] = lines[k].split("|");
-                used.add(label.trim());
-                const lb = label.trim(); // (the lines have them in capitals, like on a label: shown as words)
-                return { label: lb === lb.toUpperCase() ? lb[0] + lb.slice(1).toLowerCase() : lb, text: rest.join("|").trim(), since: at + start * 864e5 };
-            }
+            stays.push({ i, start, end: start + stay });
             start += stay + gap;
         }
-        return null;
+    }
+    stays.sort((a, b) => a.start - b.start || a.i - b.i);
+    const order = drawerOrder(at, lines.length), used = new Set(); // (no tenant in two drawers at once, for a short list: a clash moves on to the next line)
+    stays.forEach((st, n) => {
+        if (days >= st.end)
+            return;
+        let k = order[n % lines.length];
+        for (let m = 0; m < lines.length && used.has(lines[k].split("|")[0].trim()); m++)
+            k = (k + 1) % lines.length;
+        const [label, ...rest] = lines[k].split("|"), lb = label.trim(); // (the lines have them in capitals, like on a label: shown as words)
+        used.add(lb);
+        out[st.i] = { label: lb === lb.toUpperCase() ? lb[0] + lb.slice(1).toLowerCase() : lb, text: rest.join("|").trim(), since: at + st.start * 864e5 };
     });
+    return out;
 }
 /* the note the last tenant of drawer i left in it, while it's to let (S.drawers.notes: [{ d, from, t, at }]) */
 const drawerNote = i => ((S.drawers && S.drawers.notes) || []).find(n => n.d === i) || null;
