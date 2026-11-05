@@ -837,6 +837,7 @@ body.pixel{--boxlh:24px;--boxfs:16px}
 #boxRuler{visibility:hidden;pointer-events:none;top:0;bottom:auto;min-height:0;z-index:-1}
 /* QA 02-11-2026: on a phone the slips sat over the add form (the Add button, Medium, Big); with the sheet up they go in the strip above it */
 @media (max-width:959px){body.game.sheet .toasts:not(.stay){top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto}}
+.askans{display:flex;flex-direction:column;gap:8px;margin-top:12px}.askans .btn{width:100%;text-align:left;white-space:normal}
 
 </style>
 <div class="app">
@@ -1165,6 +1166,14 @@ const POOL_INFO = {
     news_tenant: "A visitor with what it's heard about the tenants, a little wrong: in, out or letter | V: / M: ({label} is who)",
     news_buy: "A visitor who's heard about something bought, a little wrong: V: / M: ({what} is what)",
     news_made: "A visitor who's heard about something baked, knitted or painted, a little wrong: V: / M: ({what} is what)",
+    news_ask: "A visitor who's heard about a letter you answered, a little wrong: V: / M: ({label} is who wrote)",
+    ask_letters: "A letter that asks something: id | who | the letter (who: a word from a pen pal's name, or anom:kind; / starts a new paragraph)",
+    ask_answers: "The answers to a letter that asks: id.a (or .b, .c) | what the button says | what Mite writes",
+    ask_back: "The letter that comes back: id.a (or .b, .c) | the letter. id.x is the one for no answer",
+    ask_idle: "Mite, now and then, on how an answer turned out: id.a | the remark",
+    ask_trace: "What follows weeks later: id.a | pin | a note for the pinboard, or id.a | visit | V: / M:",
+    ask_arrived: "Mite, when a letter comes that asks something ({penpal} is who)",
+    ask_sent: "Mite, once an answer is written ({penpal} is who)",
     news_catpossum: "The cat and the possum, on what's got around: C: / P: ({what} is what)",
     news_catsnail: "The cat and the snail, on what's got around: C: / S: ({what} is what)",
     news_possumsnail: "The possum and the snail, on what's got around: P: / S: ({what} is what)",
@@ -2452,6 +2461,12 @@ linesFor("Visitors", {
         "out | V: Everyone's saying {label} has gone to sea. / M: They've gone elsewhere. / V: That's what they call it now? / M: It's what they wrote.",
         "letter | V: I heard {label} wrote to you. A long letter, full of secrets. / M: It was very short. / V: What did it say? / M: That they were well. / V: Ah. Secrets.",
         "letter | V: The snail's been telling everyone that {label} sent a parcel. / M: A letter. / V: Heavy, it said. / M: The snail finds everything heavy.",
+    ],
+    news_ask: [
+        "V: I hear you've been telling {label} what to do. / M: They asked. We only answered.",
+        "V: They say you settled a whole dispute by post. / M: It was one letter, and it was a question.",
+        "V: I heard {label} does nothing now without asking you first. / M: Once. They asked once.",
+        "V: Is it true you've gone into business, giving advice by letter? / M: No. Though I've thought about the stamps.",
     ],
     news_buy: [
         "V: I hear you've got {what}. Two of them, the mouse said. / M: One. / V: Bigger than the wagon, she said. / M: It's in the wagon. / V: That's what I told her.",
@@ -4371,6 +4386,182 @@ linesFor("Post", {
         "[strange] Please don't open this drawer on the fourth night after moving out. Thank you. Signed, {label}",
         "[night] Left after dark so nobody would have to say goodbye. Signed, {label}",
     ],
+    ask_letters: [
+        "heron | heron | Dear {pet}, a question for you and your person. / A small fish has started coming to the same stone every morning. It looks at me. I am a heron. I know what usually happens next, and so, I think, does it. It comes anyway. / What should I do? I have told nobody else. Bramble",
+        "mole | mole | Dear {pet}, an awkward one. / I dug a little too far on Tuesday and came out at the back of my neighbour's larder. Nobody saw. There is a very good cheese. / What's the decent thing? Ask your person, they sound sensible. Yours, from two burrows over",
+        "lichen | lichen | Mite, dear. / They want to move my rock. Three hundred years on it, and now somebody wants a bench here. They have offered me a nicer rock, further up, with a view. / I am too old to know my own mind, so I'm asking yours, and your person's. Great-aunt Lichen",
+        "lighthouse | lighthouse | Dear {pet}, / The keeper is retiring in the spring. There's a cottage inland with a stove, and I'm invited. There is also the lamp, which has never once been left alone, and I have always been here for it. / You two seem to know about staying and going. Which is it? The lighthouse keeper's cat",
+        "tortoise | tortoise | Dear {pet}, / I have found a letter I meant to answer. It came sixty-one years ago. It asks if I'd like to come to tea on Thursday. / I don't know which Thursday. The sender may not be at the same address, or at any. / What would you do? Take your time. I always do. A very old tortoise",
+        "moth | moth | Dear {pet}, / There's a new lamp across the woods. A big one. The others have all gone to see it and they say it is like standing inside a Sunday. / I live in this one. I've always lived in this one. It's small, and it hums a bit. / Tell me what to do. I'll believe you. The moth",
+        "hedgehog | hedgehog | Dear {pet}, a matter of taste, which is why I'm writing to you and yours. / A dear friend has knitted me a hat. It is the worst hat I have ever seen, and it has a bobble on each side. They ask, every day, when I'll be wearing it. / Advise me. Yours, with excellent taste and a heavy heart",
+        "landlord | landlord | Dear {pet}, a matter of business. / The tenant behind the night door has paid no rent for nine years. They do leave moonlight on the step, in a jar, on the first of the month. It isn't money. It is rather nice. / Your person keeps an orderly house, I hear. What would they do? The night door's landlord",
+        "mailroom | mailroom | Dear {pet}, query ref. 7/UNDELIVERED. / A parcel has been in pigeonhole 40 since before the pigeonholes. No address. Since last week it hums, and it's warm. The forms allow for opening it, returning it, or nothing. / We find we'd like a second opinion, off the record. The Bureau's mailroom",
+        "double | anom:double | Dear {pet}, / Everything here matches yours: the wagon, the rug, the crooked pipe. I've never had a thing that was only mine. / I have some paint. It isn't a colour you have. May I? I'd rather ask. Ask your person too; they've got one of me somewhere. / the other one",
+        "tentacle | anom:tentacle | Dear {pet}, / The tea is the warmest thing that happens to me. But there's a lot of me, and most of it has never had any. It has asked. / I could come up further. Not all of it. Some. I'd wipe my feet, if that's what they are. / Say what's best for you both. I can wait. I'm very good at it.",
+        "ghost | anom:ghost | Dear {pet}, / I've one sheet of paper left. I've folded all the others into things. / I could fold this too, the best one yet. Or I could keep it and always have one left, which has its own comfort. / I can't decide, and I've had a long time to try. What do you and your person think?",
+    ],
+    ask_answers: [
+        "heron.a | Go on not eating it | Dear Bramble, go on not eating it. It trusts the stone, and you are part of the stone now. Yours, {pet}",
+        "heron.b | Tell it to find another stone | Dear Bramble, tell it kindly to find another stone. Herons get hungry, and it's better said now. Yours, {pet}",
+        "heron.c | Give it a name | Dear Bramble, give it a name. It's very hard to eat someone once they're called something. Yours, {pet}",
+        "mole.a | Own up, and bring something | Dear mole, knock at the front door, own up, and bring something. Yours, {pet}",
+        "mole.b | Fill it in, say nothing | Dear mole, fill it in tonight and say nothing. Not even about the cheese. Yours, {pet}",
+        "lichen.a | Stay on the rock, wherever it goes | Dear Great-aunt, stay on your own rock and let them carry it. You and it have an understanding. Love, {pet}",
+        "lichen.b | Take the rock with the view | Dear Great-aunt, take the rock with the view. Three hundred years is long enough to look at one thing. Love, {pet}",
+        "lichen.c | Let them build the bench around you | Dear Great-aunt, stay put and let them build the bench around you. Benches need something to look at too. Love, {pet}",
+        "lighthouse.a | Stay with the lamp | Dear cat, stay with the lamp. Someone will come for it, and they'll need showing where everything goes. Yours, {pet}",
+        "lighthouse.b | Go with the keeper | Dear cat, go with the keeper. The lamp has the sea. The keeper will only have the stove. Yours, {pet}",
+        "tortoise.a | Go to tea, on any Thursday | Dear tortoise, go on a Thursday. Any one. It's rude to leave someone waiting, and they did ask. Yours, {pet}",
+        "tortoise.b | Write back, say sorry | Dear tortoise, write back and say sorry for the delay. Say yes to tea. Let them pick the Thursday. Yours, {pet}",
+        "tortoise.c | Keep it, unanswered | Dear tortoise, keep it as it is. Some invitations are nicer left open. Yours, {pet}",
+        "moth.a | Stay in your own lamp | Dear moth, stay. A lamp that hums for you is worth more than a Sunday. Yours, {pet}",
+        "moth.b | Go and see it | Dear moth, go and see it. Your lamp will still hum when you come back. Yours, {pet}",
+        "hedgehog.a | Wear it, once, proudly | Dear hedgehog, wear it once, in public, with your chin up. That's what taste is really for. Yours, {pet}",
+        "hedgehog.b | Tell them, gently | Dear hedgehog, tell them, gently. They'll go on knitting, and someone has to think of the rest of us. Yours, {pet}",
+        "hedgehog.c | Give it a job elsewhere | Dear hedgehog, say it's far too good to wear and find it a job somewhere. A teapot, perhaps. Yours, {pet}",
+        "landlord.a | Call the moonlight rent | Dear landlord, call the moonlight rent, and write it in the book. Yours, {pet}",
+        "landlord.b | Ask for one coin a year | Dear landlord, ask for one coin a year, so it's all proper, and keep the jars. Yours, {pet}",
+        "mailroom.a | Open it | Dear mailroom, open it. Something that hums wants to be asked. Off the record, {pet}",
+        "mailroom.b | Do nothing, keep it warm | Dear mailroom, do nothing, and keep the pigeonhole warm. It's been fine so far. Off the record, {pet}",
+        "mailroom.c | Return it to sender | Dear mailroom, return it to sender. Put it in the out tray and let it find its own way. Off the record, {pet}",
+        "double.a | Paint the whole wagon | Dear other one, paint all of it. Go on. Yours, the first one",
+        "double.b | Just the door | Dear other one, start with the door. A door can always be painted back. Yours, the first one",
+        "tentacle.a | Come up, a bit, at teatime | Dear you, come up a bit, at teatime, and go back down after. We'll put the big pot on. Yours, {pet}",
+        "tentacle.b | Stay down, we'll send more tea | Dear you, stay where you are, and we'll send more down. Tell the rest it's on its way. Yours, {pet}",
+        "ghost.a | Fold the last sheet | Dear you, fold it. The best one yet. We'd like to see it. Yours, {pet}",
+        "ghost.b | Keep it, always have one left | Dear you, keep it. Having one left is a good thing to have. Yours, {pet}",
+        "ghost.c | Write to us on it | Dear you, write something on it. You've never told us what you'd say. Yours, {pet}",
+    ],
+    ask_back: [
+        "heron.a | Dear {pet}, I went on not eating it. It brought a friend. There are two of them now, on the stone, looking at me. I've been eating further up the canal. Bramble",
+        "heron.b | Dear {pet}, I told it. It looked at me for a long while and left. The stone's very clean now. I still go there in the mornings, out of habit. Bramble",
+        "heron.c | Dear {pet}, I've called it Thursday, after the day it first came. You were right. I can't so much as look at it hungrily. Thursday seems pleased with itself. Bramble",
+        "heron.x | Dear {pet}, never mind about the fish. I stood and thought so long that the fish got bored and left of its own accord. That's one way to settle it. Bramble",
+        "mole.a | Dear {pet}, I knocked. I brought a turnip. My neighbour laughed for a whole minute, then said the back of the larder had always been draughty and now we've a door there. There was cheese. From two burrows over, and now, in a way, one",
+        "mole.b | Dear {pet}, filled in, and nobody knows. It was the right thing, I'm sure. I do think about that cheese. I've started going the long way round. From two burrows over",
+        "mole.x | Dear {pet}, no need to trouble yourselves. While I was making up my mind my neighbour dug through from the other side, looking for my potatoes. We've agreed not to mention it. From two burrows over",
+        "lichen.a | Mite, dear. They carried it up on a cart, with me on it, swearing. I have not moved, as such. It's the world that's gone a bit to the left. Great-aunt Lichen",
+        "lichen.b | Mite, dear. I've had three weeks of the view. There's a lot of it. I had no idea there were so many hills, or that I'd have opinions about them. Great-aunt Lichen",
+        "lichen.c | Mite, dear. The bench is up, with a neat gap in it. People sit either side of me and tell each other things. At my age, it's better than a view. Great-aunt Lichen",
+        "lichen.x | Mite, dear. Don't fret. I sat quite still until they lost the paperwork. It's how I've dealt with most things. Great-aunt Lichen",
+        "lighthouse.a | Dear {pet}, I stayed. The new one came on a wet Tuesday and put the kettle in the wrong place. I've moved it. We're getting somewhere. The lighthouse keeper's cat",
+        "lighthouse.b | Dear {pet}, the cottage has a stove and no sea. The keeper still wakes at three to see to the lamp. So do I. We sit up together and don't mention it. The cat who was at the lighthouse",
+        "lighthouse.x | Dear {pet}, I stayed on the step while the cart was loaded, not deciding. The keeper left the door open and went. Some days I walk over. It's further than it looks, and I'm back by dark. The lighthouse keeper's cat",
+        "tortoise.a | Dear {pet}, I set off on a Thursday and I am writing from the end of the lane. I expect to arrive in the spring of next year. It's a lovely lane. A very old tortoise",
+        "tortoise.b | Dear {pet}, I wrote. I said sorry. A reply came by return, from a granddaughter, who says the family has been wondering. She asks if this Thursday suits. A very old tortoise",
+        "tortoise.c | Dear {pet}, it's back in the drawer. I take it out on Thursdays. Someone once wanted me for tea. That's not nothing, at any age. A very old tortoise",
+        "tortoise.x | Dear {pet}, you took your time, as I asked, and I approve. I've done the same. I'll let you know how it comes out, in forty years or so. A very old tortoise",
+        "moth.a | Dear {pet}, I stayed. The others came back in ones and twos and said it was too bright to see anything. They're all here now. It's very crowded and it's still humming. The moth",
+        "moth.b | Dear {pet}, I went. It is like standing in a Sunday. I stood there for one evening. Then I wanted to be able to see my own wings, and came home. The moth",
+        "moth.x | Dear {pet}, I set out twice and turned back twice, which is mostly how moths travel. I'm in the lamp, for now. It hasn't said anything about it. The moth",
+        "hedgehog.a | Dear {pet}, I wore it to market. Two people asked where I got it. I'm afraid it's starting a fashion, and I hold you responsible. Yours, in a bobble",
+        "hedgehog.b | Dear {pet}, I told them. They took it very well. They've unpicked it, and they're making me another, which they say will be better. It's got three bobbles. Yours, regretfully",
+        "hedgehog.c | Dear {pet}, it's on the teapot, bobbles and all, and my friend is delighted. It keeps the tea hot for two hours. I can't fault it, which pains me. Yours, with warm tea",
+        "hedgehog.x | Dear {pet}, I needn't have asked. The moths found it first. A loss. I've written to my friend, in deep black ink. Yours, relieved and a bit ashamed",
+        "landlord.a | Dear {pet}, it's in the book: 108 jars, paid in full. I keep them in the cellar. It's the only cellar I know that you can read in. The night door's landlord",
+        "landlord.b | Dear {pet}, the tenant paid. One coin, slid under the door, very old, and cold on one side only. I've asked no questions. The jars still come. The night door's landlord",
+        "landlord.x | Dear {pet}, I went down to discuss it with the tenant and we talked until it got light. Nothing was settled. I'll go again next month, I think. The night door's landlord",
+        "mailroom.a | Dear {pet}, ref. 7/UNDELIVERED, closed. It held a smaller parcel, which hums more quietly. Forms have been filled. That one is in pigeonhole 41. The Bureau's mailroom",
+        "mailroom.b | Dear {pet}, ref. 7/UNDELIVERED, ongoing. Pigeonhole 40 kept at a steady warm. Staff have begun eating their lunch near it. Off the record, morale is up. The Bureau's mailroom",
+        "mailroom.c | Dear {pet}, ref. 7/UNDELIVERED. Returned to sender on Monday. It was back in pigeonhole 40 by Wednesday, stamped. We'd call that an answer. The Bureau's mailroom",
+        "mailroom.x | Dear {pet}, ref. 7/UNDELIVERED, under review, as is proper. No action taken. Please disregard our earlier letter, which we did not send. The Bureau's mailroom",
+        "double.a | Dear {pet}, it's the colour of the inside of a plum, nearly, or whatever we'd have called it if the word had got here. I can't stop going outside to look. the other one, for once",
+        "double.b | Dear {pet}, the door's done. Only the door. I go in and out more than I need to. Nothing here has ever been different before, and it's very loud. the other one",
+        "double.x | Dear {pet}, I didn't paint anything. I opened the tin, looked at it, and shut it. It's still there. I keep it on the shelf where yours hasn't got one. the other one",
+        "tentacle.a | Dear {pet}, I came up as far as I dared, and had the tea, and it told the rest. There's a sort of queue now, down there. Very polite. Thank you for the big pot.",
+        "tentacle.b | Dear {pet}, it reached the bottom, more or less, and was passed along. It took eleven days to get to the end of me. Everybody had some. I have never been so warm.",
+        "tentacle.x | Dear {pet}, I stayed where I am. I think that was the answer. I sent some of me up to look at the idea, and it says the idea is nice. Thank you for the tea.",
+        "ghost.a | Dear {pet}, it's done. I shan't say what it is yet. It's the last one, and it'll know when. There isn't any paper left now. I thought I'd mind.",
+        "ghost.b | Dear {pet}, I have it here. It's very white. On bad nights I look at it and it could still be anything. You were right, it's a good thing to have.",
+        "ghost.c | Dear {pet}, I wrote on it. It took a long while and it's only short. I've left it where you'll find it, when the window's right. Please don't hurry.",
+        "ghost.x | Dear {pet}, I've left it on the sill to decide for itself. It hasn't. We're both very patient.",
+    ],
+    ask_idle: [
+        "heron.a | I keep thinking about the two fish on the stone.",
+        "heron.b | I hope that fish found a good stone. I told Bramble to send it away. Well, you did.",
+        "heron.c | Somewhere on a canal there's a fish called Thursday. We did that.",
+        "heron.x | Bramble's fish got bored. I've been a bit bored myself. It's nice.",
+        "mole.a | There's a door at the back of a larder now, because we said so. Doors are easy, really.",
+        "mole.b | I wonder if the mole still goes the long way round.",
+        "mole.x | Nobody's mentioning the potatoes. I'm only mentioning it to you.",
+        "lichen.a | Great-aunt Lichen says it's the world that moved. I've checked, and I can't rule it out.",
+        "lichen.b | Great-aunt Lichen has opinions on hills now. I'd watch out, if I were a hill.",
+        "lichen.c | I'd like to sit on that bench. Either side.",
+        "lichen.x | Sitting quite still until they lose the paperwork. I want to try that.",
+        "lighthouse.a | I wonder where the new keeper thinks the kettle goes by now.",
+        "lighthouse.b | Three in the morning. Somewhere inland, two people are sitting up for a lamp.",
+        "lighthouse.x | It's further than it looks, the cat said. A lot of things are.",
+        "tortoise.a | The tortoise will be about halfway down the lane by now. Or not.",
+        "tortoise.b | Someone's granddaughter has had a surprise, thanks to us.",
+        "tortoise.c | Someone once wanted that tortoise for tea. I think about that.",
+        "tortoise.x | Forty years, the tortoise said. I'll put it in the calendar.",
+        "moth.a | The lamp's crowded, I hear, and still humming.",
+        "moth.b | Being able to see your own wings. That's a good reason to come home.",
+        "moth.x | Mostly how moths travel, out and back. I do that with the kitchen.",
+        "hedgehog.a | A fashion in bobbles, and it's our fault.",
+        "hedgehog.b | Three bobbles. We meant well.",
+        "hedgehog.c | Two hours, that hat keeps tea hot. I've been looking at our pot.",
+        "hedgehog.x | Black ink, for a hat. I'm not sure the hedgehog's as sorry as all that.",
+        "landlord.a | A cellar you can read in. I'd like one of those.",
+        "landlord.b | Cold on one side only. I keep thinking about that coin.",
+        "landlord.x | They talked till it got light. I don't think it's about the rent.",
+        "mailroom.a | Pigeonhole 41. I wonder how far down that goes.",
+        "mailroom.b | There's a warm pigeonhole at the Bureau, and it's our doing. Off the record.",
+        "mailroom.c | It came back stamped. I'd love to know who stamped it.",
+        "mailroom.x | The Bureau didn't send that letter. I've got it right here.",
+        "double.a | There's a wagon somewhere the colour of the inside of a plum. Nearly.",
+        "double.b | The other one's got a door of its own now. Only the door.",
+        "double.x | A tin of paint on a shelf we haven't got one on. I looked. We haven't.",
+        "tentacle.a | There's a queue, very polite, a long way down. I should warm the big pot.",
+        "tentacle.b | Eleven days to reach the end of it. That's a lot of someone.",
+        "tentacle.x | Some of it came up to look at the idea. I hope it liked it here.",
+        "ghost.a | There's no paper left there now. I wonder what it folded.",
+        "ghost.b | One blank sheet, somewhere, that could still be anything.",
+        "ghost.c | When the window's right, it said. I look, now and then.",
+        "ghost.x | There's a sheet on a sill, deciding.",
+    ],
+    ask_trace: [
+        "heron.a | pin | Two fish on a stone, and a heron looking elsewhere. Bramble sent this, unsigned by the fish.",
+        "heron.b | visit | V: I passed a very clean stone on the canal. A heron was guarding it from nothing. / M: Somebody told it to. I'm not sure it's stopped thinking about it.",
+        "heron.c | pin | THURSDAY. (A wet fin-print, gone stiff. Bramble says it's a signature.)",
+        "mole.a | visit | V: I hear two burrows have a door between them now, and neither locks it. / M: It started as a mistake. A lot of doors do.",
+        "mole.b | pin | The long way round is 212 steps. The mole counted. No reason given.",
+        "lichen.a | visit | V: I saw a rock go by on a cart, swearing. / M: That's Great-aunt Lichen. It isn't the rock's fault.",
+        "lichen.b | pin | There are forty-one hills, and six of them are wrong. Great-aunt Lichen",
+        "lichen.c | visit | V: There's a bench up the hill with a gap in it. You leave things in the gap, they say, and tell it what you can't tell anyone. / M: That'll be my great-aunt. She's a good listener. She isn't going anywhere.",
+        "lighthouse.a | pin | Kettle: left of the window. Not the right. Pass it on. The lighthouse cat",
+        "lighthouse.b | visit | V: There's a cottage inland with a light on at three every night. Nobody knows why. / M: I do. I won't say. They're fine.",
+        "tortoise.a | visit | V: There's a tortoise on the lane who asked me what day it was. I said Thursday and it looked so pleased. / M: Which Thursday? / V: It didn't ask.",
+        "tortoise.b | pin | Tea was on Thursday. It was very good. It took sixty-one years, and I would do it again. The tortoise",
+        "tortoise.c | pin | Would you like to come to tea on Thursday? (An old invitation, copied out neatly. Keep it, the tortoise says.)",
+        "moth.a | visit | V: There's a lamp down the road that's more moth than lamp. It's still going, somehow. / M: It hums. That's how you can tell it's happy.",
+        "moth.b | pin | It's nice to have seen it. It's nice to be home. Both, the moth says.",
+        "hedgehog.a | visit | V: Everybody at market's got a bobble on each side this year. Nobody can say why. / M: I couldn't possibly comment.",
+        "hedgehog.b | pin | Three bobbles. Send help. (On very good notepaper.)",
+        "hedgehog.c | visit | V: Is that a hat on your teapot? / M: No. But now I want one. How did you hear about that?",
+        "landlord.a | pin | Rent received, with thanks: one jar of moonlight. Paid in full. The landlord's stamp.",
+        "landlord.b | visit | V: I was offered an old coin at the crossroads, cold on one side. I didn't take it. / M: That's a good idea. It's already paid for something.",
+        "mailroom.a | pin | Ref. 7/UNDELIVERED: pigeonhole 41 has begun to hum. Reopen? Sign here. (Nobody has.)",
+        "mailroom.b | visit | V: Is it true the Bureau's mailroom is the nicest room in the building? They've got cushions. / M: I can neither confirm nor deny the cushions.",
+        "mailroom.c | pin | RETURNED TO SENDER. Sender not known at this address. See over. (There's nothing over.)",
+        "double.a | visit | V: I saw your wagon from the far road. It was a funny colour. / M: That wasn't ours. It's very nice, though. Don't tell it I said so.",
+        "double.b | pin | A paint sample the size of a thumb, a colour nobody here can quite name. For your board, the other one says.",
+        "tentacle.a | visit | V: Do you know there's a queue in your floor? / M: Yes. Sit down, they won't mind. They're being very good about it.",
+        "tentacle.b | pin | Thank you. Thank you. Thank you. Thank you. (It goes on, up the back and round the edges.)",
+        "ghost.a | pin | A very small folded thing, too small to open. It's the last one. It wanted to be here.",
+        "ghost.b | visit | V: I saw someone at your window holding up a blank page, the other night. / M: That's only so it can see it's still there. Have some tea.",
+        "ghost.c | pin | I liked it here. There. I said it. (Very faint, on the last sheet.)",
+    ],
+    ask_arrived: [
+        "A letter came from {penpal}. It's got a question in it, and I think it's for you too. It's in the rack.",
+        "Post, from {penpal}. They're asking something. It's in the rack, whenever you've a minute.",
+        "{penpal} wants to know what we think. It's in the rack. No hurry. Well, some hurry.",
+    ],
+    ask_sent: [
+        "Written, sealed, and off it goes. Now we wait and see.",
+        "There. That's gone to {penpal}. I hope we were right. I don't think there is a right.",
+        "It's in the post. {penpal} can do what they like with it, but they did ask.",
+    ],
     replies: [
         "Dear Mite, your letter came on the one dry day this week, which I am taking as a sign. Everything here is the same, which is a kind of news. Yours, {penpal}",
         "Dear Mite, I read your letter twice, once for the news and once for the handwriting. Both very good. Yours, {penpal}",
@@ -5732,7 +5923,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -6040,13 +6231,17 @@ function sanitizeState(raw) {
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
     // the chest of drawers for rent in the nook: when it arrived, and who Mite last knew was living in it (sig)
     o.marks = arr(s.marks, 24).map(m => ({ id: str(m.id, 20), k: str(m.k, 12), room: ["room", "garden", "archive"].includes(m.room) ? m.room : "room", x: clamp(num(m.x), 0, 1), y: clamp(num(m.y), 0, 1), at: num(m.at), off: num(m.off) })).filter(m => m.id && m.k); // (what anomalies left: marks.js)
+    { // letters that ask something (asks.js)
+        const k = s.ask && typeof s.ask === "object" ? s.ask : {};
+        o.ask = { at: num(k.at), log: arr(k.log, 60).map(e => ({ id: str(e.id, 24), from: str(e.from, 80), c: str(e.c, 4), at: num(e.at), ans: num(e.ans), back: num(e.back), tr: num(e.tr) })).filter(e => e.id && e.from) };
+    }
     o.news = arr(s.news, 12).map(n => ({ id: str(n.id, 20), k: str(n.k, 8), sub: str(n.sub, 12), v: str(n.v, 60), at: num(n.at), told: num(n.told), res: num(n.res) })).filter(n => n.id && n.k); // (what gets around: news.js)
     o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240), notes: (Array.isArray(s.drawers && s.drawers.notes) ? s.drawers.notes : []).filter(n => n && [0, 1, 2, 3].includes(n.d)).map(n => ({ d: n.d, from: str(n.from, 40), t: noDash(str(n.t, 200)), at: num(n.at) })).filter(n => n.t).slice(-4), postAt: Math.max(0, num(s.drawers && s.drawers.postAt)) }; // (notes: what a tenant who moved out left in its drawer; postAt: up to where former tenants' post has come: garden.js)
     // the post: letters Mite wrote at the desk (to whom, when, whether a reply came: r) and the replies (read or not)
     {
         const ps = s.post && typeof s.post === "object" ? s.post : {};
         o.post = { sent: arr(ps.sent, 30).map(x => ({ to: str(x.to, 80), at: num(x.at), r: x.r ? 1 : 0 })).filter(x => x.to && x.at),
-            inbox: inboxOnce(arr(ps.inbox, 40).map(x => Object.assign({ from: str(x.from, 80), text: noDash(str(x.text, 1200)), at: num(x.at), read: x.read ? 1 : 0 }, x.you ? { you: 1 } : {})).filter(x => x.from && x.text)), // (you: a letter for you, from the world: post.js)
+            inbox: inboxOnce(arr(ps.inbox, 40).map(x => Object.assign({ from: str(x.from, 80), text: noDash(str(x.text, 1200)), at: num(x.at), read: x.read ? 1 : 0 }, x.you ? { you: 1 } : {}, x.give ? { give: str(x.give, 12) } : {}, x.card ? { card: str(x.card, 24) } : {}, x.ask ? { ask: str(x.ask, 24) } : {})).filter(x => x.from && x.text)), // (you: a letter for you, from the world: post.js)
             worldAt: num(ps.worldAt), ser: numMap(ps.ser), serAt: num(ps.serAt) }; // (ser: how far each pen pal's story has got, serAt: its last chapter: post.js)
     }
     o.raccoonAt = num(s.raccoonAt);
@@ -6453,6 +6648,14 @@ function mergeStates(a, b) {
                 m.set(x.n, { n: x.n, at: Math.min(o2.at || num(x.at), num(x.at) || o2.at), kin: Math.max(o2.kin, x.kin ? 1 : 0), told: Math.max(o2.told, x.told ? 1 : 0) });
             }
         o.mice = [...m.values()].sort((x, y) => x.at - y.at).slice(-20);
+    }
+    { // letters that ask: the first answer given stands; the rest only moves on
+        const m = new Map(), pa = a.ask || {}, pb = b.ask || {};
+        for (const x of [...(pa.log || []), ...(pb.log || [])]) {
+            const c = m.get(x.id), w = c && (!x.ans || (c.ans && c.ans <= x.ans)) ? c : x;
+            m.set(x.id, c ? Object.assign({}, w, { at: Math.min(num(c.at), num(x.at)), back: Math.max(num(c.back), num(x.back)), tr: Math.max(num(c.tr), num(x.tr)) }) : x);
+        }
+        o.ask = { at: Math.max(num(pa.at), num(pb.at)), log: [...m.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-60) };
     }
     { // news: from either side; told or heard on either side stays that way
         const m = new Map();
@@ -18575,7 +18778,7 @@ function drawRaccoon(g, now) {
     }
 }
 function pickVisitorLine() {
-    return newsLine() || convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
+    return askVisitLine() || newsLine() || convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
 }
 
 </script>
@@ -19990,7 +20193,7 @@ function markSay() {
  * news.js - What happens here gets around (group 65). Things worth repeating go in S.news: { id, k, sub, v, at, told, res }.
  * About one visit in three, the visitor brings up the newest thing nobody's told yet, a little wrong; Mite corrects it
  * (told: when). A day or so later the residents have heard it too (res: when). k: anom (sub: which kind), tenant (sub: in,
- * out or letter; v: who), buy, made (v: "the writing desk", "the Bin-Day Shortbread"). Nothing from tasks or notes goes in.
+ * out or letter; v: who), ask (v: who answered back: asks.js), buy, made (v: "the writing desk", "the Bin-Day Shortbread"). Nothing from tasks or notes goes in.
  * Lines: news_anom ("kind | V: / M:"), news_tenant ("in | ..."), news_buy, news_made, news_catpossum, news_catsnail,
  * news_possumsnail. {what} is what it's about, {label} who (a tenant).
  */
@@ -20012,6 +20215,8 @@ function newsWhat(n) {
         return fillNames((ANOM_WHO[n.sub] || "the strange thing"));
     if (n.k === "tenant")
         return n.sub === "letter" ? `the letter from ${n.v}` : `${n.v} moving ${n.sub}`;
+    if (n.k === "ask")
+        return `the letter from ${n.v}`;
     return n.v;
 }
 /* the lines for a piece of news */
@@ -20021,7 +20226,7 @@ function newsLines(n) {
         return pool("news_anom").filter(sub).map(rest);
     if (n.k === "tenant")
         return pool("news_tenant").filter(sub).map(rest);
-    return pool(n.k === "buy" ? "news_buy" : "news_made");
+    return pool(n.k === "ask" ? "news_ask" : n.k === "buy" ? "news_buy" : "news_made");
 }
 const newsFill = (t, n) => t.replace(/\{What\}/g, newsWhat(n)[0].toUpperCase() + newsWhat(n).slice(1)).replace(/\{what\}/g, newsWhat(n)).replace(/\{label\}/g, n.v);
 /* a visitor, sitting down: news instead of the usual talk, or null. force: always (tests) */
@@ -20043,6 +20248,173 @@ function newsResident(key) {
     n.res = t;
     saveSoon();
     return newsFill(choice(ls), n);
+}
+
+</script>
+<script>/* js/scene/asks.js */
+"use strict";
+/*
+ * asks.js - The odd letter that asks something (group 66). About every three weeks a pen pal, or an anomaly Mite has met,
+ * writes with a question. It opens as a card at the rack: you pick an answer and Mite writes it (ask_answers). A few days
+ * later a letter comes back that depends on the answer (ask_back). After that the answer stays: Mite brings it up now and
+ * then (ask_idle), it gets around (news, k "ask"), and two to five weeks on one thing follows (ask_trace): a note for the
+ * pinboard, or a visitor who's heard. Left for ten days, the writer moves on by themselves: answer "x", no penalty.
+ * S.ask: { at: when the last one came, log: [{ id, from, c: the answer (a, b, c or x; "" while open), at, ans, back, tr }] }
+ * Pools, by thread id: ask_letters "id | who | letter" (who: a word from a pen pal's name, or anom:kind), ask_answers
+ * "id.a | button | Mite's letter", ask_back "id.a | letter" (also id.x), ask_idle "id.a | line" (also id.x), ask_trace
+ * "id.a | pin | the note" or "id.a | visit | V: / M:". A thread needs a line in ask_letters and two answers.
+ */
+const ASK_EVERY = 21 * 864e5, ASK_FIRST = 7 * 864e5, ASK_WAIT = 10 * 864e5, ASK_BACK = [3, 6], ASK_TRACE = [14, 35];
+/* "key | a | b" lines as { k, raw, f: [a, b] } */
+const askLines = key => pool(key).map(raw => {
+    const p = String(raw).split("|").map(s => s.trim());
+    return { k: p[0], raw: String(raw), f: p.slice(1) };
+}).filter(x => x.k && x.f.length && x.f[x.f.length - 1]);
+const askLine = (key, k) => askLines(key).find(x => x.k === k) || null;
+const askText = t => fillText(t, ctx()).replace(/ \/ /g, "\n\n");
+const askLog = () => (S.ask && S.ask.log) || [];
+const askOpen = () => askLog().find(e => !e.ans) || null;
+const askAnswers = id => askLines("ask_answers").filter(x => x.k.startsWith(id + ".") && x.f.length > 1).map(x => ({ c: x.k.slice(id.length + 1), label: x.f[0], text: x.f.slice(1).join(" | "), raw: x.raw }));
+/* who a thread comes from now, or null if they can't write (not a pen pal any more; an anomaly not met yet) */
+function askFrom(who) {
+    if (who.startsWith("anom:")) {
+        const k = who.slice(5);
+        return strangeness() && anomMet().includes(k) ? fillNames(ANOM_WHO[k]) : null;
+    }
+    return pool("penpals").find(p => p.toLowerCase().includes(who.toLowerCase())) || null;
+}
+/* the next thread: not asked yet, in an order of its own for each game, so two devices agree */
+function askNext() {
+    const had = new Set(askLog().map(e => e.id));
+    return askLines("ask_letters").filter(x => x.f.length > 1 && !had.has(x.k) && askFrom(x.f[0]) && askAnswers(x.k).length > 1)
+        .sort((a, b) => hash01(a.k + S.created) - hash01(b.k + S.created))[0] || null;
+}
+const askBackDue = e => e.c === "x" ? e.ans : e.ans + (ASK_BACK[0] + hash01("askb" + e.id) * (ASK_BACK[1] - ASK_BACK[0])) * 864e5;
+const askTraceDue = e => e.back + (ASK_TRACE[0] + hash01("askt" + e.id) * (ASK_TRACE[1] - ASK_TRACE[0])) * 864e5;
+/* every minute or so (from postTick). True if a letter came (one letter a day, like all post) */
+function askTick(t) {
+    if (!S.ask || !S.post || !hasDesk())
+        return false;
+    const A = S.ask;
+    if (!num(A.at)) { // (the clock starts now: the first one in a week)
+        A.at = t - ASK_EVERY + ASK_FIRST;
+        saveSoon();
+        return false;
+    }
+    for (const e of A.log) {
+        if (!e.ans && t - e.at >= ASK_WAIT) { // no answer: they get on with it
+            e.c = "x";
+            e.ans = t;
+            saveSoon();
+        }
+        if (e.back && !e.tr && e.c !== "x" && t >= askTraceDue(e))
+            askTrace(e, t);
+    }
+    const free = num(S.flags.letterInDay) !== dayNum(), due = A.log.find(e => e.ans && !e.back && t >= askBackDue(e));
+    if (due && free) {
+        const l = askLine("ask_back", `${due.id}.${due.c}`);
+        due.back = t;
+        if (due.c === "x" || !l)
+            due.tr = t; // (nothing more follows)
+        if (!l) {
+            saveSoon();
+            return false;
+        }
+        lineCount("ask_back", l.raw);
+        S.flags.letterInDay = dayNum();
+        deliverLetter(due.from, askText(l.f.join(" | ")), t);
+        newsAdd("ask", "", due.from);
+        note(`A letter came from ${due.from}.`);
+        say("letterarrived", { penpal: due.from });
+        saveSoon();
+        return true;
+    }
+    if (!free || askOpen() || A.log.some(e => e.ans && !e.back) || t - num(A.at) < ASK_EVERY)
+        return false;
+    const x = askNext();
+    if (!x)
+        return false;
+    const from = askFrom(x.f[0]), text = askText(x.f.slice(1).join(" | "));
+    A.at = t;
+    A.log.push({ id: x.k, from, c: "", at: t, ans: 0, back: 0, tr: 0 });
+    S.flags.letterInDay = dayNum();
+    lineCount("ask_letters", x.raw);
+    S.post.inbox.push({ from, text, at: t, read: 0, ask: x.k });
+    corrRegister("in", from, text, t);
+    if (S.post.inbox.length > 40)
+        S.post.inbox.splice(0, S.post.inbox.length - 40);
+    note(`A letter came from ${from}. It asks something. It's in the rack in the nook.`);
+    say("ask_arrived", { penpal: from });
+    saveSoon();
+    return true;
+}
+/* what follows, weeks on: a note goes up on the board now; a visitor waits for the next visit (askVisitLine) */
+function askTrace(e, t) {
+    const l = askLine("ask_trace", `${e.id}.${e.c}`);
+    if (!l) {
+        e.tr = t;
+        return;
+    }
+    if (l.f[0] !== "pin")
+        return;
+    e.tr = t;
+    pinAddNote(fillText(l.f.slice(1).join(" | "), ctx()));
+    lineCount("ask_trace", l.raw);
+    note(`Something came from ${e.from} for the pinboard.`);
+    saveSoon();
+}
+/* a visitor, sitting down: someone who's heard what came of an answer, or null */
+function askVisitLine() {
+    const t = Date.now();
+    for (const e of askLog()) {
+        if (!e.back || e.tr || e.c === "x" || t < askTraceDue(e))
+            continue;
+        const l = askLine("ask_trace", `${e.id}.${e.c}`);
+        if (!l || l.f[0] !== "visit")
+            continue;
+        e.tr = t;
+        lineCount("ask_trace", l.raw);
+        saveSoon();
+        return l.f.slice(1).join(" | ");
+    }
+    return null;
+}
+/* Mite, now and then, on an answer that's had its reply */
+function askSay() {
+    const t = Date.now(), ls = askLog().filter(e => e.back && t - e.back > 864e5).map(e => askLine("ask_idle", `${e.id}.${e.c}`)).filter(Boolean);
+    if (!ls.length)
+        return false;
+    const l = choice(ls);
+    lineCount("ask_idle", l.raw);
+    speak(fillText(l.f.join(" | "), ctx()));
+    return true;
+}
+/* the card: the letter, the answers, and room to think about it */
+function showAskLetter(e) {
+    const th = askLine("ask_letters", e.id), l = (S.post.inbox || []).find(x => x.ask === e.id), text = l ? l.text : th ? askText(th.f.slice(1).join(" | ")) : "", ans = askAnswers(e.id);
+    if (l)
+        l.read = 1;
+    saveSoon();
+    openRitual("A letter with a question", `From ${e.from}. It wants an answer. From you, really: I'll do the writing.`,
+        `<div class="letter">${esc(homeTxt(text)).replace(/\n/g, "<br>")}</div><div class="askans">${ans.map(a => `<button type="button" class="btn" data-ask="${esc(a.c)}">${esc(a.label)}</button>`).join("")}</div>`,
+        [["Not yet", "ghost", closeRitual], ["The drawer", "", showCorrDrawer]]);
+    $("ritBody").querySelectorAll("[data-ask]").forEach(b => b.onclick = () => askAnswer(e, b.dataset.ask));
+    sfx("card");
+    return 3;
+}
+function askAnswer(e, c) {
+    const a = askAnswers(e.id).find(x => x.c === c);
+    if (!a || e.ans)
+        return closeRitual();
+    const t = Date.now(), text = askText(a.text);
+    e.c = c;
+    e.ans = t;
+    lineCount("ask_answers", a.raw);
+    corrRegister("out", e.from, text, t);
+    closeRitual();
+    note(`${S.settings.pet} answered ${e.from}.`);
+    saveSoon();
+    setTimeout(() => say("ask_sent", { penpal: e.from }), 500);
 }
 
 </script>
@@ -24306,6 +24678,8 @@ function postTick(now) {
         return;
     if (otherTick(t)) // (and a note from further in, or Mite's answer: deeper.js)
         return;
+    if (askTick(t)) // (and the odd letter that asks something, or what came of it: asks.js)
+        return;
     if (tenantPostTick(t)) // (and a tenant who moved out: garden.js)
         return;
     lostTick(t); // (and the lost property shelf in the closet: lostprop.js)
@@ -24399,6 +24773,9 @@ function deliverLetter(from, text, t) {
 /* Mite at the rack: the oldest unread letter, read out (or an old one, now and then) */
 function readLetter() {
     const inbox = (S.post && S.post.inbox) || [];
+    const open = askOpen();
+    if (open && !inbox.some(x => !x.read && x.you)) // (a letter that's waiting for an answer comes to hand first: asks.js)
+        return showAskLetter(open);
     const l = inbox.find(x => !x.read && x.you) || inbox.find(x => !x.read);
     if (!l) { // nothing new: the correspondence drawer, with this week's letters (older ones are in the paternoster)
         showCorrDrawer();
@@ -31184,7 +31561,7 @@ function ambientTalk() {
         return;
     }
     if (r < .8) // (now and then a remark about the workshop out of sight, where some things are kept instead: group 36)
-        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || (Math.random() < .04 && markSay()) || say("idle");
+        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || (Math.random() < .04 && markSay()) || (Math.random() < .03 && askSay()) || say("idle");
 }
 function inventWord() {
     const syl = ["flim", "bor", "quo", "snu", "ber", "lin", "dra", "mo", "ket", "vy", "pel", "ziff", "ow", "gren", "tash", "mu", "pim", "wob", "lo", "fen", "drib", "sil", "nok", "ul"];
