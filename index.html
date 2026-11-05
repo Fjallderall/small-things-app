@@ -754,6 +754,8 @@ body.pixel .wxicon{width:18px;height:18px}
 .poolfind{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
 .poolfind input{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 10px;font-size:16px}
 .poolrow select{flex:1 1 240px;min-width:0;max-width:100%}
+.poolheard p{margin:2px 0;overflow-wrap:anywhere}
+.poolheard ul{margin:4px 0;padding-left:18px;font-size:.9em;overflow-wrap:anywhere}
 .resetinfo ul{margin:2px 0 10px;padding-left:18px}.resetinfo li{margin:2px 0}.resetinfo p{margin:6px 0 2px}
 .costlist{margin:6px 0 8px;padding-left:18px;font-size:14px;line-height:1.5;color:var(--muted)}.costlist li{margin:3px 0}
 body.editing #addForm{display:none}
@@ -1064,6 +1066,7 @@ body.pixel{--boxlh:24px;--boxfs:16px}
         <span class="sync" id="poolInfo"></span>
       </div>
       <textarea id="poolText" aria-label="Lines in this pool" spellcheck="false"></textarea>
+      <div class="poolheard" id="poolHeard" hidden></div>
       <div class="row">
         <button class="btn primary" id="poolSave">Save pool</button>
         <button class="btn ghost" id="poolReset">Reset pool to default</button>
@@ -5429,7 +5432,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [] }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [] }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -5767,6 +5770,22 @@ function sanitizeState(raw) {
             x.tasks = m.tasks.slice(0, 4).filter(q => q && typeof q === "object").map(q => ({ t: str(q.t, 140), s: [1, 3, 8].includes(+q.s) ? +q.s : 1, tag: q.tag === "work" || q.tag === "life" ? q.tag : "", due: dkey(q.due), added: q.added ? 1 : 0 })).filter(q => q.t);
         return x;
     });
+    { // how often each line was said (speech.js): pool -> line id -> count
+        o.lineN = {};
+        let left = 9000;
+        const m = s.lineN && typeof s.lineN === "object" ? s.lineN : {};
+        for (const k of Object.keys(m)) {
+            if (!/^\w{1,40}$/.test(k) || k === "__proto__" || !m[k] || typeof m[k] !== "object")
+                continue;
+            const p = {};
+            for (const h of Object.keys(m[k]))
+                if (left > 0 && /^[0-9a-z]{1,8}$/.test(h) && num(m[k][h]) > 0) {
+                    p[h] = Math.min(1e6, Math.floor(num(m[k][h])));
+                    left--;
+                }
+            o.lineN[k] = p;
+        }
+    }
     o.said = arr(s.said, 40).map(x => ({ t: str(x.t, 600), at: num(x.at) }));
     for (const f of arr(s.fixes, 500)) // (the old fix-it list: what was still open is jotted down now)
         if (f && !f.done && !f.task && str(f.t, 200) && !o.tasks.some(t => t.id === "fx" + sid(f.id)))
@@ -6163,6 +6182,12 @@ function mergeStates(a, b) {
     o.inc = uniq([...(nw.inc || []), ...(od.inc || [])], n => n.at + "|" + n.text).sort((x, y) => y.at - x.at).slice(0, 100);
     o.memories = uniq([...(nw.memories || []), ...(od.memories || [])], m => m.t.toLowerCase()).filter(m => !o.del["m:" + m.t.toLowerCase()]).slice(0, 150);
     o.chat = uniq([...(a.chat || []), ...(b.chat || [])], m => m.at + "|" + m.r + "|" + m.t).sort((x, y) => x.at - y.at).slice(-80);
+    o.lineN = JSON.parse(JSON.stringify(a.lineN || {})); // (two devices: the higher count of each line)
+    for (const [k, p] of Object.entries(b.lineN || {})) {
+        const q = o.lineN[k] || (o.lineN[k] = {});
+        for (const [h, n] of Object.entries(p))
+            q[h] = Math.max(num(q[h]), num(n));
+    }
     o.said = uniq([...(nw.said || []), ...(od.said || [])], x => x.at + "|" + x.t).sort((x, y) => y.at - x.at).slice(0, 40);
     o.words = uniq([...(nw.words || []), ...(od.words || [])], w => w.w).sort((x, y) => y.at - x.at).slice(0, 80);
     o.aiLog = uniq([...(nw.aiLog || []), ...(od.aiLog || [])], e => e.k + "|" + e.l).sort((x, y) => y.at - x.at).slice(0, 300);
@@ -7127,6 +7152,13 @@ function parseLine(raw) {
     return m ? { conds: m[1].trim().split(/\s+/).filter(Boolean).map(s => s.toLowerCase()), text: raw.slice(m[0].length) } : { conds: [], text: raw.trim() };
 }
 const recent = [];
+/* how often each line has been said (S.lineN: pool, then a short id of the line's text, then the count), shown in the
+   Lines editor. A changed line counts from zero */
+const lineId = raw => Math.floor(hash01(raw) * 2176782336).toString(36);
+function lineCount(key, raw) {
+    const m = S.lineN || (S.lineN = {}), p = m[key] || (m[key] = {}), h = lineId(raw);
+    p[h] = (p[h] || 0) + 1;
+}
 /* a conversation line from a pool ("M: … / S: …"), weighted like compose: [rare] and other conditions count, and one
    heard lately (in the Log, S.heard, which is saved) or picked lately is much less likely. A plain choice() let a rare
    line come round as often as any other (owner, 25-10-2026: the heron one) */
@@ -7167,6 +7199,7 @@ function convoPick(key, keep) {
         }
     }
     recent.push(pick.raw);
+    lineCount(key, pick.raw);
     if (recent.length > 40)
         recent.shift();
     return pick.text;
@@ -7211,6 +7244,7 @@ function compose(key, extra = {}) {
         }
     }
     recent.push(pick.raw);
+    lineCount(key, pick.raw);
     if (recent.length > 40)
         recent.shift();
     const out = /possum/.test(key) ? oneName(fillText(pick.text, c)) : fillText(pick.text, c); // (only in the possum's lines: some of its possible names are ordinary words)
@@ -33280,6 +33314,33 @@ function loadPoolEditor() {
     $("poolText").value = pool(k).join("\n");
     $("poolInfo").textContent = (Array.isArray(S.content.pools[k]) ? "edited · " : "default · ") + pool(k).length + " lines";
     poolShowHit(false);
+    poolHeardShow(k);
+}
+/* under the lines: how often this pool's lines were said, the most said one, and the ones not said yet (lineCount, speech.js) */
+function poolHeardShow(k) {
+    const box = $("poolHeard"), m = (S.lineN && S.lineN[k]) || {}, c = pool(k).filter(l => l.trim()).map(l => ({ l, n: m[lineId(l)] || 0 }));
+    box.textContent = "";
+    box.hidden = !c.length;
+    if (!c.length)
+        return;
+    const total = c.reduce((a, x) => a + x.n, 0), top = c.reduce((a, x) => x.n > a.n ? x : a, c[0]), never = c.filter(x => !x.n);
+    const p = document.createElement("p");
+    p.className = "sub";
+    p.textContent = total ? `Said ${total} ${total === 1 ? "time" : "times"} since counting began. Most: "${top.l}" (${top.n})` : "Not said yet since counting began.";
+    box.append(p);
+    if (!never.length || !total)
+        return;
+    const d = document.createElement("details"), sm = document.createElement("summary"), ul = document.createElement("ul"), h = document.createElement("p");
+    sm.textContent = `Not said yet (${never.length})`;
+    h.className = "sub";
+    h.textContent = "Some of these are waiting for a season, a time of day or a setting.";
+    never.forEach(x => {
+        const li = document.createElement("li");
+        li.textContent = x.l;
+        ul.append(li);
+    });
+    d.append(sm, h, ul);
+    box.append(d);
 }
 /* Finding a pool among the hundreds: every word typed has to appear in the pool's name ("task done" finds
    task_done), in what it's for, or (for a line) in that line. The list shrinks to the pools that match; one found by
