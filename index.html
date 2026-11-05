@@ -1161,6 +1161,13 @@ const POOL_INFO = {
     eclipse_lunar: "Mite, on the day of a lunar eclipse",
     eclipse_now_solar: "Mite, while the sun in the window is eclipsed",
     eclipse_now_lunar: "Mite, while the moon in the window is red with the eclipse",
+    news_anom: "A visitor with what it's heard about an anomaly here, a little wrong: kind | V: / M: (kinds: door, phone, eyes, tentacle, chair, ghost, letter, cloud, figure, hand, drips, report, double, sheet, coat, lantern, moth)",
+    news_tenant: "A visitor with what it's heard about the tenants, a little wrong: in, out or letter | V: / M: ({label} is who)",
+    news_buy: "A visitor who's heard about something bought, a little wrong: V: / M: ({what} is what)",
+    news_made: "A visitor who's heard about something baked, knitted or painted, a little wrong: V: / M: ({what} is what)",
+    news_catpossum: "The cat and the possum, on what's got around: C: / P: ({what} is what)",
+    news_catsnail: "The cat and the snail, on what's got around: C: / S: ({what} is what)",
+    news_possumsnail: "The possum and the snail, on what's got around: P: / S: ({what} is what)",
     marktap: "Mite, on a mark an anomaly left, when you tap it: kind | line (kinds: door, phone, eyes, tentacle, chair, ghost, letter, cloud, figure, hand, drips, report, double, sheet, coat, lantern, moth, space, deep)",
     marknew: "Mite, noticing that an anomaly nobody dealt with left something ({mark} is what)",
     markidle: "Mite, out of nowhere, about a mark that's still there ({mark} is what)",
@@ -2417,6 +2424,69 @@ linesFor("Residents", {
 "use strict";
 /* lines/visitors.js - Who drops by: visitors, the raccoon and the mice. */
 linesFor("Visitors", {
+    news_anom: [
+        "door | V: I heard you had a door in here. Three doors, the rat said. / M: One. / V: And all of them opened onto the sea. / M: It didn't open. I saw to it. / V: That's not nearly as good. I'll tell it the other way.",
+        "phone | V: Is it true you've got a telephone that rings for the dead? / M: It rings for someone. It's red. / V: And you answered it. / M: I hung up. / V: Everyone's saying you had a long talk.",
+        "eyes | V: They say there were a hundred eyes in your wall. / M: There were a few. In the dark. / V: A hundred, the mouse said. / M: She can't count. / V: She counted twice.",
+        "tentacle | V: I heard something came up through the floor and ate your whole kitchen. / M: It took a cup of tea. / V: The whole cup? / M: The whole cup. / V: Well, there you are.",
+        "chair | V: Word is a throne appeared in here. / M: A chair. / V: A golden throne. / M: A plain one. It went away again. / V: They always do.",
+        "ghost | V: You've got a ghost, I hear. A big one. Wailing. / M: A small one. It folds paper. / V: Wailing, though. / M: It said something kind. / V: Oh, that's worse.",
+        "letter | V: They say the Bureau's written to you. Seven pages. / M: One page, mostly black. / V: Seven pages of black! / M: That's not what I said.",
+        "cloud | V: I heard it rained in here for a week. / M: On me. For a minute. / V: The whole road's talking about the flood. / M: It was a very small cloud.",
+        "figure | V: Someone said there's a giant in your corner. / M: He's only tall. And he's gone. / V: As tall as the wagon? / M: Taller, a bit. / V: So there's a giant.",
+        "hand | V: A hand came up through your floor and shook yours, I'm told. / M: It didn't shake anything. It waved. / V: It waved? Who at? / M: I've been wondering that.",
+        "drips | V: They say your roof leaks upward. / M: It was only for a moment. / V: The water went up? / M: It did. / V: I told them that bit was made up.",
+        "report | V: Someone's filed a report on you. It's all over the hedge. / M: It said nice things. / V: It said you were wanted. / M: Wanted how? / V: Nobody finished reading it.",
+        "double | V: There are two of you now, I hear. / M: There's one. There was nearly another. / V: Which one are you? / M: The one with the {treat}. / V: That's what the other one said.",
+        "sheet | V: Heard you had a parade through here. A hundred feet, all marching. / M: It was someone under a sheet. / V: With a hundred feet. / M: …Yes, all right.",
+        "coat | V: I hear there was a coat in here, walking about by itself. Three coats, the rat said. / M: One coat. It raised its hat. / V: To you? / M: To me. / V: Three coats and a hat, then.",
+        "lantern | V: They say a bonfire walked through here at night. / M: A lantern. Someone was holding it. / V: Who? / M: I couldn't see a face. / V: So it was the bonfire.",
+        "moth | V: I heard something with wings carried off your lamp. / M: It's only large. It left the lamp. / V: How large? / M: A hat. / V: They said a horse.",
+    ],
+    news_tenant: [
+        "in | V: I hear you've let a drawer to {label}. Whole family of them, I suppose. / M: Just the one. / V: They say the rent's paid in gold. / M: Buttons.",
+        "in | V: So {label} has moved in. I knew them when they were small. / M: They're still small. / V: I'd keep the drawer shut, that's all I'll say. / M: Why? / V: I don't know. It's what everyone's saying.",
+        "in | V: Is it true there's a waiting list for your drawers? / M: Not really. {label} just turned up. / V: Forty names long, I heard. / M: …That might be true, actually.",
+        "out | V: I heard {label} left in the middle of the night, owing a year's rent. / M: They left a note, and it's all paid. / V: A note! So it's serious.",
+        "out | V: They say {label} was thrown out. / M: The stay was up. / V: With a broom. / M: Nobody had a broom.",
+        "out | V: Everyone's saying {label} has gone to sea. / M: They've gone elsewhere. / V: That's what they call it now? / M: It's what they wrote.",
+        "letter | V: I heard {label} wrote to you. A long letter, full of secrets. / M: It was very short. / V: What did it say? / M: That they were well. / V: Ah. Secrets.",
+        "letter | V: The snail's been telling everyone that {label} sent a parcel. / M: A letter. / V: Heavy, it said. / M: The snail finds everything heavy.",
+    ],
+    news_buy: [
+        "V: I hear you've got {what}. Two of them, the mouse said. / M: One. / V: Bigger than the wagon, she said. / M: It's in the wagon. / V: That's what I told her.",
+        "V: Word is you've come into money. {What}, of all things. / M: I saved up. / V: That's what people say when they've come into money.",
+        "V: They're talking about {what} all along the road. / M: What are they saying? / V: That it hums. / M: It doesn't hum. / V: Listen properly.",
+        "V: Is it true about {what}? / M: Is what true? / V: I don't know. I was told to ask you in a meaningful way. / M: …It's true. / V: I knew it.",
+        "V: I heard {what} fell off the back of a cart. / M: I paid for it. In glimmers. / V: Of course you did. / M: I really did.",
+        "V: Someone says {what} once belonged to a duchess. / M: It was in the shop. / V: Yes. After the duchess.",
+    ],
+    news_made: [
+        "V: They say you made {what}. Enough for the whole road, I heard. / M: There's just the one. / V: Oh. Is it spoken for?",
+        "V: I've heard about {what}. Someone cried, apparently. / M: Nobody cried. / V: From joy, they said. / M: Well. Maybe a bit.",
+        "V: {What}! Everyone's heard. It's going to be shown at the fair. / M: What fair? / V: That's what I said.",
+        "V: Is it true about {what}? A heron came from three valleys off to see it. / M: I didn't see any heron. / V: They're very quiet about it.",
+        "V: The rat says {what} took you a year. / M: It didn't. / V: He says you didn't sleep. / M: I slept very well.",
+        "V: I heard {what} won a prize. / M: There wasn't a prize. / V: Then who's got the prize?",
+    ],
+    news_catpossum: [
+        "C: They are saying things about {what}. / P: Hhh. Are they true? / C: Mrrp. Not one of them. I've been enjoying it.",
+        "P: The mice are all talking about {what}. / C: Mice talk. / P: Do you want to know what they said? / C: I know what they said. I started it.",
+        "P: Did you hear about {what}? / C: I was there. / P: Was it as big as they say? / C: Mew. Nothing is.",
+        "C: Everyone on the road knows about {what}. / P: How? / C: There's always one who drops by for the tea.",
+    ],
+    news_catsnail: [
+        "S: I've carried three versions of {what} this week. / C: Which is true? / S: …The slowest one, usually.",
+        "C: The road's got {what} all wrong. / S: Should someone correct it? / C: Mrrp. Would you like to? / S: …I could start on Monday and get there by spring.",
+        "S: A mouse asked me about {what}. / C: What did you say? / S: …I was still answering when it left.",
+        "C: {What}. That's all they talk about out there. / S: …It's been a slow week on the road. / C: Mew. For you, it always is.",
+    ],
+    news_possumsnail: [
+        "P: Is it true about {what}? / S: …Which part? / P: All the parts. There are lots now.",
+        "S: The story about {what} got here before I did. / P: Hhh. Stories are quick. / S: …I've noticed.",
+        "P: I heard about {what} from a mouse. / S: Who told the mouse? / P: A rat. / S: …And the rat? / P: Hhh. I think it was me.",
+        "S: They've got {what} wrong all the way to the bridge. / P: Good. Is there food in it? / S: …Not yet.",
+    ],
     glimpses_mouse: [
         "{mouse} | A cold spring, long ago: a mouse found alone in a seed packet, taken in by a family of dormice who taught her to sleep through anything. {mouse}'s great-great-grandmother, still a light sleeper.",
         "{mouse} | A nest in a teapot, and a mouse who wasn't born there being shown which spoon is hers. Nobody ever said she wasn't family. Nobody ever thought to.",
@@ -5662,7 +5732,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -5970,6 +6040,7 @@ function sanitizeState(raw) {
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
     // the chest of drawers for rent in the nook: when it arrived, and who Mite last knew was living in it (sig)
     o.marks = arr(s.marks, 24).map(m => ({ id: str(m.id, 20), k: str(m.k, 12), room: ["room", "garden", "archive"].includes(m.room) ? m.room : "room", x: clamp(num(m.x), 0, 1), y: clamp(num(m.y), 0, 1), at: num(m.at), off: num(m.off) })).filter(m => m.id && m.k); // (what anomalies left: marks.js)
+    o.news = arr(s.news, 12).map(n => ({ id: str(n.id, 20), k: str(n.k, 8), sub: str(n.sub, 12), v: str(n.v, 60), at: num(n.at), told: num(n.told), res: num(n.res) })).filter(n => n.id && n.k); // (what gets around: news.js)
     o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240), notes: (Array.isArray(s.drawers && s.drawers.notes) ? s.drawers.notes : []).filter(n => n && [0, 1, 2, 3].includes(n.d)).map(n => ({ d: n.d, from: str(n.from, 40), t: noDash(str(n.t, 200)), at: num(n.at) })).filter(n => n.t).slice(-4), postAt: Math.max(0, num(s.drawers && s.drawers.postAt)) }; // (notes: what a tenant who moved out left in its drawer; postAt: up to where former tenants' post has come: garden.js)
     // the post: letters Mite wrote at the desk (to whom, when, whether a reply came: r) and the replies (read or not)
     {
@@ -6382,6 +6453,14 @@ function mergeStates(a, b) {
                 m.set(x.n, { n: x.n, at: Math.min(o2.at || num(x.at), num(x.at) || o2.at), kin: Math.max(o2.kin, x.kin ? 1 : 0), told: Math.max(o2.told, x.told ? 1 : 0) });
             }
         o.mice = [...m.values()].sort((x, y) => x.at - y.at).slice(-20);
+    }
+    { // news: from either side; told or heard on either side stays that way
+        const m = new Map();
+        for (const x of [...(a.news || []), ...(b.news || [])]) {
+            const c = m.get(x.id);
+            m.set(x.id, c ? Object.assign({}, x, { told: Math.max(num(c.told), num(x.told)), res: Math.max(num(c.res), num(x.res)) }) : x);
+        }
+        o.news = [...m.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-12);
     }
     { // marks: every one from either side; scrubbed on either side stays scrubbed
         const m = new Map();
@@ -16316,6 +16395,7 @@ function showSendoff(day, prog = 1) {
     const P = paintingOf(day), friend = choice(pool("penpals").length ? pool("penpals") : ["a friend"]);
     paintCard(day, prog, own("snail") ? `The snail is taking it to ${esc(friend)}.` : `Posted to ${esc(friend)}.`);
     note(`Sent yesterday's painting, “${P.title}”, to ${friend}.`);
+    newsAdd("made", "", `the painting called “${P.title}”`); // (it gets around: news.js)
     addToGallery(day, friend, own("snail") ? "snail" : "post", prog);
     setTimeout(() => cardHide("paintView", null, () => { // then off it goes
         if (own("snail")) {
@@ -16421,6 +16501,7 @@ function showBake() {
     cardCap($("bakeCap"), `<b>${esc(d.name)}</b>${d.note ? " " + esc(d.note) : ""}`);
     cardShow("bakeView");
     S.flags.bakes = (S.flags.bakes || 0) + 1;
+    newsAdd("made", "", "the " + d.name); // (it gets around: news.js)
     if (Math.random() < .3)
         note(`Baked: ${d.name}.`);
     saveSoon();
@@ -17768,7 +17849,7 @@ function animalTalkTick(now) {
     }
     const pr = choice(pairs), key = pr.map(a => a.k).sort().join("");
     const old = Math.random() < .06 ? oldTenant() : null; // (now and then about someone who used to rent a drawer: garden.js)
-    const line = (old && compose({ CP: "tenant_catpossum", CS: "tenant_catsnail", PS: "tenant_possumsnail" }[key], { label: old })) || compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
+    const line = (Math.random() < NEWS_RES_ODDS && newsResident(key)) || (old && compose({ CP: "tenant_catpossum", CS: "tenant_catsnail", PS: "tenant_possumsnail" }[key], { label: old })) || compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
     if (!line)
         return;
     // everyone involved stays put and turns to the other
@@ -18494,7 +18575,7 @@ function drawRaccoon(g, now) {
     }
 }
 function pickVisitorLine() {
-    return convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
+    return newsLine() || convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
 }
 
 </script>
@@ -18868,6 +18949,7 @@ function resolveAnom() {
     if (SHIFTS.includes(a.type)) // nothing to deal with: Mite just remarks on the view (planeshift.js)
         return (a.type === "deep" ? deepTap : spaceTap)(a);
     a.resolved = true;
+    newsAdd("anom", a.type); // (it gets around: news.js)
     sfx("low");
     nextAnom = performance.now() + anomalyInterval();
     const { no, tm } = (S.incidents++, anomStamp());
@@ -19902,6 +19984,68 @@ function markSay() {
 }
 
 </script>
+<script>/* js/scene/news.js */
+"use strict";
+/*
+ * news.js - What happens here gets around (group 65). Things worth repeating go in S.news: { id, k, sub, v, at, told, res }.
+ * About one visit in three, the visitor brings up the newest thing nobody's told yet, a little wrong; Mite corrects it
+ * (told: when). A day or so later the residents have heard it too (res: when). k: anom (sub: which kind), tenant (sub: in,
+ * out or letter; v: who), buy, made (v: "the writing desk", "the Bin-Day Shortbread"). Nothing from tasks or notes goes in.
+ * Lines: news_anom ("kind | V: / M:"), news_tenant ("in | ..."), news_buy, news_made, news_catpossum, news_catsnail,
+ * news_possumsnail. {what} is what it's about, {label} who (a tenant).
+ */
+const NEWS_MAX = 12, NEWS_KEEP = 7 * 864e5, NEWS_ODDS = 1 / 3, NEWS_RES_AFTER = 18 * 36e5, NEWS_RES_ODDS = .12;
+function newsAdd(k, sub, v) {
+    const old = (S.news || []).find(n => n.k === k && n.sub === (sub || "") && n.v === (v || "") && !n.told);
+    if (old) {
+        old.at = Date.now();
+        return old;
+    }
+    const n = { id: Date.now().toString(36) + ri(0, 999), k, sub: sub || "", v: String(v || "").slice(0, 60), at: Date.now(), told: 0, res: 0 };
+    S.news = (S.news || []).concat([n]).slice(-NEWS_MAX);
+    saveSoon();
+    return n;
+}
+/* what it's called in the residents' talk */
+function newsWhat(n) {
+    if (n.k === "anom")
+        return fillNames((ANOM_WHO[n.sub] || "the strange thing"));
+    if (n.k === "tenant")
+        return n.sub === "letter" ? `the letter from ${n.v}` : `${n.v} moving ${n.sub}`;
+    return n.v;
+}
+/* the lines for a piece of news */
+function newsLines(n) {
+    const sub = l => l.split("|")[0].trim() === n.sub, rest = l => l.split("|").slice(1).join("|").trim();
+    if (n.k === "anom")
+        return pool("news_anom").filter(sub).map(rest);
+    if (n.k === "tenant")
+        return pool("news_tenant").filter(sub).map(rest);
+    return pool(n.k === "buy" ? "news_buy" : "news_made");
+}
+const newsFill = (t, n) => t.replace(/\{What\}/g, newsWhat(n)[0].toUpperCase() + newsWhat(n).slice(1)).replace(/\{what\}/g, newsWhat(n)).replace(/\{label\}/g, n.v);
+/* a visitor, sitting down: news instead of the usual talk, or null. force: always (tests) */
+function newsLine(force) {
+    if (!force && Math.random() >= NEWS_ODDS)
+        return null;
+    const t = Date.now(), n = (S.news || []).filter(x => !x.told && t - x.at < NEWS_KEEP && newsLines(x).length).pop();
+    if (!n)
+        return null;
+    n.told = t;
+    saveSoon();
+    return newsFill(choice(newsLines(n)), n);
+}
+/* two residents, once it's had time to get round: { pool's key: the line }, or null */
+function newsResident(key) {
+    const t = Date.now(), n = (S.news || []).filter(x => x.told && !x.res && t - x.told > NEWS_RES_AFTER && t - x.told < 3 * NEWS_KEEP).pop(), ls = pool({ CP: "news_catpossum", CS: "news_catsnail", PS: "news_possumsnail" }[key]);
+    if (!n || !ls.length)
+        return null;
+    n.res = t;
+    saveSoon();
+    return newsFill(choice(ls), n);
+}
+
+</script>
 <script>/* js/scene/dream-archive.js */
 "use strict";
 /*
@@ -20839,6 +20983,7 @@ function finishKnit() {
     sfx("done", { step: 2 });
     speak(choice([`Finished: a ${knitName(k)}. I'm very proud. Don't look at the back.`, `Done! One ${knitName(k)}. It's with my crafts now.`, `Cast off. A ${knitName(k)}. Slightly wonky. Completely loved.`]), { ms: 6000 });
     note(`Knitted a ${knitName(k)}.`);
+    newsAdd("made", "", "the " + knitName(k)); // (it gets around: news.js)
     if (k.item === "cosy" && own("snail")) // it's the snail's: it says thank you
         setTimeout(() => {
             const t = compose("snail_cosythanks", { knit: knitName(k) });
@@ -22927,6 +23072,7 @@ function tenantPostTick(t) {
         return false;
     S.flags.letterInDay = dayNum();
     deliverLetter(m.label, text, m.at);
+    newsAdd("tenant", "letter", m.label); // (it gets around: news.js)
     note(`A letter came from ${m.label}, who used to rent a drawer. It's in the rack in the nook.`);
     if (own("snail")) { // the snail brings it up (snail.js, on its way to the rack)
         tenantLetterNew = m.label;
@@ -22957,11 +23103,13 @@ function drawerTick() {
         const old = was[i] || "";
         if (d && d.label.toUpperCase() !== old.toUpperCase()) { // (the sig keeps labels in capitals: compare like with like, jot mvthycq59jwea)
             const back = formerTenants().some(f => f.label.toUpperCase() === d.label.toUpperCase()); // (they've all been here before, after the first round)
+            newsAdd("tenant", "in", d.label); // (it gets around: news.js)
             note(back ? `${d.label} is back, in drawer ${i + 1}.` : `New tenant in drawer ${i + 1}: ${d.label}.`);
             news = news && /^drawer(movein|back)$/.test(news[0]) ? news : [back ? "drawerback" : "drawermovein", d.label, i + 1];
         }
         else if (!d && old) {
             const lb = drawerName(old);
+            newsAdd("tenant", "out", lb); // (it gets around: news.js)
             const nt = compose("drawernote", { label: lb }); // they leave a little note in the drawer (jot mvre03nu4ozba)
             if (nt) {
                 S.drawers.notes = (S.drawers.notes || []).filter(n => n.d !== i).concat([{ d: i, from: lb, t: nt.slice(0, 200), at: Date.now() }]);
@@ -32974,6 +33122,8 @@ function buy(b) {
     sfx("coin");
     S.g -= c;
     S.b[b.id] = (S.b[b.id] || 0) + 1;
+    if (S.b[b.id] === 1) // (it gets around: news.js)
+        newsAdd("buy", "", "the " + b.name[0].toLowerCase() + b.name.slice(1));
     if (b.id === "jar" && nameFireflies(true))
         return afterChange();
     if (S.b[b.id] === 1 && b.id === "chair") {
