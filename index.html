@@ -1161,6 +1161,13 @@ const POOL_INFO = {
     eclipse_lunar: "Mite, on the day of a lunar eclipse",
     eclipse_now_solar: "Mite, while the sun in the window is eclipsed",
     eclipse_now_lunar: "Mite, while the moon in the window is red with the eclipse",
+    tenantpost: "A letter from a tenant who moved out: LABEL (as in the drawers pool) | what they write. Lines starting * | are for anyone ({label} is who)",
+    snail_post_tenant: "The snail at the rack, when a former tenant has written ({label} is who)",
+    drawerback: "Mite, when a former tenant moves back in ({label} is who, {drawer} which drawer)",
+    tenant_idle: "Mite remembering someone who used to rent a drawer ({label} is who)",
+    tenant_catpossum: "The cat and the possum on a former tenant: C: / P: ({label} is who)",
+    tenant_catsnail: "The cat and the snail on a former tenant: C: / S: ({label} is who)",
+    tenant_possumsnail: "The possum and the snail on a former tenant: P: / S: ({label} is who)",
     drawernote: "The note a tenant leaves in the drawer when it moves out ({label} is who)",
     seas_sfrog: "Mite, tapping the frogspawn jar on the nook's windowsill (the tadpoles change colour every morning)",
     seas_snest: "Mite, tapping the nest with one blue egg on the wall (the egg hums, never hatches)",
@@ -4047,6 +4054,109 @@ linesFor("The strange", {
 "use strict";
 /* lines/post.js - Letters, pen pals, serials and the donation jar. */
 linesFor("Post", {
+    tenantpost: [
+        "BUTTONS | Dear Mite, I've found work on a coat in the next valley. It has five holes and we've all agreed to take turns. Regards to the chest. Yours, Buttons",
+        "SPARE MOONLIGHT | Dear Mite, I'm airing on a line behind a lighthouse. The keeper thinks I'm a mistake and leaves me out anyway. Keep your curtains kind. Spare Moonlight",
+        "LOST HUMS | Dear Mite, a kettle in a railway cafe has taken me in. People stop in the doorway and can't think why. If you find yourself humming, that's only me saying hello. Lost Hums",
+        "KEYS, UNKNOWN | Dear Mite, we are down to eleven. The twelfth found its door on a Sunday and hasn't written. We don't like to talk about it, but we are proud. Keys, Unknown",
+        "PATIENCE | Dear Mite, I meant to write sooner, but there was no hurry. There still isn't. Yours, when it suits you, Patience",
+        "STRING | Dear Mite, I've been tying up a parcel that hasn't been decided yet. Good steady work. I've left a small knot on the back of this letter, in case you need to remember something. String",
+        "WEDNESDAYS | Dear Mite, I have a shelf now in a clockmaker's back room. Nobody comes in between two and three. It's exactly what I wanted. Wednesdays",
+        "SEEDS, ASLEEP | Dear Mite, we are in a tin in somebody's shed. Nobody has asked us to do anything. Three of us turned over last week and it was very exciting. Seeds, Asleep",
+        "SMALL WINS | Dear Mite, I'm at a bakery now, in the flour on the windowsill. It's the same dust as yours, only prouder. Tell your person I said well done, for no reason. Small Wins",
+        "THE OTHER KEY | Dear Mite, I've found the first key. It had no idea. We've agreed not to discuss what we open. The Other Key",
+        "MAPS OF HERE | Dear Mite, I'm being unfolded in a library, by someone who keeps frowning at your wagon. There are now two rooms you don't recognise. Sorry about that. Maps of Here",
+        "FIREFLY LIGHT | Dear Mite, we've gone back to the fireflies. We told them everything. They were very nice about it and only a little bit dim. Firefly Light",
+        "EXCUSES, UNUSED | Dear Mite, I'm sorry I didn't write earlier. The post was late, the ink was resting, and I had a thing. Excuses, Unused",
+        "RAIN, LATER | Dear Mite, I fell on a very good evening, over a village with a fete on. Everyone ran indoors and had a lovely time. Mind the gutters. Rain, later",
+        "LAST TUESDAY | Dear Mite, I've gone softer since I left. Someone in the next town keeps telling me to a friend, and every time, I come out better than I was. Last Tuesday",
+        "ODD SOCKS | Dear Mite, no news of the others. We remain confident. We've left the porch light on. Odd Socks",
+        "A SMALL ECHO | Dear Mite, I'm in a well now, a very nice one. People lean over and say hello. Hello. Yours, A Small Echo. Echo",
+        "TEASPOONS | Dear Mite, the committee has moved to a canteen. We've passed a motion in favour of your wagon, ten to one. The one knows what it did. Teaspoons",
+        "PENCIL STUBS | Dear Mite, this letter was written by all of us, in turns, which is why it gets fainter and then starts again. We are getting shorter and we don't mind. Pencil Stubs",
+        "SECOND THOUGHTS | Dear Mite, I nearly didn't send this. Then I nearly did. It's come to you, but I'd like you to know that it was close. Second Thoughts",
+        "NAPS, PENDING | Dear Mite, we've been taken up by a retired ferryman. He takes two of us a day, after lunch. Nobody has shaken anything. Naps, Pending",
+        "THE DRAUGHT | Dear Mite, I've taken a position under a door in a big house. It's a step up. Tell whoever's by your window that I think of them. The Draught",
+        "BLANK LABELS | Dear Mite, one of us has been written on! It says JAM. We are all very happy for it and it hasn't changed at all. Blank Labels",
+        "DUST, SORTED | Dear Mite, a museum has taken us on. We've been told not to settle. We've settled. The oldest pile sends its regards and a correction. Dust, Sorted",
+        "A SPARE SHADOW | Dear Mite, someone at a crossroads needed me for the evening. It's been some time and they haven't asked for the lamp back on. I fit better than I did. A Spare Shadow",
+        "UNSENT POST | Dear Mite, this is the first one of us that has ever gone anywhere. We're all very moved. Please don't reply, the others couldn't take it. Unsent Post",
+        "MOTHS, RETIRED | Dear Mite, there's a bench outside a lamp shop now, and we sit on it. Nobody's going in. We just like to know that it's there. Moths, Retired",
+        "TICKING, SPARE | Dear Mite, I've joined a grandfather clock whose own had stopped. He doesn't remember, and I don't remind him. It's five past, here. Ticking, Spare",
+        "FOG, A LITTLE | Dear Mite, I've been out on a marsh with some much bigger fog. They're very welcoming. I found your thimble. I've lost it again. Fog, A Little",
+        "CANDLE ENDS | Dear Mite, we've been melted down together into one good candle. There are arguments about what room we're remembering, but it burns well. Candle Ends",
+        "GOOD INTENTIONS | Dear Mite, some of us have ripened. One became a visit, and one nearly a phone call. The rest of us are getting on with it, in a while. Good Intentions",
+        "THE THIRTEENTH | Dear Mite, it turns out that I was a Friday. I've been asked to stay on until further notice. Mind the ladders. The Thirteenth",
+        "MUSHROOMS | Dear Mite, may we write? Thank you. A log has very kindly had us. May we say that we miss the drawer? Thank you. We've asked it to give you our best. Mushrooms",
+        "WRONG NUMBERS | Dear Mite, is that the bakery? We were sure this was the bakery. Sorry to trouble you. Wrong Numbers",
+        "A QUIET COUGH | Dear Mite, I finally let it go, in a very silent library, on a Thursday, after all those years. I can't tell you how good it felt. Everyone looked. A Quiet Cough",
+        "BOOKMARKS | Dear Mite, one of the books has turned up, at page 212. We were right where we'd said. We've all been very calm and nobody has cried. Bookmarks",
+        "LEFT GLOVES | Dear Mite, we've met some of the right ones. It wasn't what we'd hoped. It was a little awkward, and we held hands anyway. Left Gloves",
+        "TIDE TABLES | Dear Mite, I've found the sea. It's smaller than I'd said, and it's a little late, but high water was at four. Tell the others it exists. Tide Tables",
+        "HALF A RECIPE | Dear Mite, a cook on the coast has added an ending. It's wrong, and it's delicious. I'm going to allow it. And then, very carefully, Half a Recipe",
+        "STAIRS, A FEW | Dear Mite, we've unfolded. It was in a barn, and we were careful. We go up to somewhere now. We don't always know where, but it's nice to be asked. Stairs, A Few",
+        "* | Dear Mite, I've found a new place. It isn't a chest, but the rent's fair and nothing rattles. Say hello to the drawers. {label}",
+        "* | Dear Mite, I still think of the third runner, the one that stuck. It's strange what you end up missing. {label}",
+        "* | Dear Mite, a short note to say I'm well and that I took your good teaspoon by accident. It's a very good teaspoon. {label}",
+        "* | Dear Mite, please forward any post that comes for me, unless it ticks. {label}",
+        "* | Dear Mite, the new place has more room. I keep to one corner of it anyway, out of habit. {label}",
+        "* | Dear Mite, I told someone here about your wagon, and they asked if there were any drawers free. I said it was a good address. {label}",
+        "* | Dear Mite, I passed through your old road last week. There was a wagon-shaped patch of very contented grass. {label}",
+        "* | Dear Mite, just to say that I found the thing I thought I'd left behind. It was in me the whole time, which was embarrassing. {label}",
+        "* | Dear Mite, it rained here, and I thought of the sound on your roof. That's all. That's the whole letter. {label}",
+        "* | Dear Mite, I've enclosed a small amount of rent I think I may still owe you. It seems to have fallen out on the way. {label}",
+        "* | Dear Mite, I'm writing again because nothing has happened, and I'd like someone to know. {label}",
+    ],
+    snail_post_tenant: [
+        "Post. From {label}. They used to rent a drawer. I'd know that handwriting anywhere. Eventually.",
+        "A letter for the rack. It's from {label}. I brought it up myself. It took a while. It's worth it.",
+        "Delivery. {label} has written. Former tenant. Forwarding address on the back. Very neat.",
+        "This one's from {label}. It smells of the chest, a little. It's in the rack.",
+        "{label} wrote. I carried it the last bit. The rest was done by others, but I'd like the credit.",
+        "[rainy] Post from {label}. Slightly damp. That was the post, not me. All right, a bit was me.",
+    ],
+    drawerback: [
+        "{label} is back, in drawer {drawer}. They said the old place had a damp sort of quiet.",
+        "Look who's back. {label}. Drawer {drawer}. They didn't ask where anything was.",
+        "{label} moved back in. Drawer {drawer}. They brought me something. It's a smaller version of what they took.",
+        "Drawer {drawer} is {label} again. We nodded at each other like people who've been through something.",
+        "{label} came back. They said it was just for a while. That's what they said last time.",
+        "The new tenant in drawer {drawer} is the old tenant. {label}. I dusted for no reason, it turns out.",
+        "{label} is back. They knocked first, which was nice, since it's a drawer and they know how it opens.",
+        "[night] {label} came back after dark. They didn't need the light. Drawer {drawer}, like they'd never been gone.",
+        "[strange] {label} is back in drawer {drawer}. The drawer knew before I did. It was already open.",
+    ],
+    tenant_idle: [
+        "I keep thinking about {label}. The drawer's let to someone else now, but it still shuts a little politely.",
+        "{label} used to rent a drawer here. I wonder how the new place is treating them.",
+        "Found something of {label}'s behind the chest. I think. It might be nothing. I've kept it anyway.",
+        "I miss {label} a bit. Not the rustling. Just knowing they were in there.",
+        "{label} used to say the third drawer gets the good air. I've checked. They were right.",
+        "I hope {label} found somewhere with runners that don't stick.",
+        "Somebody should tell {label} that the rent's still paid till Thursday. In buttons.",
+        "[evening] This is about the time {label} would shuffle a bit before settling. It's gone quiet at this hour since they left.",
+        "[rainy] Rain. {label} liked that, I think. The drawer always sounded pleased.",
+        "[strange] I heard {label} last night. They've moved out. I checked the drawer. I'm not going to think about it.",
+    ],
+    tenant_catpossum: [
+        "C: {label} left, you know. / P: Hhh. Did they leave food? / C: Mrrp. They left a smell of elsewhere. / P: Can I eat that?",
+        "P: I miss {label}. / C: You ate their label. / P: I miss it more for that.",
+        "C: {label} owes me a nap in that drawer. / P: You don't fit in that drawer. / C: Mrow. That was never settled.",
+        "P: Where do they go, the ones like {label}? / C: Out. Then back. It's mostly the same place. / P: Hhh. Comforting.",
+        "C: I see {label} sometimes, further in. / P: Doing what? / C: Being rented. / P: Hhh. Good for them.",
+    ],
+    tenant_catsnail: [
+        "S: I carried a card for {label} once. / C: How was it? / S: …Long. / C: Mrrp. The card or the trip? / S: Yes.",
+        "C: {label} never once looked at me properly. / S: …Is that bad? / C: Mew. It was refreshing.",
+        "S: {label} left a forwarding address. / C: Where? / S: …I'll know when I get there.",
+        "C: You liked {label}. / S: They said good morning at my speed. / C: Mrrp. It took all day. / S: …It was a very good morning.",
+    ],
+    tenant_possumsnail: [
+        "P: {label} left crumbs in the runners. / S: …You've checked? / P: I check every week. Out of respect.",
+        "S: {label} would've liked this weather. / P: Hhh. You think? / S: …They told me so. Slowly. Over several days.",
+        "P: Why did {label} go? / S: …The stay was up. / P: Did we do something? / S: You ate the label. / P: That was a different me.",
+        "S: I still have {label}'s spare key. / P: Do you use it? / S: …It's a nice weight. For a shell.",
+    ],
     drawernote: [
         "Thank you for the drawer. It was very dark and very kind. Signed, {label}",
         "Left a crumb for the next one. For luck. Signed, {label}",
@@ -5432,7 +5542,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [] }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -5739,7 +5849,7 @@ function sanitizeState(raw) {
     o.mice = arr(s.mice, 20).map(m => ({ n: str(m && m.n, 30).trim(), at: num(m && m.at), kin: m && m.kin ? 1 : 0, told: m && m.told ? 1 : 0 })).filter(m => m.n); // mice who've visited; kin: the circle has shown its found family, told: it knows Mite saw (visitors.js, circle.js)
     o.quotes = Array.isArray(s.quotes) ? arr(s.quotes, 300).map(q => ({ t: str(q && q.t, 120).replace(/\s+/g, " ").trim(), at: num(q && q.at), off: num(q && q.off) })).filter(q => q.t) : QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 }));
     // the chest of drawers for rent in the nook: when it arrived, and who Mite last knew was living in it (sig)
-    o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240), notes: (Array.isArray(s.drawers && s.drawers.notes) ? s.drawers.notes : []).filter(n => n && [0, 1, 2, 3].includes(n.d)).map(n => ({ d: n.d, from: str(n.from, 40), t: noDash(str(n.t, 200)), at: num(n.at) })).filter(n => n.t).slice(-4) }; // (notes: what a tenant who moved out left in its drawer, garden.js)
+    o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240), notes: (Array.isArray(s.drawers && s.drawers.notes) ? s.drawers.notes : []).filter(n => n && [0, 1, 2, 3].includes(n.d)).map(n => ({ d: n.d, from: str(n.from, 40), t: noDash(str(n.t, 200)), at: num(n.at) })).filter(n => n.t).slice(-4), postAt: Math.max(0, num(s.drawers && s.drawers.postAt)) }; // (notes: what a tenant who moved out left in its drawer; postAt: up to where former tenants' post has come: garden.js)
     // the post: letters Mite wrote at the desk (to whom, when, whether a reply came: r) and the replies (read or not)
     {
         const ps = s.post && typeof s.post === "object" ? s.post : {};
@@ -6158,7 +6268,7 @@ function mergeStates(a, b) {
         for (const n of [...(da.notes || []), ...(db.notes || [])])
             if (!notes[n.d] || num(n.at) > num(notes[n.d].at))
                 notes[n.d] = n;
-        o.drawers = { at: ats.length ? Math.min(...ats) : 0, sig: str((nw.drawers || {}).sig || (od.drawers || {}).sig, 240), notes: Object.values(notes) };
+        o.drawers = { at: ats.length ? Math.min(...ats) : 0, sig: str((nw.drawers || {}).sig || (od.drawers || {}).sig, 240), notes: Object.values(notes), postAt: Math.max(num(da.postAt), num(db.postAt)) };
     }
     { // the post from both sides: a letter answered (or read) on either one counts
         const pa = a.post || {}, pb = b.post || {}, sent = new Map(), inbox = new Map();
@@ -17528,7 +17638,8 @@ function animalTalkTick(now) {
         return;
     }
     const pr = choice(pairs), key = pr.map(a => a.k).sort().join("");
-    const line = compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
+    const old = Math.random() < .06 ? oldTenant() : null; // (now and then about someone who used to rent a drawer: garden.js)
+    const line = (old && compose({ CP: "tenant_catpossum", CS: "tenant_catsnail", PS: "tenant_possumsnail" }[key], { label: old })) || compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
     if (!line)
         return;
     // everyone involved stays put and turns to the other
@@ -22464,14 +22575,9 @@ function drawerOrder(at, n) {
     }
     return drawerShuffle.order;
 }
-function drawerLabels(t = Date.now()) {
-    const out = [null, null, null, null];
-    if (!S.drawers || !S.drawers.at)
-        return out;
-    const at = S.drawers.at, days = (t - at) / 864e5, lines = pool("drawers").filter(l => l.includes("|"));
-    if (!lines.length)
-        return out;
-    const stays = []; // every stay so far, in all four drawers
+/* every stay so far, in all four drawers, in the order they began: { i, start, end, n } (days after the chest came) */
+function drawerStays(days) {
+    const at = S.drawers.at, stays = [];
     for (let i = 0; i < 4; i++) {
         let start = 1 + i * 2; // the first tenant moves in a day after the chest came, the next two days later...
         for (let c = 0; c < 400 && days >= start; c++) {
@@ -22481,18 +22587,104 @@ function drawerLabels(t = Date.now()) {
         }
     }
     stays.sort((a, b) => a.start - b.start || a.i - b.i);
-    const order = drawerOrder(at, lines.length), used = new Set(); // (no tenant in two drawers at once, for a short list: a clash moves on to the next line)
-    stays.forEach((st, n) => {
+    stays.forEach((st, n) => st.n = n);
+    return stays;
+}
+function drawerLabels(t = Date.now()) {
+    const out = [null, null, null, null];
+    if (!S.drawers || !S.drawers.at)
+        return out;
+    const at = S.drawers.at, days = (t - at) / 864e5, lines = pool("drawers").filter(l => l.includes("|"));
+    if (!lines.length)
+        return out;
+    const stays = drawerStays(days), order = drawerOrder(at, lines.length), used = new Set(); // (no tenant in two drawers at once, for a short list: a clash moves on to the next line)
+    stays.forEach(st => {
         if (days >= st.end)
             return;
-        let k = order[n % lines.length];
+        let k = order[st.n % lines.length];
         for (let m = 0; m < lines.length && used.has(lines[k].split("|")[0].trim()); m++)
             k = (k + 1) % lines.length;
         const [label, ...rest] = lines[k].split("|"), lb = label.trim(); // (the lines have them in capitals, like on a label: shown as words)
         used.add(lb);
-        out[st.i] = { label: lb === lb.toUpperCase() ? lb[0] + lb.slice(1).toLowerCase() : lb, text: rest.join("|").trim(), since: at + st.start * 864e5 };
+        out[st.i] = { label: drawerName(lb), text: rest.join("|").trim(), since: at + st.start * 864e5 };
     });
     return out;
+}
+const drawerName = lb => lb === lb.toUpperCase() ? lb[0] + lb.slice(1).toLowerCase() : lb;
+/* who has lived here and left, oldest first: { label, end (ms), n }. Worked out like the tenants themselves, so it's the
+   same on every device */
+function formerTenants(t = Date.now()) {
+    if (!S.drawers || !S.drawers.at)
+        return [];
+    const at = S.drawers.at, days = (t - at) / 864e5, lines = pool("drawers").filter(l => l.includes("|"));
+    if (!lines.length)
+        return [];
+    const order = drawerOrder(at, lines.length);
+    return drawerStays(days).filter(st => days >= st.end).sort((a, b) => a.end - b.end)
+        .map(st => ({ label: drawerName(lines[order[st.n % lines.length]].split("|")[0].trim()), end: at + st.end * 864e5, n: st.n }));
+}
+/* one of the last few who left, for the residents to mention */
+function oldTenant() {
+    if (!hasDrawers())
+        return null;
+    const here = new Set(drawerLabels().filter(Boolean).map(d => d.label)), f = formerTenants().slice(-6).filter(x => !here.has(x.label));
+    return f.length ? choice(f).label : null;
+}
+/* Post from former tenants (group 65). About one in five writes, three to nine days after leaving, a week apart at
+   least: every 10-14 days. It's all worked out from the chest, so two devices deliver the same letter at the same `at`
+   (the merge keeps one). S.drawers.postAt: up to where they've been delivered */
+const TENANT_POST_ODDS = .22, TENANT_POST_GAP = 7 * 864e5;
+function tenantMail(t = Date.now()) {
+    const at = S.drawers.at, out = [], wrote = new Set();
+    let last = -Infinity;
+    const due = formerTenants(t).filter(f => hash01(at + "w" + f.n) < TENANT_POST_ODDS).map(f => ({ label: f.label, n: f.n, at: Math.round(f.end + (3 + hash01(at + "wd" + f.n) * 6) * 864e5) })).sort((a, b) => a.at - b.at);
+    for (const m of due) {
+        if (m.at - last < TENANT_POST_GAP || m.at > t)
+            continue;
+        last = m.at;
+        m.again = wrote.has(m.label); // (a second letter from the same tenant: one of the general ones)
+        wrote.add(m.label);
+        out.push(m);
+    }
+    return out;
+}
+/* what they write: their own line in the pool tenantpost ("LABEL | text"), or a general one ("* | text") */
+function tenantLetter(m) {
+    const lines = pool("tenantpost").filter(l => l.includes("|")), key = l => l.split("|")[0].trim().toUpperCase();
+    const mine = m.again ? [] : lines.filter(l => key(l) === m.label.toUpperCase()), any = lines.filter(l => key(l) === "*"), from = mine.length ? mine : any;
+    if (!from.length)
+        return null;
+    const raw = from[Math.floor(hash01(S.drawers.at + "wt" + m.n) * from.length)];
+    lineCount("tenantpost", raw);
+    return fillText(raw.split("|").slice(1).join("|").trim(), Object.assign(ctx(), { label: m.label })).replace(/ \/ /g, "\n\n");
+}
+let tenantLetterNew = null; // the tenant's letter the snail hasn't announced yet (snail.js)
+function tenantPostTick(t) {
+    if (!S.drawers || !S.drawers.at || !hasDrawers() || !hasDesk() || num(S.flags.letterInDay) === dayNum())
+        return false;
+    if (!num(S.drawers.postAt)) { // (the clock starts now: no pile of old post)
+        S.drawers.postAt = t;
+        saveSoon();
+        return false;
+    }
+    const m = tenantMail(t).filter(x => x.at > S.drawers.postAt).pop(); // (after a long time away, just the latest)
+    if (!m)
+        return false;
+    S.drawers.postAt = m.at;
+    const text = tenantLetter(m);
+    saveSoon();
+    if (!text)
+        return false;
+    S.flags.letterInDay = dayNum();
+    deliverLetter(m.label, text, m.at);
+    note(`A letter came from ${m.label}, who used to rent a drawer. It's in the rack in the nook.`);
+    if (own("snail")) { // the snail brings it up (snail.js, on its way to the rack)
+        tenantLetterNew = m.label;
+        snailPostSoon();
+    }
+    else
+        say("letterarrived", { penpal: m.label });
+    return true;
 }
 /* the note the last tenant of drawer i left in it, while it's to let (S.drawers.notes: [{ d, from, t, at }]) */
 const drawerNote = i => ((S.drawers && S.drawers.notes) || []).find(n => n.d === i) || null;
@@ -22514,11 +22706,12 @@ function drawerTick() {
     now.forEach((d, i) => {
         const old = was[i] || "";
         if (d && d.label.toUpperCase() !== old.toUpperCase()) { // (the sig keeps labels in capitals: compare like with like, jot mvthycq59jwea)
-            note(`New tenant in drawer ${i + 1}: ${d.label}.`);
-            news = news && news[0] === "drawermovein" ? news : ["drawermovein", d.label, i + 1];
+            const back = formerTenants().some(f => f.label.toUpperCase() === d.label.toUpperCase()); // (they've all been here before, after the first round)
+            note(back ? `${d.label} is back, in drawer ${i + 1}.` : `New tenant in drawer ${i + 1}: ${d.label}.`);
+            news = news && /^drawer(movein|back)$/.test(news[0]) ? news : [back ? "drawerback" : "drawermovein", d.label, i + 1];
         }
         else if (!d && old) {
-            const lb = old === old.toUpperCase() ? old[0] + old.slice(1).toLowerCase() : old;
+            const lb = drawerName(old);
             const nt = compose("drawernote", { label: lb }); // they leave a little note in the drawer (jot mvre03nu4ozba)
             if (nt) {
                 S.drawers.notes = (S.drawers.notes || []).filter(n => n.d !== i).concat([{ d: i, from: lb, t: nt.slice(0, 200), at: Date.now() }]);
@@ -23511,6 +23704,10 @@ function snailHit(p, room) {
     const sp = snailPos();
     return hitIn(p, { x: sp.x - R * .4, y: sp.y - R * .5, w: R * .8, h: R * .5 });
 }
+/* a letter worth announcing came: the next look at the rack, soon */
+function snailPostSoon() {
+    snailPostAt = Math.min(snailPostAt, performance.now() + 20e3);
+}
 /* checking the post: along to the desk, up its front, a while by the letter rack, and down again. True while busy.
    stop: something more important (bedtime, a picnic, a painting): it comes straight down */
 function snailPostTick(dt, now, stop) {
@@ -23538,8 +23735,11 @@ function snailPostTick(dt, now, stop) {
             sp.until = now + rnd(12e3, 25e3);
             snailDir = 1; // (facing the rack)
             const inbox = ((S.post && S.post.inbox) || []).filter(l => !l.read);
-            const line = giveTakeJar() || compose(inbox.length ? "snail_post_new" : "snail_post"); // (a full jar goes with it: giving.js)
+            const tenant = tenantLetterNew && inbox.some(l => l.from === tenantLetterNew) ? tenantLetterNew : null; // (a former tenant wrote: said by name, once)
+            const line = giveTakeJar() || (tenant && compose("snail_post_tenant", { label: tenant })) || compose(inbox.length ? "snail_post_new" : "snail_post"); // (a full jar goes with it: giving.js)
             if (line && roomVisible("garden") && !floorTaken()) {
+                if (tenant)
+                    tenantLetterNew = null;
                 snailSay(line, lineMs(line), "snail");
                 snailTalkUntil = now + 3000;
             }
@@ -23707,6 +23907,8 @@ function postTick(now) {
     if (giveTick(t)) // (and a place that needs glimmers, or its thanks: giving.js)
         return;
     if (otherTick(t)) // (and a note from further in, or Mite's answer: deeper.js)
+        return;
+    if (tenantPostTick(t)) // (and a tenant who moved out: garden.js)
         return;
     lostTick(t); // (and the lost property shelf in the closet: lostprop.js)
     serialTick(t);
@@ -30579,7 +30781,7 @@ function ambientTalk() {
         return;
     }
     if (r < .8) // (now and then a remark about the workshop out of sight, where some things are kept instead: group 36)
-        (Math.random() < .08 && say("workshop")) || say("idle");
+        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || say("idle");
 }
 function inventWord() {
     const syl = ["flim", "bor", "quo", "snu", "ber", "lin", "dra", "mo", "ket", "vy", "pel", "ziff", "ow", "gren", "tash", "mu", "pim", "wob", "lo", "fen", "drib", "sil", "nok", "ul"];
