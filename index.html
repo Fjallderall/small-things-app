@@ -838,6 +838,7 @@ body.pixel{--boxlh:24px;--boxfs:16px}
 /* QA 02-11-2026: on a phone the slips sat over the add form (the Add button, Medium, Big); with the sheet up they go in the strip above it */
 @media (max-width:959px){body.game.sheet .toasts:not(.stay){top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto}}
 .askans{display:flex;flex-direction:column;gap:8px;margin-top:12px}.askans .btn{width:100%;text-align:left;white-space:normal}
+.leftart{display:block;height:auto;image-rendering:pixelated;margin:4px 0}
 
 </style>
 <div class="app">
@@ -986,6 +987,8 @@ body.pixel{--boxlh:24px;--boxfs:16px}
         <div class="drawers" id="seasonDrawers"></div></details>
       <details class="shopsec colsec" data-sec="cab-altered" open><summary><h3>Altered items</h3><span class="seccount" id="cnt-cab-altered"></span><span class="secnew" id="new-cab-altered" hidden>new</span></summary><p class="sub">Recovered from anomalies. Contained, mostly.</p>
         <div class="drawers" id="altered"></div></details>
+      <details class="shopsec colsec" data-sec="cab-left" open><summary><h3>Leftovers</h3><span class="seccount" id="cnt-cab-left"></span><span class="secnew" id="new-cab-left" hidden>new</span></summary><p class="sub">What the strange visitors left behind, and what became of it.</p>
+        <div class="drawers" id="leftList"></div></details>
       <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span><span class="secnew" id="new-cab-glimpses" hidden>new</span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
         <div class="glimpses" id="glimpseList"></div></details>
       <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>The Deck</h3><span class="seccount" id="cnt-cab-cards"></span><span class="secnew" id="new-cab-cards" hidden>new</span></summary><p class="sub">Cards? They come one at a time, in wax-sealed mail.</p>
@@ -1167,6 +1170,14 @@ const POOL_INFO = {
     news_buy: "A visitor who's heard about something bought, a little wrong: V: / M: ({what} is what)",
     news_made: "A visitor who's heard about something baked, knitted or painted, a little wrong: V: / M: ({what} is what)",
     news_ask: "A visitor who's heard about a letter you answered, a little wrong: V: / M: ({label} is who wrote)",
+    left_new: "Mite, noticing an anomaly left something behind ({thing} is what)",
+    left_tap: "Mite, on a leftover when you tap it: kind | line",
+    left_kept: "Mite, having kept a leftover ({thing})",
+    left_freed: "Mite, having let a leftover go ({thing})",
+    left_filed: "Mite, having filed a leftover ({thing})",
+    left_stir: "Mite, when a kept leftover stirs: kind | line",
+    left_free: "The letter that comes after a leftover is let go: kind | the letter (/ starts a new paragraph)",
+    left_file: "The Bureau's memo after a leftover is filed: kind | the memo (/ starts a new paragraph)",
     ask_letters: "A letter that asks something: id | who | the letter (who: a word from a pen pal's name, or anom:kind; / starts a new paragraph)",
     ask_answers: "The answers to a letter that asks: id.a (or .b, .c) | what the button says | what Mite writes",
     ask_back: "The letter that comes back: id.a (or .b, .c) | the letter. id.x is the one for no answer",
@@ -4386,6 +4397,102 @@ linesFor("Post", {
         "[strange] Please don't open this drawer on the fourth night after moving out. Thank you. Signed, {label}",
         "[night] Left after dark so nobody would have to say goodbye. Signed, {label}",
     ],
+    left_new: [
+        "Something got left behind: {thing}. It's on the floor. Don't step on it. I'd like you to decide.",
+        "It left {thing}. On purpose, I think. Have a look, when you've a minute.",
+        "There's {thing} on the floor that wasn't there before. That one's your call.",
+    ],
+    left_tap: [
+        "door | It still turns. It isn't attached to anything, and it still turns.",
+        "phone | The holes go round when nobody's dialling. It stops on the same number every time.",
+        "eyes | It's only a marble. I've turned it round four times and it's still looking at me.",
+        "tentacle | It's wet, and it smells of the tea from a while ago. It's got a very small dent, as if something held it carefully.",
+        "chair | Just the one leg. It stands up by itself if you don't watch it.",
+        "ghost | It's folded very well. There's something written inside, but I'd have to unfold it to read it.",
+        "letter | Nobody's name on it. It's still soft in the middle, and it's been here an hour.",
+        "cloud | One raindrop, corked. It's still falling. Very slowly, in there.",
+        "figure | It goes on for longer than it looks. Whoever wore it had a lot of arm.",
+        "hand | It's warm. It came up through the floor point first, and politely.",
+        "drips | I put a saucer over it. It went round the saucer and carried on up.",
+        "report | The ink pad's dry, and it still leaves a mark. I'm not sure it's a word.",
+        "double | I can see the room in it. I'm in it too, a second after.",
+        "sheet | It's still warm from walking. I don't want to know how many feet that took.",
+        "coat | Four holes, no thread. It hums if you put it in a pocket.",
+        "lantern | It's been lit and it isn't burnt. It smells of a long way off.",
+        "moth | Very good card, with a name that comes off on your fingers. Someone meant to call again.",
+    ],
+    left_kept: [
+        "All right. {thing}'s staying. I've put it in the Cabinet, at the back.",
+        "It's in the Cabinet now, with a label. I'll keep an eye on it. Well, one of us will.",
+        "We've got {thing} now. I hope it knows that.",
+    ],
+    left_freed: [
+        "I've put {thing} out on the step. It wasn't there when I looked back.",
+        "Off it goes. I didn't see it leave. It didn't say anything, and I could tell.",
+        "That's {thing} gone. Back where it came from, I hope.",
+    ],
+    left_filed: [
+        "Tagged, boxed and sent up to the Bureau. There's a form for everything, and this one had a box for it.",
+        "{thing}: filed. They'll write. They always do.",
+        "It's in the out tray. I've kept the carbon copy.",
+    ],
+    left_stir: [
+        "door | The doorknob's turned itself. I heard it from here. The Cabinet drawer wasn't open, and now it is.",
+        "phone | The dial went round in the night. Seven numbers. It wasn't our number.",
+        "eyes | The marble's rolled to the front of the drawer. It's got a better view from there.",
+        "tentacle | The teaspoon's wet again. Fresh wet. I gave it a biscuit, in case.",
+        "chair | The chair leg's standing up in the drawer. I've laid it down. We'll see.",
+        "ghost | The paper boat's moved along the drawer. It's left a small wake.",
+        "letter | The seal's soft again. Something's pressed into it now, and it wasn't me.",
+        "cloud | The raindrop's reached the bottom of the bottle. It's started again from the top.",
+        "figure | The glove's got longer. I measured. It's holding the drawer shut from the inside.",
+        "hand | The nail's warm enough to dry a sock. I tried it. It worked.",
+        "drips | The drop's gone up to the top of the drawer. It's waiting there.",
+        "report | There's a new stamp on the drawer's label. It says something like YES.",
+        "double | I looked in the small mirror and I waved first. I checked twice.",
+        "sheet | The hem's walked across the drawer and folded itself. Very tidy, for a scrap.",
+        "coat | The button's been sewn onto something in the Cabinet. I can't find what.",
+        "lantern | The wick lit by itself for a moment. Everything in the drawer looked much older.",
+        "moth | The card's got a new corner turned down. That means someone called while we were out.",
+    ],
+    left_free: [
+        "door | Dear {pet}, / The knob came back. We had been opening that door with a spoon. / You may use it whenever you like. It knows your wall now. / the door that wasn't there",
+        "phone | Dear {pet}, / The dial is back. We can ring out again. We shan't ring you unless it's important. / It was never important. We just like to hear someone pick up.",
+        "eyes | Dear {pet}, / Thank you for the marble. That one had been looking for us. / We've got a very good view of your window from here. We mean that kindly.",
+        "tentacle | Dear {pet}, / The spoon's here. I've stirred with it, down here. It's the first time anything's been stirred. / Everything's a little warmer on one side.",
+        "chair | Dear {pet}, / I am steady again. I hadn't been sitting right for some time. / If anybody needs to sit down, somewhere, suddenly, I'll be there. / the chair that wasn't there",
+        "ghost | Dear {pet}, / You let the boat go. It came all this way on the sill. / It's the only thing I've made that ever came back. Thank you for that.",
+        "letter | Dear ████, / Seal received. The ████ can now be closed. You have been very ████. / We'd like you to know that the blacked-out part said thank you.",
+        "cloud | Dear {pet}, / Plip. / (It's written in water. It dried before the post came, and the paper still says it.)",
+        "figure | Dear {pet}, / I have both hands again. I had been standing in the corner with one in my pocket. It wasn't dignified. / I shall stand very straight now, when I'm there.",
+        "hand | Dear {pet}, / Got your nail back. The board's holding. / Knock if you ever want to. Twice is hello, and three times is, could you move the rug.",
+        "drips | Dear {pet}, / Our drop got home. It came up from under us, which is how it's done. / You'll hear the rest of us going past now and then. It's only us.",
+        "report | To whom it may concern: / One (1) stamp returned, in good order. A note has been made in your favour. / Nobody is sure what that note will do. Do not lose this letter.",
+        "double | Dear {pet}, / My mirror came back. I'd been doing my own face from memory, and it was starting to look like yours. / Thank you. The other one",
+        "sheet | Dear {pet}, / I'm whole again. It's a relief, on stairs. / I've counted my feet and there are the right number. I shan't say what that is.",
+        "coat | Dear {pet}, / The coat buttons up properly now. It stands much better for it. / It's asked me to say that it holds no hard feelings about the hook. Nobody in particular",
+        "lantern | Dear {pet}, / The wick's in. I can see the road again. / I've been walking towards you for a long time. I'm still a long way off. That's as it should be.",
+        "moth | Dear {pet}, / My card has come back to me, and I'm a little embarrassed. One leaves a card so that it's kept. / May I leave it again? I'll call on Thursday, if the lamp is in.",
+    ],
+    left_file: [
+        "door | MEMO. Item received: doorknob, brass. Fitted to a test door in sub-basement 3. The door now opens. We hadn't known about the door. Please advise.",
+        "phone | MEMO. Item received: telephone dial. Assigned to Records. Calls now arrive at Records for persons not yet employed here. All have been polite.",
+        "eyes | MEMO. Item received: marble. Stored in a sealed drawer. The drawer has requested a window. Request approved.",
+        "tentacle | MEMO. Item received: teaspoon, damp. The canteen has borrowed it. Tea break now runs eleven minutes over. No one's complained.",
+        "chair | MEMO. Item received: chair leg. Filed under Furniture, Incomplete. A chair in Accounts has stopped wobbling. No link has been established. None's being sought.",
+        "ghost | MEMO. Item received: paper boat. Unfolded for inspection, per regulations. It could not be refolded. It has refolded itself. Inspector's note reads: fair enough.",
+        "letter | MEMO. Item received: ████ seal. Entered in the ████ register. Clearance of the registering officer has been ████. Thank you for your ████.",
+        "cloud | MEMO. Item received: bottled raindrop. Shelved in Weather (Domestic). Shelf is now slightly damp at 1500 daily. Maintenance has been told not to worry.",
+        "figure | MEMO. Item received: glove, one, long. Measured twice with different results. Average entered. Item now hangs in the east stairwell, where it seems to feel at home.",
+        "hand | MEMO. Item received: nail, warm. Used to hang the staff noticeboard. The board's notices are now answered overnight. Handwriting unknown. Very helpful.",
+        "drips | MEMO. Item received: one drop, airborne. Stored on the ceiling of Room 12. Please don't send more. Room 12 asks if you could send more.",
+        "report | MEMO. Item received: rubber stamp. This office's own. Lost 1961. Your efforts are noted. See attached form. There is no attached form.",
+        "double | MEMO. Item received: mirror, small. Signed for twice, by the same clerk, one second apart. The clerk has been sent home. Both of them.",
+        "sheet | MEMO. Item received: hem. Laundry confirms it's not ours. The laundry's stock has since increased by one sheet. It keeps to itself.",
+        "coat | MEMO. Item received: button. Added to Lost Property. An unclaimed coat in the cloakroom has since done itself up. Staff are hanging their things elsewhere.",
+        "lantern | MEMO. Item received: wick. Placed in storage, unlit. Storage reports seeing a small light a long way down the corridor. Corridor isn't that long.",
+        "moth | MEMO. Item received: calling card. Filed under Correspondence. The Director has been left a card in return. The Director is out. The Director would like that noted.",
+    ],
     ask_letters: [
         "heron | heron | Dear {pet}, a question for you and your person. / A small fish has started coming to the same stone every morning. It looks at me. I am a heron. I know what usually happens next, and so, I think, does it. It comes anyway. / What should I do? I have told nobody else. Bramble",
         "mole | mole | Dear {pet}, an awkward one. / I dug a little too far on Tuesday and came out at the back of my neighbour's larder. Nobody saw. There is a very good cheese. / What's the decent thing? Ask your person, they sound sensible. Yours, from two burrows over",
@@ -5923,7 +6030,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -6234,6 +6341,10 @@ function sanitizeState(raw) {
     { // letters that ask something (asks.js)
         const k = s.ask && typeof s.ask === "object" ? s.ask : {};
         o.ask = { at: num(k.at), log: arr(k.log, 60).map(e => ({ id: str(e.id, 24), from: str(e.from, 80), c: str(e.c, 4), at: num(e.at), ans: num(e.ans), back: num(e.back), tr: num(e.tr) })).filter(e => e.id && e.from) };
+    }
+    { // what anomalies left behind (leftovers.js)
+        const k = s.left && typeof s.left === "object" ? s.left : {};
+        o.left = { at: num(k.at), log: arr(k.log, 40).map(e => ({ k: str(e.k, 12), room: ["room", "garden", "archive"].includes(e.room) ? e.room : "room", x: clamp(num(e.x), 0, 1), y: clamp(num(e.y), 0, 1), at: num(e.at), c: ["keep", "free", "file"].includes(e.c) ? e.c : "", ans: num(e.ans), back: num(e.back), n: num(e.n), st: num(e.st) })).filter(e => e.k) };
     }
     o.news = arr(s.news, 12).map(n => ({ id: str(n.id, 20), k: str(n.k, 8), sub: str(n.sub, 12), v: str(n.v, 60), at: num(n.at), told: num(n.told), res: num(n.res) })).filter(n => n.id && n.k); // (what gets around: news.js)
     o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240), notes: (Array.isArray(s.drawers && s.drawers.notes) ? s.drawers.notes : []).filter(n => n && [0, 1, 2, 3].includes(n.d)).map(n => ({ d: n.d, from: str(n.from, 40), t: noDash(str(n.t, 200)), at: num(n.at) })).filter(n => n.t).slice(-4), postAt: Math.max(0, num(s.drawers && s.drawers.postAt)) }; // (notes: what a tenant who moved out left in its drawer; postAt: up to where former tenants' post has come: garden.js)
@@ -6656,6 +6767,14 @@ function mergeStates(a, b) {
             m.set(x.id, c ? Object.assign({}, w, { at: Math.min(num(c.at), num(x.at)), back: Math.max(num(c.back), num(x.back)), tr: Math.max(num(c.tr), num(x.tr)) }) : x);
         }
         o.ask = { at: Math.max(num(pa.at), num(pb.at)), log: [...m.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-60) };
+    }
+    { // leftovers: the first choice stands; the rest only moves on
+        const m = new Map(), pa = a.left || {}, pb = b.left || {};
+        for (const x of [...(pa.log || []), ...(pb.log || [])]) {
+            const c = m.get(x.k), w = c && (!x.ans || (c.ans && c.ans <= x.ans)) ? c : x;
+            m.set(x.k, c ? Object.assign({}, w, { at: Math.min(num(c.at), num(x.at)), back: Math.max(num(c.back), num(x.back)), n: Math.max(num(c.n), num(x.n)), st: Math.max(num(c.st), num(x.st)) }) : x);
+        }
+        o.left = { at: Math.max(num(pa.at), num(pb.at)), log: [...m.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-40) };
     }
     { // news: from either side; told or heard on either side stays that way
         const m = new Map();
@@ -19153,6 +19272,7 @@ function resolveAnom() {
         return (a.type === "deep" ? deepTap : spaceTap)(a);
     a.resolved = true;
     newsAdd("anom", a.type); // (it gets around: news.js)
+    leftTry(a); // (and it may leave something: leftovers.js)
     sfx("low");
     nextAnom = performance.now() + anomalyInterval();
     const { no, tm } = (S.incidents++, anomStamp());
@@ -20415,6 +20535,177 @@ function askAnswer(e, c) {
     note(`${S.settings.pet} answered ${e.from}.`);
     saveSoon();
     setTimeout(() => say("ask_sent", { penpal: e.from }), 500);
+}
+
+</script>
+<script>/* js/scene/leftovers.js */
+"use strict";
+/*
+ * leftovers.js - What an anomaly leaves behind once Mite has dealt with it (group 66). About one in four does, each kind
+ * once, one waiting at a time and at least LEFT_GAP apart. It lies in the room (tap: a card): Keep it, Let it go or File it.
+ * Each choice goes on by itself: kept, it stirs now and then (left_stir); let go, whoever it belonged to writes
+ * (left_free); filed, the Bureau sends a memo (left_file). All of them end up in the Cabinet (the Leftovers drawer).
+ * Marks (marks.js) are the other way round: what's left by an anomaly nobody dealt with. Hidden while Strangeness is off.
+ * S.left: { at: the last one, log: [{ k, room, x, y, at, c: "" waiting / keep / free / file, ans, back, n: stirs, st }] }
+ * Lines, all "kind | text": left_tap, left_stir, left_free, left_file. {thing} in left_new, left_kept, left_freed, left_filed.
+ */
+const LEFT_ODDS = .25, LEFT_GAP = 3 * 864e5, LEFT_FREE = [5, 12], LEFT_FILE = [2, 5], LEFT_STIR = [9, 16], LEFT_OFFICE = "the Bureau's filing office";
+/* each kind: what it's called, who it goes back to if they aren't in ANOM_WHO, its colours and picture ('.': nothing) */
+const LEFT = {
+    door: { name: "a brass doorknob", pal: { a: "#c9a24a", b: "#f0d890", c: "#6e5222" }, art: ["..aaa..", ".abbaa.", ".abaaa.", ".aaaac.", "..aaa..", "...c...", "..ccc.."] },
+    phone: { name: "a telephone dial", pal: { a: "#2a2a2a", b: "#ece4d0", c: "#c0392b" }, art: ["..aaaaa..", ".aabaaba.", "aabaaaaba", "aaaacaaaa", "abaaaaaba", ".aababa..", "..aaaaa.."] },
+    eyes: { name: "a marble that looks back", pal: { a: "#dfe6e8", b: "#3f7f8a", c: "#141414" }, art: [".aaaa.", "aabbaa", "abccba", "abccba", "aabbaa", ".aaaa."] },
+    tentacle: { name: "a damp teaspoon", pal: { a: "#b8bcc4", b: "#e8ecf0", c: "#5a8a8e" }, art: ["aa.......", "aba......", "abaaaaaaa", "aba....cc", "aa.....c."] },
+    chair: { name: "a chair leg", pal: { a: "#7a4e2c", b: "#a87a4c" }, art: ["ab......", ".ab.....", "..ab....", "...ab...", "....ab..", ".....ab.", "......aa"] },
+    ghost: { name: "a paper boat", pal: { a: "#f4efe4", b: "#b9b2a4" }, art: ["....a....", "...aab...", "..aaabb..", "bbbbbbbbb", ".aaaaaaa.", "..bbbbb.."] },
+    letter: { name: "a black wax seal", who: "the sender of the blacked-out letter", pal: { a: "#141414", b: "#3a3a42" }, art: ["..aaa..", ".aabaa.", "aabbbaa", "aababaa", "aabbbaa", ".aaaaa.", "..aaa.."] },
+    cloud: { name: "a bottled raindrop", pal: { a: "#b5d0e6", b: "#6f8fa6", c: "#8a6a4a" }, art: ["..cc..", ".a..a.", "a....a", "a.b..a", "a.bb.a", ".aaaa."] },
+    figure: { name: "one very long glove", pal: { a: "#3a3038", b: "#5a4e58" }, art: [".aa.", "abaa", "abaa", ".aa.", ".aa.", ".ba.", ".aa.", ".aa.", ".ba.", ".aa."] },
+    hand: { name: "a warm floorboard nail", pal: { a: "#8a8078", b: "#d8783a" }, art: ["aaaaa", "..a..", "..a..", "..b..", "..a..", "..a.."] },
+    drips: { name: "a drop that stays up", pal: { a: "#7fa3ab", b: "#c8e2e8" }, art: ["..a...", ".aaa..", ".aba..", "aabaa.", "aaaaa.", ".aaa."] },
+    report: { name: "a rubber stamp", who: "whoever writes the reports", pal: { a: "#7a4e2c", b: "#a87a4c", c: "#5a5a6a" }, art: ["..aa..", "..ab..", "..ab..", ".aaaa.", "cccccc", "cccccc"] },
+    double: { name: "a small mirror", pal: { a: "#c9a24a", b: "#d6ecf5", c: "#8fb4c4" }, art: [".aaaa.", "abbbca", "abbcba", "abcbba", "acbbba", ".aaaa.", "..aa..", "..aa.."] },
+    sheet: { name: "a scrap of white hem", pal: { a: "#efe9dc", b: "#c4bcae" }, art: ["aaaaaaaaa", "aaaaaaaaa", "bbbbbbbbb", "a.aa.aa.a"] },
+    coat: { name: "a coat button", pal: { a: "#4a3020", b: "#7a5a3a", c: "#1e140e" }, art: [".aaaa.", "abbbba", "abcbca", "abcbca", "abbbba", ".aaaa."] },
+    lantern: { name: "a stub of wick", pal: { a: "#e8d9a8", b: "#2a2420", c: "#e8903a" }, art: ["..c..", ".ccc.", "..b..", ".aaa.", ".aaa.", ".aaa."] },
+    moth: { name: "a calling card, dusted", pal: { a: "#efe6cc", b: "#c8bca0", c: "#7a6a50" }, art: ["aaaaaaaaaa", "aaccaacaaa", "aaaaaaaaab", "aaacacaabb", "aaaaaaabbb"] }
+};
+const leftLog = () => (S.left && S.left.log) || [];
+const leftWaiting = () => leftLog().find(e => !e.c && LEFT[e.k]) || null;
+const leftHere = rm => {
+    const e = strangeness() ? leftWaiting() : null;
+    return e && e.room === rm ? [e] : [];
+};
+const leftWho = k => fillNames(LEFT[k].who || ANOM_WHO[k] || "someone");
+function leftPos(e) {
+    return { x: e.x * W, y: GY + 6 + e.y * (H - GY - 14) * MESS_MAXY };
+}
+function leftBox(e) {
+    const p = leftPos(e), a = LEFT[e.k].art, u = Math.max(1, PX), w = a[0].length * u, h = a.length * u;
+    return { x: p.x - w / 2, y: p.y - h / 2, w, h, cx: p.x };
+}
+/* just dealt with: it may leave something (force: always, for the tests) */
+function leftTry(a, force) {
+    const t = Date.now(), d = LEFT[a.type];
+    if (!S.left || !d || !strangeness() || leftWaiting() || leftLog().some(e => e.k === a.type) || t - num(S.left.at) < LEFT_GAP || (!force && Math.random() >= LEFT_ODDS))
+        return null;
+    const e = { k: a.type, room: a.room || "room", x: rnd(.15, .85), y: Math.random(), at: t, c: "", ans: 0, back: 0, n: 0, st: 0 };
+    S.left.at = t;
+    S.left.log.push(e);
+    note(`Something got left behind: ${d.name}.`);
+    setTimeout(() => say("left_new", { thing: d.name }), 12000); // (after Mite's done telling what happened)
+    saveSoon();
+    return e;
+}
+function drawLeft(dk, room) {
+    for (const e of leftHere(room)) {
+        const d = LEFT[e.k], p = leftPos(e), u = PX, x0 = Math.round((p.x - d.art[0].length * u / 2) / u) * u, y0 = Math.round((p.y - d.art.length * u / 2) / u) * u; // (on the scene's own pixel grid, like the marks)
+        d.art.forEach((row, r) => {
+            for (let c = 0; c < row.length; c++) {
+                const col = d.pal[row[c]];
+                if (col) {
+                    cx.fillStyle = dk ? mix(col, "#1a1620", dk * .5) : col;
+                    cx.fillRect(x0 + c * u, y0 + r * u, u, u);
+                }
+            }
+        });
+    }
+}
+/* its picture, for the card and the Cabinet */
+const leftArtCache = {};
+function leftArt(k) {
+    if (leftArtCache[k])
+        return leftArtCache[k];
+    const d = LEFT[k], cv = document.createElement("canvas"), g = cv.getContext("2d");
+    cv.width = Math.max(...d.art.map(r => r.length));
+    cv.height = d.art.length;
+    d.art.forEach((row, r) => {
+        for (let c = 0; c < row.length; c++)
+            if (d.pal[row[c]]) {
+                g.fillStyle = d.pal[row[c]];
+                g.fillRect(c, r, 1, 1);
+            }
+    });
+    return leftArtCache[k] = cv.toDataURL();
+}
+const leftImg = k => `<img class="leftart" src="${leftArt(k)}" alt="" style="width:${LEFT[k].art[0].length * 4}px">`;
+/* the line for this kind in a pool of "kind | text" */
+function leftLine(key, k) {
+    const ls = pool(key).filter(l => l.includes("|") && l.split("|")[0].trim() === k);
+    if (!ls.length)
+        return "";
+    const raw = choice(ls);
+    lineCount(key, raw);
+    return fillText(raw.split("|").slice(1).join("|").trim(), ctx()).replace(/ \/ /g, "\n\n");
+}
+function leftTap(p, rm) {
+    const e = leftHere(rm).find(x => hitIn(p, leftBox(x), 30));
+    if (!e || !notOnMite(p))
+        return false;
+    const name = LEFT[e.k].name;
+    openRitual(name[0].toUpperCase() + name.slice(1), leftLine("left_tap", e.k) || "That wasn't here before.",
+        `${leftImg(e.k)}<p class="sub">Keep it and it stays with us, in the Cabinet. It may not stay still. Let it go and it goes back to where it came from. File it and the Bureau hears about it.</p>`,
+        [["Keep it", "", () => leftChoose(e, "keep")], ["Let it go", "", () => leftChoose(e, "free")], ["File it", "", () => leftChoose(e, "file")], ["Not yet", "ghost", closeRitual]]);
+    sfx("card");
+    return true;
+}
+function leftChoose(e, c) {
+    closeRitual();
+    if (e.c)
+        return;
+    const p = leftPos(e), name = LEFT[e.k].name;
+    e.c = c;
+    e.ans = e.st = Date.now();
+    sfx("soft");
+    for (let i = 0; i < 8; i++)
+        addP({ type: "spark", room: e.room, x: p.x + rnd(-R * .3, R * .3), y: p.y + rnd(-R * .15, R * .15), vx: rnd(-14, 14), vy: rnd(-24, -6), g: 20, max: .8, col: "#f3e7c8", size: 2 });
+    say({ keep: "left_kept", free: "left_freed", file: "left_filed" }[c], { thing: name });
+    note(`${S.settings.pet} ${{ keep: "kept", free: "let go of", file: "filed" }[c]} ${name}.`);
+    renderContent();
+    saveSoon();
+}
+const leftDue = e => {
+    const w = e.c === "free" ? LEFT_FREE : LEFT_FILE;
+    return e.ans + (w[0] + hash01("left" + e.k) * (w[1] - w[0])) * 864e5;
+};
+const leftStirDue = e => e.st + (LEFT_STIR[0] + hash01("stir" + e.k + e.n) * (LEFT_STIR[1] - LEFT_STIR[0])) * 864e5;
+/* every minute or so (from postTick). True if a letter came (one a day, like all post) */
+function leftTick(t) {
+    if (!S.left || !S.post || !strangeness())
+        return false;
+    const e = leftLog().find(x => x.c === "keep" && t >= leftStirDue(x));
+    if (e && num(S.flags.leftStirDay) !== dayNum()) { // something in the drawer moved (once a day at most)
+        const l = leftLine("left_stir", e.k);
+        e.st = t;
+        e.n++;
+        S.flags.leftStirDay = dayNum();
+        if (l) {
+            note(`${LEFT[e.k].name[0].toUpperCase() + LEFT[e.k].name.slice(1)} stirred, in the Cabinet.`);
+            speak(l);
+        }
+        saveSoon();
+    }
+    const d = leftLog().find(x => (x.c === "free" || x.c === "file") && !x.back && t >= leftDue(x));
+    if (!d || !hasDesk() || num(S.flags.letterInDay) === dayNum())
+        return false;
+    const text = leftLine(d.c === "free" ? "left_free" : "left_file", d.k), from = d.c === "free" ? leftWho(d.k) : LEFT_OFFICE;
+    d.back = t;
+    saveSoon();
+    if (!text)
+        return false;
+    S.flags.letterInDay = dayNum();
+    deliverLetter(from, text, t);
+    note(`A letter came from ${from}. It's in the rack in the nook.`);
+    say("letterarrived", { penpal: from });
+    return true;
+}
+/* the Cabinet's drawer */
+function renderLeftovers() {
+    const el = $("leftList");
+    if (!el)
+        return;
+    const when = t => esc(dmy(new Date(t)));
+    el.innerHTML = leftLog().filter(e => e.c && LEFT[e.k]).slice().reverse().map(e => `<div class="drawer"><span class="cls">${e.c === "keep" ? "Kept" : e.c === "free" ? "Let go" : "Filed"}</span>${leftImg(e.k)}<b>${esc(LEFT[e.k].name)}</b>${e.c === "keep" ? `Since ${when(e.ans)}. ${e.n ? `It has stirred ${e.n === 1 ? "once" : e.n + " times"}.` : "Quiet, so far."}` : e.c === "free" ? `${when(e.ans)}. Back with ${esc(leftWho(e.k))}.` : `${when(e.ans)}. With the Bureau.`}</div>`).join("");
 }
 
 </script>
@@ -24677,6 +24968,8 @@ function postTick(now) {
     if (giveTick(t)) // (and a place that needs glimmers, or its thanks: giving.js)
         return;
     if (otherTick(t)) // (and a note from further in, or Mite's answer: deeper.js)
+        return;
+    if (leftTick(t)) // (and what came of a leftover: leftovers.js)
         return;
     if (askTick(t)) // (and the odd letter that asks something, or what came of it: asks.js)
         return;
@@ -30979,6 +31272,7 @@ function drawParts(dt, layer = "fg") {
 /* the mess on this room's floor */
 function drawMess(dk, room) {
     drawMarks(dk, room); // (what anomalies left: marks.js)
+    drawLeft(dk, room); // (and what they left once dealt with: leftovers.js)
     for (const m of (S.mess || [])) {
         if (messRoom(m) !== room)
             continue;
@@ -31829,6 +32123,7 @@ const TAP_TARGETS = {
         }
     },
     pet: { hit: onMite, act: () => patPet() },
+    left: { tap: (p, rm) => leftTap(p, rm), boxes: rm => leftHere(rm).map(leftBox) }, // what an anomaly left once dealt with (leftovers.js)
     mark: { tap: (p, rm) => markTap(p, rm), boxes: rm => marksHere(rm).map(markBox) }, // what an anomaly left (marks.js): small, so before the rooms' bigger things
     sweep: { tap: (p, rm) => sweepAt(p.x, p.y, rm), boxes: rm => (S.mess || []).filter(m => messRoom(m) === rm).map(m => dotBox(m.x * W, GY + 6 + m.y * (H - GY - 14))) }, // mess on the floor (care.js)
     look: { tap: (p, rm) => lookTap(p, rm), boxes: rm => lookSpots(rm).filter(s => !/rug$/.test(s.pool)) }, // the lamp, the window, the ladder... (looks.js)
@@ -31946,13 +32241,13 @@ const TAP_TARGETS = {
 };
 
 const TAP_ORDER = {
-    room: ["gold", "seasonal", "anomaly", "drifter", "mark", "dream", "origami", "festival", "calendar", "postit", "splurge",
+    room: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "dream", "origami", "festival", "calendar", "postit", "splurge",
         "possum", "cat", "guest", "snail", "vault", "easel", "sill", "jar", "cabinet", "hearth", "wall", "oven", "kettle",
         "books", "scope", "pet", "sweep", "pile", "shelfbox", "look", "floor"],
-    garden: ["gold", "seasonal", "anomaly", "drifter", "mark", "shade", "splurge", "possum", "cat", "snail", "pet", "plants",
+    garden: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "shade", "splurge", "possum", "cat", "snail", "pet", "plants",
         "gramophone", "givejar", "letters", "pinboard", "vase", "flowerbook", "tenants", "drawers", "chair", "desk",
         "postit", "sweep", "look", "floor"],
-    archive: ["archiveSeen", "gold", "seasonal", "anomaly", "drifter", "mark", "journal", "cat", "postit", "sweep", "circle",
+    archive: ["archiveSeen", "gold", "seasonal", "anomaly", "drifter", "left", "mark", "journal", "cat", "postit", "sweep", "circle",
         "possum", "snail", "archsill", "archwall", "keepsakes", "pet", "archbox", "look", "floor"]
 };
 
@@ -33892,6 +34187,7 @@ function renderCabinet() {
         set("cab-origami", `${ORIGAMI.filter(o => oc.has(o.id)).length}/${ORIGAMI.length}`);
         set("cab-fest", `${FESTIVALS.filter(f => S.fest[f.id]).length}`);
         set("cab-glimpses", `${(S.glimpses || []).length}`);
+        set("cab-left", `${leftLog().filter(e => e.c).length} of ${Object.keys(LEFT).length}`);
         set("cab-cards", `${new Set((S.cards || []).map(c => c.k)).size} of ${cardList().length}`);
         set("cab-dreams", `${(S.dreams || []).length}`);
         set("cab-hats", `${HATS.filter(h => h.id && hatHeld(h) && L >= h.lvl).length}/${HATS.filter(hatHeld).length - 1}`);
@@ -33899,6 +34195,7 @@ function renderCabinet() {
     }
     if (typeof renderTapes === "function")
         renderTapes(); // the tapes from the recorder (oral.js)
+    renderLeftovers(); // what anomalies left (leftovers.js)
     renderGallery(); // the paintings and knits (Mite's crafts) are here too
     colSections();
     foldSections();
@@ -33911,6 +34208,7 @@ const COL_HAS = {
     "cab-season": () => Object.values((S.seasonal && S.seasonal.got) || {}).some(Boolean),
     "cab-altered": () => alteredList().some(t => S.altered[t.name]),
     "cab-glimpses": () => (S.glimpses || []).length > 0,
+    "cab-left": () => leftLog().some(e => e.c),
     "cab-cards": () => (S.cards || []).length > 0,
     "cab-origami": () => (S.origami || []).length > 0,
     "cab-fest": () => FESTIVALS.some(f => S.fest[f.id]),
