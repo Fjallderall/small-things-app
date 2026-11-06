@@ -991,6 +991,8 @@ body.pixel{--boxlh:24px;--boxfs:16px}
         <div class="drawers" id="leftList"></div></details>
       <details class="shopsec colsec" data-sec="cab-tree" open><summary><h3>The lantern tree</h3><span class="seccount" id="cnt-cab-tree"></span><span class="secnew" id="new-cab-tree" hidden>new</span></summary><p class="sub">The tree in the nook, and the pears it gave.</p>
         <div class="drawers" id="treeList"></div></details>
+      <details class="shopsec colsec" data-sec="cab-places" open><summary><h3>Places</h3><span class="seccount" id="cnt-cab-places"></span><span class="secnew" id="new-cab-places" hidden>new</span></summary><p class="sub">Where the wagon has stopped, a postcard from each, and where it goes next.</p>
+        <div class="drawers" id="placeList"></div></details>
       <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span><span class="secnew" id="new-cab-glimpses" hidden>new</span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
         <div class="glimpses" id="glimpseList"></div></details>
       <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>The Deck</h3><span class="seccount" id="cnt-cab-cards"></span><span class="secnew" id="new-cab-cards" hidden>new</span></summary><p class="sub">Cards? They come one at a time, in wax-sealed mail.</p>
@@ -1201,6 +1203,18 @@ const POOL_INFO = {
     tree_catsnail: "Cat and snail on the lantern tree: n | C: / S: (from stage n on)",
     tree_possumsnail: "Possum and snail on the lantern tree: n | P: / S: (from stage n on)",
     tree_visitor: "A visitor asks after the lantern tree: n | V: / M: (from stage n on, a sapling or bigger)",
+    place_names: "The places the wagon can move on to: id | Name | what it's like (the ids are fixed: meadow, birch, marsh, moor, lake, orchard, pass, cliff, town)",
+    place_offer: "Mite, on the card that offers two places, a few days before a season turn",
+    place_chosen: "Mite, when you've chosen where to go next ({place} is its name)",
+    place_leave: "Mite, saying goodbye to a place as the wagon moves on: id | line",
+    place_arrive: "Mite, the first thing it says at a new place: id | line",
+    place_idle: "Mite on where the wagon is, now and then: id | line",
+    place_postcard: "The postcard from each place, in the Cabinet: id | the picture, and what's on the back",
+    place_visitors: "Visitors who live near a place (about one visit in three there): id | Name | mouse or rat",
+    place_visitortalk: "A local visitor talking with Mite: id | V: / M:",
+    place_catpossum: "Cat and possum on where the wagon is: id | C: / P:",
+    place_catsnail: "Cat and snail on where the wagon is: id | C: / S:",
+    place_possumsnail: "Possum and snail on where the wagon is: id | P: / S:",
     mystery_after: "The letter that brings the teacup by post, when there's no night door to come through (/ starts a new paragraph)",
     ask_letters: "A letter that asks something: id | who | the letter (who: a word from a pen pal's name, or anom:kind; / starts a new paragraph)",
     ask_answers: "The answers to a letter that asks: id.a (or .b, .c) | what the button says | what Mite writes",
@@ -5066,6 +5080,179 @@ linesFor("The lantern tree", {
 });
 
 </script>
+<script>/* js/content/lines/places.js */
+"use strict";
+/* lines/places.js - The wagon moves on (places.js): where it stops, what Mite says about each place, the postcards, and
+   the local visitors. Every place line starts with the place's id: meadow, birch, marsh, moor, lake, orchard, pass,
+   cliff, town. */
+linesFor("Places", {
+    place_names: [
+        "meadow | the Long Meadow | Green hills that roll on further than anyone has walked. Where the wagon was when all this started.",
+        "birch | Whitebark Wood | A wood of white birches, thin as chalk marks. The trees stand very still and lean in a little when nobody looks.",
+        "marsh | the Salt Marsh | Flat land, wide sky, water in every hollow. Reeds that whisper, and a tide that comes in further than the sea is.",
+        "moor | Hollow Moor | Purple heather, brown hills, three old standing stones. The wind has opinions here.",
+        "lake | Stillwater | A lake so calm it holds the hills upside down. There's a jetty, and nobody seems to own it.",
+        "orchard | Quince End | Rows and rows of fruit trees, planted by someone very patient. In autumn the air tastes of jam.",
+        "pass | Kettle Pass | High up between grey mountains with snow on top. Cold, clear, and the stars come very close.",
+        "cliff | Gullstone | A green cliff over the sea, with a small lighthouse further along. The light goes round all night, for whoever needs it.",
+        "town | Lampwick | The edge of a small town: rooftops, chimneys and a clock tower. At night every window is a little lamp."
+    ],
+    place_offer: [
+        "The season's turning. That's when the wagon moves on. Where shall we go?",
+        "I've been looking at the map. Two places keep catching my eye. You choose.",
+        "Time to move on soon. I've packed nothing, but I've thought about packing. Where to?"
+    ],
+    place_chosen: [
+        "{place} it is. I'll start not packing properly.",
+        "{place}. Good. I've always wanted to see if it's real.",
+        "Right, {place}. I'll tell the snail. It'll want a head start."
+    ],
+    place_leave: [
+        "meadow | Goodbye, hills. Don't move. I mean it. We might come back.",
+        "birch | Goodbye, birches. Stop leaning, I can see you.",
+        "marsh | Goodbye, marsh. I'll miss the reeds. Not the damp. The reeds.",
+        "moor | Goodbye, moor. I tidied the stones. Sorry. I put them back.",
+        "lake | Goodbye, Stillwater. I didn't throw a single stone. Nearly.",
+        "orchard | Goodbye, orchard. I took one quince. It was on the ground. It was asking.",
+        "pass | Goodbye, mountains. Thank you for the stars. Please don't send the cold after us.",
+        "cliff | Goodbye, lighthouse. Keep it going round.",
+        "town | Goodbye, Lampwick. I'll miss the clock. It was wrong in such a friendly way."
+    ],
+    place_arrive: [
+        "meadow | We're back in the hills. The grass grew while we were away. Rude of it, really. Lovely of it, too.",
+        "birch | We've stopped in a birch wood. White trees everywhere. I counted them and then I counted them again and got a different number.",
+        "birch | Whitebark Wood. It's very quiet. The kind of quiet that's listening.",
+        "marsh | We're on the salt marsh. You can see a very long way. The sky's doing most of the work.",
+        "marsh | Salt marsh. Everything smells of the sea, but the sea's nowhere. It went out and forgot to come back.",
+        "moor | Hollow Moor. There are three standing stones on the hill. I've said hello. Two of them seemed fine about it.",
+        "moor | We're on the moor. The heather's purple and the wind is very keen to meet us.",
+        "lake | Stillwater. There's a lake, and the lake has another sky in it. I'm going to sit on the jetty.",
+        "lake | We've stopped by a lake. It's so still I can hear the fish thinking.",
+        "orchard | Quince End. Fruit trees in rows, like a library with leaves.",
+        "orchard | We're in an orchard. Somebody planted all of this, tree by tree. I'd like to shake their hand.",
+        "pass | Kettle Pass. We're very high up. The air's thin. I'm wearing two scarves.",
+        "pass | Mountains! Real ones, with snow on top. The stove is going to be very popular.",
+        "cliff | Gullstone. That's the sea. All of it, right there. There's a lighthouse, too.",
+        "cliff | We're on a cliff by the sea. I've parked us a sensible distance from the edge. Very sensible. Mostly.",
+        "town | Lampwick. A town! There are chimneys, and a clock tower that's five minutes off.",
+        "town | We've stopped at the edge of a town. I can hear a bakery. You can hear a bakery, if you try."
+    ],
+    place_idle: [
+        "meadow | The hills look the same as ever. That's the nice thing about hills.",
+        "meadow | I've been all over and these hills are still the best at being hills.",
+        "birch | One of the birches has an eye-shaped knot. It's just a knot. I've checked twice.",
+        "birch | The birch bark peels off like paper. I wrote a note on a piece. I'm not saying who to.",
+        "marsh | The tide came in last night, all the way to the wheels, and then went politely away.",
+        "marsh | There's a heron out on the marsh who stands on one leg all day. I've tried. It's harder than it looks.",
+        "moor | The stones on the hill were in a different order this morning. Probably the light.",
+        "moor | The wind on the moor sounds like someone humming a song they've forgotten the middle of.",
+        "lake | I skimmed a stone on the lake. It went seven times and then it came back.",
+        "lake | The lake's reflection waves sometimes, even when the lake doesn't.",
+        "orchard | The trees here are very old and very polite. One of them dropped a quince right next to me, not on me.",
+        "orchard | Someone mows between the rows at night. I've never seen them. The grass is always just so.",
+        "pass | The snow on the peaks goes pink in the morning. Nobody told me mountains blush.",
+        "pass | Up here the kettle boils faster. I looked it up. It's true and it's slightly unsettling.",
+        "cliff | The lighthouse light came round and lit up the wagon last night. It felt like being checked on.",
+        "cliff | Gulls. So many gulls. They all have a lot to say and none of it is for us.",
+        "town | The clock tower struck thirteen last night. Just once. Then it went back to normal.",
+        "town | A cat from the town came by and looked at Midnightcat. Midnightcat looked back. Nobody won."
+    ],
+    place_postcard: [
+        "meadow | Rolling green hills under a big sky. On the back: Where we started. Where we can always come back to.",
+        "birch | White birches in a pale wood. On the back: The trees here stand close and keep very still. Nice neighbours, if a bit quiet.",
+        "marsh | Reeds, water and a wide flat sky. On the back: The tide came in to look at us and went out again, satisfied.",
+        "moor | Three standing stones on a purple hill. On the back: We said hello to the stones. One of them is shy.",
+        "lake | A still lake with the hills upside down in it. On the back: Sat on the jetty every evening. The lake held two moons.",
+        "orchard | Rows of fruit trees, a gate, a path. On the back: Quince End. Smelled of jam the whole time.",
+        "pass | Snowy mountains and a very small wagon. On the back: High up and cold. The stars were close enough to dust.",
+        "cliff | A green cliff, the sea and a little lighthouse. On the back: The light went round all night. We never felt lost once.",
+        "town | Rooftops and a clock tower at dusk. On the back: Lampwick. The clock is wrong and nobody minds."
+    ],
+    place_visitors: [
+        "birch | Peel | mouse",
+        "birch | Old Silverbark | rat",
+        "birch | Twiggin | mouse",
+        "marsh | Brine | rat",
+        "marsh | Reedlet | mouse",
+        "marsh | Sorrel Mudd | mouse",
+        "moor | Heath | mouse",
+        "moor | Granny Cairn | rat",
+        "moor | Bracken | mouse",
+        "lake | Ripple | mouse",
+        "lake | Captain Jetty | rat",
+        "lake | Minnow | mouse",
+        "orchard | Pippin | mouse",
+        "orchard | Russet | rat",
+        "orchard | Quincey | mouse",
+        "pass | Flint | rat",
+        "pass | Snowberry | mouse",
+        "pass | Old Scree | rat",
+        "cliff | Spindrift | mouse",
+        "cliff | Gull-Ward | rat",
+        "cliff | Kelp | mouse",
+        "town | Cobble | rat",
+        "town | Wick | mouse",
+        "town | Mrs Chimney | mouse"
+    ],
+    place_visitortalk: [
+        "birch | V: You're new in the wood. / M: Just for the season. / V: The trees noticed. They don't mind. / M: That's good to know. / V: Mostly.",
+        "birch | V: Don't count the birches. / M: Why not? / V: You get a different number every time, and then you start to wonder. / M: I already did. / V: Ah.",
+        "birch | V: I brought you some bark. It's for writing on. / M: Thank you. What should I write? / V: Something kind. The wood reads everything.",
+        "marsh | V: Mind the tide. / M: The sea's miles away. / V: It is. The tide isn't. / M: I'll mind it.",
+        "marsh | V: Heard you've got a stove. Dry socks? / M: Help yourself, {visitor}. / V: I've had wet feet since spring. / M: There's {treat}, too.",
+        "marsh | V: You see the heron? / M: On one leg, all day. / V: She's been on that leg for years. Saving the other one for something.",
+        "moor | V: Did you say hello to the stones? / M: I did. / V: All three? / M: Yes. / V: Good. The middle one sulks.",
+        "moor | V: Windy, isn't it. / M: Very. / V: It's always windy. We stopped mentioning it. Then it got lonely. / M: So you mention it again? / V: Every day.",
+        "moor | V: Lovely bit of heather on your wheels. / M: It came with us from the hill. / V: Then it likes you. Heather's choosy.",
+        "lake | V: Don't skim stones on Stillwater. / M: Why not? / V: They come back. / M: ...Yes. I noticed.",
+        "lake | V: Fine evening for the jetty. / M: Whose jetty is it? / V: Nobody's. Everybody's. Yours, while you're sitting on it.",
+        "lake | V: I swam across the lake once. / M: All the way? / V: Twice, technically. The reflection counts.",
+        "orchard | V: Welcome to Quince End. Have a quince. / M: Have some {treat}. / V: A fair swap.",
+        "orchard | V: Someone mows between the rows at night. / M: Who? / V: We don't ask. They've been doing it longer than there have been trees.",
+        "orchard | V: You picked that quince off the ground? / M: It was asking. / V: Good. The ones on the ground are the ones that want to go somewhere.",
+        "pass | V: You came up the pass in that? / M: It's a good {wagon}. / V: It must be. Most don't. / M: Have some {treat}. / V: That too.",
+        "pass | V: Cold up here. / M: Have a seat by the stove. / V: I'll have a seat by the stove forever, if you're not careful.",
+        "pass | V: The stars are close tonight. / M: Close enough to touch. / V: Don't. They're warmer than they look.",
+        "cliff | V: You're parked near the edge. / M: A sensible distance. / V: Everyone says that. / M: Do they fall? / V: Never. The cliff doesn't let them.",
+        "cliff | V: Have you met the lighthouse keeper? / M: No. / V: Nor has anyone. Light still goes round, though.",
+        "cliff | V: The gulls say you've got {treat}. / M: The gulls are right. / V: They usually are. It's their only good quality.",
+        "town | V: You're the wagon at the end of the lane! / M: That's us. / V: The whole street's talking about you. / M: Good things? / V: Curious things.",
+        "town | V: Don't mind the clock tower. / M: It struck thirteen. / V: Only when it's pleased about something.",
+        "town | V: I live over the bakery. / M: That must smell wonderful. / V: Every morning. I've never once been on time for anything."
+    ],
+    place_catpossum: [
+        "birch | C: The trees are watching. / P: Trees don't watch. / C: These do. / P: ...I'll sleep facing the other way.",
+        "marsh | P: Everything's damp. / C: Everything's always damp, for you. / P: Damper, then.",
+        "moor | C: The stones moved. / P: Stones don't move. / C: I watched one. / P: Which way? / C: Closer.",
+        "lake | P: There's a whole other sky in the lake. / C: Don't fall in it. / P: Which one?",
+        "orchard | P: Fruit. On the ground. Everywhere. / C: You've eaten three. / P: Four. I'm pacing myself.",
+        "pass | C: My whiskers are cold. / P: Mine too. / C: You don't have whiskers. / P: Everything I have is cold.",
+        "cliff | C: The gulls are very loud. / P: You could chase them. / C: I could. I'm choosing peace.",
+        "town | C: There's a town cat. / P: Is she nice? / C: She's fine. / P: You said that with your ears back."
+    ],
+    place_catsnail: [
+        "birch | C: Do you like the wood? / S: The bark is very good to climb. Slowly.",
+        "marsh | S: I love it here. / C: Of course you do. It's wet.",
+        "moor | S: I went to see the stones. / C: All the way up there? / S: I'm still on my way back.",
+        "lake | S: The jetty is the perfect length. / C: For what? / S: For one whole day.",
+        "orchard | S: I've found a windfall pear. / C: That's a quince. / S: It's mine, whatever it is.",
+        "pass | C: You're very still. / S: I'm cold. / C: You're always still. / S: I'm colder than usual, then.",
+        "cliff | C: Don't go near the edge. / S: I'll be there in about a week. / C: That's what worries me.",
+        "town | S: I went to the town. / C: All the way? / S: Halfway. It was very nice, halfway."
+    ],
+    place_possumsnail: [
+        "birch | P: The birches peel. / S: So do I, a little. / P: Is that normal? / S: It's a snail thing.",
+        "marsh | P: I found a crab. / S: Where is it now? / P: It found somewhere else.",
+        "moor | P: It's windy. / S: I've noticed. I've moved backwards twice.",
+        "lake | S: I saw a fish. / P: Did it see you? / S: It looked surprised.",
+        "orchard | P: I live here now. / S: We're leaving in spring. / P: Then I'll live here until spring.",
+        "pass | P: Up here the snow squeaks. / S: Everything squeaks when you're small enough.",
+        "cliff | P: There's a light that goes round. / S: Like a very slow possum. / P: Hey.",
+        "town | P: The town has bins. / S: Don't. / P: Lovely, full bins. / S: Don't."
+    ]
+});
+
+</script>
 <script>/* js/content/lines/collections.js */
 "use strict";
 /* lines/collections.js - Things kept and found, one per line: trinkets, books, brews, bakes, flowers, tapes, names. */
@@ -6218,7 +6405,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, myst: { at: 0, n: 0, l8: 0, gift: 0, via: "" }, tree: { due: 0, seed: 0, n: 0, at: 0, g: 0, last: 0, w: 0, wn: 0, st: [], told: 0, thirst: 0, keep: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, myst: { at: 0, n: 0, l8: 0, gift: 0, via: "" }, tree: { due: 0, seed: 0, n: 0, at: 0, g: 0, last: 0, w: 0, wn: 0, st: [], told: 0, thirst: 0, keep: [] }, place: { at: "", since: 0, turn: "", off: null, told: 0, remind: 0, log: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -6535,6 +6722,13 @@ function sanitizeState(raw) {
         o.left = { at: num(k.at), log: arr(k.log, 40).map(e => ({ k: str(e.k, 12), room: ["room", "garden", "archive"].includes(e.room) ? e.room : "room", x: clamp(num(e.x), 0, 1), y: clamp(num(e.y), 0, 1), at: num(e.at), c: ["keep", "free", "file"].includes(e.c) ? e.c : "", ans: num(e.ans), back: num(e.back), n: num(e.n), st: num(e.st) })).filter(e => e.k) };
     }
     o.news = arr(s.news, 12).map(n => ({ id: str(n.id, 20), k: str(n.k, 8), sub: str(n.sub, 12), v: str(n.v, 60), at: num(n.at), told: num(n.told), res: num(n.res) })).filter(n => n.id && n.k); // (what gets around: news.js)
+    { // the wagon moves on (places.js)
+        const k = s.place && typeof s.place === "object" ? s.place : {}, id = x => PLACE_IDS.includes(x) ? x : "", day = x => /^\d{4}-\d{2}-\d{2}$/.test(x) ? x : "";
+        const f = k.off && typeof k.off === "object" && id(k.off.a) && id(k.off.b) && day(k.off.turn) ? k.off : null;
+        o.place = { at: id(k.at), since: num(k.since), turn: day(k.turn), told: num(k.told), remind: num(k.remind),
+            off: f ? { a: f.a, b: f.b, turn: f.turn, at: num(f.at), pick: id(f.pick), shown: f.shown ? 1 : 0 } : null,
+            log: (Array.isArray(k.log) ? k.log : []).filter(x => x && typeof x === "object" && id(x.p)).slice(-200).map(x => ({ p: x.p, at: num(x.at) })) };
+    }
     { // the lantern tree (tree.js)
         const k = s.tree && typeof s.tree === "object" ? s.tree : {};
         o.tree = { due: num(k.due), seed: num(k.seed), n: clamp(Math.round(num(k.n)), 0, 9999), at: num(k.at), g: clamp(num(k.g), 0, 175), last: num(k.last), w: num(k.w), wn: clamp(Math.round(num(k.wn)), 0, 99999),
@@ -6973,6 +7167,19 @@ function mergeStates(a, b) {
             m.set(x.k, c ? Object.assign({}, w, { at: Math.min(num(c.at), num(x.at)), back: Math.max(num(c.back), num(x.back)), n: Math.max(num(c.n), num(x.n)), st: Math.max(num(c.st), num(x.st)) }) : x);
         }
         o.left = { at: Math.max(num(pa.at), num(pb.at)), log: [...m.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-40) };
+    }
+    { // the wagon moves on: the side that has moved further (the later turn, then the later arrival) wins; a pick made on either side is kept
+        const pa = a.place || {}, pb = b.place || {}, w = (String(pb.turn || "") > String(pa.turn || "") || (pb.turn === pa.turn && num(pb.since) > num(pa.since))) ? pb : pa;
+        const log = new Map();
+        for (const x of [...(pa.log || []), ...(pb.log || [])])
+            if (x && !log.has(x.p + ":" + Math.round(num(x.at) / 864e5)))
+                log.set(x.p + ":" + Math.round(num(x.at) / 864e5), x);
+        let off = w.off || null;
+        const other = w === pa ? pb : pa;
+        if (off && other.off && other.off.turn === off.turn && !off.pick && other.off.pick)
+            off = Object.assign({}, off, { pick: other.off.pick });
+        o.place = Object.assign({}, w, { off, told: Math.max(num(pa.told), num(pb.told)), remind: Math.max(num(pa.remind), num(pb.remind)),
+            log: [...log.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-200) });
     }
     { // the lantern tree: the further-grown tree (later tree, then more days grown) wins; the pears picked on either side are kept
         const pa = a.tree || {}, pb = b.tree || {}, w = (num(pb.n) > num(pa.n) || (num(pb.n) === num(pa.n) && num(pb.g) > num(pa.g))) ? pb : pa;
@@ -9422,7 +9629,7 @@ function wxName(w) {
 }
 function travelling() {
     const d = new Date(), h = d.getHours();
-    return homeKind() === "wagon" && !S.lightsOut && h >= 10 && h < 16 && hash01("trip" + dayKey(d)) < .35;
+    return !S.lightsOut && ((homeKind() === "wagon" && h >= 10 && h < 16 && hash01("trip" + dayKey(d)) < .35) || (h >= 9 && h < 16 && placeMoving(d)));
 }
 function sunAmt(sky) {
     const w = weather();
@@ -14099,20 +14306,7 @@ function drawWindow(rm, sky, d, hf, tsec, dt, dk, arr = wparts, shutters = true)
     }
     else
         drawMoon(wx + wr * .35, wy - wr * .4, wr * .15, moonPhase(d));
-    cx.fillStyle = mix("#7aa36a", "#1f2b2a", sky.dark);
-    cx.beginPath();
-    cx.moveTo(wx - wr, wy + wr);
-    for (let x = -1; x <= 1.001; x += .1)
-        cx.lineTo(wx + x * wr, wy + wr * .45 - Math.sin(x * 3 + 1 + TRV * .6) * wr * .12);
-    cx.lineTo(wx + wr, wy + wr);
-    cx.fill();
-    cx.fillStyle = mix("#5f8a4e", "#18221c", sky.dark);
-    cx.beginPath();
-    cx.moveTo(wx - wr, wy + wr);
-    for (let x = -1; x <= 1.001; x += .1)
-        cx.lineTo(wx + x * wr, wy + wr * .7 - Math.sin(x * 4 + 2 + TRV * 1.4) * wr * .07);
-    cx.lineTo(wx + wr, wy + wr);
-    cx.fill();
+    drawPlaceLand(wx, wy, wr, sky, tsec); // the land outside: wherever the wagon is (places.js)
     if (W8.cloud > .12) {
         // clouds drift across, greyer when it rains
         const n = Math.max(1, Math.round(W8.cloud * 6)), grey = W8.rain ? .55 : .25 * W8.cloud;
@@ -18382,7 +18576,7 @@ function animalTalkTick(now) {
     }
     const pr = choice(pairs), key = pr.map(a => a.k).sort().join("");
     const old = Math.random() < .06 ? oldTenant() : null; // (now and then about someone who used to rent a drawer: garden.js)
-    const line = (Math.random() < NEWS_RES_ODDS && newsResident(key)) || (Math.random() < .06 && mystResident(key)) || (Math.random() < .05 && treeResident(key)) || (old && compose({ CP: "tenant_catpossum", CS: "tenant_catsnail", PS: "tenant_possumsnail" }[key], { label: old })) || compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
+    const line = (Math.random() < NEWS_RES_ODDS && newsResident(key)) || (Math.random() < .06 && mystResident(key)) || (Math.random() < .05 && treeResident(key)) || (Math.random() < .05 && placeResident(key)) || (old && compose({ CP: "tenant_catpossum", CS: "tenant_catsnail", PS: "tenant_possumsnail" }[key], { label: old })) || compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
     if (!line)
         return;
     // everyone involved stays put and turns to the other
@@ -18491,12 +18685,12 @@ function spawnRaccoon() {
 function spawnGuest() {
     const taken = namesTaken("guest"), all = pool("visitors").map(x => x.split("|").map(y => y.trim())).filter(x => x[0]);
     const free = all.filter(x => !taken.has(x[0].toLowerCase())), list = free.length ? free : all; // (not a name someone else has: group 36)
-    const pick = list.length ? choice(list) : ["Pip", "mouse"];
+    const loc = placeLocal(), pick = loc || (list.length ? choice(list) : ["Pip", "mouse"]); // (now and then someone local to where the wagon is: places.js)
     const kind = /rat/i.test(pick[1] || "") ? "rat" : "mouse", side = Math.random() < .5 ? -1 : 1;
     let tx = W * rnd(.28, .72);
     for (let k = 0; k < 8 && Math.abs(tx - pet.x) < R * 2; k++)
         tx = W * rnd(.22, .78);
-    guest = { name: pick[0].slice(0, 30), kind, s: 0, x: side < 0 ? -R : W + R, tx, dir: -side, ph: "in", t: 0, treat: guestTreat(), eaten: 0, treatOut: false, tside: 1, scarf: guestScarf(pick[0]), z: 0, tz: Math.random() < .5 ? floorDepth() : 0 };
+    guest = { name: pick[0].slice(0, 30), kind, s: 0, x: side < 0 ? -R : W + R, tx, dir: -side, ph: "in", t: 0, treat: guestTreat(), eaten: 0, treatOut: false, tside: 1, scarf: guestScarf(pick[0]), z: 0, tz: Math.random() < .5 ? floorDepth() : 0, local: loc ? placeNow() : "" };
     guest.s = guestSize(guest);
     S.guestAt = Date.now();
     saveSoon();
@@ -19108,7 +19302,7 @@ function drawRaccoon(g, now) {
     }
 }
 function pickVisitorLine() {
-    return askVisitLine() || newsLine() || (Math.random() < .12 && treeVisitLine()) || convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
+    return askVisitLine() || placeVisitLine(guest) || newsLine() || (Math.random() < .12 && treeVisitLine()) || convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
 }
 
 </script>
@@ -21403,6 +21597,359 @@ function renderTree() {
     const T = S.tree, when = x => esc(dmy(new Date(x))), s = treeStage();
     const now = treeOn() ? `<div class="drawer"><b>Tree no. ${num(T.n)}, ${esc(TREE_STAGES[s])}</b>Planted ${when(T.at)}. ${(T.st || []).map((x, i) => i && num(x) ? `${TREE_STAGES[i][0].toUpperCase() + TREE_STAGES[i].slice(1)} ${when(x)}.` : "").filter(Boolean).join(" ")} Watered on ${num(T.wn)} day${num(T.wn) === 1 ? "" : "s"}.</div>` : "";
     el.innerHTML = now + (T.keep || []).slice().reverse().map(k => `<div class="drawer"><b>${esc(TREE_PEAR)}, from tree no. ${num(k.n)}</b>Picked ${when(k.at)}. It still glows a little, after dark. The tree it grew on is outside the plant window.</div>`).join("");
+}
+
+</script>
+<script>/* js/scene/places.js */
+"use strict";
+/*
+ * places.js - The wagon moves on (group 67, item 3). Four times a year, at each season turn (the equinoxes and
+ * solstices, the day the seasonal shop turns), the wagon goes somewhere new. Five days before, a card offers two
+ * places: you pick one, or Mite does if you don't. On the turn day the wagon travels all day (0900-1600, the hills
+ * scroll past), and from then on the windows show the new place and about one visit in three is a local mouse or rat
+ * with its own name and talk. Mite says goodbye to the old place and hello to the new, remarks on it now and then; the
+ * residents have something to say about it. Each place it arrives at sends a postcard to the Cabinet.
+ * The wagon and the bag move; the burrow stays put (nothing happens there, and its window keeps the old hills).
+ * The first place is the Long Meadow (the old hills). A new game waits for the next turn at least two weeks on.
+ * S.place: { at: the place id ("" = the meadow), since: when it got there, turn: the last turn day dealt with
+ *   ("YYYY-MM-DD"), off: { a, b, turn, at, pick, shown } or null, told: when Mite said hello there, remind: the day Mite
+ *   last nudged about an open offer, log: [{ p, at }] the arrivals (the postcards) }
+ * Pools: place_names "id | Name | about", place_offer, place_chosen ({place}), place_leave / place_arrive / place_idle /
+ *   place_postcard "id | ...", place_visitors "id | Name | mouse or rat", place_visitortalk "id | V: / M:",
+ *   place_catpossum / place_catsnail / place_possumsnail "id | C: / P:".
+ */
+const PLACE_IDS = ["meadow", "birch", "marsh", "moor", "lake", "orchard", "pass", "cliff", "town"];
+const PLACE_OFFER = 5 * 864e5, PLACE_FIRST = 14 * 864e5, PLACE_LOCAL = 1 / 3, PLACE_IDLE = .05;
+const placeOn = () => homeKind() !== "burrow";
+const placeNow = () => (S.place && PLACE_IDS.includes(S.place.at) && S.place.at) || "meadow";
+/* "id | rest" lines of a pool, for one place */
+const placeLines = (key, id) => pool(key).map(raw => {
+    const i = String(raw).indexOf("|");
+    return i < 0 ? null : { k: String(raw).slice(0, i).trim(), rest: String(raw).slice(i + 1).trim(), raw: String(raw) };
+}).filter(x => x && x.k === id && x.rest);
+function placeInfo(id) {
+    const l = placeLines("place_names", id)[0], p = l ? l.rest.split("|").map(s => s.trim()) : [];
+    return { id, name: p[0] || id, about: p.slice(1).join(" | ") };
+}
+function placeSay(key, id, c) {
+    const ls = placeLines(key, id || placeNow());
+    if (!ls.length)
+        return null;
+    const l = choice(ls);
+    lineCount(key, l.raw);
+    return fillText(l.rest.replace(/\{place\}/g, c || ""), ctx());
+}
+/* the next season turn on or after a day ("YYYY-MM-DD") */
+function placeTurnFrom(day) {
+    const y = +day.slice(0, 4);
+    for (const yy of [y, y + 1])
+        for (const [md] of SEASON_START) {
+            const k = `${yy}-${md}`;
+            if (k >= day)
+                return k;
+        }
+    return `${y + 1}-${SEASON_START[0][0]}`;
+}
+const placeDayT = k => new Date(+k.slice(0, 4), +k.slice(5, 7) - 1, +k.slice(8, 10)).getTime();
+/* the two places on offer: not where we are, the ones not seen yet first, in an order of this game's own */
+function placePair(turn) {
+    const seen = new Set((S.place.log || []).map(e => e.p)), now = placeNow();
+    const rest = PLACE_IDS.filter(p => p !== now).sort((a, b) => (seen.has(a) - seen.has(b)) || hash01(a + turn + S.created) - hash01(b + turn + S.created));
+    return [rest[0], rest[1]];
+}
+/* the moving day: arrived today, so the land goes by until 1600 (weather.js travelling()) */
+const placeMoving = (d = new Date()) => placeOn() && !!S.place && num(S.place.since) > 0 && dayKey(new Date(num(S.place.since))) === dayKey(d) && S.place.turn === dayKey(d);
+/* the turn after a turn day that's been dealt with */
+const placeNext = turn => placeTurnFrom(dayKey(new Date(placeDayT(turn) + 36 * 36e5)));
+/* every minute or so (from postTick) */
+function placeTick(t) {
+    if (!S.place || !placeOn())
+        return false;
+    const P = S.place, now = new Date(t), today = dayKey(now);
+    if (!P.turn) { // (the clock starts now: a turn less than two weeks away is let go by)
+        const nx = placeTurnFrom(today);
+        P.turn = placeDayT(nx) - t < PLACE_FIRST ? nx : dayKey(new Date(t - 864e5));
+        saveSoon();
+        return false;
+    }
+    if (P.off) { // the turn day has come (from 0900), or gone by while nobody looked: move on
+        if (today > P.off.turn || (today === P.off.turn && now.getHours() >= 9))
+            placeMove(P.off.pick || P.off.a, P.off.turn, t);
+        return false;
+    }
+    const next = placeNext(P.turn);
+    if (t >= placeDayT(next) - PLACE_OFFER) { // five days ahead: the offer
+        const [a, b] = placePair(next);
+        P.off = { a, b, turn: next, at: t, pick: "", shown: 0 };
+        if (today < next) {
+            note(`The season turns on ${dmy(new Date(placeDayT(next)))}, and the ${homeKind() === "bag" ? "bag" : "wagon"} moves on. Choose where: ${placeInfo(a).name} or ${placeInfo(b).name}.`);
+            placeCardSoon(4000);
+        }
+        saveSoon();
+    }
+    return false;
+}
+function placeMove(id, turn, t) {
+    const P = S.place, from = placeNow();
+    if (!PLACE_IDS.includes(id) || id === from)
+        id = placePair(turn)[0];
+    Object.assign(P, { at: id, since: t, turn, off: null, told: 0 });
+    P.log = (P.log || []).concat({ p: id, at: t }).slice(-200);
+    const l = placeSay("place_leave", from);
+    if (l)
+        setTimeout(() => speak(l), 1500);
+    note(`The ${homeKind() === "bag" ? "bag" : "wagon"} moved on to ${placeInfo(id).name}. A postcard from there is in the Cabinet.`);
+    renderContent();
+    saveSoon();
+}
+/* the card: two places, and Mite's word on it */
+let placeCardTimer = 0;
+function placeCardSoon(delay) {
+    clearTimeout(placeCardTimer);
+    placeCardTimer = setTimeout(function tryCard() {
+        if (!S.place || !S.place.off || S.place.off.pick || S.place.off.shown)
+            return;
+        if (!booted || !$("ritual").hidden || talkHeld() || floorTaken() || !$("desk").hidden) {
+            placeCardTimer = setTimeout(tryCard, 3000);
+            return;
+        }
+        S.place.off.shown = 1;
+        saveSoon();
+        placeCard();
+    }, delay || 4000);
+}
+function placeCard() {
+    const O = S.place && S.place.off;
+    if (!O)
+        return false;
+    const opts = [O.a, O.b].map(placeInfo), when = dmy(new Date(placeDayT(O.turn)));
+    const body = `<p class="sub">We go on ${esc(when)}, when the season turns.${O.pick ? ` You chose ${esc(placeInfo(O.pick).name)}; you can still change your mind.` : " If you don't choose, I will."}</p>` +
+        opts.map(o => `<div class="drawer"><b>${esc(o.name)}</b>${esc(o.about)}</div>`).join("");
+    const pick = id => () => {
+        S.place.off.pick = id;
+        closeRitual();
+        const n = placeInfo(id).name, l = pool("place_chosen").length ? choice(pool("place_chosen")) : "{place} it is.";
+        lineCount("place_chosen", l);
+        setTimeout(() => speak(fillText(l.replace(/\{place\}/g, n), ctx())), 500);
+        renderContent();
+        saveSoon();
+    };
+    openRitual("Where next?", pool("place_offer").length ? fillText(choice(pool("place_offer")), ctx()) : "Where shall we go?", body,
+        [[opts[0].name, O.pick === O.a ? "amber" : "", pick(O.a)], [opts[1].name, O.pick === O.b ? "amber" : "", pick(O.b)], ["Not yet", "ghost", closeRitual]]);
+    sfx("card");
+    return true;
+}
+/* Mite, now and then (idle remarks): hello to a new place first (not while travelling), else about where we are */
+function placeIdle() {
+    if (!S.place || !placeOn() || travelling())
+        return false;
+    const P = S.place;
+    if (P.off && !P.off.pick && num(P.remind) !== dayNum()) { // (the offer still open: once a day, a nudge)
+        P.remind = dayNum();
+        saveSoon();
+        speak(`We move on ${dmy(new Date(placeDayT(P.off.turn)))}. ${placeInfo(P.off.a).name} or ${placeInfo(P.off.b).name}? The choice is in the Cabinet, under Places.`);
+        return true;
+    }
+    if (num(P.since) && num(P.told) < num(P.since)) {
+        P.told = Date.now();
+        saveSoon();
+        const l = placeSay("place_arrive");
+        if (l) {
+            speak(l);
+            return true;
+        }
+    }
+    if (Math.random() >= PLACE_IDLE || !(P.log || []).length)
+        return false;
+    const l = placeSay("place_idle");
+    if (!l)
+        return false;
+    speak(l);
+    return true;
+}
+/* two residents, now and then (conversations.js): a line about where we are, or null (not in the old meadow) */
+function placeResident(key) {
+    return placeOn() && placeNow() !== "meadow" ? placeSay({ CP: "place_catpossum", CS: "place_catsnail", PS: "place_possumsnail" }[key]) : null;
+}
+/* a local visitor (visitors.js spawnGuest): [name, kind] or null */
+function placeLocal() {
+    if (!placeOn() || placeNow() === "meadow" || Math.random() >= PLACE_LOCAL)
+        return null;
+    const ls = placeLines("place_visitors", placeNow()).map(l => l.rest.split("|").map(s => s.trim())).filter(x => x[0]);
+    return ls.length ? choice(ls) : null;
+}
+function placeVisitLine(g) {
+    return g && g.local && g.local === placeNow() && Math.random() < .6 ? placeSay("place_visitortalk", g.local) : null;
+}
+/* ---------- the view: the land outside the round windows (room.js drawWindow), for each place ---------- */
+const PLACE_LAND = { // far and near land, by day (palette colours: canvas.js PAL)
+    meadow: ["#73a24f", "#4f7d3c"], birch: ["#365a2c", "#4f7d3c"], marsh: ["#73a24f", "#a0c86a"], moor: ["#6b4a84", "#74503a"],
+    lake: ["#365a2c", "#4f7d3c"], orchard: ["#4f7d3c", "#73a24f"], pass: ["#8c8a80", "#55392a"], cliff: ["#33456e", "#4f7d3c"], town: ["#365a2c", "#3a281d"]
+};
+const PLACE_NIGHT = ["#16231a", "#10142a"];
+/* x of a thing that scrolls by while travelling, wrapped over the window */
+const placeScroll = (x0, sp, wx, wr) => wx - wr * 1.3 + (((x0 - TRV * sp) % (wr * 2.6)) + wr * 2.6) % (wr * 2.6);
+function drawPlaceLand(wx, wy, wr, sky, tsec) {
+    const p = placeOn() ? placeNow() : "meadow", nd = sky.dark, n = c => mix(c, p === "cliff" || p === "lake" || p === "marsh" ? PLACE_NIGHT[1] : PLACE_NIGHT[0], nd);
+    const [far, near] = PLACE_LAND[p] || PLACE_LAND.meadow, u = Math.max(1, PX);
+    const band = (col, base, amp, f, ph, sp) => {
+        cx.fillStyle = col;
+        cx.beginPath();
+        cx.moveTo(wx - wr, wy + wr);
+        for (let x = -1; x <= 1.001; x += .1)
+            cx.lineTo(wx + x * wr, wy + wr * base - Math.sin(x * f + ph + TRV * sp) * wr * amp);
+        cx.lineTo(wx + wr, wy + wr);
+        cx.fill();
+    };
+    if (p === "meadow") {
+        band(mix("#7aa36a", "#1f2b2a", nd), .45, .12, 3, 1, .6);
+        band(mix("#5f8a4e", "#18221c", nd), .7, .07, 4, 2, 1.4);
+        return;
+    }
+    if (p === "pass") { // grey peaks with snow, then rocky ground
+        for (let i = 0; i < 3; i++) {
+            const x = placeScroll(wr * (.4 + i * .95), wr * .25, wx, wr), h = wr * (.75 + hash01("pk" + i) * .35), b = wy + wr * .55;
+            cx.fillStyle = n(i % 2 ? "#8c8a80" : "#c9c4b4");
+            cx.beginPath(); cx.moveTo(x - wr * .6, b); cx.lineTo(x, b - h); cx.lineTo(x + wr * .6, b); cx.fill();
+            cx.fillStyle = n("#fbf1d9");
+            cx.beginPath(); cx.moveTo(x - wr * .16, b - h + wr * .27); cx.lineTo(x, b - h); cx.lineTo(x + wr * .16, b - h + wr * .27); cx.fill();
+        }
+        band(n(near), .62, .05, 6, 1, 1.4);
+        return;
+    }
+    if (p === "cliff" || p === "lake" || p === "marsh") { // water: a band of it, with light on it
+        const top = p === "cliff" ? .15 : p === "lake" ? .35 : .5;
+        if (p !== "cliff") // (the far shore, behind the water)
+            band(n(far), p === "lake" ? .3 : .52, p === "lake" ? .1 : .02, p === "lake" ? 2.5 : 5, .5, .4);
+        cx.fillStyle = n(p === "cliff" ? "#33456e" : "#52709c");
+        cx.fillRect(wx - wr, wy + wr * top, wr * 2, wr * (1 - top));
+        cx.fillStyle = n(p === "cliff" ? "#52709c" : "#b5d0e6");
+        for (let i = 0; i < 7; i++) {
+            const y = wy + wr * (top + .05 + i * .07), x = wx - wr + ((i * 37 + tsec * (reduced ? 0 : 3 + i)) % (wr * 2));
+            cx.fillRect(Math.round(x / u) * u, Math.round(y / u) * u, wr * (.15 + (i % 3) * .06), u);
+        }
+    }
+    else
+        band(n(far), p === "moor" ? .3 : .4, p === "moor" ? .06 : .1, p === "moor" ? 2 : 3, .5, .5);
+    if (p === "cliff") { // the lighthouse along the shore, then the cliff top
+        const lx = placeScroll(wr * 1.9, wr * .3, wx, wr), ly = wy + wr * .2;
+        cx.fillStyle = n("#8c8a80");
+        cx.fillRect(lx - wr * .2, ly - wr * .02, wr * .4, wr * .08);
+        cx.fillStyle = n("#fbf1d9");
+        cx.fillRect(lx - wr * .05, ly - wr * .3, wr * .1, wr * .3);
+        cx.fillStyle = n("#8c3a2c");
+        cx.fillRect(lx - wr * .05, ly - wr * .2, wr * .1, wr * .05);
+        cx.fillRect(lx - wr * .06, ly - wr * .36, wr * .12, wr * .06);
+        if (nd > .3) { // the light, going round
+            const a = (Math.sin(tsec * (reduced ? 0 : 1.2)) + 1) / 2;
+            cx.fillStyle = `rgba(242,193,78,${.4 + .6 * a})`;
+            cx.fillRect(lx - wr * .04, ly - wr * .34, wr * .08, wr * .04);
+            cx.fillStyle = `rgba(255,240,184,${.18 * a * nd})`;
+            cx.beginPath(); cx.moveTo(lx, ly - wr * .32); cx.lineTo(lx + wr * (a - .5) * 2.4, ly - wr * .45); cx.lineTo(lx + wr * (a - .5) * 2.4, ly - wr * .2); cx.fill();
+        }
+        band(n(near), .62, .04, 2, 2, 1.4);
+        cx.fillStyle = n("#8c8a80");
+        for (let x = -1; x <= 1; x += .25)
+            cx.fillRect(wx + x * wr, wy + wr * (.66 + .03 * Math.sin(x * 6)), wr * .14, wr * .05);
+        return;
+    }
+    if (p === "moor") { // three standing stones on the hill
+        for (let i = 0; i < 3; i++) {
+            const x = placeScroll(wr * (1.0 + i * .22), wr * .35, wx, wr), h = wr * (.2 + (i === 1 ? .08 : 0));
+            cx.fillStyle = n("#55392a");
+            cx.fillRect(x, wy + wr * .32 - h, wr * .1, h);
+            cx.fillStyle = n("#8c8a80");
+            cx.fillRect(x, wy + wr * .32 - h, wr * .06, h);
+        }
+    }
+    if (p === "town") { // rooftops and a clock tower, the windows lit after dark
+        for (let i = 0; i < 6; i++) {
+            const x = placeScroll(wr * i * .45, wr * .4, wx, wr), w = wr * .38, h = wr * (.28 + hash01("hs" + i) * .2), b = wy + wr * .55, tower = i === 2;
+            cx.fillStyle = n(tower ? "#55392a" : i % 2 ? "#5a1f22" : "#3a281d");
+            cx.fillRect(x, b - h - (tower ? wr * .3 : 0), w * (tower ? .6 : 1), h + (tower ? wr * .3 : 0));
+            cx.beginPath(); cx.moveTo(x - u, b - h - (tower ? wr * .3 : 0)); cx.lineTo(x + w * (tower ? .3 : .5), b - h - wr * (tower ? .5 : .14)); cx.lineTo(x + w * (tower ? .6 : 1) + u, b - h - (tower ? wr * .3 : 0)); cx.fill();
+            if (tower) {
+                cx.fillStyle = n("#ecd6ad");
+                cx.fillRect(x + w * .3 - wr * .05, b - h - wr * .22, wr * .1, wr * .1);
+            }
+            cx.fillStyle = nd > .3 ? "#f2c14e" : n("#241812");
+            for (let k = 0; k < 2; k++)
+                if (nd > .3 ? hash01("lw" + i + k) < .75 : true)
+                    cx.fillRect(Math.round((x + w * (.2 + k * .4)) / u) * u, Math.round((b - h * .6) / u) * u, wr * .06, wr * .07);
+        }
+    }
+    if (p === "orchard") { // rows of round fruit trees
+        for (const [row, y, s] of [[0, .45, .7], [1, .64, 1]])
+            for (let i = 0; i < 6; i++) {
+                const x = placeScroll(wr * (i * .48 + row * .24), wr * (.5 + row * .5), wx, wr), r = wr * .2 * s;
+                cx.fillStyle = n("#55392a");
+                cx.fillRect(x - u, wy + wr * y, wr * .04, wr * .12 * s);
+                const ss = season(new Date().getMonth());
+                cx.fillStyle = n(ss === "autumn" ? "#8c3a2c" : ss === "winter" ? "#55392a" : "#24391f");
+                cx.beginPath(); cx.arc(x, wy + wr * y - r * .3, r, 0, 7); cx.fill();
+                cx.fillStyle = n(ss === "autumn" ? "#b8592f" : ss === "winter" ? "#74503a" : "#365a2c");
+                cx.beginPath(); cx.arc(x - r * .15, wy + wr * y - r * .45, r * .75, 0, 7); cx.fill();
+                if (ss !== "winter") { // (the fruit, or blossom in spring)
+                    cx.fillStyle = n(ss === "spring" ? "#fbf1d9" : "#f2c14e");
+                    cx.fillRect(Math.round((x - r * .4) / u) * u, Math.round((wy + wr * y - r * .3) / u) * u, u, u);
+                    cx.fillRect(Math.round((x + r * .3) / u) * u, Math.round((wy + wr * y - r * .1) / u) * u, u, u);
+                    cx.fillRect(Math.round((x) / u) * u, Math.round((wy + wr * y - r * .7) / u) * u, u, u);
+                }
+            }
+    }
+    if (p !== "marsh" && p !== "lake")
+        band(n(near), p === "orchard" ? .8 : .68, p === "orchard" ? .02 : .05, 4, 2, 1.4);
+    else
+        band(n(p === "lake" ? near : "#73a24f"), .82, .03, 4, 2, 1.4);
+    if (p === "lake") { // the jetty
+        const x = placeScroll(wr * .9, wr * 1.4, wx, wr);
+        cx.fillStyle = n("#55392a");
+        cx.fillRect(x, wy + wr * .74, wr * .5, wr * .05);
+        cx.fillRect(x + wr * .45, wy + wr * .74, wr * .04, wr * .14);
+    }
+    if (p === "marsh") { // reeds in front
+        cx.fillStyle = n("#946c4c");
+        for (let i = 0; i < 18; i++) {
+            const x = placeScroll(wr * i * .15, wr * 1.4, wx, wr), h = wr * (.12 + hash01("rd" + i) * .14), sway = reduced ? 0 : Math.sin(tsec * 1.5 + i) * u;
+            cx.fillRect(Math.round((x + sway) / u) * u, wy + wr * .84 - h, u, h);
+            if (i % 3 === 0) {
+                cx.fillStyle = n("#55392a");
+                cx.fillRect(Math.round((x + sway) / u) * u - u / 2, wy + wr * .84 - h, u * 2, wr * .05);
+                cx.fillStyle = n("#946c4c");
+            }
+        }
+    }
+    if (p === "birch") { // white birches in front
+        for (let i = 0; i < 5; i++) {
+            const x = placeScroll(wr * i * .55, wr * 1.4, wx, wr), w = wr * .07, top = wy - wr * (.2 + hash01("bh" + i) * .3);
+            cx.fillStyle = n("#fbf1d9");
+            cx.fillRect(Math.round(x / u) * u, top, w, wy + wr - top);
+            cx.fillStyle = n("#241812");
+            for (let k = 0; k < 6; k++)
+                cx.fillRect(Math.round((x + (k % 2) * w * .5) / u) * u, Math.round((top + wr * (.12 + k * .2)) / u) * u, w * .5, u);
+            if (season(new Date().getMonth()) !== "winter") {
+                cx.fillStyle = n(season(new Date().getMonth()) === "autumn" ? "#f2c14e" : "#a0c86a");
+                cx.beginPath(); cx.ellipse(x + w / 2, top, wr * .16, wr * .1, 0, 0, 7); cx.fill();
+            }
+        }
+    }
+}
+/* the hedge under the nook's plant window, in the place's near colour */
+const placeHedge = () => (PLACE_LAND[placeOn() ? placeNow() : "meadow"] || PLACE_LAND.meadow)[placeNow() === "pass" ? 0 : 1];
+/* ---------- the Cabinet: the postcards ---------- */
+function renderPlaces() {
+    const el = $("placeList");
+    if (!el || !S.place)
+        return;
+    const O = S.place.off, when = x => esc(dmy(new Date(x)));
+    const off = O ? `<div class="drawer"><b>Where next?</b>We move on ${esc(dmy(new Date(placeDayT(O.turn))))}: ${esc(placeInfo(O.a).name)} or ${esc(placeInfo(O.b).name)}.${O.pick ? ` Chosen: ${esc(placeInfo(O.pick).name)}.` : ""}<span class="bacts"><button type="button" class="btn amber" id="placeChoose">${O.pick ? "Change" : "Choose"}</button></span></div>` : "";
+    el.innerHTML = off + (S.place.log || []).slice().reverse().map((e, i) => {
+        const l = placeLines("place_postcard", e.p)[0];
+        return `<div class="drawer"><b>${i === 0 ? "Now: " : ""}${esc(placeInfo(e.p).name)}</b>Arrived ${when(e.at)}. ${esc(l ? fillText(l.rest, ctx()) : "")}</div>`;
+    }).join("");
+    const b = $("placeChoose");
+    if (b)
+        b.onclick = () => placeCard();
 }
 
 </script>
@@ -24669,7 +25216,7 @@ function drawGarden(now, dt) {
         cx.ellipse(c0 + R * .25, c1 - R * .1, R * .3, R * .16, 0, 0, 7);
         cx.fill();
     }
-    cx.fillStyle = mix("#4f7d3c", "#141c14", dk);
+    cx.fillStyle = mix(placeHedge(), "#141c14", dk); // (the hedge in the colour of wherever we are: places.js)
     for (let x = wx0 - R * .3; x < wx1 + R; x += R * .45) {
         cx.beginPath();
         cx.ellipse(x, wy1, R * .32, R * .3 + Math.sin(x * .7) * R * .08, 0, Math.PI, 0);
@@ -25671,6 +26218,7 @@ function postTick(now) {
         return;
     if (leftTick(t)) // (and what came of a leftover: leftovers.js)
         return;
+    placeTick(t); // (and the wagon moving on at the season turns: places.js)
     if (treeTick(t)) // (and the lantern tree: its seed by post, and growing: tree.js)
         return;
     if (mystTick(t)) // (and the letters with no name on them: mystery.js)
@@ -32593,7 +33141,7 @@ function ambientTalk() {
         return;
     }
     if (r < .8) // (now and then a remark about the workshop out of sight, where some things are kept instead: group 36)
-        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || (Math.random() < .04 && markSay()) || (Math.random() < .03 && askSay()) || (Math.random() < .03 && mystSay()) || (Math.random() < .04 && treeSay()) || say("idle");
+        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || (Math.random() < .04 && markSay()) || (Math.random() < .03 && askSay()) || (Math.random() < .03 && mystSay()) || (Math.random() < .04 && treeSay()) || placeIdle() || say("idle");
 }
 function inventWord() {
     const syl = ["flim", "bor", "quo", "snu", "ber", "lin", "dra", "mo", "ket", "vy", "pel", "ziff", "ow", "gren", "tash", "mu", "pim", "wob", "lo", "fen", "drib", "sil", "nok", "ul"];
@@ -34926,6 +35474,7 @@ function renderCabinet() {
         set("cab-origami", `${ORIGAMI.filter(o => oc.has(o.id)).length}/${ORIGAMI.length}`);
         set("cab-fest", `${FESTIVALS.filter(f => S.fest[f.id]).length}`);
         set("cab-glimpses", `${(S.glimpses || []).length}`);
+        set("cab-places", `${new Set(((S.place && S.place.log) || []).map(e => e.p)).size} of ${PLACE_IDS.length - 1}`);
         set("cab-tree", `${((S.tree && S.tree.keep) || []).length} picked`);
         set("cab-left", `${leftLog().filter(e => e.c).length} of ${Object.keys(LEFT).length}`);
         set("cab-cards", `${new Set((S.cards || []).map(c => c.k)).size} of ${cardList().length}`);
@@ -34937,6 +35486,7 @@ function renderCabinet() {
         renderTapes(); // the tapes from the recorder (oral.js)
     renderLeftovers(); // what anomalies left (leftovers.js)
     renderTree(); // the lantern tree and its pears (tree.js)
+    renderPlaces(); // where the wagon has been, and where it goes next (places.js)
     renderGallery(); // the paintings and knits (Mite's crafts) are here too
     colSections();
     foldSections();
@@ -34951,6 +35501,7 @@ const COL_HAS = {
     "cab-glimpses": () => (S.glimpses || []).length > 0,
     "cab-left": () => leftLog().some(e => e.c),
     "cab-tree": () => !!(S.tree && num(S.tree.n)),
+    "cab-places": () => !!(S.place && ((S.place.log || []).length || S.place.off)),
     "cab-cards": () => (S.cards || []).length > 0,
     "cab-origami": () => (S.origami || []).length > 0,
     "cab-fest": () => FESTIVALS.some(f => S.fest[f.id]),
