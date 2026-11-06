@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 05-11-2026 -->
+<!-- Small Things, shared build of 06-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -1178,6 +1178,16 @@ const POOL_INFO = {
     left_stir: "Mite, when a kept leftover stirs: kind | line",
     left_free: "The letter that comes after a leftover is let go: kind | the letter (/ starts a new paragraph)",
     left_file: "The Bureau's memo after a leftover is filed: kind | the memo (/ starts a new paragraph)",
+    mystery_letters: "The letter mystery's eight letters, about two weeks apart: n | from | the letter (n.kept if the brass key was kept, n.nodoor if there's no night door; / starts a new paragraph)",
+    mystery_idle: "Mite, wondering about the letter mystery: n | line (said from letter n on; 9 is after the visit)",
+    mystery_catpossum: "Cat and possum on the letter mystery: n | C: / P: (from letter n on; 9 after the visit)",
+    mystery_catsnail: "Cat and snail on the letter mystery: n | C: / S: (from letter n on; 9 after the visit)",
+    mystery_possumsnail: "Possum and snail on the letter mystery: n | P: / S: (from letter n on; 9 after the visit)",
+    mystery_knock: "Mite, when the night door opens on a Sunday and the one who keeps the garden is in it",
+    mystery_knock_far: "Mite, hearing that Sunday knock from another room",
+    mystery_visit: "The visit at the night door, on its card: V: / M: (one is picked per game)",
+    mystery_gift: "Mite, after the one who keeps the garden has left the teacup",
+    mystery_after: "The letter that brings the teacup by post, when there's no night door to come through (/ starts a new paragraph)",
     ask_letters: "A letter that asks something: id | who | the letter (who: a word from a pen pal's name, or anom:kind; / starts a new paragraph)",
     ask_answers: "The answers to a letter that asks: id.a (or .b, .c) | what the button says | what Mite writes",
     ask_back: "The letter that comes back: id.a (or .b, .c) | the letter. id.x is the one for no answer",
@@ -4493,6 +4503,69 @@ linesFor("Post", {
         "lantern | MEMO. Item received: wick. Placed in storage, unlit. Storage reports seeing a small light a long way down the corridor. Corridor isn't that long.",
         "moth | MEMO. Item received: calling card. Filed under Correspondence. The Director has been left a card in return. The Director is out. The Director would like that noted.",
     ],
+    mystery_letters: [
+        "1 | no name on the envelope | Dear {pet}, / You don't know me. A small brass key passed through your hands not long ago, and a door opened that had been shut for a very long time. A draught came through it, and the draught smelled of your wagon: woodsmoke, tea, and something green. / I only wanted to say thank you. I'll write again if the post allows. It doesn't always, from here. / (No name. The envelope is soft, like a leaf.)",
+        "1.kept | no name on the envelope | Dear {pet}, / You don't know me. There's a small brass key in a drawer of yours. Keep it as long as you like: a key is never only for one door. Someone I love has been ringing about it, I think. They'll manage. They always did. / I'll write again if the post allows. It doesn't always, from here. / (No name. The envelope is soft, like a leaf.)",
+        "2 | no name on the envelope | Dear {pet}, / The seasons here don't keep to the calendar. Today it's early summer and the beans are up. Yesterday it snowed, but only on one corner. / I keep a garden. It isn't big. On one side there's a little door with a brass lock. On the other there's a door I've never been able to open, with a keyhole the shape of a question mark. / Do you know anyone who lets out rooms?",
+        "3 | no name on the envelope | Dear {pet}, / Someone came through the question-mark door this week: a woman in overalls, with paint on her sleeves. She'd asked the lock whether her daughter would be happy, and it opened, and there she was among my beans. She was very polite about it. I gave her a cutting. / She said she worked for a landlord. Whose landlord, I wonder? Not mine. I've never paid rent in my life.",
+        "4 | no name on the envelope | Dear {pet}, / A notice has been pinned to my side of the question-mark door: tenants on both sides may use the garden on Sundays. Nobody asked me. I don't mind. It's been very quiet here for a very long time. / Last Sunday someone left a jar of moonlight on the bench. I've put it with the tomatoes. They seem to like it.",
+        "5 | no name on the envelope | Dear {pet}, / Most evenings now my grandchild comes through the little brass door. They bring tea in my old pot and sit on the bench with me, and they don't know quite who I am. I'm not sure I should say. People go odd when you tell them things like that. / Don't answer. I know the post doesn't go that way. I'm only thinking out loud on paper, which is what letters are.",
+        "6 | no name on the envelope | Dear {pet}, / I've worked out where you are. The question-mark door has the night door on its other side, and the night door opens onto a little platform, and on the platform there's a bowl, and the bowl is often full. / So it's you who feeds what comes through. Thank you. Some of them are mine.",
+        "6.nodoor | no name on the envelope | Dear {pet}, / I've worked out roughly where you are. The question-mark door has a night door on its other side, and that night door is somewhere near you. Not in your wagon, not yet. Doors take their time. / Some of the things that wander out of my garden at night come your way, I think. If you find one at your window, be kind. They're mine.",
+        "7 | no name on the envelope | Dear {pet}, / The little brass key: it was mine first. I dropped it the year I came to live in the garden, and I've waited a long time for it to come home the long way round. Keys do, if you let them. You let it. / Now both doors are open and I can't think why I waited so long to write.",
+        "7.kept | no name on the envelope | Dear {pet}, / The little brass key: it was mine first. I dropped it the year I came to live in the garden. It's still in your drawer, I hear, and that's all right. Now the question-mark door is open, the brass one doesn't matter half as much as everyone thought. / I can't think why I waited so long to write.",
+        "8 | the one who keeps the garden | Dear {pet}, / I should sign these. I'm the one who keeps the garden behind the doors, the brass one and the question-mark one. My grandchild calls me Gran now. I told them last Sunday, over tea. They took it well: they cried a little, then ate three scones. / One Sunday soon I'd like to come and say hello properly, through whichever door you leave on the latch. I'll bring something. / With love from the garden, / the one who keeps the garden",
+    ],
+    mystery_idle: [
+        "1 | No name on that letter. Whoever it is, they know about the brass key.",
+        "1 | The envelope's soft, like a leaf. I keep wanting to water it.",
+        "2 | A garden with a brass door on one side and a question-mark door on the other. Where have I heard about a question-mark door?",
+        "2 | Snow on one corner of a garden. I'd like to see that. From a distance.",
+        "3 | The decorator with paint on her sleeves. That's the Landlord's decorator. It's all one garden, isn't it?",
+        "4 | Moonlight with the tomatoes. That's where the night door's rent goes, then.",
+        "5 | Their grandchild doesn't know who they are. I think I'd want to be told. Slowly.",
+        "6 | Some of the things that come to the bowl are theirs. I'll put out a bit more.",
+        "6 | They know where we are. That should feel strange. It feels like being visited.",
+        "7 | The brass key was theirs first. It's been on a very long walk.",
+        "8 | Gran. The one who keeps the garden. I'd half guessed. I hadn't guessed the scones.",
+        "8 | Whichever door we leave on the latch. I've oiled the night door. Just in case.",
+        "9 | The cup's in the Cabinet. When I looked, it was autumn in it.",
+        "9 | Tenants on both sides may use the garden on Sundays. We count, now.",
+    ],
+    mystery_catpossum: [
+        "1 | C: A letter with no name. / P: Hhh. Can it be eaten? / C: It smells of a garden. / P: So yes.",
+        "3 | P: The painter lady went through the funny door. / C: And came out among beans. / P: I would go for beans.",
+        "6 | C: Some of what comes to the bowl is hers, the letter says. / P: Some of what comes to the bowl is me. / C: You're not hers. / P: I could be. If there's beans.",
+        "9 | P: The cup lady came. / C: Mrrp. She smelled of rain that hadn't happened yet. / P: Did she bring beans? / C: A cup. / P: Next time beans.",
+    ],
+    mystery_catsnail: [
+        "2 | S: A garden where the seasons don't keep to the calendar. / C: Nothing keeps to the calendar. Least of all you. / S: That's fair.",
+        "5 | C: She hasn't told the grandchild. / S: Some news is best carried slowly. / C: You'd know.",
+        "8 | S: Signed at last. The one who keeps the garden. / C: I knew from the second letter. / S: You did not. / C: Mrrp.",
+    ],
+    mystery_possumsnail: [
+        "2 | P: A door shaped like a question. / S: Shaped like the question you bring to it. / P: Mine would be shaped like a bin.",
+        "4 | S: Sundays in the garden, both sides. / P: Can I go? / S: You're a tenant. Of sorts. / P: Of the best sort.",
+        "7 | P: The key went home the long way. / S: The only way worth going. / P: Was it slower than you? / S: Nothing is slower than me. That's why I deliver post.",
+    ],
+    mystery_knock: [
+        "The night door's open. There's a garden behind it, in daylight, and someone standing in it with a cup.",
+        "It's Sunday, and the night door's open on a garden. Someone in a sun hat is waiting on the step.",
+    ],
+    mystery_knock_far: [
+        "Someone's knocking at the night door. Gently. Like they've got their hands full.",
+        "A knock, up in the nook. Sunday knocking. It sounds like someone with a teacup.",
+    ],
+    mystery_visit: [
+        "V: Hello, {pet}. I won't come all the way in; the garden fusses if I'm gone long. / M: You're the one who writes with no name. / V: Not any more. I signed the last one. / M: Gran. / V: Only to one person. To you, the one who keeps the garden will do. / V: I brought you this. It's from my old set. The teapot went home with my grandchild, and the cup wanted to go somewhere too. / M: There's a garden painted inside it. / V: Is there? It's usually a different one. Look after it. Come through on a Sunday, if the door lets you.",
+    ],
+    mystery_gift: [
+        "A teacup, from the one who keeps the garden. I've put it in the Cabinet. There's a garden painted inside. It's raining in it.",
+        "She's gone back through. The door's shut, and smells of beans. The cup's in the Cabinet.",
+    ],
+    mystery_after: [
+        "Dear {pet}, / I couldn't find a door of yours to come through this Sunday, so the snail is bringing this instead: a teacup from my old set. The teapot went home with my grandchild, and the cup wanted to go somewhere too. / There's a garden painted inside. It's usually a different one. Look after it. / With love from the garden, / the one who keeps the garden",
+    ],
     ask_letters: [
         "heron | heron | Dear {pet}, a question for you and your person. / A small fish has started coming to the same stone every morning. It looks at me. I am a heron. I know what usually happens next, and so, I think, does it. It comes anyway. / What should I do? I have told nobody else. Bramble",
         "mole | mole | Dear {pet}, an awkward one. / I dug a little too far on Tuesday and came out at the back of my neighbour's larder. Nobody saw. There is a very good cheese. / What's the decent thing? Ask your person, they sound sensible. Yours, from two burrows over",
@@ -4521,8 +4594,8 @@ linesFor("Post", {
         "tortoise.a | Go to tea, on any Thursday | Dear tortoise, go on a Thursday. Any one. It's rude to leave someone waiting, and they did ask. Yours, {pet}",
         "tortoise.b | Write back, say sorry | Dear tortoise, write back and say sorry for the delay. Say yes to tea. Let them pick the Thursday. Yours, {pet}",
         "tortoise.c | Keep it, unanswered | Dear tortoise, keep it as it is. Some invitations are nicer left open. Yours, {pet}",
-        "moth.a | Stay in your own lamp | Dear moth, stay. A lamp that hums for you is worth more than a Sunday. Yours, {pet}",
-        "moth.b | Go and see it | Dear moth, go and see it. Your lamp will still hum when you come back. Yours, {pet}",
+        "moth.a | Stay in your own lamp | Dear friend in the lamp, stay. A lamp that hums for you is worth more than a Sunday. Yours, {pet}",
+        "moth.b | Go and see it | Dear friend in the lamp, go and see it. Your lamp will still hum when you come back. Yours, {pet}",
         "hedgehog.a | Wear it, once, proudly | Dear hedgehog, wear it once, in public, with your chin up. That's what taste is really for. Yours, {pet}",
         "hedgehog.b | Tell them, gently | Dear hedgehog, tell them, gently. They'll go on knitting, and someone has to think of the rest of us. Yours, {pet}",
         "hedgehog.c | Give it a job elsewhere | Dear hedgehog, say it's far too good to wear and find it a job somewhere. A teapot, perhaps. Yours, {pet}",
@@ -4558,13 +4631,13 @@ linesFor("Post", {
         "tortoise.b | Dear {pet}, I wrote. I said sorry. A reply came by return, from a granddaughter, who says the family has been wondering. She asks if this Thursday suits. A very old tortoise",
         "tortoise.c | Dear {pet}, it's back in the drawer. I take it out on Thursdays. Someone once wanted me for tea. That's not nothing, at any age. A very old tortoise",
         "tortoise.x | Dear {pet}, you took your time, as I asked, and I approve. I've done the same. I'll let you know how it comes out, in forty years or so. A very old tortoise",
-        "moth.a | Dear {pet}, I stayed. The others came back in ones and twos and said it was too bright to see anything. They're all here now. It's very crowded and it's still humming. The moth",
-        "moth.b | Dear {pet}, I went. It is like standing in a Sunday. I stood there for one evening. Then I wanted to be able to see my own wings, and came home. The moth",
-        "moth.x | Dear {pet}, I set out twice and turned back twice, which is mostly how moths travel. I'm in the lamp, for now. It hasn't said anything about it. The moth",
+        "moth.a | Dear {pet}, I stayed. The others came back in ones and twos and said it was too bright to see anything. They're all here now. It's very crowded and it's still humming. From the lamp",
+        "moth.b | Dear {pet}, I went. It is like standing in a Sunday. I stood there for one evening. Then I wanted to be able to see my own wings, and came home. From the lamp",
+        "moth.x | Dear {pet}, I set out twice and turned back twice, which is mostly how we travel. I'm in the lamp, for now. It hasn't said anything about it. From the lamp",
         "hedgehog.a | Dear {pet}, I wore it to market. Two people asked where I got it. I'm afraid it's starting a fashion, and I hold you responsible. Yours, in a bobble",
         "hedgehog.b | Dear {pet}, I told them. They took it very well. They've unpicked it, and they're making me another, which they say will be better. It's got three bobbles. Yours, regretfully",
         "hedgehog.c | Dear {pet}, it's on the teapot, bobbles and all, and my friend is delighted. It keeps the tea hot for two hours. I can't fault it, which pains me. Yours, with warm tea",
-        "hedgehog.x | Dear {pet}, I needn't have asked. The moths found it first. A loss. I've written to my friend, in deep black ink. Yours, relieved and a bit ashamed",
+        "hedgehog.x | Dear {pet}, I needn't have asked. Something with wings found it first. A loss. I've written to my friend, in deep black ink. Yours, relieved and a bit ashamed",
         "landlord.a | Dear {pet}, it's in the book: 108 jars, paid in full. I keep them in the cellar. It's the only cellar I know that you can read in. The night door's landlord",
         "landlord.b | Dear {pet}, the tenant paid. One coin, slid under the door, very old, and cold on one side only. I've asked no questions. The jars still come. The night door's landlord",
         "landlord.x | Dear {pet}, I went down to discuss it with the tenant and we talked until it got light. Nothing was settled. I'll go again next month, I think. The night door's landlord",
@@ -4604,7 +4677,7 @@ linesFor("Post", {
         "tortoise.x | Forty years, the tortoise said. I'll put it in the calendar.",
         "moth.a | The lamp's crowded, I hear, and still humming.",
         "moth.b | Being able to see your own wings. That's a good reason to come home.",
-        "moth.x | Mostly how moths travel, out and back. I do that with the kitchen.",
+        "moth.x | Out and back, the way they travel. I do that with the kitchen.",
         "hedgehog.a | A fashion in bobbles, and it's our fault.",
         "hedgehog.b | Three bobbles. We meant well.",
         "hedgehog.c | Two hours, that hat keeps tea hot. I've been looking at our pot.",
@@ -4641,8 +4714,8 @@ linesFor("Post", {
         "tortoise.a | visit | V: There's a tortoise on the lane who asked me what day it was. I said Thursday and it looked so pleased. / M: Which Thursday? / V: It didn't ask.",
         "tortoise.b | pin | Tea was on Thursday. It was very good. It took sixty-one years, and I would do it again. The tortoise",
         "tortoise.c | pin | Would you like to come to tea on Thursday? (An old invitation, copied out neatly. Keep it, the tortoise says.)",
-        "moth.a | visit | V: There's a lamp down the road that's more moth than lamp. It's still going, somehow. / M: It hums. That's how you can tell it's happy.",
-        "moth.b | pin | It's nice to have seen it. It's nice to be home. Both, the moth says.",
+        "moth.a | visit | V: There's a lamp down the road that's more wings than lamp. It's still going, somehow. / M: It hums. That's how you can tell it's happy.",
+        "moth.b | pin | It's nice to have seen it. It's nice to be home. Both, says the lamp.",
         "hedgehog.a | visit | V: Everybody at market's got a bobble on each side this year. Nobody can say why. / M: I couldn't possibly comment.",
         "hedgehog.b | pin | Three bobbles. Send help. (On very good notepaper.)",
         "hedgehog.c | visit | V: Is that a hat on your teapot? / M: No. But now I want one. How did you hear about that?",
@@ -6030,7 +6103,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, myst: { at: 0, n: 0, l8: 0, gift: 0, via: "" }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -6347,6 +6420,10 @@ function sanitizeState(raw) {
         o.left = { at: num(k.at), log: arr(k.log, 40).map(e => ({ k: str(e.k, 12), room: ["room", "garden", "archive"].includes(e.room) ? e.room : "room", x: clamp(num(e.x), 0, 1), y: clamp(num(e.y), 0, 1), at: num(e.at), c: ["keep", "free", "file"].includes(e.c) ? e.c : "", ans: num(e.ans), back: num(e.back), n: num(e.n), st: num(e.st) })).filter(e => e.k) };
     }
     o.news = arr(s.news, 12).map(n => ({ id: str(n.id, 20), k: str(n.k, 8), sub: str(n.sub, 12), v: str(n.v, 60), at: num(n.at), told: num(n.told), res: num(n.res) })).filter(n => n.id && n.k); // (what gets around: news.js)
+    { // the letter mystery (mystery.js)
+        const k = s.myst && typeof s.myst === "object" ? s.myst : {};
+        o.myst = { at: num(k.at), n: clamp(Math.round(num(k.n)), 0, 8), l8: num(k.l8), gift: num(k.gift), via: ["door", "step", "post"].includes(k.via) ? k.via : "" };
+    }
     o.drawers = { at: Math.max(0, num(s.drawers && s.drawers.at)), sig: str(s.drawers && s.drawers.sig, 240), notes: (Array.isArray(s.drawers && s.drawers.notes) ? s.drawers.notes : []).filter(n => n && [0, 1, 2, 3].includes(n.d)).map(n => ({ d: n.d, from: str(n.from, 40), t: noDash(str(n.t, 200)), at: num(n.at) })).filter(n => n.t).slice(-4), postAt: Math.max(0, num(s.drawers && s.drawers.postAt)) }; // (notes: what a tenant who moved out left in its drawer; postAt: up to where former tenants' post has come: garden.js)
     // the post: letters Mite wrote at the desk (to whom, when, whether a reply came: r) and the replies (read or not)
     {
@@ -6775,6 +6852,10 @@ function mergeStates(a, b) {
             m.set(x.k, c ? Object.assign({}, w, { at: Math.min(num(c.at), num(x.at)), back: Math.max(num(c.back), num(x.back)), n: Math.max(num(c.n), num(x.n)), st: Math.max(num(c.st), num(x.st)) }) : x);
         }
         o.left = { at: Math.max(num(pa.at), num(pb.at)), log: [...m.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-40) };
+    }
+    { // the letter mystery: only moves on; the cup came the first time it came, the way it came then
+        const pa = a.myst || {}, pb = b.myst || {}, g = [pa, pb].filter(x => num(x.gift)).sort((x, y) => num(x.gift) - num(y.gift))[0];
+        o.myst = { at: Math.max(num(pa.at), num(pb.at)), n: Math.max(num(pa.n), num(pb.n)), l8: Math.max(num(pa.l8), num(pb.l8)), gift: g ? num(g.gift) : 0, via: g ? g.via || "" : "" };
     }
     { // news: from either side; told or heard on either side stays that way
         const m = new Map();
@@ -18171,7 +18252,7 @@ function animalTalkTick(now) {
     }
     const pr = choice(pairs), key = pr.map(a => a.k).sort().join("");
     const old = Math.random() < .06 ? oldTenant() : null; // (now and then about someone who used to rent a drawer: garden.js)
-    const line = (Math.random() < NEWS_RES_ODDS && newsResident(key)) || (old && compose({ CP: "tenant_catpossum", CS: "tenant_catsnail", PS: "tenant_possumsnail" }[key], { label: old })) || compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
+    const line = (Math.random() < NEWS_RES_ODDS && newsResident(key)) || (Math.random() < .06 && mystResident(key)) || (old && compose({ CP: "tenant_catpossum", CS: "tenant_catsnail", PS: "tenant_possumsnail" }[key], { label: old })) || compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
     if (!line)
         return;
     // everyone involved stays put and turns to the other
@@ -20706,6 +20787,174 @@ function renderLeftovers() {
         return;
     const when = t => esc(dmy(new Date(t)));
     el.innerHTML = leftLog().filter(e => e.c && LEFT[e.k]).slice().reverse().map(e => `<div class="drawer"><span class="cls">${e.c === "keep" ? "Kept" : e.c === "free" ? "Let go" : "Filed"}</span>${leftImg(e.k)}<b>${esc(LEFT[e.k].name)}</b>${e.c === "keep" ? `Since ${when(e.ans)}. ${e.n ? `It has stirred ${e.n === 1 ? "once" : e.n + " times"}.` : "Quiet, so far."}` : e.c === "free" ? `${when(e.ans)}. Back with ${esc(leftWho(e.k))}.` : `${when(e.ans)}. With the Bureau.`}</div>`).join("");
+}
+
+</script>
+<script>/* js/scene/mystery.js */
+"use strict";
+/*
+ * mystery.js - A letter mystery (group 67, item 1). Once the small brass key has gone back to its owner (or Mite has
+ * kept it, three times asked), letters start to come with no name on the envelope: eight of them, about two weeks
+ * apart. Read together they join the key's small door and the garden behind the night door (the Landlord's
+ * question-mark door) into one place, and whoever keeps that garden. Nothing to answer: Mite and the residents wonder
+ * about it now and then. After the eighth, on a Sunday (the garden is shared on Sundays), the writer knocks at the
+ * night door: open the nook and tap the doorway for a card. She leaves a teacup, which goes in the Cabinet. With no
+ * night door, or Strangeness off, three weeks after the eighth letter the cup comes by post instead (mystery_after).
+ * S.myst: { at: when the last letter came, n: letters so far (0-8), l8: when the eighth came, knock: the day Mite last
+ *   said so, gift: when the cup came, via: "door" or "post" }
+ * Pools: mystery_letters "n | from | letter" (n.kept: if Mite kept the key, n.nodoor: if there's no night door),
+ * mystery_idle "n | line" (from letter n on; 9: after the visit), mystery_catpossum / catsnail / possumsnail
+ * "n | C: / P:", mystery_knock, mystery_knock_far, mystery_visit "V: / M:", mystery_gift, mystery_after.
+ */
+const MYST_N = 8, MYST_FIRST = 5 * 864e5, MYST_GAP = [12, 16], MYST_SUNDAY = 4 * 864e5, MYST_POST = 21 * 864e5, MYST_VISIT = 90e3;
+const MYST_CUP = "A garden teacup", MYST_GRAN = "the one who keeps the garden";
+const mystOn = () => !!(S.myst && (S.flags.keyThanks || num(S.flags.keyAsk) >= 3));
+const mystKept = () => !S.flags.keyGiven;
+const mystGap = n => (MYST_GAP[0] + hash01("myst" + n + S.created) * (MYST_GAP[1] - MYST_GAP[0])) * 864e5;
+/* "n | ..." lines: the first field, and the rest */
+const mystLines = key => pool(key).map(raw => {
+    const i = String(raw).indexOf("|");
+    return i < 0 ? null : { k: String(raw).slice(0, i).trim(), rest: String(raw).slice(i + 1).trim(), raw: String(raw) };
+}).filter(x => x && x.k && x.rest);
+/* the n-th letter, with its variant if there is one: { from, text, raw } */
+function mystLetter(n) {
+    const ls = mystLines("mystery_letters"), pick = k => ls.find(x => x.k === k);
+    const l = (mystKept() && pick(n + ".kept")) || (!own("ndoor") && pick(n + ".nodoor")) || pick(String(n));
+    if (!l)
+        return null;
+    const i = l.rest.indexOf("|"), from = i < 0 ? "" : l.rest.slice(0, i).trim(), text = i < 0 ? l.rest : l.rest.slice(i + 1).trim();
+    return { from: from || "no name on the envelope", text: fillText(text, ctx()).replace(/ \/ /g, "\n\n"), raw: l.raw };
+}
+/* a line for where the story's got to: the latest stage that has some, now and then an earlier one */
+function mystPick(key) {
+    const S9 = S.myst.gift ? 9 : num(S.myst.n), ls = mystLines(key).filter(x => +x.k >= 1 && +x.k <= S9);
+    if (!ls.length)
+        return null;
+    const top = Math.max(...ls.map(x => +x.k)), now = ls.filter(x => +x.k === top), l = choice(Math.random() < .7 ? now : ls);
+    lineCount(key, l.raw);
+    return l.rest;
+}
+/* Mite, now and then (from the idle remarks) */
+function mystSay() {
+    if (!S.myst || !num(S.myst.n))
+        return false;
+    const l = mystPick("mystery_idle");
+    if (!l)
+        return false;
+    speak(fillText(l, ctx()));
+    return true;
+}
+/* two residents, now and then (conversations.js): a "C: / P:" line or null */
+function mystResident(key) {
+    if (!S.myst || !num(S.myst.n))
+        return null;
+    const l = mystPick({ CP: "mystery_catpossum", CS: "mystery_catsnail", PS: "mystery_possumsnail" }[key]);
+    return l ? fillText(l, ctx()) : null;
+}
+const isSunday = t => new Date(t).getDay() === 0;
+const mystVisitDue = t => num(S.myst.n) >= MYST_N && !S.myst.gift && t - num(S.myst.l8) >= MYST_SUNDAY;
+/* every minute or so (from postTick). True if a letter came (one a day, like all post) */
+function mystTick(t) {
+    if (!mystOn() || !S.post)
+        return false;
+    const M = S.myst;
+    if (mystVisitDue(t)) {
+        if (own("ndoor") && strangeness()) {
+            if (isSunday(t))
+                mystKnock(t);
+            return false;
+        }
+        if (t - num(M.l8) < MYST_POST || !hasDesk() || num(S.flags.letterInDay) === dayNum())
+            return false;
+        const l = pool("mystery_after")[0]; // no door to come through: the cup by post
+        M.gift = t;
+        M.via = "post";
+        S.flags.letterInDay = dayNum();
+        if (l) {
+            lineCount("mystery_after", l);
+            deliverLetter(MYST_GRAN, fillText(l, ctx()).replace(/ \/ /g, "\n\n"), t);
+        }
+        note(`A parcel came from ${MYST_GRAN}: ${MYST_CUP.toLowerCase()}. It's in the Cabinet.`);
+        say("letterarrived", { penpal: MYST_GRAN });
+        saveSoon();
+        return true;
+    }
+    if (num(M.n) >= MYST_N || !hasDesk())
+        return false;
+    if (!num(M.at)) { // (the clock starts now: the first one in five days)
+        M.at = t - mystGap(1) + MYST_FIRST;
+        saveSoon();
+        return false;
+    }
+    if (t - num(M.at) < mystGap(num(M.n) + 1) || num(S.flags.letterInDay) === dayNum())
+        return false;
+    const n = num(M.n) + 1, l = mystLetter(n);
+    M.at = t;
+    M.n = n;
+    if (n === MYST_N)
+        M.l8 = t;
+    saveSoon();
+    if (!l)
+        return false;
+    lineCount("mystery_letters", l.raw);
+    S.flags.letterInDay = dayNum();
+    deliverLetter(l.from, l.text, t);
+    note(n === MYST_N ? `A letter came from ${l.from}. It's signed, this time. It's in the rack in the nook.` : `A letter came with no name on the envelope. It's in the rack in the nook.`);
+    say("letterarrived", { penpal: l.from });
+    return true;
+}
+/* Sunday: a knock at the night door (said once a day); in the nook, the door opens and she's there */
+function mystKnock(t) {
+    if (ndShade && ndShade.k === "guest")
+        return;
+    if (view === "garden") {
+        ndShade = { k: "guest", t0: performance.now(), side: 1, dur: MYST_VISIT, seed: 0 };
+        S.flags.mystKnockDay = dayNum();
+        speak(compose("mystery_knock") || "The night door's open. Someone's standing in it, with the garden behind them.", { ms: 6000 });
+        return;
+    }
+    if (num(S.flags.mystKnockDay) === dayNum())
+        return;
+    S.flags.mystKnockDay = dayNum();
+    speak(compose("mystery_knock_far") || "Someone's knocking at the night door. Gently.", { ms: 6000 });
+}
+/* the visit's card: tap the doorway */
+function mystVisitTap() {
+    const vl = pool("mystery_visit"), v = vl.length ? vl[Math.floor(hash01("mv" + S.created) * vl.length)] : "V: Hello, Mite. / M: Hello. Come in.";
+    lineCount("mystery_visit", v);
+    const html = fillText(v, ctx()).split(/ \/ /).map(p => {
+        const m = /^([VM]):\s*(.*)$/.exec(p.trim());
+        return m ? `<p><b>${m[1] === "V" ? "She" : esc(S.settings.pet)}:</b> ${esc(m[2])}</p>` : `<p>${esc(p)}</p>`;
+    }).join("");
+    openRitual("At the night door", `It's Sunday. ${MYST_GRAN[0].toUpperCase() + MYST_GRAN.slice(1)} has come through.`, html,
+        [["Take the cup", "", () => { closeRitual(); mystGift("door"); }]]);
+    sfx("card");
+    return true;
+}
+/* the cup: in the Cabinet from now on */
+function mystGift(via) {
+    if (!S.myst || S.myst.gift)
+        return;
+    S.myst.gift = Date.now();
+    S.myst.via = via;
+    if (ndShade && ndShade.k === "guest")
+        ndShade.dur = Math.min(ndShade.dur, performance.now() - ndShade.t0 + 1600); // (she goes back in)
+    note(`${MYST_GRAN[0].toUpperCase() + MYST_GRAN.slice(1)} came through the night door, and left ${MYST_CUP.toLowerCase()}. It's in the Cabinet.`);
+    setTimeout(() => say("mystery_gift"), 900);
+    renderContent();
+    saveSoon();
+}
+/* the visit runs out untapped: she leaves the cup on the step (draw-world.js, when the shade ends) */
+function mystVisitEnd() {
+    if (S.myst && !S.myst.gift && mystVisitDue(Date.now()))
+        mystGift("step");
+}
+/* the Cabinet's drawer for it (collection.js, among the small things) */
+function mystDrawer() {
+    if (!S.myst || !S.myst.gift)
+        return "";
+    const how = S.myst.via === "post" ? "Came by post" : S.myst.via === "step" ? "Left on the step by the night door" : "Given at the night door";
+    return `<div class="drawer myst"><b>${esc(MYST_CUP)}</b>From ${esc(MYST_GRAN)}. ${how}, ${esc(dmy(new Date(S.myst.gift)))}. There's a garden painted inside, and it's never quite the same season twice.</div>`;
 }
 
 </script>
@@ -24970,6 +25219,8 @@ function postTick(now) {
     if (otherTick(t)) // (and a note from further in, or Mite's answer: deeper.js)
         return;
     if (leftTick(t)) // (and what came of a leftover: leftovers.js)
+        return;
+    if (mystTick(t)) // (and the letters with no name on them: mystery.js)
         return;
     if (askTick(t)) // (and the odd letter that asks something, or what came of it: asks.js)
         return;
@@ -30744,8 +30995,12 @@ function drawDoorShade(x, y, w, h, sky) {
     const e = now - a.t0;
     if (e > a.dur) {
         ndShade = null;
+        if (a.k === "guest") // (she's gone: the cup's on the step if it wasn't taken: mystery.js)
+            mystVisitEnd();
         return;
     }
+    if (a.k === "guest")
+        return drawDoorGuest(x, y, w, h, e, a.dur, sky);
     const sm = k => k * k * (3 - 2 * k), grow = sm(clamp(e / 1400, 0, 1)) * sm(clamp((a.dur - e) / 1400, 0, 1)), t = e / 1000;
     const waving = a.wave && now - a.wave < 2600; // (tapped: the hand waves back)
     const ink = "rgba(10,6,16,.95)", halo = `rgba(130,100,220,${.3 + .25 * sky.dark})`;
@@ -30812,6 +31067,34 @@ function drawDoorShade(x, y, w, h, sky) {
     }
     cx.restore();
 }
+/* the letter mystery's visit (mystery.js): the night door stands open on a Sunday, the garden behind it in daylight,
+   and the one who keeps it in the doorway with a teacup. Pixel steps on the PX grid, no alpha (the palette step) */
+function drawDoorGuest(x, y, w, h, e, dur, sky) {
+    const q = PX, op = clamp(Math.min(e / 1200, (dur - e) / 1200), 0, 1), sn = v => Math.round(v / q) * q;
+    if (op <= 0)
+        return;
+    const x0 = sn(x - w / 2) + q, x1 = sn(x + w / 2) - q, top = sn(y - h - w / 2) + q, rows = Math.round((y - top) / q);
+    for (let r = 0; r < rows; r++) { // the garden through the door, in daylight: sky, a hedge, grass, a path
+        const yy = top + r * q, f = r / rows, dy = (y - h) - yy, half = (x1 - x0) / 2;
+        const inset = dy > 0 ? sn(half - Math.sqrt(Math.max(0, half * half - dy * dy))) : 0; // (inside the round top)
+        cx.fillStyle = f < .4 ? "#bfe0e8" : f < .55 ? "#4e8a48" : f < .88 ? "#7cba62" : "#d8c49a";
+        if (x1 - x0 - inset * 2 > 0)
+            cx.fillRect(x0 + inset, yy, x1 - x0 - inset * 2, q);
+    }
+    if (op < .5) // (fading in or out: just the garden)
+        return;
+    const u = Math.max(q, Math.round(h * 1.35 / 15 / q) * q), gx = sn(x - w / 2 - u * 3), feet = y; // the one who keeps the garden, left of the door (the pinboard is drawn over the right): skirt, shawl, face, sun hat, a teacup held out
+    const parts = [ // [x, y, w, h, colour], in u from her feet (outlined first, so she stands out from the wall)
+        [-2, -8, 4, 8, "#2c2438"], [-3, -11, 6, 4, "#4f7fb8"], [-2, -7, 4, 1, "#4f7fb8"], [-1, -13, 2, 2, "#f0d8b8"], [-4, -9, 1, 2, "#f0d8b8"],
+        [-3, -14, 6, 1, "#ecc85a"], [-2, -15, 4, 1, "#ecc85a"], [-2, -14, 4, 1, "#c84a4a"], [-6, -10, 2, 2, "#f6f2ea"], [-6, -10, 2, 1, "#4f7fb8"]];
+    cx.fillStyle = "#1a1420";
+    for (const [px, py, pw, ph] of parts)
+        cx.fillRect(gx - (px + pw) * u - q, feet + py * u - q, pw * u + q * 2, ph * u + (py + ph >= 0 ? q : q * 2));
+    for (const [px, py, pw, ph, c] of parts) {
+        cx.fillStyle = c;
+        cx.fillRect(gx - (px + pw) * u, feet + py * u, pw * u, ph * u); // (mirrored: the cup is held out towards the door)
+    }
+}
 /* the shadow hand plays the gramophone: out of the door's right-hand gap, along to the gramophone's crank; it winds
    (the palm going round), puts the needle down at 5.2 s (gramoPlay, once) and goes back in. Mite says so if it's
    in the nook (shade_gramo) */
@@ -30870,6 +31153,8 @@ function shadeTap(p) {
     const now = performance.now(), e = now - a.t0, x = ndoorX(), y = nookLoftGeo().balY;
     if (e < 1000 || e > a.dur - 1000 || Math.abs(p.x - x) > R * 1.9 || p.y > y + R * .2 || p.y < y - R * 2.2)
         return false;
+    if (a.k === "guest") // (the letter mystery's visit: mystery.js)
+        return mystVisitTap();
     if (a.k === "gramo") // (busy with the record: it doesn't stop for a tap)
         return true;
     if (a.k === "hand") {
@@ -31855,7 +32140,7 @@ function ambientTalk() {
         return;
     }
     if (r < .8) // (now and then a remark about the workshop out of sight, where some things are kept instead: group 36)
-        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || (Math.random() < .04 && markSay()) || (Math.random() < .03 && askSay()) || say("idle");
+        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || (Math.random() < .04 && markSay()) || (Math.random() < .03 && askSay()) || (Math.random() < .03 && mystSay()) || say("idle");
 }
 function inventWord() {
     const syl = ["flim", "bor", "quo", "snu", "ber", "lin", "dra", "mo", "ket", "vy", "pel", "ziff", "ow", "gren", "tash", "mu", "pim", "wob", "lo", "fen", "drib", "sil", "nok", "ul"];
@@ -34130,7 +34415,7 @@ function renderPantry() {
  */
 function renderCabinet() {
     const list = trinketList();
-    $("drawers").innerHTML = list.map(t => t.name === KEY_NAME && S.flags.keyGiven && S.trinkets[t.name] ? `<div class="drawer given"><b>${esc(t.name)}</b>Given to the caller who asked after it, ${esc(dmy(new Date(S.flags.keyGiven)))}. The drawer still smells of brass.</div>` : S.trinkets[t.name] ? `<div class="drawer"><b>${esc(t.name)}${S.trinkets[t.name] > 1 ? ` <span class="sync">×${esc(S.trinkets[t.name])}</span>` : ""}</b>${esc(t.note)}</div>` : `<div class="drawer unk">?</div>`).join("") +
+    $("drawers").innerHTML = list.map(t => t.name === KEY_NAME && S.flags.keyGiven && S.trinkets[t.name] ? `<div class="drawer given"><b>${esc(t.name)}</b>Given to the caller who asked after it, ${esc(dmy(new Date(S.flags.keyGiven)))}. The drawer still smells of brass.</div>` : S.trinkets[t.name] ? `<div class="drawer"><b>${esc(t.name)}${S.trinkets[t.name] > 1 ? ` <span class="sync">×${esc(S.trinkets[t.name])}</span>` : ""}</b>${esc(t.note)}</div>` : `<div class="drawer unk">?</div>`).join("") + mystDrawer() +
         pool("barter_curio").filter(l => barterOwned("curio", barterName(l))).map(l => { // the raccoon's curios: only the ones you have (no empty drawers: they're a surprise)
             const [n, ...r] = parseLine(l).text.split("|");
             return `<div class="drawer racc"><b>${esc(n.trim())}</b>${esc(r.join("|").trim())}<span class="cls">from ${esc(raccoonName())}</span></div>`;
