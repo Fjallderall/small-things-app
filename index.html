@@ -989,6 +989,8 @@ body.pixel{--boxlh:24px;--boxfs:16px}
         <div class="drawers" id="altered"></div></details>
       <details class="shopsec colsec" data-sec="cab-left" open><summary><h3>Leftovers</h3><span class="seccount" id="cnt-cab-left"></span><span class="secnew" id="new-cab-left" hidden>new</span></summary><p class="sub">What the strange visitors left behind, and what became of it.</p>
         <div class="drawers" id="leftList"></div></details>
+      <details class="shopsec colsec" data-sec="cab-tree" open><summary><h3>The lantern tree</h3><span class="seccount" id="cnt-cab-tree"></span><span class="secnew" id="new-cab-tree" hidden>new</span></summary><p class="sub">The tree in the nook, and the pears it gave.</p>
+        <div class="drawers" id="treeList"></div></details>
       <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span><span class="secnew" id="new-cab-glimpses" hidden>new</span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
         <div class="glimpses" id="glimpseList"></div></details>
       <details class="shopsec colsec" data-sec="cab-cards" open><summary><h3>The Deck</h3><span class="seccount" id="cnt-cab-cards"></span><span class="secnew" id="new-cab-cards" hidden>new</span></summary><p class="sub">Cards? They come one at a time, in wax-sealed mail.</p>
@@ -1187,6 +1189,18 @@ const POOL_INFO = {
     mystery_knock_far: "Mite, hearing that Sunday knock from another room",
     mystery_visit: "The visit at the night door, on its card: V: / M: (one is picked per game)",
     mystery_gift: "Mite, after the one who keeps the garden has left the teacup",
+    tree_seed: "The letter that brings the lantern tree's seed: from | letter (one is picked per game; / starts a new paragraph)",
+    tree_stage: "Mite, when the lantern tree reaches a new stage: n | line (0 seed, 1 sprout, 2 seedling, 3 sapling, 4 young tree, 5 blossom, 6 fruit, 7 ripe)",
+    tree_idle: "Mite on the lantern tree, now and then: n | line (from stage n on; 8 once a pear has been picked)",
+    tree_look: "The lantern tree's card, its first line: n | line (the stage, as in tree_stage)",
+    tree_thirsty: "Mite, when the lantern tree hasn't been watered for a week",
+    tree_water: "Mite, when you water the lantern tree",
+    tree_perk: "Mite, when you water the lantern tree after it had drooped",
+    tree_picked: "Mite, after picking a ripe lantern-pear (the tree is planted out, a pip goes in the pot)",
+    tree_catpossum: "Cat and possum on the lantern tree: n | C: / P: (from stage n on; 8 once a pear has been picked)",
+    tree_catsnail: "Cat and snail on the lantern tree: n | C: / S: (from stage n on)",
+    tree_possumsnail: "Possum and snail on the lantern tree: n | P: / S: (from stage n on)",
+    tree_visitor: "A visitor asks after the lantern tree: n | V: / M: (from stage n on, a sapling or bigger)",
     mystery_after: "The letter that brings the teacup by post, when there's no night door to come through (/ starts a new paragraph)",
     ask_letters: "A letter that asks something: id | who | the letter (who: a word from a pen pal's name, or anom:kind; / starts a new paragraph)",
     ask_answers: "The answers to a letter that asks: id.a (or .b, .c) | what the button says | what Mite writes",
@@ -4951,6 +4965,107 @@ linesFor("Post", {
 });
 
 </script>
+<script>/* js/content/lines/tree.js */
+"use strict";
+/* lines/tree.js - The lantern tree in the nook: its seed, its stages, and who has something to say about it (tree.js). */
+linesFor("The lantern tree", {
+    tree_seed: [
+        "the Lantern Orchard | Dear Mite, / Enclosed, one seed. It is a lantern-pear, which is a kind of pear that has never quite agreed to be only a pear. / Give it a pot, a window, and water about once a week. It is slow. It will not hurry for anyone, but it will remember who waited. / Yours, from the orchard at the edge of the map",
+        "the Lantern Orchard | Dear Mite, / One of our trees dropped a pip that kept rolling until it reached the post. We took that as a sign. It's yours now. / A pot, a window, a little water each week. About half a year, and you'll see why we keep them. / With good wishes from the orchard, where the paths stop",
+        "the Lantern Orchard | To the house with the lamp on late, / We send a seed to every house that keeps a light on late. This one is for you. / It wants water once a week and to be talked to now and then, though it will never say so. / The Lantern Orchard"
+    ],
+    tree_stage: [
+        "0 | There. One seed, one pot. Now we wait, apparently for months.",
+        "1 | Something green came up in the pot! Two leaves. Very small. Very pleased with itself.",
+        "1 | A sprout. I didn't see it happen. It must have done it while I blinked.",
+        "2 | The sprout has four leaves now. It's a seedling. I've decided that's a promotion.",
+        "2 | Four leaves on the little tree. One of them turns to follow the lamp at night.",
+        "3 | It's got bark. Real bark, thin as paper. It's a sapling now.",
+        "3 | The tree's a sapling. It leans towards the window in the morning and towards the stove at night.",
+        "4 | Look at it. A proper little tree, nearly up to the desk. I'm going to need a bigger watering can.",
+        "4 | The tree's taller than me now, if I don't stand on my toes. I'm not counting the toes.",
+        "5 | It's blossoming! It doesn't seem to care what month it is. Good for it.",
+        "5 | Blossom on the lantern tree. The whole nook smells faintly of pears and warm lamps.",
+        "6 | Little green pears. Three of them. They hum, very quietly, if you get close.",
+        "6 | The blossom's gone and there are pears coming. Hard ones. Nobody touch them yet.",
+        "7 | One of the pears has gone gold and it's glowing. I think it's ready. I think it wants picking.",
+        "7 | The pear's ripe. It glows like a lantern someone left on low. Come and look."
+    ],
+    tree_idle: [
+        "0 | I keep checking the pot. Nothing yet. That's how seeds are, I'm told.",
+        "0 | I told the seed about my day. I left out the boring bits. There weren't many.",
+        "1 | The sprout leans when I walk past. I'm choosing to believe that's a wave.",
+        "2 | I've started saying good morning to the tree. It's only polite.",
+        "3 | The sapling dropped one leaf today. Just one. I've put it in a book.",
+        "3 | Sometimes the tree's shadow points the wrong way. Only a little wrong.",
+        "4 | The tree hums when the kettle boils. I think it likes the company.",
+        "4 | There's a bird-sized gap in the tree's branches. No bird. Just the gap, waiting.",
+        "5 | Petals on the desk again. I'm leaving them. They make the letters smell nice.",
+        "6 | The pears are getting heavier. The tree doesn't seem to mind.",
+        "7 | That pear's been glowing all evening. It's like having a nightlight that grew itself.",
+        "8 | You can see the old tree from the window, out in the hedge. It looks happy there.",
+        "8 | The new one in the pot doesn't know about the old one yet. I'll tell it when it's older."
+    ],
+    tree_look: [
+        "0 | A pot of soil, and somewhere in it, a seed thinking about things.",
+        "1 | Two small leaves, held up like hands.",
+        "2 | Four leaves now, and a stem you could mistake for a hair.",
+        "3 | A sapling with paper bark. It smells of rain, even indoors.",
+        "4 | A young tree. Its leaves turn very slightly when you look at them.",
+        "5 | In blossom, whatever the calendar says.",
+        "6 | Green pears, humming quietly to themselves.",
+        "7 | One pear has gone gold. It glows like a lamp turned low."
+    ],
+    tree_thirsty: [
+        "The tree's looking a bit thirsty. A splash of water wouldn't go amiss.",
+        "I think the lantern tree would like some water. It hasn't said so. It's very proud.",
+        "The soil in the tree's pot has gone pale. That means water, I'm fairly sure."
+    ],
+    tree_water: [
+        "There. A good drink. The leaves went shiny.",
+        "Watered. The pot made a happy little gurgle.",
+        "The tree drank all of it and looked at me like it wanted more. It doesn't get more. It gets next week."
+    ],
+    tree_perk: [
+        "It's perking up already. Look, the leaves are lifting. Sorry, little tree.",
+        "Oh, that's better. It's standing up straight again. We won't let it go that long again."
+    ],
+    tree_picked: [
+        "I've got it. It's warm, like it's been sitting in the sun. The tree's going out by the hedge, and I've put a pip in the pot.",
+        "The pear's in the Cabinet. The old tree's outside now, where it has room. And there's a new seed in the pot. Here we go again.",
+        "Picked. It came off with a little sigh. A pip's already in the pot. I think it knew."
+    ],
+    tree_catpossum: [
+        "1 | P: Something's growing in the pot. / C: Leave it. / P: Is it food? / C: Not yet.",
+        "3 | C: The little tree is in my sunny spot. / P: Then the sunny spot moved. / C: Sunny spots don't move. / P: This one has bark now.",
+        "4 | C: I've found a good place under the tree. / P: For sleeping? / C: For thinking. / P: You were snoring. / C: Loudly thinking.",
+        "6 | P: There are pears. / C: They're not ripe. / P: I can wait. / C: You've never waited for anything. / P: I'm waiting now. Watch me wait.",
+        "7 | P: The pear is glowing. / C: It's meant for Mite. / P: I only want to look at it. Up close. With my mouth.",
+        "8 | C: There's a new one in the pot. / P: Will it make pears? / C: Eventually. / P: I'll be here. I'm always here."
+    ],
+    tree_catsnail: [
+        "2 | S: The seedling and I are about the same speed. / C: It doesn't move at all. / S: Exactly. We understand each other.",
+        "4 | C: You keep sitting on the tree's pot. / S: It's cool and the view is nice. / C: The view is of the drawers. / S: Nice drawers.",
+        "5 | S: Petals keep landing on my shell. / C: You look like a cake. / S: Thank you. / C: It wasn't a compliment. / S: It was, a little.",
+        "7 | C: The pear glows at night. / S: I'll read by it. / C: You can't read. / S: I'll look at the pictures."
+    ],
+    tree_possumsnail: [
+        "1 | P: How long until it's a tree? / S: About half a year. / P: How long is that in snacks? / S: Many snacks.",
+        "4 | S: The tree drips on me when Mite waters it. / P: Lucky. / S: You think everything wet is lucky. / P: I'm right about that.",
+        "6 | P: When the pears are ripe I'll get one. / S: Mite gets it. / P: Mite gets one. I'll get the other one. / S: There's only one. / P: Then we'll share Mite's.",
+        "8 | S: The old tree's outside now. / P: Does it miss us? / S: It glows at night. I think that's waving."
+    ],
+    tree_visitor: [
+        "3 | V: Is that a tree in your nook? / M: A lantern tree. It's still small. / V: Everything's small to start with. I was. / M: You're still small. / V: Rude, but fair.",
+        "4 | V: How's the tree getting on? / M: Taller than me, nearly. / V: I heard about it two hedges away. Word gets round about trees. / M: What are they saying? / V: That it hums. / M: It does hum.",
+        "5 | V: Someone said your tree's in blossom. In this weather! / M: It doesn't check the weather. / V: Neither do I. Look where it gets me. / M: Here, with {treat}. / V: Exactly.",
+        "6 | V: Pears coming? / M: Three. Green ones. / V: Save me a bite? / M: The pears are spoken for. The {treat} isn't. / V: That'll do.",
+        "7 | V: Is that glow from your nook a pear? / M: It's ripe. I'm picking it soon. / V: My gran had a lantern-pear once. Kept it on the sill all winter. / M: Did it go out? / V: Never. Not while anyone was looking.",
+        "8 | V: I walked past your old tree in the hedge. It's doing well. / M: It's got room out there. / V: There was a bird in it. / M: Good. It had a space for one."
+    ]
+});
+
+</script>
 <script>/* js/content/lines/collections.js */
 "use strict";
 /* lines/collections.js - Things kept and found, one per line: trinkets, books, brews, bakes, flowers, tapes, names. */
@@ -6103,7 +6218,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, myst: { at: 0, n: 0, l8: 0, gift: 0, via: "" }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, myst: { at: 0, n: 0, l8: 0, gift: 0, via: "" }, tree: { due: 0, seed: 0, n: 0, at: 0, g: 0, last: 0, w: 0, wn: 0, st: [], told: 0, thirst: 0, keep: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -6420,6 +6535,12 @@ function sanitizeState(raw) {
         o.left = { at: num(k.at), log: arr(k.log, 40).map(e => ({ k: str(e.k, 12), room: ["room", "garden", "archive"].includes(e.room) ? e.room : "room", x: clamp(num(e.x), 0, 1), y: clamp(num(e.y), 0, 1), at: num(e.at), c: ["keep", "free", "file"].includes(e.c) ? e.c : "", ans: num(e.ans), back: num(e.back), n: num(e.n), st: num(e.st) })).filter(e => e.k) };
     }
     o.news = arr(s.news, 12).map(n => ({ id: str(n.id, 20), k: str(n.k, 8), sub: str(n.sub, 12), v: str(n.v, 60), at: num(n.at), told: num(n.told), res: num(n.res) })).filter(n => n.id && n.k); // (what gets around: news.js)
+    { // the lantern tree (tree.js)
+        const k = s.tree && typeof s.tree === "object" ? s.tree : {};
+        o.tree = { due: num(k.due), seed: num(k.seed), n: clamp(Math.round(num(k.n)), 0, 9999), at: num(k.at), g: clamp(num(k.g), 0, 175), last: num(k.last), w: num(k.w), wn: clamp(Math.round(num(k.wn)), 0, 99999),
+            st: (Array.isArray(k.st) ? k.st : []).slice(0, 8).map(num), told: clamp(Math.round(num(k.told)), 0, 7), thirst: num(k.thirst),
+            keep: (Array.isArray(k.keep) ? k.keep : []).filter(x => x && typeof x === "object").slice(-200).map(x => ({ n: Math.max(1, Math.round(num(x.n))), at: num(x.at) })) };
+    }
     { // the letter mystery (mystery.js)
         const k = s.myst && typeof s.myst === "object" ? s.myst : {};
         o.myst = { at: num(k.at), n: clamp(Math.round(num(k.n)), 0, 8), l8: num(k.l8), gift: num(k.gift), via: ["door", "step", "post"].includes(k.via) ? k.via : "" };
@@ -6852,6 +6973,15 @@ function mergeStates(a, b) {
             m.set(x.k, c ? Object.assign({}, w, { at: Math.min(num(c.at), num(x.at)), back: Math.max(num(c.back), num(x.back)), n: Math.max(num(c.n), num(x.n)), st: Math.max(num(c.st), num(x.st)) }) : x);
         }
         o.left = { at: Math.max(num(pa.at), num(pb.at)), log: [...m.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-40) };
+    }
+    { // the lantern tree: the further-grown tree (later tree, then more days grown) wins; the pears picked on either side are kept
+        const pa = a.tree || {}, pb = b.tree || {}, w = (num(pb.n) > num(pa.n) || (num(pb.n) === num(pa.n) && num(pb.g) > num(pa.g))) ? pb : pa;
+        const keep = {};
+        for (const k of [...(pa.keep || []), ...(pb.keep || [])])
+            if (k && !keep[k.n])
+                keep[k.n] = k;
+        o.tree = Object.assign({}, w, { due: Math.max(num(pa.due), num(pb.due)), seed: Math.max(num(pa.seed), num(pb.seed)), w: Math.max(num(pa.w), num(pb.w)),
+            wn: Math.max(num(pa.wn), num(pb.wn)), keep: Object.values(keep).sort((x, y) => x.n - y.n) });
     }
     { // the letter mystery: only moves on; the cup came the first time it came, the way it came then
         const pa = a.myst || {}, pb = b.myst || {}, g = [pa, pb].filter(x => num(x.gift)).sort((x, y) => num(x.gift) - num(y.gift))[0];
@@ -18252,7 +18382,7 @@ function animalTalkTick(now) {
     }
     const pr = choice(pairs), key = pr.map(a => a.k).sort().join("");
     const old = Math.random() < .06 ? oldTenant() : null; // (now and then about someone who used to rent a drawer: garden.js)
-    const line = (Math.random() < NEWS_RES_ODDS && newsResident(key)) || (Math.random() < .06 && mystResident(key)) || (old && compose({ CP: "tenant_catpossum", CS: "tenant_catsnail", PS: "tenant_possumsnail" }[key], { label: old })) || compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
+    const line = (Math.random() < NEWS_RES_ODDS && newsResident(key)) || (Math.random() < .06 && mystResident(key)) || (Math.random() < .05 && treeResident(key)) || (old && compose({ CP: "tenant_catpossum", CS: "tenant_catsnail", PS: "tenant_possumsnail" }[key], { label: old })) || compose({ CP: "catpossum", CS: "catsnail", PS: "possumsnail" }[key]);
     if (!line)
         return;
     // everyone involved stays put and turns to the other
@@ -18978,7 +19108,7 @@ function drawRaccoon(g, now) {
     }
 }
 function pickVisitorLine() {
-    return askVisitLine() || newsLine() || convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
+    return askVisitLine() || newsLine() || (Math.random() < .12 && treeVisitLine()) || convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
 }
 
 </script>
@@ -20958,6 +21088,324 @@ function mystDrawer() {
 }
 
 </script>
+<script>/* js/scene/tree.js */
+"use strict";
+/*
+ * tree.js - The lantern tree (group 67, item 2): something that grows slowly over the year. A seed comes by post a day
+ * or so after this arrives; Mite plants it in a pot on the nook floor, by the writing desk under the plant window. It
+ * grows by the calendar, about six months from seed to ripe pear: seed, sprout, seedling, sapling, young tree,
+ * blossom, fruit, ripe. Water it once a week or so (tap it for its card): two weeks without water and it droops and
+ * stops growing until it gets some. It never dies. The leaves follow the real seasons (green, silver in autumn,
+ * sparse in winter); the blossom and fruit come when the tree is ready, whatever the month.
+ * Ripe: tap it and pick the lantern-pear. The pear goes in the Cabinet, the tree is planted out (you can see it from
+ * the plant window, glowing a little after dark), and a pip from the pear goes in the pot: the next one.
+ * Mite says something at each new stage (when the nook is in view), when it's thirsty, and now and then; the cat,
+ * possum and snail talk about it; visitors ask after it; the cat naps under it once it's big enough.
+ * S.tree: { due: when the seed comes, seed: when it came, n: which tree (0 = none yet), at: planted, g: days grown,
+ *   last: last counted, w: last watered, wn: days watered, st: [when each stage was reached], told: the stage Mite has
+ *   remarked on, thirst: the day Mite last said it's thirsty, keep: [{ n, at }] the pears picked }
+ * Pools: tree_seed "from | letter", tree_stage / tree_idle / tree_look "n | line" (n the stage, 0-7; 8 once a pear has
+ * been picked), tree_thirsty, tree_water, tree_perk, tree_picked, tree_catpossum / catsnail / possumsnail "n | C: / P:",
+ * tree_visitor "n | V: / M:".
+ */
+const TREE_D = 864e5, TREE_SEED = TREE_D, TREE_ST = [0, 7, 25, 55, 95, 135, 155, 175], TREE_DROOP = 14 * TREE_D, TREE_THIRST = 7 * TREE_D;
+const TREE_NAME = "the lantern tree", TREE_PEAR = "A lantern-pear";
+const TREE_STAGES = ["a seed in a pot", "a sprout", "a seedling", "a sapling", "a young tree", "in blossom", "in fruit", "ripe"];
+const TREE_H = [.05, .3, .55, .95, 1.35, 1.55, 1.65, 1.7]; // (its height at each stage, in R, from the top of the pot)
+const treeOn = () => !!(S.tree && num(S.tree.n));
+function treeStage() {
+    if (!treeOn())
+        return -1;
+    let s = 0;
+    for (let i = 1; i < TREE_ST.length; i++)
+        if (num(S.tree.g) >= TREE_ST[i])
+            s = i;
+    return s;
+}
+const treeDry = t => treeOn() && t - num(S.tree.w) > TREE_DROOP;
+const treeBig = () => treeStage() >= 4;
+/* "n | ..." lines for where the tree's got to: the current stage mostly, now and then an earlier one (8: a pear picked) */
+function treeLines(key) {
+    return pool(key).map(raw => {
+        const i = String(raw).indexOf("|");
+        return i < 0 ? null : { k: String(raw).slice(0, i).trim(), rest: String(raw).slice(i + 1).trim(), raw: String(raw) };
+    }).filter(x => x && x.k && x.rest);
+}
+function treePick(key, exact) {
+    const s = treeStage(), picked = (S.tree.keep || []).length > 0;
+    const ls = treeLines(key).filter(x => exact ? +x.k === s : (+x.k <= s || (x.k === "8" && picked)));
+    if (!ls.length)
+        return null;
+    const now = ls.filter(x => +x.k === s || (x.k === "8" && picked)), l = choice(Math.random() < .7 && now.length ? now : ls);
+    lineCount(key, l.raw);
+    return fillText(l.rest, ctx());
+}
+function treePlant(t) {
+    const T = S.tree;
+    T.n = num(T.n) + 1;
+    Object.assign(T, { at: t, g: 0, last: t, w: t, wn: 1, st: [t], told: 0 });
+}
+/* the days it has grown: only while it isn't drooping, and it waits once ripe */
+function treeGrow(t) {
+    const T = S.tree, end = Math.min(t, num(T.w) + TREE_DROOP), was = treeStage();
+    if (end > num(T.last))
+        T.g = Math.min(TREE_ST[7], num(T.g) + (end - Math.max(num(T.last), num(T.at))) / TREE_D);
+    T.last = Math.max(num(T.last), t);
+    const s = treeStage();
+    for (let i = 1; i <= s; i++)
+        if (!num(T.st[i]))
+            T.st[i] = t;
+    return s > was ? s : -1;
+}
+/* every minute or so (from postTick). True if a letter came (the seed) */
+function treeTick(t) {
+    if (!S.tree)
+        return false;
+    const T = S.tree;
+    if (!num(T.n)) {
+        if (!num(T.due)) { // (the clock starts now: the seed in a day or so)
+            T.due = t + TREE_SEED;
+            saveSoon();
+            return false;
+        }
+        if (t < num(T.due) || (hasDesk() && num(S.flags.letterInDay) === dayNum()))
+            return false;
+        T.seed = t;
+        treePlant(t);
+        let came = false;
+        const ls = treeLines("tree_seed"), l = ls.length ? ls[Math.floor(hash01("tree" + S.created) * ls.length)] : null;
+        if (l && hasDesk()) {
+            lineCount("tree_seed", l.raw);
+            S.flags.letterInDay = dayNum();
+            deliverLetter(l.k, fillText(l.rest, ctx()).replace(/ \/ /g, "\n\n"), t);
+            say("letterarrived", { penpal: l.k });
+            came = true;
+        }
+        note(`A seed came by post, wrapped in a leaf. ${S.settings.pet} planted it in a pot in the nook, by the plant window. Water it now and then.`);
+        saveSoon();
+        return came;
+    }
+    const s = treeGrow(t);
+    if (s > 0) {
+        note(s === 7 ? `The lantern tree in the nook has a ripe pear. Tap the tree to pick it.` : `The lantern tree in the nook is ${TREE_STAGES[s]} now.`);
+        renderContent();
+    }
+    saveSoon();
+    return false;
+}
+/* Mite, now and then (from the idle remarks): a new stage first (in the nook), then thirst, then the usual */
+function treeSay() {
+    if (!treeOn())
+        return false;
+    const T = S.tree, s = treeStage(), t = Date.now();
+    if (view === "garden" && num(T.told) < s) {
+        const l = treePick("tree_stage", true);
+        T.told = s;
+        saveSoon();
+        if (l) {
+            speak(l);
+            return true;
+        }
+    }
+    if (t - num(T.w) > TREE_THIRST && num(T.thirst) !== dayNum()) {
+        T.thirst = dayNum();
+        saveSoon();
+        return !!say("tree_thirsty");
+    }
+    const l = treePick("tree_idle");
+    if (!l)
+        return false;
+    speak(l);
+    return true;
+}
+/* two residents, now and then (conversations.js): a "C: / P:" line or null */
+function treeResident(key) {
+    return treeOn() ? treePick({ CP: "tree_catpossum", CS: "tree_catsnail", PS: "tree_possumsnail" }[key]) : null;
+}
+/* a visitor asks after it (visitors.js), once it's a sapling */
+function treeVisitLine() {
+    return treeStage() >= 3 ? treePick("tree_visitor") : null;
+}
+function treeWater() {
+    const T = S.tree, t = Date.now(), dry = treeDry(t);
+    treeGrow(t); // (counted up to now first)
+    if (new Date(num(T.w)).toDateString() !== new Date(t).toDateString())
+        T.wn = num(T.wn) + 1;
+    T.w = t;
+    T.last = t;
+    sfx("card");
+    say(dry ? "tree_perk" : "tree_water");
+    saveSoon();
+}
+function treePickPear() {
+    const T = S.tree, t = Date.now();
+    if (treeStage() !== 7)
+        return;
+    T.keep = (T.keep || []).concat({ n: num(T.n), at: t });
+    note(`${S.settings.pet} picked the lantern-pear. It's in the Cabinet. The tree's been planted out where you can see it from the plant window, and a pip from the pear is in the pot.`);
+    treePlant(t);
+    setTimeout(() => say("tree_picked"), 900);
+    renderContent();
+    saveSoon();
+}
+/* where it stands: on the nook floor, in front of the left end of the writing desk, under the plant window */
+function treeGeo() {
+    const g = gardenGeo();
+    const x = Math.max(R * .55, (hasDesk() ? g.dx0 : g.wx0) + R * .3); // (Mite mostly stands right of the desk, so not there)
+    return { x: Math.round(x / PX) * PX, y: GY, pw: R * .5, ph: R * .38 };
+}
+function treeCard() {
+    if (!treeOn())
+        return false;
+    const T = S.tree, t = Date.now(), s = treeStage(), dry = treeDry(t), ago = Math.floor((t - num(T.w)) / TREE_D);
+    const left = Math.max(0, Math.ceil((TREE_ST[7] - num(T.g)) / 7));
+    const facts = [`Tree no. ${num(T.n)}, planted ${esc(dmy(new Date(num(T.at))))}. Now ${TREE_STAGES[s]}.`,
+        `Last watered ${ago < 1 ? "today" : ago === 1 ? "yesterday" : ago + " days ago"}.`,
+        dry ? "It's drooping. It won't grow until it gets some water." : s === 7 ? "The pear's ripe." : `Ripe in about ${left} week${left === 1 ? "" : "s"}, if it's watered.`];
+    const btn = [["Water it", "", () => { closeRitual(); treeWater(); }]];
+    if (s === 7)
+        btn.unshift(["Pick the pear", "", () => { closeRitual(); treePickPear(); }]);
+    btn.push(["Leave it", "ghost", closeRitual]);
+    openRitual("The lantern tree", treePick("tree_look", true) || "It's growing.", facts.map(f => `<p class="sub">${f}</p>`).join(""), btn);
+    sfx("card");
+    return true;
+}
+/* ---------- drawing ---------- */
+function treeLeaf(dk, dry) { // (palette colours, so they stay themselves on the canvas: canvas.js PAL)
+    const ss = season(new Date().getMonth()), c = { autumn: ["#c9c4b4", "#8c8a80", "#f2c14e"], winter: ["#8c8a80", "#365a2c", "#c9c4b4"],
+        spring: ["#73a24f", "#365a2c", "#d1e49a"], summer: ["#4f7d3c", "#24391f", "#a0c86a"] }[ss];
+    return c.map(h => mix(dry ? mix(h, "#946c4c", .4) : h, "#16231a", dk));
+}
+/* the pot and what's in it (in the nook's layer, garden.js) */
+function drawTree(dk, t) {
+    gardenHits.tree = null;
+    if (!treeOn())
+        return;
+    const T = S.tree, s = treeStage(), dry = treeDry(Date.now()), { x, y, pw, ph } = treeGeo(), u = Math.max(1, PX);
+    const night = clamp(skyAt(new Date().getHours() + new Date().getMinutes() / 60).dark * 1.4 + (S.lightsOut ? .4 : 0), 0, 1);
+    // how tall: between this stage's height and the next one's, by the days in between
+    const g = num(T.g), f = s >= 7 ? 1 : clamp((g - TREE_ST[s]) / (TREE_ST[s + 1] - TREE_ST[s]), 0, 1);
+    const hgt = R * (TREE_H[s] + (s >= 7 ? 0 : (TREE_H[s + 1] - TREE_H[s]) * f)), top = y - ph, sag = dry ? R * .1 : 0;
+    const lean = dry ? R * .12 : 0, sway = reduced ? 0 : Math.sin(t * .7 + T.n) * R * .015 * Math.min(1, hgt / R);
+    // the stem or trunk: a few pixels wide, thicker as it grows, bending over when it's dry
+    const tw = Math.max(u, Math.round((s < 3 ? .04 : s < 4 ? .07 : .11) * R / u) * u), bark = mix(s < 3 ? "#6f9a48" : "#7a5638", "#1a120c", dk);
+    cx.fillStyle = bark;
+    const segs = Math.max(1, Math.round(hgt / u));
+    for (let i = 0; i < segs; i++) {
+        const k = i / segs, xx = x + (lean + sway) * k * k;
+        cx.fillRect(Math.round((xx - tw / 2) / u) * u, Math.round((top - i * u - u) / u) * u, i > segs * .7 ? Math.max(u, tw - u) : tw, u);
+    }
+    const tipX = x + lean + sway, tipY = top - hgt + sag;
+    const [leaf, leafD, leafL] = treeLeaf(dk, dry);
+    if (s === 0) { // just the soil, a little mound
+    }
+    else if (s <= 2) { // a sprout: two leaves, then four
+        cx.fillStyle = leaf;
+        const n = s === 1 ? 1 : 2;
+        for (let i = 0; i < n; i++)
+            for (const sd of [-1, 1]) {
+                cx.beginPath();
+                cx.ellipse(tipX + sd * R * .09, tipY + i * R * .18 + sag * .5, R * .1, R * .05, sd * (dry ? .9 : .3), 0, 7);
+                cx.fill();
+            }
+    }
+    else { // a crown of leaf clusters, bigger as it grows; fewer leaves in winter
+        const cr = R * (s === 3 ? .3 : .52) * (s === 3 ? .7 + .3 * f : 1), winter = season(new Date().getMonth()) === "winter";
+        const blobs = s === 3 ? 4 : winter ? 6 : 9;
+        for (let pass = 0; pass < 2; pass++) {
+            cx.fillStyle = pass ? leaf : leafD;
+            for (let i = 0; i < blobs; i++) {
+                const a = i * 2.39 + T.n, rr = cr * (.35 + .5 * hash01("tl" + i));
+                const bx = tipX + Math.cos(a) * rr * .85, by = tipY + cr * .5 + Math.sin(a) * rr * .9 + sag;
+                cx.beginPath();
+                cx.ellipse(bx, by - pass * R * .05, cr * .42, cr * .4, 0, 0, 7);
+                cx.fill();
+            }
+        }
+        for (let i = 0; i < blobs * 3; i++) { // leaf speckles, so it reads as leaves and not a cloud
+            const a = i * 1.13 + T.n, rr = cr * .95 * hash01("ts" + i);
+            cx.fillStyle = i % 3 ? leafD : leafL;
+            cx.fillRect(Math.round((tipX + Math.cos(a) * rr) / u) * u, Math.round((tipY + cr * .35 + Math.sin(a) * rr * .6 + sag) / u) * u, u, u);
+        }
+        if (s === 5) { // blossom: pale petals all over
+            cx.fillStyle = mix("#f2e6f0", "#3a3440", dk * .8);
+            for (let i = 0; i < 14; i++) {
+                const a = i * 1.7 + 1, rr = cr * .85 * hash01("tb" + i);
+                cx.fillRect(Math.round((tipX + Math.cos(a) * rr) / u) * u, Math.round((tipY + cr * .3 + Math.sin(a) * rr * .6 + sag) / u) * u, u * 2, u * 2);
+            }
+        }
+        if (s >= 6) { // the pears: green, then gold and glowing a little after dark
+            const n = s === 6 ? 3 : 1;
+            for (let i = 0; i < n; i++) {
+                const px = tipX + (n === 1 ? cr * .25 : (i - 1) * cr * .55), py = tipY + cr * (n === 1 ? .7 : .55 + (i % 2) * .2) + sag;
+                const pr = R * (s === 7 ? .1 : .06);
+                if (s === 7 && night > .1) {
+                    const gl = cx.createRadialGradient(px, py, 0, px, py, R * .55);
+                    gl.addColorStop(0, `rgba(255,214,120,${.45 * night})`);
+                    gl.addColorStop(1, "rgba(255,214,120,0)");
+                    cx.fillStyle = gl;
+                    cx.fillRect(px - R * .55, py - R * .55, R * 1.1, R * 1.1);
+                }
+                cx.fillStyle = s === 7 ? mix("#f0c860", "#ffe8a0", night * .6) : mix("#a8c060", "#26301a", dk);
+                cx.beginPath();
+                cx.arc(px, py + pr * .3, pr, 0, 7);
+                cx.arc(px, py - pr * .45, pr * .65, 0, 7);
+                cx.fill();
+                cx.fillStyle = bark;
+                cx.fillRect(Math.round(px / u) * u, Math.round((py - pr * 1.4) / u) * u, u, u * 2);
+            }
+        }
+    }
+    // the pot: terracotta, a rim, and the soil
+    const pot = mix("#b8643c", "#2e1810", dk), rim = mix("#cc7a4c", "#3a2014", dk);
+    cx.fillStyle = pot;
+    cx.beginPath();
+    cx.moveTo(x - pw * .42, top + ph * .2);
+    cx.lineTo(x + pw * .42, top + ph * .2);
+    cx.lineTo(x + pw * .32, y);
+    cx.lineTo(x - pw * .32, y);
+    cx.closePath();
+    cx.fill();
+    cx.fillStyle = rim;
+    cx.fillRect(x - pw / 2, top, pw, ph * .24);
+    cx.fillStyle = mix("#4a3424", "#120c08", dk);
+    cx.fillRect(x - pw * .42, top - u, pw * .84, u);
+    if (s === 0) {
+        cx.beginPath();
+        cx.ellipse(x, top - u, pw * .18, u * 1.5, 0, Math.PI, 0);
+        cx.fill();
+    }
+    const hh = Math.max(ph + hgt + R * .3, R * .8);
+    gardenHits.tree = { x: x - Math.max(pw, R * .5), y: y - hh, w: Math.max(pw, R * .5) * 2, h: hh, cx: x };
+}
+/* the trees planted out, seen from the plant window: small, in the hedge, a glow on each after dark (inside its clip) */
+function drawTreesOut(wx0, ww, wy1, dk, sky) {
+    const n = Math.min(3, ((S.tree && S.tree.keep) || []).length);
+    for (let i = 0; i < n; i++) {
+        const x = wx0 + ww * [.22, .74, .48][i], h = R * (.75 - i * .12), c = mix("#3e6a34", "#0e160e", dk);
+        cx.fillStyle = mix("#4a3424", "#0e0a08", dk);
+        cx.fillRect(Math.round(x / PX) * PX, wy1 - h * .6, Math.max(PX, R * .05), h * .6);
+        cx.fillStyle = c;
+        cx.beginPath();
+        cx.ellipse(x, wy1 - h * .7, R * .26, R * .2, 0, 0, 7);
+        cx.fill();
+        if (sky.dark > .3) {
+            cx.fillStyle = `rgba(255,214,120,${(sky.dark - .3) * 1.1})`;
+            cx.fillRect(Math.round((x + R * .08) / PX) * PX, Math.round((wy1 - h * .62) / PX) * PX, PX, PX);
+        }
+    }
+}
+/* the Cabinet: the tree now, and the pears picked */
+function renderTree() {
+    const el = $("treeList");
+    if (!el || !S.tree)
+        return;
+    const T = S.tree, when = x => esc(dmy(new Date(x))), s = treeStage();
+    const now = treeOn() ? `<div class="drawer"><b>Tree no. ${num(T.n)}, ${esc(TREE_STAGES[s])}</b>Planted ${when(T.at)}. ${(T.st || []).map((x, i) => i && num(x) ? `${TREE_STAGES[i][0].toUpperCase() + TREE_STAGES[i].slice(1)} ${when(x)}.` : "").filter(Boolean).join(" ")} Watered on ${num(T.wn)} day${num(T.wn) === 1 ? "" : "s"}.</div>` : "";
+    el.innerHTML = now + (T.keep || []).slice().reverse().map(k => `<div class="drawer"><b>${esc(TREE_PEAR)}, from tree no. ${num(k.n)}</b>Picked ${when(k.at)}. It still glows a little, after dark. The tree it grew on is outside the plant window.</div>`).join("");
+}
+
+</script>
 <script>/* js/scene/dream-archive.js */
 "use strict";
 /*
@@ -22800,7 +23248,8 @@ function catSpotsLow(room) {
     if (room === "garden") { // the armchair, mostly; the floor of the nook now and then
         const g = gardenGeo(), top = { x: g.drX + g.drW * .18, g: g.drH + R * .02 }, floor = { x: W * .5, g: 0 };
         const seat = miteInChair() ? catHeadrest() : { x: g.chX - R * .3, g: g.chH }; // (Mite's in the chair: up on its back instead)
-        return [hasChair() ? seat : floor, hasChair() ? seat : floor, hasDrawers() ? top : floor, floor]; // (or on top of the drawers)
+        const tree = treeBig() ? [{ x: treeGeo().x + R * .15, g: 0, tree: 1 }] : []; // (under the lantern tree, once it is big enough: tree.js)
+        return [hasChair() ? seat : floor, hasChair() ? seat : floor, hasDrawers() ? top : floor, floor, ...tree]; // (or on top of the drawers)
     }
     if (room === "archive") {
         const g = archGeo();
@@ -24226,6 +24675,7 @@ function drawGarden(now, dt) {
         cx.ellipse(x, wy1, R * .32, R * .3 + Math.sin(x * .7) * R * .08, 0, Math.PI, 0);
         cx.fill();
     }
+    drawTreesOut(wx0, ww, wy1, dk, sky); // the lantern trees planted out (tree.js)
     windowFall(gwparts, wcx, wy0 - 4, wy1 + 6, wr, dt, tsec, d, wx); // the same leaves, petals or snow as at the wagon window (room.js)
     if (wx.rain > 0 && !wx.snow) { // rain running down the glass
         cx.fillStyle = `rgba(200,220,240,${.35 - dk * .15})`;
@@ -24271,7 +24721,7 @@ function drawGarden(now, dt) {
     drawMess(dk, "garden"); // mess on the nook floor
     drawNookLoft(dk); // the platform high on the wall, and its stairs (loft.js)
     drawLanterns(lanternString("garden"), dk); // and the lanterns underneath it, as many as along the wagon's ceiling (draw-world.js)
-    gardenHits = { plants: [], desk: null, letters: null, chair: null, board: [], drawers: null, table: null, tenants: null, jar: null };
+    gardenHits = { plants: [], desk: null, letters: null, chair: null, board: [], drawers: null, table: null, tenants: null, jar: null, tree: null };
     drawLayered(() => {
         // the plants you've bought share the two window sills: every other one stands here (easel.js, sillPlants)
         {
@@ -24501,6 +24951,7 @@ function drawGarden(now, dt) {
         drawNookStairs(dk); // the stairs up to the platform, behind the chair (owner, 24-10; loft.js)
         if (hasChair())
             drawChesterfield(g, dk, t, wood, woodD); // the chesterfield and the side table, in front of the stairs
+        drawTree(dk, t); // the lantern tree in its pot, in front of the desk (tree.js; last, so the desk is behind it)
     });
     if (hasChair()) { // the candle's flame and glow (on the side table, which comes with the chair): a little always, more in the evening
         const c = gardenCandle(g), fl = 1 + Math.sin(t * 9) * .04 + Math.sin(t * 23) * .03, up = Math.sin(t * 9) + Math.sin(t * 23) * .6 > .9 ? PX : 0;
@@ -25219,6 +25670,8 @@ function postTick(now) {
     if (otherTick(t)) // (and a note from further in, or Mite's answer: deeper.js)
         return;
     if (leftTick(t)) // (and what came of a leftover: leftovers.js)
+        return;
+    if (treeTick(t)) // (and the lantern tree: its seed by post, and growing: tree.js)
         return;
     if (mystTick(t)) // (and the letters with no name on them: mystery.js)
         return;
@@ -32140,7 +32593,7 @@ function ambientTalk() {
         return;
     }
     if (r < .8) // (now and then a remark about the workshop out of sight, where some things are kept instead: group 36)
-        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || (Math.random() < .04 && markSay()) || (Math.random() < .03 && askSay()) || (Math.random() < .03 && mystSay()) || say("idle");
+        (Math.random() < .08 && say("workshop")) || (Math.random() < .03 && oldTenant() && say("tenant_idle", { label: oldTenant() })) || (Math.random() < .04 && markSay()) || (Math.random() < .03 && askSay()) || (Math.random() < .03 && mystSay()) || (Math.random() < .04 && treeSay()) || say("idle");
 }
 function inventWord() {
     const syl = ["flim", "bor", "quo", "snu", "ber", "lin", "dra", "mo", "ket", "vy", "pel", "ziff", "ow", "gren", "tash", "mu", "pim", "wob", "lo", "fen", "drib", "sil", "nok", "ul"];
@@ -32493,6 +32946,7 @@ const TAP_TARGETS = {
             requestObj("gplants", h.cx, h.y);
         }
     },
+    tree: { hit: tapBox(() => gardenHits.tree, 6), act: () => treeCard() }, // the lantern tree: its card (tree.js)
     gramophone: { hit: tapBox(() => gardenHits.gramo, 12), act: tapGoTo("ggramo") }, // Mite winds it (or stops it)
     givejar: { hit: tapBox(() => gardenHits.jar, 8), act: tapGoTo("gjar") }, // a place that needs glimmers (giving.js)
     letters: { hit: tapBox(() => gardenHits.letters, 30), act: tapGoTo("gletters") }, // the letter rack
@@ -32529,7 +32983,7 @@ const TAP_ORDER = {
     room: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "dream", "origami", "festival", "calendar", "postit", "splurge",
         "possum", "cat", "guest", "snail", "vault", "easel", "sill", "jar", "cabinet", "hearth", "wall", "oven", "kettle",
         "books", "scope", "pet", "sweep", "pile", "shelfbox", "look", "floor"],
-    garden: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "shade", "splurge", "possum", "cat", "snail", "pet", "plants",
+    garden: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "shade", "splurge", "possum", "cat", "snail", "pet", "tree", "plants",
         "gramophone", "givejar", "letters", "pinboard", "vase", "flowerbook", "tenants", "drawers", "chair", "desk",
         "postit", "sweep", "look", "floor"],
     archive: ["archiveSeen", "gold", "seasonal", "anomaly", "drifter", "left", "mark", "journal", "cat", "postit", "sweep", "circle",
@@ -34472,6 +34926,7 @@ function renderCabinet() {
         set("cab-origami", `${ORIGAMI.filter(o => oc.has(o.id)).length}/${ORIGAMI.length}`);
         set("cab-fest", `${FESTIVALS.filter(f => S.fest[f.id]).length}`);
         set("cab-glimpses", `${(S.glimpses || []).length}`);
+        set("cab-tree", `${((S.tree && S.tree.keep) || []).length} picked`);
         set("cab-left", `${leftLog().filter(e => e.c).length} of ${Object.keys(LEFT).length}`);
         set("cab-cards", `${new Set((S.cards || []).map(c => c.k)).size} of ${cardList().length}`);
         set("cab-dreams", `${(S.dreams || []).length}`);
@@ -34481,6 +34936,7 @@ function renderCabinet() {
     if (typeof renderTapes === "function")
         renderTapes(); // the tapes from the recorder (oral.js)
     renderLeftovers(); // what anomalies left (leftovers.js)
+    renderTree(); // the lantern tree and its pears (tree.js)
     renderGallery(); // the paintings and knits (Mite's crafts) are here too
     colSections();
     foldSections();
@@ -34494,6 +34950,7 @@ const COL_HAS = {
     "cab-altered": () => alteredList().some(t => S.altered[t.name]),
     "cab-glimpses": () => (S.glimpses || []).length > 0,
     "cab-left": () => leftLog().some(e => e.c),
+    "cab-tree": () => !!(S.tree && num(S.tree.n)),
     "cab-cards": () => (S.cards || []).length > 0,
     "cab-origami": () => (S.origami || []).length > 0,
     "cab-fest": () => FESTIVALS.some(f => S.fest[f.id]),
