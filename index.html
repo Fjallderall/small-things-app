@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 06-11-2026 -->
+<!-- Small Things, shared build of 07-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -991,6 +991,8 @@ body.pixel{--boxlh:24px;--boxfs:16px}
         <div class="drawers" id="leftList"></div></details>
       <details class="shopsec colsec" data-sec="cab-tree" open><summary><h3>The lantern tree</h3><span class="seccount" id="cnt-cab-tree"></span><span class="secnew" id="new-cab-tree" hidden>new</span></summary><p class="sub">The tree in the nook, and the pears it gave.</p>
         <div class="drawers" id="treeList"></div></details>
+      <details class="shopsec colsec" data-sec="cab-anniv" open><summary><h3>Anniversaries</h3><span class="seccount" id="cnt-cab-anniv"></span><span class="secnew" id="new-cab-anniv" hidden>new</span></summary><p class="sub">A keepsake for each year together.</p>
+        <div class="drawers" id="annivList"></div></details>
       <details class="shopsec colsec" data-sec="cab-places" open><summary><h3>Places</h3><span class="seccount" id="cnt-cab-places"></span><span class="secnew" id="new-cab-places" hidden>new</span></summary><p class="sub">Where the wagon has stopped, a postcard from each, and where it goes next.</p>
         <div class="drawers" id="placeList"></div></details>
       <details class="shopsec colsec" data-sec="cab-glimpses" open><summary><h3>Seen in the chalk circle</h3><span class="seccount" id="cnt-cab-glimpses"></span><span class="secnew" id="new-cab-glimpses" hidden>new</span></summary><p class="sub">Glimpses of the past, from the circle in the archive: a little of everyone's family history.</p>
@@ -1191,6 +1193,16 @@ const POOL_INFO = {
     mystery_knock_far: "Mite, hearing that Sunday knock from another room",
     mystery_visit: "The visit at the night door, on its card: V: / M: (one is picked per game)",
     mystery_gift: "Mite, after the one who keeps the garden has left the teacup",
+    anniv_morning: "Mite on its anniversary (the day the game began), the first time it says something that day: {years} (a year, two years), {nth} (first, second)",
+    anniv_open: "Mite starts the anniversary gathering in the wagon ({years}, {nth})",
+    anniv_cat: "Midnightcat at the anniversary gathering: C: line",
+    anniv_possum: "The possum at the anniversary gathering: P: line",
+    anniv_snail: "The snail at the anniversary gathering: S: line",
+    anniv_close: "Mite ends the anniversary gathering (the present by the cake waits to be tapped)",
+    anniv_idle: "Mite later on its anniversary, and when you tap the cake",
+    anniv_visitor: "A visitor on Mite's anniversary: V: / M: conversation",
+    anniv_gift: "The first line on the anniversary present's card",
+    anniv_keep: "The keepsake for each year: Name | about (year 1 is the first line, and so on; round again after the last)",
     tree_seed: "The letter that brings the lantern tree's seed: from | letter (one is picked per game; / starts a new paragraph)",
     tree_stage: "Mite, when the lantern tree reaches a new stage: n | line (0 seed, 1 sprout, 2 seedling, 3 sapling, 4 young tree, 5 blossom, 6 fruit, 7 ripe)",
     tree_idle: "Mite on the lantern tree, now and then: n | line (from stage n on; 8 once a pear has been picked)",
@@ -5080,6 +5092,81 @@ linesFor("The lantern tree", {
 });
 
 </script>
+<script>/* js/content/lines/anniv.js */
+"use strict";
+/* lines/anniv.js - Mite's anniversary: once a year, on the day the game began (anniv.js). {Years}: "a year", "two
+   years"...; {nth}: "first", "second"... */
+linesFor("Mite's anniversary", {
+    anniv_morning: [
+        "It's been {years}. I checked the calendar twice. Then I checked it with the cat.",
+        "{Years} today. I've hung some bunting in the wagon. It's slightly crooked. That's on purpose.",
+        "Today's the day we started. {Years} ago. Come to the wagon when you have a moment.",
+        "Our {nth} anniversary. I've made a cake. It's in the wagon, being looked at by everyone.",
+        "Happy anniversary. {Years}. I don't feel a day older. I feel about one afternoon older."
+    ],
+    anniv_open: [
+        "M: Everyone's here. Good. It's been {years}, and I thought that deserved bunting.",
+        "M: Right. Our {nth} anniversary. There's cake. There are no speeches. Well. Short ones.",
+        "M: {Years} today. I wanted to say thank you, so I made a cake. It says it better than I do.",
+        "M: I counted, and it's {years}. Everyone gets a slice and one sentence."
+    ],
+    anniv_cat: [
+        "C: I was here first. In the archive. Before any of you. I'm prepared to share the credit.",
+        "C: The bunting is at exactly the height of a good jump. I'm told that isn't what it's for.",
+        "C: Another year of good windowsills. I approve of the year.",
+        "C: I'll have the bit of cake with no candle in it. Candles are a dog thing."
+    ],
+    anniv_possum: [
+        "P: I'd like to say a few words. Cake. That's the words.",
+        "P: Best year I've had on a beam. And I've had a lot of beams.",
+        "P: I slept through most of it. It sounded lovely.",
+        "P: Can I take a slice back to the nook? For later. For tonight. For now, actually."
+    ],
+    anniv_snail: [
+        "S: I got here early. I set off last week.",
+        "S: {Years}. I've delivered every letter in it. Some of them twice, by mistake.",
+        "S: A year goes by quicker than you'd think. Quicker than me, certainly.",
+        "S: I'd like it noted that I came from the far end of the wagon. That's a journey."
+    ],
+    anniv_close: [
+        "M: That's all the speeches. Oh, and there's a parcel by the cake. It's for you.",
+        "M: Thank you, everyone. And you, especially. There's something by the cake with your name on.",
+        "M: Here's to the next one. The parcel by the stand is yours, by the way.",
+        "M: Cake now. And before I forget: that little parcel is for you."
+    ],
+    anniv_idle: [
+        "There's still cake. There will be cake for some time. I made a large one.",
+        "The bunting stays up until tomorrow. Then it goes back in the box for a year.",
+        "{Years}. It still sounds like a lot, when I say it out loud.",
+        "Somebody has had more than one slice. I'm not saying who. Its tail is still in the cake.",
+        "Most of the year was ordinary days. Those were my favourite part."
+    ],
+    anniv_visitor: [
+        "V: Bunting! What's the occasion? / M: {Years} since we started, today. / V: Well. Congratulations to both of you. / M: There's cake. / V: Even better.",
+        "V: I heard it's your anniversary. Word gets round the hedges. / M: It is. The {nth}. / V: I brought you a nice stone. / M: Thank you. It's very nice.",
+        "V: Whose birthday is it? / M: Not a birthday. An anniversary. {Years} of this. / V: Of tea and lists? / M: Mostly. / V: Sounds about right."
+    ],
+    anniv_gift: [
+        "For the year. It didn't seem right for it to go by without something to keep.",
+        "I wrapped it myself. You can tell by the corners.",
+        "One for every year. This is this year's.",
+        "Happy anniversary. I chose it carefully. Then I unchose it. Then I chose it again."
+    ],
+    anniv_keep: [
+        "A pressed four-leaf clover | Found on the very first morning, kept in a book since, waiting for today.",
+        "A brass key-ring with a wagon on it | Holds no keys. Holds the idea of the wagon, which is better.",
+        "A tin of buttons | One button for every week of the year, more or less. Mite lost count, happily.",
+        "A small painted pebble | Two dots and a smile. Mite says it's not a portrait. It's a portrait.",
+        "A candle stub from the cake | Burned for exactly one anniversary. Will not be lit again. Probably.",
+        "A folded paper star | Folded by the paper ghost, very slowly, for the occasion.",
+        "A snail-shell thimble | The snail found it and would not say where.",
+        "A jar with one firefly's glow in it | No firefly inside. Just the light it left, saved for a year.",
+        "A tiny pair of knitted mittens | For nobody's hands in particular. For warmth in general.",
+        "A ten-year ribbon | Blue, with gold thread. Mite ironed it twice."
+    ]
+});
+
+</script>
 <script>/* js/content/lines/places.js */
 "use strict";
 /* lines/places.js - The wagon moves on (places.js): where it stops, what Mite says about each place, the postcards, and
@@ -6394,7 +6481,8 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mvxuie90k8p14", "mvxuiz2owsc49", "mvxxky61gpnib", "mvxxmeav43azy", "mvyb2odffj3uv", "mvyecv348hhxd", "mvyepcgsmsxck", "mvyeprbeq9q0y", "mvyeq3w05dcnl", "mvyesvj3sirkg", "mvyeulayno17m", "mvyhbf3k1rfh6", "mvz8fuytzgujz", "mvzb5nbv4d6s9", "mvzb4gx0wcv8d", "mvzb77nwhkajc", "mvzb8jnpcjibh", "mvzf39k1dr24r", "mvzfk57yjww73", "mvzb325sjv6wm", "mvzb3ap4cix8j", "mvzb0nh9t1h6x", "mvzb1io3poh4t", "mvzwe2wo1ppbo", "mvzwed65i2i61", "mw0htonoeuma0", "mw19k04dfn9un", "mw19okic2777s", "mw19pr6zq2mb1", "mw19qbvwf4mv0", "mw1b3306x5671", "mw1bd6ui024nj",
     // group 57 (04-11-2026)
     "mw1zfypifrryc", "mw1zmhgppsiot", "mw1zntkrf8yb9", "mw1zo3la6zzlf"
-, "mw2ciqxb829vj"];
+, "mw2ciqxb829vj",
+    "mw5o58hdcib1g"]; // (group 68: the character list, 07-11-2026)
 
 </script>
 <script>/* js/core/state.js */
@@ -6405,7 +6493,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
  * the phone and laptop copies field by field. Also the weekly archive of finished tasks.
  */
 function defaultState() {
-    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, myst: { at: 0, n: 0, l8: 0, gift: 0, via: "" }, tree: { due: 0, seed: 0, n: 0, at: 0, g: 0, last: 0, w: 0, wn: 0, st: [], told: 0, thirst: 0, keep: [] }, place: { at: "", since: 0, turn: "", off: null, told: 0, remind: 0, log: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
+    return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, myst: { at: 0, n: 0, l8: 0, gift: 0, via: "" }, tree: { due: 0, seed: 0, n: 0, at: 0, g: 0, last: 0, w: 0, wn: 0, st: [], told: 0, thirst: 0, keep: [] }, anniv: { day: "", keep: [] }, place: { at: "", since: 0, turn: "", off: null, told: 0, remind: 0, log: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
         mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
@@ -6722,6 +6810,11 @@ function sanitizeState(raw) {
         o.left = { at: num(k.at), log: arr(k.log, 40).map(e => ({ k: str(e.k, 12), room: ["room", "garden", "archive"].includes(e.room) ? e.room : "room", x: clamp(num(e.x), 0, 1), y: clamp(num(e.y), 0, 1), at: num(e.at), c: ["keep", "free", "file"].includes(e.c) ? e.c : "", ans: num(e.ans), back: num(e.back), n: num(e.n), st: num(e.st) })).filter(e => e.k) };
     }
     o.news = arr(s.news, 12).map(n => ({ id: str(n.id, 20), k: str(n.k, 8), sub: str(n.sub, 12), v: str(n.v, 60), at: num(n.at), told: num(n.told), res: num(n.res) })).filter(n => n.id && n.k); // (what gets around: news.js)
+    { // Mite's anniversary (anniv.js)
+        const k = s.anniv && typeof s.anniv === "object" ? s.anniv : {};
+        o.anniv = { day: /^\d{4}-\d{2}-\d{2}$/.test(k.day) ? k.day : "",
+            keep: (Array.isArray(k.keep) ? k.keep : []).filter(x => x && typeof x === "object" && Math.round(num(x.n)) >= 1).slice(-200).map(x => Object.assign({ n: clamp(Math.round(num(x.n)), 1, 999), at: num(x.at) }, x.late ? { late: 1 } : {})) };
+    }
     { // the wagon moves on (places.js)
         const k = s.place && typeof s.place === "object" ? s.place : {}, id = x => PLACE_IDS.includes(x) ? x : "", day = x => /^\d{4}-\d{2}-\d{2}$/.test(x) ? x : "";
         const f = k.off && typeof k.off === "object" && id(k.off.a) && id(k.off.b) && day(k.off.turn) ? k.off : null;
@@ -7180,6 +7273,13 @@ function mergeStates(a, b) {
             off = Object.assign({}, off, { pick: other.off.pick });
         o.place = Object.assign({}, w, { off, told: Math.max(num(pa.told), num(pb.told)), remind: Math.max(num(pa.remind), num(pb.remind)),
             log: [...log.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-200) });
+    }
+    { // Mite's anniversary: the later day; each year's keepsake once, on time if either side had it on time
+        const pa = a.anniv || {}, pb = b.anniv || {}, keep = {};
+        for (const k of [...(pa.keep || []), ...(pb.keep || [])])
+            if (k && (!keep[k.n] || (keep[k.n].late && !k.late)))
+                keep[k.n] = k;
+        o.anniv = { day: String(pa.day || "") > String(pb.day || "") ? pa.day : pb.day || "", keep: Object.values(keep).sort((x, y) => x.n - y.n) };
     }
     { // the lantern tree: the further-grown tree (later tree, then more days grown) wins; the pears picked on either side are kept
         const pa = a.tree || {}, pb = b.tree || {}, w = (num(pb.n) > num(pa.n) || (num(pb.n) === num(pa.n) && num(pb.g) > num(pa.g))) ? pb : pa;
@@ -19302,7 +19402,7 @@ function drawRaccoon(g, now) {
     }
 }
 function pickVisitorLine() {
-    return askVisitLine() || placeVisitLine(guest) || newsLine() || (Math.random() < .12 && treeVisitLine()) || convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
+    return annivVisitLine() || askVisitLine() || placeVisitLine(guest) || newsLine() || (Math.random() < .12 && treeVisitLine()) || convoPick(guest && guest.kind === "raccoon" ? "raccoontalk" : "visitortalk", t => own("snail") || !/\{snail\}/.test(t)) || "V: Hello hello. / M: Hello, {visitor}. Have some {treat}.";
 }
 
 </script>
@@ -21597,6 +21697,213 @@ function renderTree() {
     const T = S.tree, when = x => esc(dmy(new Date(x))), s = treeStage();
     const now = treeOn() ? `<div class="drawer"><b>Tree no. ${num(T.n)}, ${esc(TREE_STAGES[s])}</b>Planted ${when(T.at)}. ${(T.st || []).map((x, i) => i && num(x) ? `${TREE_STAGES[i][0].toUpperCase() + TREE_STAGES[i].slice(1)} ${when(x)}.` : "").filter(Boolean).join(" ")} Watered on ${num(T.wn)} day${num(T.wn) === 1 ? "" : "s"}.</div>` : "";
     el.innerHTML = now + (T.keep || []).slice().reverse().map(k => `<div class="drawer"><b>${esc(TREE_PEAR)}, from tree no. ${num(k.n)}</b>Picked ${when(k.at)}. It still glows a little, after dark. The tree it grew on is outside the plant window.</div>`).join("");
+}
+
+</script>
+<script>/* js/scene/anniv.js */
+"use strict";
+/*
+ * anniv.js - Mite's anniversary (group 67, item 4; her choices, 07-11-2026): once a year, on the day the save began
+ * (S.created; 29-02 falls on 28-02 in other years). On the day there's bunting across the wagon and a cake on a
+ * stand, the cat, the snail and the possum mostly come to the wagon (pickRoom), and the first time Mite has something
+ * to say in the wagon it's a small gathering: Mite, then a line from each resident who's about, then Mite again.
+ * A visitor that day mentions it. A wrapped present stands by the cake: tap it for the year's keepsake, which goes
+ * in the Cabinet (Anniversaries). A year whose day went by unseen still gets its keepsake, on the next visit,
+ * without the gathering. Nothing before the first year.
+ * S.anniv: { day: the last day the gathering happened (yyyy-mm-dd), keep: [{ n: the year, at: when, late: 1 if the
+ *   day was missed }] }
+ * Pools: anniv_morning, anniv_open (Mite starts the gathering), anniv_cat (C:), anniv_possum (P:), anniv_snail (S:),
+ * anniv_close, anniv_idle, anniv_visitor (V: / M:), anniv_gift (the present's card), anniv_keep (Name | about: year n
+ * gets line n, round again after the last). {years} is "a year", "two years"...; {nth} "first", "second"...
+ */
+const ANNIV_WORDS = ["", "a", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+const ANNIV_NTH = ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"];
+const ANNIV_WRAP = ["#3e6a8a", "#f3d36a"]; // (the present: paper, ribbon)
+let annivHits = [], annivPulled = "";
+/* the anniversary's day in year y, as a Date (noon) */
+function annivDate(y) {
+    const c = new Date(num(S.created) || Date.now()), m = c.getMonth(), d = c.getDate();
+    const leap = new Date(y, 1, 29).getMonth() === 1;
+    return new Date(y, m, m === 1 && d === 29 && !leap ? 28 : d, 12);
+}
+/* how many anniversaries have come by day d (0 before the first) */
+function annivYears(d = new Date()) {
+    const y0 = new Date(num(S.created) || Date.now()).getFullYear();
+    let n = d.getFullYear() - y0;
+    if (n > 0 && dayKey(d) < dayKey(annivDate(d.getFullYear())))
+        n--;
+    return Math.max(0, n);
+}
+const annivToday = (d = new Date()) => d.getFullYear() > new Date(num(S.created) || Date.now()).getFullYear() && dayKey(d) === dayKey(annivDate(d.getFullYear()));
+const annivVars = n => { const y = n === 1 ? "a year" : (ANNIV_WORDS[n] || String(n)) + " years"; return { years: y, Years: y[0].toUpperCase() + y.slice(1), nth: ANNIV_NTH[n] || n + "th" }; };
+const annivLine = (key, n) => compose(key, annivVars(n));
+/* the residents go to the wagon on the day (camera.js pickRoom) */
+function annivPull(w) {
+    if (!annivToday() || S.lightsOut)
+        return w;
+    return Object.assign({}, w, { room: (w.room || 0) + 3 });
+}
+/* the present by the cake still waits */
+const annivGiftWaits = (d = new Date()) => annivToday(d) && (S.anniv.keep || []).length < annivYears(d);
+/* a year whose day went by unseen: its keepsake comes anyway (post.js postTick) */
+function annivTick(t) {
+    if (!S.anniv)
+        return;
+    const d = new Date(t), n = annivYears(d), A = S.anniv, have = new Set((A.keep || []).map(k => num(k.n)));
+    let added = 0;
+    for (let i = 1; i <= n; i++)
+        if (!have.has(i) && !(i === n && annivToday(d))) {
+            A.keep = (A.keep || []).concat({ n: i, at: t, late: 1 });
+            added = i;
+        }
+    if (added) {
+        const k = annivKeep(added);
+        note(`${S.settings.pet}'s ${ANNIV_NTH[added] || added + "th"} anniversary came and went while you were away. ${k.name} is in the Cabinet, under Anniversaries.`);
+        A.keep.sort((a, b) => num(a.n) - num(b.n));
+        renderContent();
+        saveSoon();
+    }
+}
+/* the keepsake for year n */
+function annivKeep(n) {
+    const ls = pool("anniv_keep").map(l => String(l).split("|").map(x => x.trim())).filter(x => x[0]);
+    const l = ls.length ? ls[(n - 1) % ls.length] : ["A small keepsake", "From the year."];
+    return { name: l[0], about: l[1] || "" };
+}
+/* Mite, now and then on the day (loop.js ambientTalk): the gathering first, in the wagon */
+function annivSay() {
+    if (!S.anniv || !annivToday() || S.lightsOut || isLate(new Date().getHours()))
+        return false;
+    const n = annivYears(), today = dayKey();
+    if (S.anniv.day !== today && roomOnScreen("room") && view === "room" && !boxOn()) {
+        S.anniv.day = today;
+        saveSoon();
+        const parts = [annivLine("anniv_open", n)];
+        if (cat.ready && cat.room === "room")
+            parts.push(annivLine("anniv_cat", n));
+        if (possum.ready && !possum.arriving && possum.room === "room")
+            parts.push(annivLine("anniv_possum", n));
+        if (own("snail") && !snailAsleep && snailRoom === "room")
+            parts.push(annivLine("anniv_snail", n));
+        parts.push(annivLine("anniv_close", n));
+        runConvo(parts.filter(Boolean).join(" / "));
+        return true;
+    }
+    if (num(S.flags.annivSaid) !== dayNum() && S.anniv.day !== today) { // (elsewhere first: a word about the day)
+        S.flags.annivSaid = dayNum();
+        saveSoon();
+        const l = annivLine("anniv_morning", n);
+        if (l)
+            speak(l);
+        return !!l;
+    }
+    if (Math.random() < .25) {
+        const l = annivLine("anniv_idle", n);
+        if (l) {
+            speak(l);
+            return true;
+        }
+    }
+    return false;
+}
+/* a visitor that day (visitors.js) */
+function annivVisitLine() {
+    return annivToday() && Math.random() < .5 ? annivLine("anniv_visitor", annivYears()) : null;
+}
+/* the present: its card, and the keepsake */
+function annivGift() {
+    if (!annivGiftWaits())
+        return false;
+    const n = annivYears(), k = annivKeep(n);
+    S.anniv.keep = (S.anniv.keep || []).concat({ n, at: Date.now() });
+    note(`${S.settings.pet}'s ${ANNIV_NTH[n] || n + "th"} anniversary: ${k.name}. It's in the Cabinet, under Anniversaries.`);
+    openRitual(k.name, annivLine("anniv_gift", n) || "For the year.", `<p class="sub">${esc(k.about)}</p><p class="sub">Year ${n}, ${esc(dmy(new Date()))}.</p>`, [["Keep it", "", closeRitual]]);
+    sfx("card");
+    renderContent();
+    saveSoon();
+    return true;
+}
+function annivTap(p) {
+    const h = annivHits.find(r => hitIn(p, r, 24));
+    if (!h)
+        return false;
+    if (h.gift)
+        annivGift();
+    else
+        speak(annivLine("anniv_idle", annivYears()) || "Cake. For later. Probably.");
+    return true;
+}
+/* ---------- drawing (in the wagon, after the festivals) ---------- */
+function annivSpot() {
+    const x = festFloorX();
+    return festFloorOn() ? Math.max(R * .7, x - R * 1.15) : x; // (a floor festival has the stand: next to it)
+}
+function drawAnniv(dk, tsec) {
+    annivHits = [];
+    if (drawingRoom !== "room" || !S.anniv || !annivToday())
+        return;
+    const q = PX, cols = ["#c2453a", "#f3d36a", "#3e7a4a", "#5d8fc4", "#a77cb8"];
+    drawLayered(() => { // the bunting: a string with little flags, sagging a little, across the wagon
+        const y0 = Math.max(ceilY(W * .1, "room"), ceilY(W * .9, "room")) + R * 1.15, x0 = W * .04, x1 = W * .96, sag = R * .4;
+        const yAt = x => y0 + sag * (1 - Math.pow((2 * (x - x0) / (x1 - x0)) - 1, 2));
+        cx.fillStyle = mix("#8a6a48", "#2a2018", dk * .6);
+        for (let x = x0; x <= x1; x += q)
+            cx.fillRect(Math.round(x / q) * q, Math.round(yAt(x) / q) * q, q, q);
+        const step = R * .42;
+        let i = 0;
+        for (let x = x0 + step * .5; x < x1 - step * .3; x += step, i++) {
+            const fx = Math.round(x / q) * q, fy = Math.round(yAt(x) / q) * q + q, w = Math.round(R * .26 / q) * q;
+            cx.fillStyle = mix(cols[i % cols.length], "#141018", dk * .55);
+            for (let r = 0; r < w; r += q) // (a triangle, row by row)
+                cx.fillRect(fx - w / 2 + r / 2, fy + r, Math.max(q, w - r), q);
+        }
+    });
+    const x = annivSpot(), pw = R * .62, FY = GY - R * .32;
+    drawLayered(() => { // a cake stand and the cake, with one candle per year (up to five)
+        cx.fillStyle = mix("#c49a6c", "#4a3626", dk * .5);
+        cx.fillRect(x - q, FY, q * 2, GY - FY);
+        cx.fillRect(x - pw / 2, FY - q, pw, q);
+        cx.fillRect(x - pw / 3, GY - q, pw * 2 / 3, q);
+        const cw = Math.round(R * .46 / q) * q, ch = Math.round(R * .26 / q) * q, c0 = Math.round((x - cw / 2) / q) * q;
+        cx.fillStyle = mix("#f4ecd8", "#4a463c", dk * .6);
+        cx.fillRect(c0, FY - q - ch, cw, ch);
+        cx.fillStyle = mix("#d47a8a", "#3a1a20", dk * .5); // the icing's drip line
+        cx.fillRect(c0, FY - q - ch, cw, q);
+        for (let k = 0; k < cw; k += q * 3)
+            cx.fillRect(c0 + k, FY - ch, q, q);
+        const n = Math.min(5, Math.max(1, annivYears()));
+        for (let k = 0; k < n; k++) {
+            const kx = Math.round((x - (n - 1) * q + k * q * 2) / q) * q;
+            cx.fillStyle = mix("#9fd3e6", "#24305a", dk * .4);
+            cx.fillRect(kx, FY - q - ch - q * 3, q, q * 3);
+            cx.fillStyle = (Math.floor(tsec * 3 + k) % 2) && !reduced ? "#f3d36a" : "#e07a22";
+            cx.fillRect(kx, FY - q - ch - q * 4, q, q);
+        }
+    });
+    if (dk > .3)
+        softGlow(x, FY - R * .5, R * .7, "rgba(255,190,90,.18)");
+    annivHits.push({ x: x - pw / 2, y: FY - R * .6, w: pw, h: GY - FY + R * .6, cx: x });
+    if (annivGiftWaits()) {
+        const gx = x - pw / 2 - R * .45; // (left of the stand: the stand is near the right edge)
+        drawLayered(() => {
+            const save = FEST_WRAP.anniv;
+            FEST_WRAP.anniv = ANNIV_WRAP;
+            drawFestBox(dk, tsec, gx, GY, "anniv");
+            FEST_WRAP.anniv = save;
+        });
+        annivHits.unshift({ x: gx - R * .4, y: GY - R * .7, w: R * .8, h: R * .7, cx: gx, gift: 1 });
+    }
+}
+/* ---------- the Cabinet ---------- */
+function renderAnniv() {
+    const el = $("annivList");
+    if (!el || !S.anniv)
+        return;
+    const keep = (S.anniv.keep || []).slice().sort((a, b) => num(b.n) - num(a.n));
+    el.innerHTML = keep.map(k => {
+        const x = annivKeep(num(k.n));
+        return `<div class="drawer"><b>${esc(x.name)}</b>Year ${num(k.n)}${k.late ? " (the day went by while you were away)" : ""}, ${esc(dmy(new Date(num(k.at))))}. ${esc(x.about)}</div>`;
+    }).join("");
 }
 
 </script>
@@ -24668,6 +24975,7 @@ function camTick(dt) {
 }
 /* the animals each have a home room but go visiting: every few minutes they pick a room, home most likely */
 function pickRoom(w) { // w: { room: weight, ... }
+    w = annivPull(w); // (Mite's anniversary: everyone to the wagon, anniv.js)
     let r = Math.random() * Object.values(w).reduce((a, b) => a + b, 0);
     for (const k of ROOMS)
         if ((r -= w[k] || 0) <= 0)
@@ -26218,6 +26526,7 @@ function postTick(now) {
         return;
     if (leftTick(t)) // (and what came of a leftover: leftovers.js)
         return;
+    annivTick(t); // (and a missed anniversary's keepsake: anniv.js)
     placeTick(t); // (and the wagon moving on at the season turns: places.js)
     if (treeTick(t)) // (and the lantern tree: its seed by post, and growing: tree.js)
         return;
@@ -31491,6 +31800,7 @@ function drawWorld(now, dt) {
     drawCrystalShelf(dk, tsec); // the crystal shelf on the wall (crystals.js)
     drawGarland(rm, dk); // the adorbigami strings (anomalies.js)
     drawFestivals(dk, tsec); // festival things and postcards (festivals.js)
+    drawAnniv(dk, tsec); // Mite's anniversary: bunting, the cake, the present (anniv.js)
     if (homeKind() === "burrow") {
         // ceiling and roots
         cx.fillStyle = mix("#3f2e22", "#140f0b", dk);
@@ -33099,6 +33409,8 @@ function ambientTalk() {
             say("dream");
         return;
     }
+    if (annivSay()) // (Mite's anniversary: the gathering in the wagon, anniv.js)
+        return;
     if (isLate(c.h) && r < .5) {
         say("late");
         return;
@@ -33419,6 +33731,7 @@ const TAP_TARGETS = {
     dream: { hit: p => dreamOutHit(p), act: () => catchDream() },
     origami: { tap: p => origamiTap(p), boxes: () => origHits },
     festival: { tap: p => festTap(p), boxes: () => festHits },
+    anniv: { tap: p => annivTap(p), boxes: () => annivHits }, // the anniversary's cake and present (anniv.js)
     calendar: { // nothing on the wall covers it
         hit: p => calHit && hitIn(p, calHit) && notOnMite(p) && calHit,
         act: tapGoTo("calendar")
@@ -33528,7 +33841,7 @@ const TAP_TARGETS = {
 };
 
 const TAP_ORDER = {
-    room: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "dream", "origami", "festival", "calendar", "postit", "splurge",
+    room: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "dream", "origami", "festival", "anniv", "calendar", "postit", "splurge",
         "possum", "cat", "guest", "snail", "vault", "easel", "sill", "jar", "cabinet", "hearth", "wall", "oven", "kettle",
         "books", "scope", "pet", "sweep", "pile", "shelfbox", "look", "floor"],
     garden: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "shade", "splurge", "possum", "cat", "snail", "pet", "tree", "plants",
@@ -35475,6 +35788,7 @@ function renderCabinet() {
         set("cab-fest", `${FESTIVALS.filter(f => S.fest[f.id]).length}`);
         set("cab-glimpses", `${(S.glimpses || []).length}`);
         set("cab-places", `${new Set(((S.place && S.place.log) || []).map(e => e.p)).size} of ${PLACE_IDS.length - 1}`);
+        set("cab-anniv", `${((S.anniv && S.anniv.keep) || []).length}`);
         set("cab-tree", `${((S.tree && S.tree.keep) || []).length} picked`);
         set("cab-left", `${leftLog().filter(e => e.c).length} of ${Object.keys(LEFT).length}`);
         set("cab-cards", `${new Set((S.cards || []).map(c => c.k)).size} of ${cardList().length}`);
@@ -35486,6 +35800,7 @@ function renderCabinet() {
         renderTapes(); // the tapes from the recorder (oral.js)
     renderLeftovers(); // what anomalies left (leftovers.js)
     renderTree(); // the lantern tree and its pears (tree.js)
+    renderAnniv(); // the anniversaries' keepsakes (anniv.js)
     renderPlaces(); // where the wagon has been, and where it goes next (places.js)
     renderGallery(); // the paintings and knits (Mite's crafts) are here too
     colSections();
@@ -35501,6 +35816,7 @@ const COL_HAS = {
     "cab-glimpses": () => (S.glimpses || []).length > 0,
     "cab-left": () => leftLog().some(e => e.c),
     "cab-tree": () => !!(S.tree && num(S.tree.n)),
+    "cab-anniv": () => !!(S.anniv && ((S.anniv.keep || []).length || annivToday())),
     "cab-places": () => !!(S.place && ((S.place.log || []).length || S.place.off)),
     "cab-cards": () => (S.cards || []).length > 0,
     "cab-origami": () => (S.origami || []).length > 0,
