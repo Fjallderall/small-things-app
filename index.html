@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 07-11-2026 -->
+<!-- Small Things, shared build of 08-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -9519,7 +9519,7 @@ function ambTick() {
         return;
     const d = new Date(), dk = skyAt(d.getHours() + d.getMinutes() / 60).dark, now = performance.now();
     const rainK = raining() ? clamp(weather().rain, .25, 1) : 0; // heavier rain is louder and denser
-    Snd.rain.gain.setTargetAtTime(rainK ? (.08 + .06 * rainK) * (gramoPlaying() ? .35 : 1) : 0, t, 2); // (a record on: the rain steps back so it can be heard, jot mvtylvt7sge6t)
+    Snd.rain.gain.setTargetAtTime(rainK ? (.04 + .03 * rainK) * (gramoPlaying() ? .35 : 1) : 0, t, 2); // (half as loud as before: owner, 08-11-2026, "too loud"; a record on: the rain steps back so it can be heard, jot mvtylvt7sge6t)
     Snd.hum.gain.setTargetAtTime(anom ? .035 : 0, t, 1.2);
     if (dk < .35 && now > Snd.nextBird) {
         Snd.nextBird = now + rnd(5e3, 14e3);
@@ -9540,12 +9540,12 @@ function ambTick() {
     }
     if (raining()) { // the patter: a soft, dense spatter that blends into the wash, a few round drops on leaves and the roof, now and then one off the edge
         for (let k = Math.round(ri(20, 30) * (.6 + rainK * .6)); k > 0; k--)
-            nburst(t + Math.random() * .5, rnd(.008, .02), { f: rnd(1300, 3800), q: rnd(1.5, 3), vol: rnd(.002, .006) });
+            nburst(t + Math.random() * .5, rnd(.008, .02), { f: rnd(1300, 3800), q: rnd(1.5, 3), vol: rnd(.001, .003) });
         for (let k = ri(3, 7); k > 0; k--) // round, soft drops: leaves outside, the wagon's roof
-            nburst(t + Math.random() * .5, rnd(.03, .06), { f: rnd(350, 900), q: 1.5, vol: rnd(.005, .011) });
+            nburst(t + Math.random() * .5, rnd(.03, .06), { f: rnd(350, 900), q: 1.5, vol: rnd(.0025, .0055) });
         if (now > Snd.nextDrip) {
             Snd.nextDrip = now + rnd(2500, 7000);
-            tone(rnd(900, 1500), t, .07, { vol: .004, glide: .7, bus: Snd.amb }); // (a plip off the edge, gentle)
+            tone(rnd(900, 1500), t, .07, { vol: .002, glide: .7, bus: Snd.amb }); // (a plip off the edge, gentle)
         }
     }
     if (homeKind() === "wagon" && now > Snd.nextCreak) {
