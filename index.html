@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 09-11-2026 -->
+<!-- Small Things, shared build of 10-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -7532,40 +7532,66 @@ function saveKeep() {
     saveSoon(800);
 }
 /* account documents can hold at most 256 KiB each. A save that's grown past that (years of reflections, hundreds of
-   tasks and lines) is written in parts: the text split into pieces "<name>-part-0", "-part-1", ..., and the main
-   document says how many ({ chunked: n }). Reading puts them back together. Small saves stay one document. */
+   tasks and lines) is written in parts: the text split into pieces, and the main document says how many
+   ({ chunked: n }). Reading puts them back together. Small saves stay one document.
+   The parts are written beside the save in use, never over it (group 73, 10-11-2026): into the slot ("a" or "b")
+   the main document isn't pointing at, each stamped with this write (g); only then does the main document name the
+   new slot and stamp. A write cut off halfway leaves the old save whole, and a reader that finds parts with another
+   stamp (two devices writing at once) knows the save can't be read right now: UNREAD, which is not "no save". */
 const DOC_MAX = 200000, PART_CHARS = 60000; // (60 000 characters stay under 200 KB even if every one takes 3 bytes)
+const UNREAD = { unreadable: 1 };
+const readable = r => r && r !== UNREAD ? r : null;
+let acctHold = false, keepUnread = false; // (nothing saved in this browser and the account's save unreadable: nothing is written over it)
 async function putDoc(name, obj) {
     const base = "data/users/" + uid + "/" + name, j = JSON.stringify(obj);
     if (byteLen(j) <= DOC_MAX)
         return db.doc(base).set(JSON.parse(j));
+    const head = async () => {
+        const snap = await db.doc(base).get();
+        return snap && snap.exists ? snap.data() || {} : {};
+    }, mark = m => (m.g || "") + "|" + num(m.savedAt);
+    const m0 = await head(), slot = m0.chunked && m0.slot === "a" ? "b" : "a", g = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
     const n = Math.ceil(j.length / PART_CHARS);
     for (let i = 0; i < n; i++)
-        await db.doc(base + "-part-" + i).set({ i, n, s: j.slice(i * PART_CHARS, (i + 1) * PART_CHARS) });
-    return db.doc(base).set({ chunked: n, savedAt: num(obj.savedAt) || Date.now() });
+        await db.doc(base + "-part-" + slot + "-" + i).set({ i, n, g, s: j.slice(i * PART_CHARS, (i + 1) * PART_CHARS) });
+    if (mark(await head()) !== mark(m0))
+        throw new Error("busy"); // (another device saved while the parts went up: leave its save, combine and try again)
+    return db.doc(base).set({ chunked: n, slot, g, savedAt: num(obj.savedAt) || Date.now() });
 }
-async function getDoc(name) {
+async function getDoc(name, tries = 2) {
     const base = "data/users/" + uid + "/" + name, snap = await db.doc(base).get(), d = snap && snap.exists ? snap.data() : null;
     if (!d || !d.chunked)
         return d;
-    let j = "";
-    for (let i = 0; i < Math.min(500, num(d.chunked)); i++) {
-        const p = await db.doc(base + "-part-" + i).get(), pd = p && p.exists ? p.data() : null;
-        if (!pd || pd.n !== d.chunked || typeof pd.s !== "string")
-            return null; // (parts missing or from another save: leave it; the next save writes them again)
-        j += pd.s;
+    const pre = base + (d.slot ? "-part-" + d.slot + "-" : "-part-"); // (no slot: split before the slots existed)
+    let j = "", ok = true;
+    for (let i = 0; ok && i < Math.min(500, num(d.chunked)); i++) {
+        const p = await db.doc(pre + i).get(), pd = p && p.exists ? p.data() : null;
+        if (!pd || pd.n !== d.chunked || typeof pd.s !== "string" || (d.g && pd.g !== d.g))
+            ok = false; // (parts missing or from another write)
+        else
+            j += pd.s;
     }
-    try {
-        return JSON.parse(j);
+    if (ok)
+        try {
+            return JSON.parse(j);
+        }
+        catch (e) {
+        }
+    if (tries > 1) { // (caught mid-write: once more, a moment later)
+        await new Promise(r => setTimeout(r, 900));
+        return getDoc(name, tries - 1);
     }
-    catch (e) {
-        return null;
-    }
+    return UNREAD;
 }
 async function pushKeep() {
     if (!db || !uid || !keepDirty)
         return;
     try {
+        if (keepUnread) { // (the account's keepsakes couldn't be read: look again before writing; an empty copy never goes over them)
+            await pullKeep();
+            if (keepUnread && !["refl", "caps", "cat", "tcat", "corr"].some(k => (KEEP[k] || []).length))
+                return;
+        }
         await putDoc("keepsakes", KEEP);
         keepDirty = false;
     }
@@ -7577,7 +7603,8 @@ async function pullKeep() {
         return;
     try {
         const r = await getDoc("keepsakes");
-        if (r) {
+        keepUnread = r === UNREAD;
+        if (readable(r)) {
             const before = JSON.stringify(KEEP);
             KEEP = mergeKeep(KEEP, cleanKeep(r));
             if (JSON.stringify(KEEP) !== before) {
@@ -7617,6 +7644,7 @@ function compact() {
     if (!weeks.length)
         return 0;
     weeks.forEach(k => mergeWeek(k, archClean(moved[k])));
+    weeks.forEach(k => moved[k].forEach(t => tomb(t.id))); // (in the archive now: another device's older copy of it, still open, doesn't come back: mergeStates)
     rebuildFlat();
     saveArchLocal();
     S.tasks = keep;
@@ -7626,15 +7654,32 @@ function compact() {
 async function pushArch() {
     if (!db || !uid || !(S.archPending || []).length)
         return;
+    let got = false;
     for (const k of S.archPending.slice()) {
         try {
-            await db.doc("data/users/" + uid + "/w-" + k).set({ week: k, tasks: ARCH[k] || [] });
+            const ref = db.doc("data/users/" + uid + "/w-" + k), snap = await ref.get(), body = snap && snap.exists ? snap.data() : null;
+            if (body && Array.isArray(body.tasks) && body.tasks.length) { // (another device's boxes for this week: both, never one over the other)
+                mergeWeek(k, archClean(body.tasks));
+                got = true;
+            }
+            await ref.set({ week: k, tasks: ARCH[k] || [] });
             S.archPending = S.archPending.filter(x => x !== k);
         }
         catch (e) {
             break;
         }
     }
+    if (got) {
+        rebuildFlat();
+        saveArchLocal();
+    }
+}
+/* a task that's in the archive (finished and filed, on some device) and still on the list here, unchanged since:
+   the archive's is the real one (a device that hadn't synced before it was finished) */
+function dropRefiled() {
+    const at = new Map(ARCH_FLAT.map(t => [t.id, num(t.d)])), n = S.tasks.length;
+    S.tasks = S.tasks.filter(t => !(at.has(t.id) && num(t.u) <= at.get(t.id)));
+    return n - S.tasks.length;
 }
 async function pullArch() {
     if (!db || !uid)
@@ -7705,7 +7750,17 @@ function saveSoon(ms = 1500) {
    change (saveSoon), not of the 45-second heartbeat, so a device that only sat open doesn't win the newest-wins
    fields (the hat, settings) */
 async function pullBeforeSave() {
-    const r = await getDoc("mossling");
+    const r = await getDoc("mossling", acctHold ? 1 : 2);
+    if (r === UNREAD)
+        return false; // (with its own copy, this device writes it: that mends the account's; on hold, nothing is written)
+    if (acctHold) { // readable again: this browser had nothing, so the account's game is the game
+        acctHold = false;
+        if (r) {
+            S.flags.starter = 1;
+            adoptAccount(r, true);
+            return true;
+        }
+    }
     if (!r || num(r.savedAt) === lastPut || num(r.savedAt) === num(S.savedAt))
         return false;
     adoptAccount(r);
@@ -7725,6 +7780,7 @@ function syncBaseSet(c) {
     }
 }
 function adoptAccount(r, blank) { // blank: nothing was saved in this browser: the account's glimmers and pantry are the only real ones
+    compact(); // (what this device can file itself goes to its archive first: the other side's marks for filed tasks take them off the list)
     const a = S, b = merge(defaultState(), r), m = merge(defaultState(), mergeStates(JSON.parse(JSON.stringify(a)), b));
     if (num(a.wiped) === num(b.wiped)) { // (started over on one side: mergeStates has taken that side, as it is)
         const same = num(a.savedAt) === num(b.savedAt), base = same ? syncCounts(b) : blank ? null : syncBase, nw = blank || num(b.savedAt) > num(a.savedAt) ? b : a; // (no base yet: the copy saved last)
@@ -7763,7 +7819,9 @@ async function save() {
     }
     if (typeof safekeepMirror === "function")
         safekeepMirror(); // (the Android app: a second copy in its own files, safekeep.js)
-    if (db && uid) {
+    if (db && uid && acctHold)
+        setSync("Your account's save can't be read just now. Nothing is written over it; I'll look again in a moment");
+    else if (db && uid) {
         try {
             const sent = JSON.parse(j);
             await putDoc("mossling", sent);
@@ -7775,6 +7833,8 @@ async function save() {
         }
         catch (e) {
             setSync("Couldn't reach your account; saved in this browser");
+            if (e && e.message === "busy")
+                saveSoon(3000);
         }
     }
 }
@@ -39893,8 +39953,14 @@ async function connect(prevSeen) {
                 return;
             db = d;
             uid = id;
-            const remote = await getDoc("mossling");
-            if (firstStart && !remote)
+            let remote = await getDoc("mossling");
+            if (remote === UNREAD) { // there is a save, but it can't be read right now (storage.js). With nothing saved here, hold: no new game goes over it
+                acctHold = firstStart;
+                remote = null;
+            }
+            if (acctHold)
+                S.flags.starter = 1;
+            else if (firstStart && !remote)
                 starterGift();
             else if (remote)
                 S.flags.starter = 1; // an existing game: no starting gift
@@ -39903,6 +39969,7 @@ async function connect(prevSeen) {
                 setSync("synced with your account");
             }
             await pullArch();
+            dropRefiled();
             await pullKeep();
             archiveCrafts();
             migrateCounts();
@@ -39933,7 +40000,7 @@ document.addEventListener("visibilitychange", async () => {
     const prev = S.lastSeen;
     if (db && uid) {
         try {
-            const r = await getDoc("mossling");
+            const r = readable(await getDoc("mossling"));
             if (r) {
                 adoptAccount(r);
                 setSync("synced with your account");
