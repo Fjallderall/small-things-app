@@ -1026,6 +1026,8 @@ body.pixel{--boxlh:24px;--boxfs:16px}
       <details class="shopsec colsec" data-sec="log-said" open><summary><h3>Said</h3><span class="seccount" id="cnt-log-said"></span></summary><p class="sub">What <span class="pn">Mite</span> and the others said. A conversation's lines stay together.</p>
         <div class="heard" id="logList"></div></details>
       <details class="shopsec colsec" data-sec="log-did" open><summary><h3>Happened</h3><span class="seccount" id="cnt-log-did"></span></summary><p class="sub">What <span class="pn">Mite</span> wrote down in its notebook, and the little notes that popped up.</p>
+        <p class="sub" id="nbInfo"></p>
+        <div class="row"><button class="btn" type="button" id="nbSave" hidden>Save the notebook as a file</button></div>
         <div class="heard" id="notes"></div></details>
     </div>
 
@@ -6496,7 +6498,7 @@ function defaultState() {
     return { v: 1, eco: 2, wiped: 0, lineN: {}, bowl: { at: 0, day: "", u: 0 }, motes: 0, quotes: QUOTES_SEED.map((t, i) => ({ t, at: i + 1, off: 0 })), marks: [], news: [], ask: { at: 0, log: [] }, left: { at: 0, log: [] }, myst: { at: 0, n: 0, l8: 0, gift: 0, via: "" }, tree: { due: 0, seed: 0, n: 0, at: 0, g: 0, last: 0, w: 0, wn: 0, st: [], told: 0, thirst: 0, keep: [] }, anniv: { day: "", keep: [] }, place: { at: "", since: 0, turn: "", off: null, told: 0, remind: 0, log: [] }, drawers: { at: 0, sig: "", notes: [], postAt: 0 }, post: { sent: [], inbox: [], worldAt: 0, ser: {}, serAt: 0 }, snailName: "", possumName: "", possumAt: 0, possumSet: 0, snailSet: 0, glimpses: [], cards: [], mice: [], eyes: [], eyesGone: {}, barter: { wk: "", stock: [], got: [] }, barterOwn: [], shopSeen: { ids: [], at: 0 }, fold: {}, lastSnack: { n: "", at: 0 }, colSeen: { ids: [], at: 0, it: [], itAt: 0 }, splurge: { k: "", at: 0 }, amb: { d: "", g: 0, f: 0, s: 0 }, pantry: {}, anomLog: {}, kettleStyle: { k: "copper", at: 0 }, rugCol: { rug: "red", grug: "green", arug: "blue", own: [], rect: 0, sh: {}, at: 0 }, tiffany: { k: "classic", at: 0 }, postits: [], ev: { items: [], pay: { d: "", n: 0 } }, buy: { items: [] }, timer: { k: "", ph: "", nx: "", n: 0, end: 0, left: 0, mins: 25, task: "", tt: "", at: 0 }, give: { cur: null, done: [], n: 0, nextAt: 0 }, tapes: { cur: null, done: [], next: 0, lit: 0, asked: 0 }, lost: { items: [], had: [], gone: [], back: 0, next: 0, claimAt: 0, swapAt: 0, sw: null }, deep: { log: [], day: "", had: [] }, other: { i: 0, at: 0, next: 0, rep: 0, repAt: 0 }, basket: { t: [], at: 0 }, puddle: { n: 0, c: "", odd: 0, f: "", at: 0 }, terms: [], sched: {}, pause: {}, seasonal: { s: "", got: {} }, postcards: [], journal: { name: "Small journal", at: 0 }, vase: { n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }, flowerBook: [{ n: "Lavender", c: "#a77cb8", s: "herb", note: "Dried from the old herb beam. Still smells of summer.", odd: 0, from: "Mite", at: 1 }], ndoorFlowers: "", raccoonName: "", raccoonAt: 0, heard: [], gallery: [], origami: [], dreams: [], dreamDay: "", fest: {}, festSaid: {}, festBox: {}, knit: null, knits: [], knitRest: "", guestAt: 0, hideAt: {}, showAt: {}, ff: [], paint: { day: "", prog: 0, sent: "" }, created: Date.now(), savedAt: 0, lastSeen: Date.now(), lastDay: "", g: 0, gTotal: 0, mom: 0, xp: 0, b: {}, up: {},
         tasks: [], pats: 0, flies: 0, trinkets: {}, ach: {}, notes: [], words: [], hat: "", hatAt: 0, streak: { n: 0, last: "" }, flags: {}, hours: Array(24).fill(0),
         settings: { you: "", pet: "Mite", work: [1, 2, 3, 4, 5], office: [], doneBy: 17, bed: 23, dayStart: 5, nightLight: 0, lamp: 0, pace: 0, strange: 1, sound: 0, ai: 0, talk: 1, backup: 1, app: "Small Things" }, content: { pools: {} }, lessonsSeen: 0, lvlSeen: 1, altered: {}, revealed: {}, incidents: 0, inc: [], clSeen: 0, aiLog: [],
-        mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [] };
+        mess: [], chat: [], memories: [], care: { fed: 0, played: 0, washed: 0, games: 0, swept: 0 }, selfcare: {}, lightsOut: false, lightsAt: 0, backupAt: 0, goodnight: "", fedUntil: 0, gamesDay: { d: "", n: 0, g: 0 }, hints: {}, said: [], plan: { d: "", ids: [] }, rit: { morning: "", evening: "" }, fixes: [], chg: { s0: 0, c0: 0, f0: 0, set: {}, pool: {}, bulk: {}, f: {}, lines: [] } };
 }
 let S = defaultState();
 /* the Log keeps the last 50 things said and the last 50 that popped up (S.heard, oldest first) */
@@ -6896,6 +6898,15 @@ function sanitizeState(raw) {
     o.mess = arr(s.mess, 14).map(m => ({ room: ["room", "garden", "archive"].includes(m.room) ? m.room : "room", x: clamp(num(m.x, .5), 0, 1), y: clamp(num(m.y, .5), 0, 1), t: ["dust", "leaf", "paper", "crumb"].includes(m.t) ? m.t : "dust", r: clamp(num(m.r, 1), .5, 2), rot: num(m.rot) }));
     o.plan = { d: dkey(s.plan && s.plan.d), ids: (s.plan && Array.isArray(s.plan.ids) ? s.plan.ids : []).slice(0, 3).map(sid) };
     o.rit = { morning: dkey(s.rit && s.rit.morning), evening: dkey(s.rit && s.rit.evening) };
+    { /* when things last changed on a device (chgStamp, storage.js), so two devices are combined piece by piece: each
+         setting (set), each pool of her own lines (pool; "_persona": the personality), the plan, goodnight and the
+         lights (f). lines: the lines added to (on) or taken out of a pool, newest first; bulk: when a pool was replaced
+         or reset as a whole (line changes from before that don't count). s0/c0/f0: the times from before this existed
+         (of the settings, the lines and the save as a whole); a save without chg gets them from its old times */
+        const c = s.chg && typeof s.chg === "object" ? s.chg : null;
+        o.chg = { s0: c ? num(c.s0) : num(s.settingsAt), c0: c ? num(c.c0) : num(s.contentAt), f0: c ? num(c.f0) : num(s.savedAt), set: numMap(c && c.set), pool: numMap(c && c.pool), bulk: numMap(c && c.bulk), f: numMap(c && c.f),
+            lines: arr(c && c.lines, 300).map(e => ({ k: str(e.k, 40), l: str(e.l, 400), at: num(e.at), on: e.on ? 1 : 0 })).filter(e => e.l && Object.prototype.hasOwnProperty.call(POOL_INFO, e.k)) };
+    }
     o.del = {};
     if (s.del && typeof s.del === "object")
         Object.keys(s.del).slice(-1500).forEach(k => {
@@ -7352,27 +7363,83 @@ function mergeStates(a, b) {
     o.archPending = [...new Set([...(a.archPending || []), ...(b.archPending || [])])];
     const sa = a.streak || {}, sb = b.streak || {};
     o.streak = (sa.last || "") > (sb.last || "") ? sa : (sb.last || "") > (sa.last || "") ? sb : { n: Math.max(num(sa.n), num(sb.n)), last: sa.last || "" };
-    /* settings and lines: the side that changed them last wins; a fresh device (never changed) never overrides */
+    /* settings and her own lines: piece by piece, each from the side that changed it last (chg; group 73, finding 3).
+       A fresh device (never changed anything) never overrides; saves from before chg go by their whole-side times */
     const pick = (k, x, y) => num(x[k]) !== num(y[k]) ? (num(x[k]) > num(y[k]) ? x : y) : null;
-    const ss = pick("settingsAt", a, b) || ((a.settings || {}).you && !(b.settings || {}).you ? a : (b.settings || {}).you && !(a.settings || {}).you ? b : nw);
-    o.settings = JSON.parse(JSON.stringify(ss.settings || {}));
+    const cg = x => x.chg || {}, t0 = (x, z, old) => x.chg ? num(x.chg[z]) : num(x[old]);
+    const tOf = (x, m, k, z, old) => Math.max(num((cg(x)[m] || {})[k]), t0(x, z, old));
+    const cp = v => JSON.parse(JSON.stringify(v));
+    {
+        const sa = a.settings || {}, sb = b.settings || {}, tie = sa.you && !sb.you ? a : sb.you && !sa.you ? b : nw;
+        o.settings = {};
+        for (const k of new Set([...Object.keys(sa), ...Object.keys(sb)])) {
+            const ta = tOf(a, "set", k, "s0", "settingsAt"), tb = tOf(b, "set", k, "s0", "settingsAt");
+            let src = ta > tb ? sa : tb > ta ? sb : tie.settings || {};
+            if (src[k] === undefined)
+                src = src === sa ? sb : sa;
+            if (src[k] !== undefined)
+                o.settings[k] = cp(src[k]);
+        }
+    }
     o.settingsAt = Math.max(num(a.settingsAt), num(b.settingsAt));
     { // the hat: the side that changed it last (a save made later for something else no longer takes it off)
         const hs = pick("hatAt", a, b) || nw;
         o.hat = hs.hat || "";
         o.hatAt = Math.max(num(a.hatAt), num(b.hatAt));
     }
-    const cs = pick("contentAt", a, b);
-    const ca = (a.content || {}), cb = (b.content || {});
-    if (cs)
-        o.content = JSON.parse(JSON.stringify(cs.content || { pools: {} }));
-    else {
-        const cn = nw === a ? ca : cb, co = nw === a ? cb : ca;
-        o.content = { pools: Object.assign({}, co.pools || {}, cn.pools || {}) };
-        const pe = cn.persona || co.persona;
+    const chg = { s0: Math.max(t0(a, "s0", "settingsAt"), t0(b, "s0", "settingsAt")), c0: Math.max(t0(a, "c0", "contentAt"), t0(b, "c0", "contentAt")), f0: Math.max(t0(a, "f0", "savedAt"), t0(b, "f0", "savedAt")),
+        set: mmax(cg(a).set, cg(b).set), pool: mmax(cg(a).pool, cg(b).pool), bulk: mmax(cg(a).bulk, cg(b).bulk), f: mmax(cg(a).f, cg(b).f) };
+    { // the line changes of both sides: the latest for each line; older than a whole-pool change or 120 days: gone
+        const seen = {}, old = Date.now() - 120 * 864e5;
+        chg.lines = [...(cg(a).lines || []), ...(cg(b).lines || [])].sort((x, y) => num(y.at) - num(x.at)).filter(e => {
+            const id = e.k + "\n" + e.l;
+            if (seen[id] || num(e.at) < old || num(e.at) <= num(chg.bulk[e.k]))
+                return false;
+            return seen[id] = e;
+        }).slice(0, 300);
+        const ca = (a.content || {}), cb = (b.content || {}), pa = ca.pools || {}, pb = cb.pools || {};
+        o.content = { pools: {} };
+        for (const k of new Set([...Object.keys(pa), ...Object.keys(pb)])) {
+            const ta = tOf(a, "pool", k, "c0", "contentAt"), tb = tOf(b, "pool", k, "c0", "contentAt");
+            if (ta === tb) { // (neither changed it since they last agreed: as it was, the copy saved last first)
+                const x = nw === a ? pa[k] || pb[k] : pb[k] || pa[k];
+                if (Array.isArray(x))
+                    o.content.pools[k] = x.slice();
+                continue;
+            }
+            const mine = ta > tb ? pa[k] : pb[k], other = ta > tb ? pb[k] : pa[k];
+            if (!Array.isArray(mine))
+                continue; // (reset to the built-in lines on the side that changed it last)
+            let r = mine.slice();
+            if (Array.isArray(other)) { // the other side's own changes to the same pool: its added lines come along, its removed ones go
+                const has = new Set(r), oth = new Set(other);
+                r = r.filter(l => oth.has(l) || !(seen[k + "\n" + l] && !seen[k + "\n" + l].on));
+                for (const l of other)
+                    if (!has.has(l) && seen[k + "\n" + l] && seen[k + "\n" + l].on) {
+                        has.add(l);
+                        r.push(l);
+                    }
+            }
+            o.content.pools[k] = r.slice(0, 3000);
+        }
+        const ta = tOf(a, "pool", "_persona", "c0", "contentAt"), tb = tOf(b, "pool", "_persona", "c0", "contentAt");
+        const pe = ta > tb ? ca.persona : tb > ta ? cb.persona : (nw === a ? ca.persona || cb.persona : cb.persona || ca.persona);
         if (pe)
             o.content.persona = pe;
     }
+    { /* the plan, goodnight and the lights: from the side that changed them last, not the copy saved last (finding 5).
+         A plan for a later day wins; a ritual done on either device is done; the day's games: the later day, or the most */
+        const tf = (x, k) => Math.max(num((cg(x).f || {})[k]), t0(x, "f0", "savedAt")), later = k => tf(a, k) > tf(b, k) ? a : tf(b, k) > tf(a, k) ? b : nw;
+        o.goodnight = later("goodnight").goodnight || "";
+        o.lightsOut = !!later("lightsOut").lightsOut;
+        const pa = a.plan || { d: "", ids: [] }, pb = b.plan || { d: "", ids: [] };
+        o.plan = cp((pa.d || "") > (pb.d || "") ? pa : (pb.d || "") > (pa.d || "") ? pb : later("plan").plan || pa);
+        const ra = a.rit || {}, rb = b.rit || {}, mx = (x, y) => (x || "") > (y || "") ? x || "" : y || "";
+        o.rit = { morning: mx(ra.morning, rb.morning), evening: mx(ra.evening, rb.evening) };
+        const ga = a.gamesDay || { d: "", n: 0, g: 0 }, gb = b.gamesDay || { d: "", n: 0, g: 0 };
+        o.gamesDay = (ga.d || "") > (gb.d || "") ? cp(ga) : (gb.d || "") > (ga.d || "") ? cp(gb) : { d: ga.d || "", n: Math.max(num(ga.n), num(gb.n)), g: Math.max(num(ga.g), num(gb.g)) };
+    }
+    o.chg = chg;
     o.contentAt = Math.max(num(a.contentAt), num(b.contentAt));
     return o;
 }
@@ -7739,6 +7806,51 @@ function loadLocal() {
     }
     return null;
 }
+/* what changed on this device since the last look, each piece with its own time (S.chg, state.js), so mergeStates can
+   take each setting, each pool of lines, the plan, goodnight and the lights from the device that changed it last.
+   Compared with a picture taken at the start, after every save and after the account's copy came in (that isn't a
+   change made here). A pool: the lines added and taken out are written down, up to 60 at once; more than that (an
+   import) or a reset counts as the whole pool replaced */
+let chgBase = null;
+const chgPic = () => JSON.stringify({ set: S.settings || {}, pools: (S.content || {}).pools || {}, persona: (S.content || {}).persona || "", f: { plan: S.plan || null, goodnight: S.goodnight || "", lightsOut: !!S.lightsOut } });
+function chgSnap() {
+    chgBase = chgPic();
+}
+function chgStamp(now = Date.now()) {
+    const cur = chgPic();
+    if (!chgBase || cur === chgBase) {
+        chgBase = cur;
+        return;
+    }
+    const o = JSON.parse(chgBase), n = JSON.parse(cur), df = (x, y) => JSON.stringify(x) !== JSON.stringify(y);
+    const c = S.chg = Object.assign({ s0: 0, c0: 0, f0: 0 }, S.chg || {});
+    for (const m of ["set", "pool", "bulk", "f"])
+        c[m] = c[m] || {};
+    c.lines = c.lines || [];
+    for (const k of new Set([...Object.keys(o.set), ...Object.keys(n.set)]))
+        if (df(o.set[k], n.set[k]))
+            c.set[k] = now;
+    for (const k of new Set([...Object.keys(o.pools), ...Object.keys(n.pools)])) {
+        if (!df(o.pools[k], n.pools[k]))
+            continue;
+        c.pool[k] = now;
+        const was = Array.isArray(o.pools[k]) ? o.pools[k] : (DEF.pools[k] || []), is = Array.isArray(n.pools[k]) ? n.pools[k] : null;
+        const ws = new Set(was), ns = new Set(is || []), add = (is || []).filter(l => !ws.has(l)), off = was.filter(l => !ns.has(l));
+        if (!is || add.length + off.length > 60) {
+            c.bulk[k] = now;
+            c.lines = c.lines.filter(e => e.k !== k);
+            continue;
+        }
+        const ch = new Set([...add, ...off]);
+        c.lines = [...add.map(l => ({ k, l, at: now, on: 1 })), ...off.map(l => ({ k, l, at: now, on: 0 })), ...c.lines.filter(e => !(e.k === k && ch.has(e.l)))].slice(0, 300);
+    }
+    if (o.persona !== n.persona)
+        c.pool._persona = now;
+    for (const k of ["plan", "goodnight", "lightsOut"])
+        if (df(o.f[k], n.f[k]))
+            c.f[k] = now;
+    chgBase = cur;
+}
 let saveTimer = null, saveDirty = false, lastPut = 0;
 function saveSoon(ms = 1500) {
     saveDirty = true;
@@ -7780,6 +7892,7 @@ function syncBaseSet(c) {
     }
 }
 function adoptAccount(r, blank) { // blank: nothing was saved in this browser: the account's glimmers and pantry are the only real ones
+    chgStamp(); // (what changed here gets its time before the account's copy comes in)
     compact(); // (what this device can file itself goes to its archive first: the other side's marks for filed tasks take them off the list)
     const a = S, b = merge(defaultState(), r), m = merge(defaultState(), mergeStates(JSON.parse(JSON.stringify(a)), b));
     if (num(a.wiped) === num(b.wiped)) { // (started over on one side: mergeStates has taken that side, as it is)
@@ -7794,10 +7907,12 @@ function adoptAccount(r, blank) { // blank: nothing was saved in this browser: t
         }
     }
     S = m;
+    chgSnap();
     syncBaseSet(syncCounts(b));
 }
 async function save() {
     let merged = false;
+    chgStamp();
     if (saveDirty || !S.savedAt)
         S.savedAt = Date.now();
     saveDirty = false;
@@ -10278,10 +10393,34 @@ function incNote(text) {
 function note(text) {
     text = homeTxt(text);
     S.notes.unshift({ at: Date.now(), text });
-    if (S.notes.length > 250)
-        S.notes.length = 250;
+    if (S.notes.length > NB_MAX)
+        S.notes.length = NB_MAX;
+    nbTell();
     if (curTab === "log")
         renderLog();
+}
+/* the notebook holds 250 lines; after that each new line lets the oldest go (by design). Said once when it's nearly
+   full and once when it's full (S.flags.nbTold 1, 2), with the way to keep them: the lines as a text file (nbSave,
+   settings.js; the button is in the Log). The Log's "Happened" says how many lines there are */
+const NB_MAX = 250, NB_NEAR = 225;
+function nbTell() {
+    const n = (S.notes || []).length, told = num(S.flags.nbTold), lvl = n >= NB_MAX ? 2 : n >= NB_NEAR ? 1 : 0;
+    if (lvl <= told)
+        return;
+    S.flags.nbTold = lvl;
+    const pet = S.settings.pet;
+    toast(lvl === 2 ? `My notebook is full: ${NB_MAX} lines. From now on each new line lets the oldest one go. You can save them all as a file first; the Log has the button too.`
+        : `My notebook is nearly full: ${n} of ${NB_MAX} lines. When it's full, each new line lets the oldest one go. You can save them as a file, in the Log.`, { who: pet, act: { label: "Save file", fn: () => nbSave() } });
+    if (typeof saveSoon === "function")
+        saveSoon();
+}
+function nbText() { // oldest first, a line each: dd-mm-yyyy hh:mm, two spaces, the text
+    return (S.notes || []).slice().reverse().map(n => `${dmy(n.at)} ${hhmm(new Date(n.at))}  ${String(n.text).replace(/\s+/g, " ")}`).join("\n");
+}
+function nbInfo() {
+    const n = (S.notes || []).length, at = num(S.flags.nbSaved);
+    return `The notebook has ${n} of ${NB_MAX} lines. ` + (n >= NB_MAX ? "It's full: each new line lets the oldest one go." : "Once it's full, each new line lets the oldest one go.")
+        + (at ? ` Last saved as a file on ${dmy(at)} at ${hhmm(new Date(at))}.` : " Save the lines as a file to keep them.");
 }
 function toast(text, { undo, cls, act, stay, who } = {}) {
     if (typeof heard === "function")
@@ -36065,6 +36204,11 @@ function renderLog() {
             days.push({ k, at: h.at, l: [h] });
     }
     $("notes").innerHTML = days.map(g => `<section><time>${wdmy(new Date(g.at))}</time>${g.l.map(h => `<p class="n"><b>${hhmm(new Date(h.at))}</b>${esc(h.t)}</p>`).join("")}</section>`).join("") || `<span class="sub">Nothing yet. ${esc(S.settings.pet)} writes down what it notices, on its own.</span>`;
+    const ni = $("nbInfo"), nb = $("nbSave");
+    if (ni)
+        ni.textContent = nbInfo();
+    if (nb)
+        nb.hidden = !(S.notes || []).length;
     const c1 = $("cnt-log-said"), c2 = $("cnt-log-did");
     if (c1)
         c1.textContent = String(said.length);
@@ -37122,14 +37266,14 @@ function backupDone(how) {
 }
 /* inside claude.ai the page can't download by itself: the viewer's own save (with a confirmation; in the Claude
    iOS app that's the share sheet). Resolves "saved", "declined", or null when this view can't do it */
-async function claudeSave(text) {
+async function claudeSave(text, name) {
     try {
         if (!window.claude || !window.claude.use)
             return null;
         const d = await window.claude.use("downloads");
         if (!d)
             return null;
-        await d.save({ filename: backupName(), data: text });
+        await d.save({ filename: name || backupName(), data: text });
         return "saved";
     }
     catch (e) {
@@ -37142,22 +37286,23 @@ async function claudeSave(text) {
 function nativeApp() {
     return !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
 }
-async function nativeBackup(text, share) {
+async function nativeBackup(text, share, name, title) {
+    name = name || backupName();
     const P = (window.Capacitor && Capacitor.Plugins) || {}, fsys = P.Filesystem, sh = P.Share;
     if (!nativeApp() || !fsys)
         return null;
     try {
         if (!share)
             try {
-                await fsys.writeFile({ path: "Small Things/" + backupName(), data: text, directory: "DOCUMENTS", encoding: "utf8", recursive: true });
+                await fsys.writeFile({ path: "Small Things/" + name, data: text, directory: "DOCUMENTS", encoding: "utf8", recursive: true });
                 return "saved";
             }
             catch (e) { // (no access to Documents on this phone: share it instead)
             }
         if (!sh)
             return null;
-        const r = await fsys.writeFile({ path: backupName(), data: text, directory: "CACHE", encoding: "utf8" });
-        await sh.share({ title: "Small Things backup", files: [r.uri] });
+        const r = await fsys.writeFile({ path: name, data: text, directory: "CACHE", encoding: "utf8" });
+        await sh.share({ title: title || "Small Things backup", files: [r.uri] });
         return "shared";
     }
     catch (e) {
@@ -37213,6 +37358,46 @@ async function saveBackup(text, fromShare) {
         copy(text, "Save");
     }
 }
+/* the notebook's lines as a text file (notes.js: it holds 250, then the oldest go), the same ways as a backup: the app's
+   Documents folder, claude.ai's own save, or a download; failing all of those, the text to copy */
+async function nbSave() {
+    const text = nbText(), p = n => String(n).padStart(2, "0"), d = new Date(), name = `small-things-notebook-${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}.txt`;
+    if (!text)
+        return toast("The notebook is still empty");
+    const done = how => {
+        S.flags.nbSaved = Date.now();
+        saveSoon();
+        if (curTab === "log")
+            renderLog();
+        toast(how);
+    };
+    const n = await nativeBackup(text, false, name, "Small Things notebook");
+    if (n === "saved")
+        return done("Notebook saved in Documents, in the Small Things folder");
+    if (n === "shared")
+        return done("Notebook sent");
+    if (n === "declined")
+        return;
+    const c = await claudeSave(text, name);
+    if (c === "saved")
+        return done("Notebook saved as a file");
+    if (c === "declined")
+        return;
+    try {
+        const url = URL.createObjectURL(new Blob([text], { type: "text/plain" })), a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        done("Notebook downloaded");
+    }
+    catch (e) {
+        copy(text, "Save");
+    }
+}
+$("nbSave").onclick = () => nbSave();
 $("bkSend").onclick = $("bkSend2").onclick = () => sendBackup();
 $("bkSave").onclick = $("bkSave2").onclick = () => saveBackup();
 /* on the card itself: ask once a week from now on, or not at all (Settings, Preferences: Backup reminder) */
@@ -39832,6 +40017,7 @@ function boot() {
     const isNew = !local;
     firstStart = isNew;
     S = merge(defaultState(), local || {});
+    chgSnap(); // (from here on, what changes on this device gets its own time: storage.js)
     if (isNew) // (a new game begins in a burrow; the wagon comes later, by letter: post.js)
         S.settings.home = "burrow";
     const prevSeen = S.lastSeen || Date.now();
@@ -39882,6 +40068,7 @@ function boot() {
         if (ch)
             S.contentAt = Date.now();
     }
+    setTimeout(nbTell, 6000); // (a notebook that was already full or nearly full before it said so: once, a moment after opening)
     if (num(S.flags.m_devjots) < DEV_JOTS.length) { // the owner's jotted notes about building this app, once done (her yes, 24-10-2026): let go.
         S.flags.m_devjots = DEV_JOTS.length; // (a count, so ids added to DEV_JOTS later are let go too; running again is harmless)
         const gone = new Set(DEV_JOTS);
