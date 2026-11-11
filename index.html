@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 10-11-2026 -->
+<!-- Small Things, shared build of 11-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -1026,8 +1026,6 @@ body.pixel{--boxlh:24px;--boxfs:16px}
       <details class="shopsec colsec" data-sec="log-said" open><summary><h3>Said</h3><span class="seccount" id="cnt-log-said"></span></summary><p class="sub">What <span class="pn">Mite</span> and the others said. A conversation's lines stay together.</p>
         <div class="heard" id="logList"></div></details>
       <details class="shopsec colsec" data-sec="log-did" open><summary><h3>Happened</h3><span class="seccount" id="cnt-log-did"></span></summary><p class="sub">What <span class="pn">Mite</span> wrote down in its notebook, and the little notes that popped up.</p>
-        <p class="sub" id="nbInfo"></p>
-        <div class="row"><button class="btn" type="button" id="nbSave" hidden>Save the notebook as a file</button></div>
         <div class="heard" id="notes"></div></details>
     </div>
 
@@ -10393,34 +10391,10 @@ function incNote(text) {
 function note(text) {
     text = homeTxt(text);
     S.notes.unshift({ at: Date.now(), text });
-    if (S.notes.length > NB_MAX)
-        S.notes.length = NB_MAX;
-    nbTell();
+    if (S.notes.length > 250)
+        S.notes.length = 250;
     if (curTab === "log")
         renderLog();
-}
-/* the notebook holds 250 lines; after that each new line lets the oldest go (by design). Said once when it's nearly
-   full and once when it's full (S.flags.nbTold 1, 2), with the way to keep them: the lines as a text file (nbSave,
-   settings.js; the button is in the Log). The Log's "Happened" says how many lines there are */
-const NB_MAX = 250, NB_NEAR = 225;
-function nbTell() {
-    const n = (S.notes || []).length, told = num(S.flags.nbTold), lvl = n >= NB_MAX ? 2 : n >= NB_NEAR ? 1 : 0;
-    if (lvl <= told)
-        return;
-    S.flags.nbTold = lvl;
-    const pet = S.settings.pet;
-    toast(lvl === 2 ? `My notebook is full: ${NB_MAX} lines. From now on each new line lets the oldest one go. You can save them all as a file first; the Log has the button too.`
-        : `My notebook is nearly full: ${n} of ${NB_MAX} lines. When it's full, each new line lets the oldest one go. You can save them as a file, in the Log.`, { who: pet, act: { label: "Save file", fn: () => nbSave() } });
-    if (typeof saveSoon === "function")
-        saveSoon();
-}
-function nbText() { // oldest first, a line each: dd-mm-yyyy hh:mm, two spaces, the text
-    return (S.notes || []).slice().reverse().map(n => `${dmy(n.at)} ${hhmm(new Date(n.at))}  ${String(n.text).replace(/\s+/g, " ")}`).join("\n");
-}
-function nbInfo() {
-    const n = (S.notes || []).length, at = num(S.flags.nbSaved);
-    return `The notebook has ${n} of ${NB_MAX} lines. ` + (n >= NB_MAX ? "It's full: each new line lets the oldest one go." : "Once it's full, each new line lets the oldest one go.")
-        + (at ? ` Last saved as a file on ${dmy(at)} at ${hhmm(new Date(at))}.` : " Save the lines as a file to keep them.");
 }
 function toast(text, { undo, cls, act, stay, who } = {}) {
     if (typeof heard === "function")
@@ -36204,11 +36178,6 @@ function renderLog() {
             days.push({ k, at: h.at, l: [h] });
     }
     $("notes").innerHTML = days.map(g => `<section><time>${wdmy(new Date(g.at))}</time>${g.l.map(h => `<p class="n"><b>${hhmm(new Date(h.at))}</b>${esc(h.t)}</p>`).join("")}</section>`).join("") || `<span class="sub">Nothing yet. ${esc(S.settings.pet)} writes down what it notices, on its own.</span>`;
-    const ni = $("nbInfo"), nb = $("nbSave");
-    if (ni)
-        ni.textContent = nbInfo();
-    if (nb)
-        nb.hidden = !(S.notes || []).length;
     const c1 = $("cnt-log-said"), c2 = $("cnt-log-did");
     if (c1)
         c1.textContent = String(said.length);
@@ -37266,14 +37235,14 @@ function backupDone(how) {
 }
 /* inside claude.ai the page can't download by itself: the viewer's own save (with a confirmation; in the Claude
    iOS app that's the share sheet). Resolves "saved", "declined", or null when this view can't do it */
-async function claudeSave(text, name) {
+async function claudeSave(text) {
     try {
         if (!window.claude || !window.claude.use)
             return null;
         const d = await window.claude.use("downloads");
         if (!d)
             return null;
-        await d.save({ filename: name || backupName(), data: text });
+        await d.save({ filename: backupName(), data: text });
         return "saved";
     }
     catch (e) {
@@ -37286,23 +37255,22 @@ async function claudeSave(text, name) {
 function nativeApp() {
     return !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
 }
-async function nativeBackup(text, share, name, title) {
-    name = name || backupName();
+async function nativeBackup(text, share) {
     const P = (window.Capacitor && Capacitor.Plugins) || {}, fsys = P.Filesystem, sh = P.Share;
     if (!nativeApp() || !fsys)
         return null;
     try {
         if (!share)
             try {
-                await fsys.writeFile({ path: "Small Things/" + name, data: text, directory: "DOCUMENTS", encoding: "utf8", recursive: true });
+                await fsys.writeFile({ path: "Small Things/" + backupName(), data: text, directory: "DOCUMENTS", encoding: "utf8", recursive: true });
                 return "saved";
             }
             catch (e) { // (no access to Documents on this phone: share it instead)
             }
         if (!sh)
             return null;
-        const r = await fsys.writeFile({ path: name, data: text, directory: "CACHE", encoding: "utf8" });
-        await sh.share({ title: title || "Small Things backup", files: [r.uri] });
+        const r = await fsys.writeFile({ path: backupName(), data: text, directory: "CACHE", encoding: "utf8" });
+        await sh.share({ title: "Small Things backup", files: [r.uri] });
         return "shared";
     }
     catch (e) {
@@ -37358,46 +37326,6 @@ async function saveBackup(text, fromShare) {
         copy(text, "Save");
     }
 }
-/* the notebook's lines as a text file (notes.js: it holds 250, then the oldest go), the same ways as a backup: the app's
-   Documents folder, claude.ai's own save, or a download; failing all of those, the text to copy */
-async function nbSave() {
-    const text = nbText(), p = n => String(n).padStart(2, "0"), d = new Date(), name = `small-things-notebook-${p(d.getDate())}-${p(d.getMonth() + 1)}-${d.getFullYear()}.txt`;
-    if (!text)
-        return toast("The notebook is still empty");
-    const done = how => {
-        S.flags.nbSaved = Date.now();
-        saveSoon();
-        if (curTab === "log")
-            renderLog();
-        toast(how);
-    };
-    const n = await nativeBackup(text, false, name, "Small Things notebook");
-    if (n === "saved")
-        return done("Notebook saved in Documents, in the Small Things folder");
-    if (n === "shared")
-        return done("Notebook sent");
-    if (n === "declined")
-        return;
-    const c = await claudeSave(text, name);
-    if (c === "saved")
-        return done("Notebook saved as a file");
-    if (c === "declined")
-        return;
-    try {
-        const url = URL.createObjectURL(new Blob([text], { type: "text/plain" })), a = document.createElement("a");
-        a.href = url;
-        a.download = name;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 4000);
-        done("Notebook downloaded");
-    }
-    catch (e) {
-        copy(text, "Save");
-    }
-}
-$("nbSave").onclick = () => nbSave();
 $("bkSend").onclick = $("bkSend2").onclick = () => sendBackup();
 $("bkSave").onclick = $("bkSave2").onclick = () => saveBackup();
 /* on the card itself: ask once a week from now on, or not at all (Settings, Preferences: Backup reminder) */
@@ -40068,7 +39996,6 @@ function boot() {
         if (ch)
             S.contentAt = Date.now();
     }
-    setTimeout(nbTell, 6000); // (a notebook that was already full or nearly full before it said so: once, a moment after opening)
     if (num(S.flags.m_devjots) < DEV_JOTS.length) { // the owner's jotted notes about building this app, once done (her yes, 24-10-2026): let go.
         S.flags.m_devjots = DEV_JOTS.length; // (a count, so ids added to DEV_JOTS later are let go too; running again is harmless)
         const gone = new Set(DEV_JOTS);
