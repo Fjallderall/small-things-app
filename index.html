@@ -6482,7 +6482,8 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     // group 57 (04-11-2026)
     "mw1zfypifrryc", "mw1zmhgppsiot", "mw1zntkrf8yb9", "mw1zo3la6zzlf"
 , "mw2ciqxb829vj",
-    "mw5o58hdcib1g", "mw86hsvax4p7h"]; // (group 68: the character list, 07-11-2026)
+    "mw5o58hdcib1g", "mw86hsvax4p7h", // (group 68: the character list, 07-11-2026)
+    "mwcqosbmiaz3e", "mwcqz3yqebm59"]; // group 75 (12-11-2026)
 
 </script>
 <script>/* js/core/state.js */
@@ -12702,7 +12703,11 @@ Object.assign(BEH, {
             waterAt = performance.now();
             const spots = gardenPlantSpots(), g0 = gardenGeo(), sp = !spots.length ? { k: "sill", x: (g0.wx0 + g0.wx1) / 2, y: g0.wy1 - R * .3 } : gardenPlantAt ? spots.reduce((a, s) => Math.abs(s.x - gardenPlantAt) < Math.abs(a.x - gardenPlantAt) ? s : a) : choice(spots); // (nothing to water: the bare sill)
             gardenPlantAt = 0;
-            const st = standBy(sp.x, R * 1.25, p.x > sp.x ? 1 : -1);
+            if (b.tree && treeOn()) { // the lantern tree in its pot on the floor (tree.js): the can tipped over the pot
+                const tg = treeGeo();
+                Object.assign(sp, { k: "tree", x: tg.x, y: tg.y - tg.ph - R * .25, id: "" });
+            }
+            const st = standBy(sp.x, R * 1.25, b.tree ? 1 : p.x > sp.x ? 1 : -1);
             b.tx = st.x;
             b.face = st.face;
             b.sp = { x: sp.x, y: sp.y, k: sp.k, id: sp.id };
@@ -15023,7 +15028,10 @@ const SCOPE_CAP = {
  * walked over: requestObj(kind) queues it (one more can wait), startObj starts the behaviour
  * from OBJ_ACT, and its show() runs at the moment of arrival (revealAt). objTick ends it.
  */
-const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () => showGlimpse() }, gdrawers: { beh: "opendrawer", revealAt: .8, show: () => openDrawer() }, gchair: { beh: "armread", revealAt: 1.2, show: () => showBook() || 8 }, gletters: { beh: "readletter", revealAt: .6, show: () => readLetter() }, gjar: { beh: "readletter", revealAt: .5, show: () => showGiveCard() }, cat: { beh: "catvisit", revealAt: 0, show: () => (treatGive("cat"), 8) }, possum: { beh: "possumchat", revealAt: 0, show: () => (treatGive("possum"), 8) }, possumcookie: { beh: "givecookie", revealAt: 0, room: "room", show: () => 5 }, gdesk: { beh: "write", revealAt: .3, show: () => 6 }, gplants: { beh: "gwater", revealAt: .6, show: () => {
+const OBJ_ACT = { scry: { beh: "scry", revealAt: 2.2, room: "archive", show: () => showGlimpse() }, gdrawers: { beh: "opendrawer", revealAt: .8, show: () => openDrawer() }, gchair: { beh: "armread", revealAt: 1.2, show: () => showBook() || 8 }, gletters: { beh: "readletter", revealAt: .6, show: () => readLetter() }, gjar: { beh: "readletter", revealAt: .5, show: () => showGiveCard() }, cat: { beh: "catvisit", revealAt: 0, show: () => (treatGive("cat"), 8) }, possum: { beh: "possumchat", revealAt: 0, show: () => (treatGive("possum"), 8) }, possumcookie: { beh: "givecookie", revealAt: 0, room: "room", show: () => 5 }, gdesk: { beh: "write", revealAt: .3, show: () => 6 }, gtree: { beh: "gwater", revealAt: 1.4, room: "garden", extra: { tree: 1 }, show: () => {
+            treeWaterNow(); // (the lantern tree, from its card: tree.js)
+            return 4;
+        } }, gplants: { beh: "gwater", revealAt: .6, show: () => {
             const sp = pet.b && pet.b.sp, hp = sp && sp.id && PLANTS.find(x => x.id === sp.id);
             const pl = hp ? [hp] : sp && sp.k === "sill" ? sillPlants("garden") : []; // (the window sill's pots, or the hanging one: Mite says which)
             if (plantSay(pl))
@@ -15326,8 +15334,8 @@ function objTick(now) {
             objDone();
         return;
     }
-    if (cur.shown && (cur.kind === "gplants" || cur.kind === "gdesk" || cur.kind === "gchair" || cur.kind === "gletters" || cur.kind === "gjar" || cur.kind === "gdrawers")) {
-        if (pet.beh !== { gplants: "gwater", gdesk: "write", gchair: "armread", gletters: "readletter", gjar: "readletter", gdrawers: "opendrawer" }[cur.kind])
+    if (cur.shown && (cur.kind === "gplants" || cur.kind === "gtree" || cur.kind === "gdesk" || cur.kind === "gchair" || cur.kind === "gletters" || cur.kind === "gjar" || cur.kind === "gdrawers")) {
+        if (pet.beh !== { gplants: "gwater", gtree: "gwater", gdesk: "write", gchair: "armread", gletters: "readletter", gjar: "readletter", gdrawers: "opendrawer" }[cur.kind])
             objDone();
         return;
     }
@@ -19980,6 +19988,12 @@ function resolveAnom() {
         const key = keyAsks(); // (now and then it's someone asking about the small brass key: keyOffer)
         a.call = { no, tm, key, it: !key && Math.random() < .35 ? findAltered() : null };
         a.life = a.t + 60; // time enough to get there from the far end of the wagon
+        if (inCloset()) { // Mite's inside the closet (deeper.js): it calls back, the phone rings on, and it answers once it's out (jot mwcqz3yqebm59; the tap used to be lost and the phone couldn't be tapped again)
+            a.want = 1;
+            a.life = a.t + Math.max(0, pet.dur - pet.bt) + 60;
+            speak(choice(["The phone? Let it ring. I'll get it when I'm out.", "I hear it! Don't pick up, I'm coming. In a bit.", "Let it ring. They always wait."]), { ms: 4000 });
+            return afterChange();
+        }
         requestObj("anomphone", a.x, a.y - R);
         return afterChange();
     }
@@ -20153,6 +20167,11 @@ function resolveAnom() {
 }
 /* every frame, while an anomaly is here: anything it does on its own */
 function anomTick(a, dt, now) {
+    if (a.want && a.type === "phone" && !a.done && !a.held && pet.beh !== "deepgo" && !objQ.cur) { // out of the closet: now Mite answers
+        a.want = 0;
+        a.life = Math.max(a.life, a.t + 60);
+        startObj("anomphone");
+    }
     if (a.type === "chair" && !a.resolved && a.t > 4 && !objQ.cur && pet.ground === 0 && view === "room") {
         markLeave(a); // (nobody tapped it: it leaves its dents, marks.js)
         resolveAnom(); // nobody tapped it; Mite can't resist a chair
@@ -21693,7 +21712,23 @@ function treeResident(key) {
 function treeVisitLine() {
     return treeStage() >= 3 ? treePick("tree_visitor") : null;
 }
+/* watered already today (by the day start, like everything else)? A pip planted today has had its water */
+function treeWateredToday() {
+    return !!num(S.tree.w) && actDay(num(S.tree.w)) === actDay();
+}
+/* "Water it" on the card: Mite walks over with the watering can (gwater, behaviours-nook.js; the water lands when it
+   gets there: treeWaterNow). Once a day (jot mwcqosbmiaz3e) */
 function treeWater() {
+    if (!treeOn())
+        return;
+    if (treeWateredToday())
+        return speak(choice(["It's had its water today. More and its feet get wet.", "Once a day is plenty. The pot's still damp.", "Not again today. I checked the soil: still dark."]), { ms: 4500 });
+    const g = treeGeo();
+    requestObj("gtree", g.x, g.y - R);
+}
+function treeWaterNow() {
+    if (!treeOn() || treeWateredToday())
+        return;
     const T = S.tree, t = Date.now(), dry = treeDry(t);
     treeGrow(t); // (counted up to now first)
     if (new Date(num(T.w)).toDateString() !== new Date(t).toDateString())
@@ -21729,7 +21764,9 @@ function treeCard() {
     const facts = [`Tree no. ${num(T.n)}, planted ${esc(dmy(new Date(num(T.at))))}. Now ${TREE_STAGES[s]}.`,
         `Last watered ${ago < 1 ? "today" : ago === 1 ? "yesterday" : ago + " days ago"}.`,
         dry ? "It's drooping. It won't grow until it gets some water." : s === 7 ? "The pear's ripe." : `Ripe in about ${left} week${left === 1 ? "" : "s"}, if it's watered.`];
-    const btn = [["Water it", "", () => { closeRitual(); treeWater(); }]];
+    const btn = treeWateredToday() ? [] : [["Water it", "", () => { closeRitual(); treeWater(); }]];
+    if (treeWateredToday())
+        facts[1] += " Once a day is plenty.";
     if (s === 7)
         btn.unshift(["Pick the pear", "", () => { closeRitual(); treePickPear(); }]);
     btn.push(["Leave it", "ghost", closeRitual]);
@@ -26213,7 +26250,7 @@ function gardenCandle(g) {
 }
 let gardenPlantAt = 0, gardenPin = null;
 function isGardenKind(kind) {
-    return kind === "ggramo" || kind === "gplants" || kind === "gdesk" || kind === "gchair" || kind === "gletters" || kind === "gjar" || kind === "gdrawers" || kind === "gpin" || kind === "gpossum" || kind === "gvase" || kind === "gfbook" || kind === "ghang";
+    return kind === "ggramo" || kind === "gplants" || kind === "gtree" || kind === "gdesk" || kind === "gchair" || kind === "gletters" || kind === "gjar" || kind === "gdrawers" || kind === "gpin" || kind === "gpossum" || kind === "gvase" || kind === "gfbook" || kind === "ghang";
 }
 /* which way Mite walks to get to another room (one step at a time; startObj and pet.start chain them) */
 function routeTo(target) {
