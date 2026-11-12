@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 11-11-2026 -->
+<!-- Small Things, shared build of 12-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -6582,6 +6582,8 @@ function inboxOnce(list) {
         }
     return list.filter(x => !ONCE_FROM.includes(x.from) || first.get(x.from).at === x.at).map(x => ONCE_FROM.includes(x.from) ? first.get(x.from) : x);
 }
+const DEL_DAYS = 120, DEL_MAX = 1500; // deletions are remembered this long, at most this many (the newest kept)
+const delNewest = (keys, del) => keys.length <= DEL_MAX ? keys : keys.slice().sort((x, y) => num(del[x]) - num(del[y])).slice(-DEL_MAX);
 function sanitizeState(raw) {
     const s = cleanJSON(raw) || {}, o = {};
     ["v", "created", "savedAt", "lastSeen", "g", "gTotal", "mom", "xp", "pats", "flies", "motes", "incidents", "clSeen", "lessonsSeen", "lvlSeen", "fedUntil", "lightsAt", "backupAt", "stats_total", "doneTotal", "settingsAt", "contentAt"].forEach(k => {
@@ -6908,7 +6910,7 @@ function sanitizeState(raw) {
     }
     o.del = {};
     if (s.del && typeof s.del === "object")
-        Object.keys(s.del).slice(-1500).forEach(k => {
+        delNewest(Object.keys(s.del), s.del).forEach(k => {
             if (!BAD_KEYS.has(k))
                 o.del[str(k, 240)] = num(s.del[k]);
         });
@@ -6976,12 +6978,18 @@ function mergeStates(a, b) {
         return a;
     if (!a)
         return b;
-    { // started over on one side: the other side's copy, saved before that, is the old game and isn't merged back in
+    { // started over on one side: the other side's copy is the old game and isn't merged back in. Only the tasks the
+        // old side made after the wipe (another device still open on the old game) come along into the new one
         const wa = num(a.wiped), wb = num(b.wiped);
-        if (wb > wa && wb > num(a.savedAt))
-            return b;
-        if (wa > wb && wa > num(b.savedAt))
-            return a;
+        if (wa !== wb) {
+            const nw = wb > wa ? b : a, od = nw === a ? b : a, w = Math.max(wa, wb), o = JSON.parse(JSON.stringify(nw));
+            const have = new Set((o.tasks || []).map(t => t.id)), del = o.del || {};
+            for (const t of od.tasks || [])
+                if (num(t.c) > w && !have.has(t.id) && !(num(del[t.id]) >= num(t.u)))
+                    (o.tasks = o.tasks || []).push(JSON.parse(JSON.stringify(t)));
+            o.tasks = (o.tasks || []).sort((x, y) => x.c - y.c);
+            return o;
+        }
     }
     const nw = (b.savedAt || 0) > (a.savedAt || 0) ? b : a, od = nw === a ? b : a;
     const o = JSON.parse(JSON.stringify(nw));
@@ -7009,11 +7017,14 @@ function mergeStates(a, b) {
     const del = Object.assign({}, a.del || {}, b.del || {});
     for (const k of Object.keys(del))
         del[k] = Math.max(num((a.del || {})[k]), num((b.del || {})[k]));
-    const cut = Date.now() - 120 * 864e5;
+    const cut = Date.now() - DEL_DAYS * 864e5;
     o.del = {};
-    Object.keys(del).filter(k => del[k] > cut).slice(-1500).forEach(k => o.del[k] = del[k]);
+    delNewest(Object.keys(del).filter(k => del[k] > cut), del).forEach(k => o.del[k] = del[k]);
+    // a side not saved since before the deletions' memory (a device left unused that long): its tasks the other side
+    // doesn't have and that haven't changed since then were deleted or filed away there, the marks long gone
+    const stale = num(od.savedAt) < cut, nwIds = stale ? new Set((nw.tasks || []).map(t => t.id)) : null;
     const tm = new Map();
-    for (const t of [...(od.tasks || []), ...(nw.tasks || [])]) {
+    for (const t of [...(od.tasks || []).filter(t => !stale || nwIds.has(t.id) || num(t.u) >= cut), ...(nw.tasks || [])]) {
         const c = tm.get(t.id);
         if (!c || num(t.u) > num(c.u) || (num(t.u) === num(c.u) && t.d && !c.d))
             tm.set(t.id, t);
@@ -7096,7 +7107,7 @@ function mergeStates(a, b) {
                 was.off = Math.max(num(was.off), num(q.off));
             }
         }
-        o.quotes = [...m.values()].map(q => Object.assign(q, { off: q.off > q.at ? q.off : 0 })).sort((x, y) => x.at - y.at).slice(-40);
+        o.quotes = [...m.values()].map(q => Object.assign(q, { off: q.off > q.at ? q.off : 0 })).sort((x, y) => x.at - y.at).slice(-300); // (as many as the board holds)
     }
     { // the encounter log: the higher count, the earliest first, the latest last, every line heard on either side
         const la = a.anomLog || {}, lb = b.anomLog || {};
@@ -7535,12 +7546,15 @@ function cleanCat(r) {
     return null;
 }
 /* Two copies of the keepsakes, merged. When one side started over since the other was made (a later wipe), that
-   side wins whole: the other is the old game, still on some device or in the account. Otherwise everything from
-   both is kept. (A backup file imported after starting over is taken on as part of the new game: importSave) */
+   side wins: the other is the old game, still on some device or in the account. Only what the old side made after
+   the wipe (a device still open on the old game) comes along. Otherwise everything from both is kept. (A backup file
+   imported after starting over is taken on as part of the new game: importSave) */
 function mergeKeep(a, b) {
     const wa = num(a.wipe), wb = num(b.wipe);
-    if (wa !== wb)
-        return JSON.parse(JSON.stringify(Object.assign({ refl: [], caps: [], cat: [], tcat: [], corr: [], del: {} }, wa > wb ? a : b)));
+    if (wa !== wb) {
+        const w = Math.max(wa, wb), nw = Object.assign({ refl: [], caps: [], cat: [], tcat: [], corr: [], del: {} }, wa > wb ? a : b), od = wa > wb ? b : a, after = (l, k) => (l || []).filter(r => num(r[k]) > w);
+        return mergeKeep(nw, { refl: after(od.refl, "at"), caps: after(od.caps, "made"), cat: after(od.cat, "at"), tcat: [], corr: after(od.corr, "at"), del: {}, wipe: w });
+    }
     const o = { refl: [], caps: [], cat: [], tcat: [], corr: [], del: {}, wipe: wa };
     { // the seasons' small things: each once per season (filed records never change)
         const m = new Map();
@@ -7881,7 +7895,8 @@ async function pullBeforeSave() {
    came back, bought tapes went (jots mvzb5nbv4d6s9, mvzb4gx0wcv8d). syncBase is what this copy and the account last
    agreed on; each side's change since then counts, once. It belongs to this browser, not to the save */
 let syncBase = (() => { try { return JSON.parse(localStorage.getItem(LS_KEY + ".sync")) || null; } catch (e) { return null; } })();
-const syncCounts = s => ({ g: num(s.g), pantry: Object.assign({}, s.pantry || {}) });
+const SYNC_N = ["xp", "doneTotal", "pats"], SYNC_CARE = ["fed", "played", "washed", "games", "swept"]; // counters: each side's change since the last agreement counts too (finding 7 of the merge audit)
+const syncCounts = s => ({ g: num(s.g), pantry: Object.assign({}, s.pantry || {}), n: Object.fromEntries(SYNC_N.map(k => [k, num(s[k])])), hours: (s.hours || []).map(num), care: Object.fromEntries(SYNC_CARE.map(k => [k, num((s.care || {})[k])])), give: s.give && s.give.cur ? { id: s.give.cur.id, got: num(s.give.cur.got) } : null });
 function syncBaseSet(c) {
     syncBase = c;
     try {
@@ -7903,6 +7918,16 @@ function adoptAccount(r, blank) { // blank: nothing was saved in this browser: t
             const n = p0 ? num(pa[k]) + num(pb[k]) - num(p0[k]) : num((nw.pantry || {})[k]), max = (PANTRY.find(x => x.id === k) || {}).max || PANTRY_MAX;
             if (n > 0)
                 m.pantry[k] = Math.min(max, n);
+        }
+        if (base && base.n) { // the counters: a + b - base, never below what either side has (a base from before this had none: the highest, as before)
+            const add = (x, y, z) => Math.max(num(x), num(y), num(x) + num(y) - num(z));
+            SYNC_N.forEach(k => m[k] = add(a[k], b[k], base.n[k]));
+            m.hours = Array.from({ length: 24 }, (_, i) => add((a.hours || [])[i], (b.hours || [])[i], (base.hours || [])[i]));
+            m.care = Object.assign({}, m.care);
+            SYNC_CARE.forEach(k => m.care[k] = add((a.care || {})[k], (b.care || {})[k], (base.care || {})[k]));
+            const ca = a.give && a.give.cur, cb = b.give && b.give.cur, mc = m.give && m.give.cur;
+            if (ca && cb && mc && ca.id === cb.id && mc.id === ca.id && base.give && base.give.id === ca.id)
+                mc.got = Math.min(num(mc.goal) || Infinity, add(ca.got, cb.got, base.give.got));
         }
     }
     S = m;
