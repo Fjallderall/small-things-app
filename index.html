@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 13-11-2026 -->
+<!-- Small Things, shared build of 15-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -27734,9 +27734,9 @@ function otherTick(t) {
 "use strict";
 /*
  * possum.js - The possum who lives in the sleeping nook (garden.js). By day it sleeps hanging by its tail from
- * the beam. When there's mess on the wagon floor it comes down: it lets itself down onto the platform on its tail
- * and takes the stairs (walkVia), or spins its tail like a helicopter and flies down. Then it trundles through to the wagon and eats
- * it, piece by piece, then goes home and hangs up again. In the evening it potters about, visiting rooms. Tap it and it says something; now and then it plays dead instead.
+ * the beam. For cookies it comes down: it lets itself down onto the platform on its tail and takes the stairs
+ * (walkVia), or spins its tail like a helicopter and flies down. Mess on the floor it eats, piece by piece, once it's
+ * dark, or by day while it's up anyway (after a cookie); then it goes home and hangs up again. In the evening it potters about, visiting rooms. Tap it and it says something; now and then it plays dead instead.
  * A ball left lying on the wagon floor it now and then takes home to its basket (p.ballGot, basketBall in basket.js).
  * Nothing about it is saved: it just lives here.
  */
@@ -28013,9 +28013,10 @@ function possumMoveIn(p, now) {
 function possumOvenX() {
     return stoveX() - R * 1.2; // on the near side of the oven (Mite takes the tray out from the other side)
 }
+/* mess on the floor: dinner once it's dark; by day only when it's up anyway (down for a cookie, say), never woken
+   for it (owner, 13-11-2026) */
 function possumHungry() {
-    const n = (S.mess || []).length;
-    return n > 0 && (possumAwake() || n >= 3);
+    return (S.mess || []).length > 0 && (possumAwake() || !["hang", "curl"].includes(possum.ph));
 }
 function possumBox() {
     const sp = possumSprite(), u = possumU(), w = sp[0].length * u, h = sp.length * u, p = possum;
