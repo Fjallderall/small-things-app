@@ -14583,6 +14583,44 @@ function windowFall(arr, wx, top, bottom, hw, dt, tsec, d, W8) {
 }
 /* a round window to the real sky (the wagon's; the archive has a small one too: its own falling-leaves list arr,
    no shutters) */
+/* Rain at a window (the wagon's, the archive's, the nook's), in pixels like everything else: the sky goes a bit
+   greyer, thin rain falls far off, and on the glass beads sit, grow and run down with a short wet tail
+   (owner's pick, 16-11-2026: "both", and "a bit greyer"). No state: each drop's place comes from its number and
+   the time, so it costs a few dozen small squares a frame and only while it rains. Reduced motion: very slow. */
+function rainHash(i, k) {
+    const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453;
+    return v - Math.floor(v);
+}
+function rainCounts(amt) {
+    return { far: Math.round(10 + amt * 20), glass: Math.round(5 + amt * 9) };
+}
+function drawRain(x0, y0, w, h, tsec, amt, dk) {
+    const sp = reduced ? .15 : 1, px = PX, snap = v => Math.round(v / px) * px, n = rainCounts(amt);
+    cx.fillStyle = `rgba(86,96,114,${.16 + amt * .16})`; // the grey veil, heavier the harder it rains
+    cx.fillRect(x0, y0, w, h);
+    cx.fillStyle = `rgba(196,212,234,${.55 - dk * .2})`; // far off: short slanted streaks
+    for (let i = 0, span = h + px * 4; i < n.far; i++) {
+        const y = (rainHash(i, 0) * span + tsec * 180 * sp * (.8 + rainHash(i, 5) * .4)) % span - px * 2, x = rainHash(i, 9) * (w + h * .5) - y * .5;
+        cx.fillRect(snap(x0 + x), snap(y0 + y), px, px);
+        cx.fillRect(snap(x0 + x - px * .5), snap(y0 + y + px), px, px);
+    }
+    const aH = .85 - dk * .3, aT = .38 - dk * .12; // on the glass
+    for (let i = 0; i < n.glass; i++) {
+        const T = 5 + rainHash(i, 21) * 7, u = tsec * sp / T + rainHash(i, 22), c = Math.floor(u), ph = u - c;
+        const bx = x0 + rainHash(i + c * 13, 20) * w, by = y0 + rainHash(i + c * 7, 23) * h * .6;
+        if (ph < .55) {
+            cx.fillStyle = `rgba(226,238,250,${aH * (.5 + ph)})`;
+            cx.fillRect(snap(bx), snap(by), px, ph > .3 ? px * 2 : px);
+        }
+        else {
+            const q = (ph - .55) / .45, yy = by + q * q * h, xx = bx + ((Math.floor(yy / (px * 4)) + i) % 3 === 0 ? px : 0);
+            cx.fillStyle = `rgba(190,210,232,${aT})`;
+            cx.fillRect(snap(xx), snap(yy) - px * 3, px, px * 3);
+            cx.fillStyle = `rgba(226,238,250,${aH})`;
+            cx.fillRect(snap(xx), snap(yy), px, px * 2);
+        }
+    }
+}
 function drawWindow(rm, sky, d, hf, tsec, dt, dk, arr = wparts, shutters = true) {
     const { wx, wy, wr } = rm;
     if (travelling() && !reduced)
@@ -14665,17 +14703,7 @@ function drawWindow(rm, sky, d, hf, tsec, dt, dk, arr = wparts, shutters = true)
         }
     }
     if (raining()) {
-        cx.fillStyle = "rgba(70,80,100,.22)";
-        cx.fillRect(wx - wr, wy - wr, wr * 2, wr * 2);
-        cx.strokeStyle = "rgba(205,220,240,.4)";
-        cx.lineWidth = 1;
-        for (let i = 0, nd = Math.round(10 + W8.rain * 36); i < nd; i++) {
-            const x = wx - wr + ((i * 53.7 + tsec * 25) % (wr * 2)), y = wy - wr + ((i * 97.1 + tsec * (reduced ? 40 : 260)) % (wr * 2.2));
-            cx.beginPath();
-            cx.moveTo(x, y);
-            cx.lineTo(x - 2, y + wr * .12);
-            cx.stroke();
-        }
+        drawRain(wx - wr, wy - wr, wr * 2, wr * 2, tsec, W8.rain, sky.dark);
     }
     drawFireworks(wx - wr, wy - wr, wr * 2, wr * 1.4, tsec, sky.dark); // fireworks over the hills, the evening you bought them (splurge.js)
     if (spaceOn()) // the detour: space outside (planeshift.js)
@@ -25773,11 +25801,8 @@ function drawGarden(now, dt) {
     }
     drawTreesOut(wx0, ww, wy1, dk, sky); // the lantern trees planted out (tree.js)
     windowFall(gwparts, wcx, wy0 - 4, wy1 + 6, wr, dt, tsec, d, wx); // the same leaves, petals or snow as at the wagon window (room.js)
-    if (wx.rain > 0 && !wx.snow) { // rain running down the glass
-        cx.fillStyle = `rgba(200,220,240,${.35 - dk * .15})`;
-        for (let i = 0; i < 10; i++)
-            cx.fillRect(wx0 + (i * 37.3) % ww, wy0 + ((t * (60 + (i % 5) * 12) + i * 41) % wh), 1, R * .14);
-    }
+    if (wx.rain > 0 && !wx.snow) // rain at the glass, the same as at the wagon's window (room.js)
+        drawRain(wx0, wy0, ww, wh, tsec, wx.rain, dk);
     else if (wx.snow)
         for (let i = 0; i < 12; i++) {
             cx.fillStyle = "rgba(255,255,255,.7)";
