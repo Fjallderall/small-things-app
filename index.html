@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 15-11-2026 -->
+<!-- Small Things, shared build of 16-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -6483,7 +6483,8 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mw1zfypifrryc", "mw1zmhgppsiot", "mw1zntkrf8yb9", "mw1zo3la6zzlf"
 , "mw2ciqxb829vj",
     "mw5o58hdcib1g", "mw86hsvax4p7h", // (group 68: the character list, 07-11-2026)
-    "mwcqosbmiaz3e", "mwcqz3yqebm59"]; // group 75 (12-11-2026)
+    "mwcqosbmiaz3e", "mwcqz3yqebm59", // group 75 (12-11-2026)
+    "mwj0fbj8ywicz", "mwj0g5x7i1aj6"]; // group 77 (16-11-2026)
 
 </script>
 <script>/* js/core/state.js */
@@ -6682,9 +6683,13 @@ function sanitizeState(raw) {
     o.raccoonName = str(s.raccoonName, 30);
     o.possumName = str(s.possumName, 30);
     // the vase in the nook and the dried flower book (flowers.js)
-    const fl = f => f && typeof f === "object" && str(f.n, 40) ? { n: str(f.n, 40), c: /^#[0-9a-f]{6}$/i.test(f.c) ? f.c : "#e8a0b0", s: str(f.s, 40) || "daisy", note: str(f.note, 160), odd: f.odd ? 1 : 0, from: str(f.from, 40), at: num(f.at) } : null;
+    const fl1 = f => f && typeof f === "object" && str(f.n, 40) ? { n: str(f.n, 40), c: /^#[0-9a-f]{6}$/i.test(f.c) ? f.c : "#e8a0b0", s: str(f.s, 40) || "daisy", note: str(f.note, 160), odd: f.odd ? 1 : 0, from: str(f.from, 40), at: num(f.at) } : null;
+    const fl = f => { // the vase: with the bunch a traded one joined, if there is one (flowers.js)
+        const v = fl1(f), w = v && fl1(f.with);
+        return w ? Object.assign(v, { with: w }) : v;
+    };
     o.vase = s.vase === undefined ? defaultState().vase : fl(s.vase);
-    o.flowerBook = Array.isArray(s.flowerBook) ? arr(s.flowerBook, 80).map(fl).filter(Boolean) : defaultState().flowerBook;
+    o.flowerBook = Array.isArray(s.flowerBook) ? arr(s.flowerBook, 80).map(fl1).filter(Boolean) : defaultState().flowerBook;
     o.ndoorFlowers = dkey(s.ndoorFlowers) || "";
     { // the bowl by the night door (pantry.js)
         const w = s.bowl && typeof s.bowl === "object" ? s.bowl : {}, day = dkey(w.day) || "", at = day ? num(w.at) : 0;
@@ -21749,7 +21754,7 @@ function treeWater() {
     if (treeWateredToday())
         return speak(choice(["It's had its water today. More and its feet get wet.", "Once a day is plenty. The pot's still damp.", "Not again today. I checked the soil: still dark."]), { ms: 4500 });
     const g = treeGeo();
-    requestObj("gtree", g.x, g.y - R);
+    requestObj("gtree", g.x, GY - R);
 }
 function treeWaterNow() {
     if (!treeOn() || treeWateredToday())
@@ -21775,11 +21780,12 @@ function treePickPear() {
     renderContent();
     saveSoon();
 }
-/* where it stands: on the nook floor, in front of the left end of the writing desk, under the plant window */
+/* where it stands: on the nook floor, a step out in front of the left end of the writing desk, under the plant window
+   (a step forward since group 77: its pot stood right in front of the dried flower book and took its taps) */
 function treeGeo() {
     const g = gardenGeo();
     const x = Math.max(R * .55, (hasDesk() ? g.dx0 : g.wx0) + R * .3); // (Mite mostly stands right of the desk, so not there)
-    return { x: Math.round(x / PX) * PX, y: GY, pw: R * .5, ph: R * .38 };
+    return { x: Math.round(x / PX) * PX, y: GY + Math.round(R * .8 / PX) * PX, pw: R * .5, ph: R * .38 };
 }
 function treeCard() {
     if (!treeOn())
@@ -29816,7 +29822,9 @@ $("pinAlbum").addEventListener("click", e => {
  * leaves some instead of an origami now and then, and the night door (if you have it) sometimes leaves some on
  * its step at night. Every flower that's been in the vase is pressed into the book (S.flowerBook), which a tap
  * opens. Flowers are lines too: pool flowers (ordinary) and flowers_odd (anomalous), "Name | #colour | shape fx | note".
- *   S.vase       what's in the vase now: { n, c, s (shape and fx), note, odd, from, at }
+ *   S.vase       what's in the vase now: { n, c, s (shape and fx), note, odd, from, at }, and with: the bunch that
+ *                was there when a traded one came (the same fields; group 77). It stays beside the new one until its
+ *                own week is up, or until the next bunch comes.
  *   S.flowerBook every flower so far, first time it came
  */
 let puddleHit = null, flowerCard = null, flowerHit = null, fbookHit = null, flowerCheckAt = 0, fbookOut = false; // fbookOut: Mite has the book in the chair
@@ -29826,10 +29834,18 @@ function parseFlower(text, odd) {
     const toks = look.toLowerCase().split(/\s+/).filter(Boolean);
     return { n: n.slice(0, 40), c: /^#[0-9a-f]{6}$/i.test(c) ? c : "#e8a0b0", s: toks.filter(t => FLOWER_SHAPES.includes(t) || /^[a-z]+$/.test(t)).slice(0, 4).join(" ") || "daisy", note: note.slice(0, 160), odd: odd ? 1 : 0 };
 }
-/* a flower from the lines that fits right now (season and so on), not the one already in the vase */
+const VASE_WEEK = 7 * 864e5;
+const vaseSince = v => v && v.at > 1e9 ? v.at : S.created || Date.now(); // (the first lavender has been there from the start)
+const vaseOne = v => { const o = Object.assign({}, v); delete o.with; return o; };
+/* the bunches in the vase: the newest, and the one a traded bunch joined */
+function vaseFlowers() {
+    const v = S.vase;
+    return !v ? [] : v.with ? [v, v.with] : [v];
+}
+/* a flower from the lines that fits right now (season and so on), not one already in the vase */
 function pickFlower(odd) {
-    const c = ctx(), cur = S.vase && S.vase.n;
-    const all = (odd ? pool("flowers_odd") : pool("flowers").concat(barterLines("flower"))).map(parseLine).filter(x => x.text.includes("|") && x.conds.every(k => condOk(k, c) !== false)).map(x => parseFlower(x.text, odd)).filter(f => f.n && f.n !== cur);
+    const c = ctx(), cur = S.vase && S.vase.n, cur2 = S.vase && S.vase.with && S.vase.with.n;
+    const all = (odd ? pool("flowers_odd") : pool("flowers").concat(barterLines("flower"))).map(parseLine).filter(x => x.text.includes("|") && x.conds.every(k => condOk(k, c) !== false)).map(x => parseFlower(x.text, odd)).filter(f => f.n && f.n !== cur && f.n !== cur2);
     return all.length ? choice(all) : null;
 }
 /* new flowers in the vase (from: who brought them) */
@@ -29840,10 +29856,14 @@ function newFlowers(f, from, bought) {
     if (!bought && num(S.flags[fk]) === dayNum())
         return null;
     S.flags[fk] = dayNum();
-    S.vase = Object.assign({}, f, { from: String(from || "").slice(0, 40), at: Date.now() });
+    const old = S.vase; // a traded bunch joins the one that's there (the owner, 16-11-2026); any other bunch takes the vase
+    const stays = bought && old && old.n.toLowerCase() !== f.n.toLowerCase() && Date.now() - vaseSince(old) < VASE_WEEK ? vaseOne(old) : null;
+    S.vase = Object.assign({}, vaseOne(f), { from: String(from || "").slice(0, 40), at: Date.now() });
+    if (stays)
+        S.vase.with = stays;
     S.flowerBook = S.flowerBook || [];
     if (!S.flowerBook.some(x => x.n.toLowerCase() === f.n.toLowerCase())) {
-        S.flowerBook.push(Object.assign({}, S.vase));
+        S.flowerBook.push(vaseOne(S.vase));
         if (S.flowerBook.length > 80)
             S.flowerBook.splice(0, S.flowerBook.length - 80);
     }
@@ -29879,8 +29899,11 @@ function flowerTick() {
         oddFlowers("the night door");
         return;
     }
-    const since = S.vase && S.vase.at > 1e9 ? S.vase.at : S.created || Date.now(); // (the first lavender has been there from the start)
-    if (!S.vase || Date.now() - since > 7 * 864e5) { // a week of the same flowers: Mite picks new ones
+    if (S.vase && S.vase.with && Date.now() - vaseSince(S.vase.with) > VASE_WEEK) { // the older bunch's week is up: it's in the book already
+        delete S.vase.with;
+        saveSoon();
+    }
+    if (!S.vase || Date.now() - vaseSince(S.vase) > VASE_WEEK) { // a week of the same flowers: Mite picks new ones
         const f = newFlowers(pickFlower(false), "a walk");
         if (f && roomVisible(view))
             say("flowerwalk", { flower: f.n });
@@ -29890,13 +29913,15 @@ function flowerTick() {
    The drops run off the chest of drawers and make a puddle on the floor beside it (S.puddle: n how big 0–1, c its
    colour, odd, f the flower it came from, at). A water puddle dries by itself once nothing drips into it; a strange one stays until Mite mops
    it up (tap it: the "puddle" look, looks.js / interactions.js) */
-const dripping = () => !!(S.vase && hasVase() && /\bdrip\b/.test(S.vase.s));
+const dripFlower = () => hasVase() && (vaseFlowers().filter(v => /\bdrip\b/.test(v.s)).sort((a, b) => b.odd - a.odd)[0] || null); // (a strange one first)
+const dripping = () => !!dripFlower();
 const dripCol = v => v.odd ? v.c : "#8fb4d8";
 function puddleTick() {
     const p = S.puddle = S.puddle || { n: 0, c: "", odd: 0, f: "", at: 0 };
-    if (dripping()) {
-        if (p.n < .05 || p.c !== dripCol(S.vase))
-            Object.assign(p, { c: dripCol(S.vase), odd: Math.max(p.n < .05 ? 0 : p.odd, S.vase.odd ? 1 : 0), f: S.vase.odd || p.n < .05 || !p.odd ? S.vase.n : p.f }); // f: which flower made it (group 47)
+    const dv = dripFlower();
+    if (dv) {
+        if (p.n < .05 || p.c !== dripCol(dv))
+            Object.assign(p, { c: dripCol(dv), odd: Math.max(p.n < .05 ? 0 : p.odd, dv.odd ? 1 : 0), f: dv.odd || p.n < .05 || !p.odd ? dv.n : p.f }); // f: which flower made it (group 47)
         if (p.n < 1) {
             p.n = Math.min(1, p.n + .04); // (full in about twenty minutes)
             p.at = Date.now();
@@ -29919,7 +29944,7 @@ function puddleGeo() {
 function drawPuddle(dk) {
     const pg = puddleGeo(), p = S.puddle, q = PX;
     if (dripping() && !reduced && Math.random() < .03) // a drop off the edge of the chest
-        addP({ type: "spark", x: pg.edge, y: pg.top + q, vx: 0, vy: 12, g: 320, max: .95, col: dripCol(S.vase), size: 2, room: "garden" });
+        addP({ type: "spark", x: pg.edge, y: pg.top + q, vx: 0, vy: 12, g: 320, max: .95, col: dripCol(dripFlower()), size: 2, room: "garden" });
     if (!p || p.n < .02 || !p.c) {
         puddleHit = null;
         return;
@@ -29958,9 +29983,10 @@ function drawVase(dk, t) {
     const v = S.vase, { x, y } = vasePos(), q = PX, vw = Math.max(q * 3, Math.round(R * .2 / q) * q), vh = Math.max(q * 4, Math.round(R * .26 / q) * q);
     const vx = Math.round(x / q) * q - vw / 2;
     if (v) { // the stems and the flowers' heads
-        const n = 3, stem = mix("#4f7d3c", "#16231a", dk * .6), odd = v.odd, hv = k => hash01(String(v.n) + k);
+        const v0 = v, two = !!v0.with, n = two ? 4 : 3, stem = mix("#4f7d3c", "#16231a", dk * .6), odd = v0.odd || (two && v0.with.odd);
         for (let i = 0; i < n; i++) {
-            const sx = vx + vw / 2 + (i - 1) * q * 1.5, sy = y - vh - R * (.2 + (i % 2) * .08 + hv("h" + i) * .06) - Math.sin(t * .8 + i) * q * .3, X = Math.round(sx / q) * q;
+            const v = two && i % 2 ? v0.with : v0, hv = k => hash01(String(v.n) + k); // (two bunches: stem about, the newest on the left)
+            const sx = vx + vw / 2 + (i - (n - 1) / 2) * q * 1.5, sy = y - vh - R * (.2 + (i % 2) * .08 + hv("h" + i) * .06) - Math.sin(t * .8 + i) * q * .3, X = Math.round(sx / q) * q;
             const tone = (hv("t" + i) - .5) * .5, col = mix(tone > 0 ? mix(v.c, "#ffffff", tone) : mix(v.c, "#000000", -tone), "#1a1418", dk * .6); // (each head a little different)
             cx.fillStyle = stem;
             cx.fillRect(X, sy, q, y - vh - sy + q);
@@ -29988,7 +30014,7 @@ function drawVase(dk, t) {
             }
         }
         if (odd && Math.random() < .02) // strange ones sparkle a little
-            addP({ type: "spark", x: vx + vw / 2 + rnd(-R * .15, R * .15), y: y - vh - R * .25, vx: rnd(-6, 6), vy: -rnd(4, 10), g: -4, max: 1, col: v.c, size: 2, room: "garden" });
+            addP({ type: "spark", x: vx + vw / 2 + rnd(-R * .15, R * .15), y: y - vh - R * .25, vx: rnd(-6, 6), vy: -rnd(4, 10), g: -4, max: 1, col: (v.odd || !v.with ? v : v.with).c, size: 2, room: "garden" });
     }
     cx.fillStyle = mix("#7fa2c8", "#1e2848", dk * .6); // a small blue glass vase
     cx.fillRect(vx, y - vh, vw, vh);
@@ -30028,7 +30054,8 @@ function showFlower() {
     cv.width = cv.height = 56;
     flowerCard = { v, t0: performance.now() };
     const from = v.from ? (v.from === "a walk" ? "Picked on a walk." : v.from === "the night door" ? "Left on the step of the night door." : `From ${v.from}.`) : "";
-    cardCap($("flowerCap"), `<b>${esc(v.n)}</b>${v.note ? " " + esc(v.note) : ""}${from ? ` <i>${esc(from)}</i>` : ""}`);
+    const also = v.with ? ` Beside ${v.with.odd ? "it" : "them"} in the vase, still: <b>${esc(v.with.n)}</b>.` : "";
+    cardCap($("flowerCap"), `<b>${esc(v.n)}</b>${v.note ? " " + esc(v.note) : ""}${from ? ` <i>${esc(from)}</i>` : ""}${also}`);
     cardShow("flowerView");
     const ms = noteMs(v.note);
     flowerCard.to = setTimeout(closeFlower, ms);
@@ -34080,9 +34107,10 @@ const TAP_ORDER = {
     room: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "dream", "origami", "festival", "anniv", "calendar", "postit", "splurge",
         "possum", "cat", "guest", "snail", "vault", "easel", "sill", "jar", "cabinet", "hearth", "wall", "oven", "kettle",
         "books", "scope", "pet", "sweep", "pile", "shelfbox", "look", "floor"],
-    garden: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "shade", "splurge", "possum", "cat", "snail", "pet", "tree", "plants",
-        "gramophone", "givejar", "letters", "pinboard", "vase", "flowerbook", "tenants", "drawers", "chair", "desk",
+    garden: ["gold", "seasonal", "anomaly", "drifter", "left", "mark", "shade", "splurge", "possum", "cat", "snail", "pet", "flowerbook", "tree", "plants",
+        "gramophone", "givejar", "letters", "pinboard", "vase", "tenants", "drawers", "chair", "desk",
         "postit", "sweep", "look", "floor"],
+    // (the flower book before the tree: it's small, and a grown tree's leaves hang in front of the desk; group 77)
     archive: ["archiveSeen", "gold", "seasonal", "anomaly", "drifter", "left", "mark", "journal", "cat", "postit", "sweep", "circle",
         "possum", "snail", "archsill", "archwall", "keepsakes", "pet", "archbox", "look", "floor"]
 };
