@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 16-11-2026 -->
+<!-- Small Things, shared build of 17-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -837,6 +837,7 @@ body.pixel{--boxlh:24px;--boxfs:16px}
 #boxRuler{visibility:hidden;pointer-events:none;top:0;bottom:auto;min-height:0;z-index:-1}
 /* QA 02-11-2026: on a phone the slips sat over the add form (the Add button, Medium, Big); with the sheet up they go in the strip above it */
 @media (max-width:959px){body.game.sheet .toasts:not(.stay){top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto}}
+.awaylist{margin:4px 0 0;padding:0 0 0 18px;display:flex;flex-direction:column;gap:8px;text-align:left;line-height:1.4}
 .askans{display:flex;flex-direction:column;gap:8px;margin-top:12px}.askans .btn{width:100%;text-align:left;white-space:normal}
 .leftart{display:block;height:auto;image-rendering:pixelated;margin:4px 0}
 
@@ -6811,7 +6812,7 @@ function sanitizeState(raw) {
     o.marks = arr(s.marks, 24).map(m => ({ id: str(m.id, 20), k: str(m.k, 12), room: ["room", "garden", "archive"].includes(m.room) ? m.room : "room", x: clamp(num(m.x), 0, 1), y: clamp(num(m.y), 0, 1), at: num(m.at), off: num(m.off) })).filter(m => m.id && m.k); // (what anomalies left: marks.js)
     { // letters that ask something (asks.js)
         const k = s.ask && typeof s.ask === "object" ? s.ask : {};
-        o.ask = { at: num(k.at), log: arr(k.log, 60).map(e => ({ id: str(e.id, 24), from: str(e.from, 80), c: str(e.c, 4), at: num(e.at), ans: num(e.ans), back: num(e.back), tr: num(e.tr) })).filter(e => e.id && e.from) };
+        o.ask = { at: num(k.at), log: arr(k.log, 60).map(e => ({ id: str(e.id, 24), from: str(e.from, 80), c: str(e.c, 4), at: num(e.at), ans: num(e.ans), back: num(e.back), tr: num(e.tr), dn: clamp(Math.round(num(e.dn)), 0, 99), dl: num(e.dl) })).filter(e => e.id && e.from) };
     }
     { // what anomalies left behind (leftovers.js)
         const k = s.left && typeof s.left === "object" ? s.left : {};
@@ -7275,7 +7276,7 @@ function mergeStates(a, b) {
         const m = new Map(), pa = a.ask || {}, pb = b.ask || {};
         for (const x of [...(pa.log || []), ...(pb.log || [])]) {
             const c = m.get(x.id), w = c && (!x.ans || (c.ans && c.ans <= x.ans)) ? c : x;
-            m.set(x.id, c ? Object.assign({}, w, { at: Math.min(num(c.at), num(x.at)), back: Math.max(num(c.back), num(x.back)), tr: Math.max(num(c.tr), num(x.tr)) }) : x);
+            m.set(x.id, c ? Object.assign({}, w, { at: Math.min(num(c.at), num(x.at)), back: Math.max(num(c.back), num(x.back)), tr: Math.max(num(c.tr), num(x.tr)), dn: Math.max(num(c.dn), num(x.dn)), dl: Math.max(num(c.dl), num(x.dl)) }) : x);
         }
         o.ask = { at: Math.max(num(pa.at), num(pb.at)), log: [...m.values()].sort((x, y) => num(x.at) - num(y.at)).slice(-60) };
     }
@@ -21133,13 +21134,15 @@ function newsResident(key) {
  * writes with a question. It opens as a card at the rack: you pick an answer and Mite writes it (ask_answers). A few days
  * later a letter comes back that depends on the answer (ask_back). After that the answer stays: Mite brings it up now and
  * then (ask_idle), it gets around (news, k "ask"), and two to five weeks on one thing follows (ask_trace): a note for the
- * pinboard, or a visitor who's heard. Left for ten days, the writer moves on by themselves: answer "x", no penalty.
- * S.ask: { at: when the last one came, log: [{ id, from, c: the answer (a, b, c or x; "" while open), at, ans, back, tr }] }
+ * pinboard, or a visitor who's heard. Left for ten days, the writer moves on by themselves: answer "x", no penalty. The ten
+ * days are days the app is opened (group 79), so a long time away doesn't use them up.
+ * S.ask: { at: when the last one came, log: [{ id, from, c: the answer (a, b, c or x; "" while open), at, ans, back, tr,
+ *   dn: days it has been open on (the day it came is 1), dl: the last of them (dayNum) }] }
  * Pools, by thread id: ask_letters "id | who | letter" (who: a word from a pen pal's name, or anom:kind), ask_answers
  * "id.a | button | Mite's letter", ask_back "id.a | letter" (also id.x), ask_idle "id.a | line" (also id.x), ask_trace
  * "id.a | pin | the note" or "id.a | visit | V: / M:". A thread needs a line in ask_letters and two answers.
  */
-const ASK_EVERY = 21 * 864e5, ASK_FIRST = 7 * 864e5, ASK_WAIT = 10 * 864e5, ASK_BACK = [3, 6], ASK_TRACE = [14, 35];
+const ASK_EVERY = 21 * 864e5, ASK_FIRST = 7 * 864e5, ASK_DAYS = 10, ASK_BACK = [3, 6], ASK_TRACE = [14, 35];
 /* "key | a | b" lines as { k, raw, f: [a, b] } */
 const askLines = key => pool(key).map(raw => {
     const p = String(raw).split("|").map(s => s.trim());
@@ -21149,6 +21152,8 @@ const askLine = (key, k) => askLines(key).find(x => x.k === k) || null;
 const askText = t => fillText(t, ctx()).replace(/ \/ /g, "\n\n");
 const askLog = () => (S.ask && S.ask.log) || [];
 const askOpen = () => askLog().find(e => !e.ans) || null;
+/* days left to answer, today included (1: today is the last) */
+const askLeft = e => Math.max(1, ASK_DAYS - Math.max(1, num(e.dn)) + 1);
 const askAnswers = id => askLines("ask_answers").filter(x => x.k.startsWith(id + ".") && x.f.length > 1).map(x => ({ c: x.k.slice(id.length + 1), label: x.f[0], text: x.f.slice(1).join(" | "), raw: x.raw }));
 /* who a thread comes from now, or null if they can't write (not a pen pal any more; an anomaly not met yet) */
 function askFrom(who) {
@@ -21177,7 +21182,12 @@ function askTick(t) {
         return false;
     }
     for (const e of A.log) {
-        if (!e.ans && t - e.at >= ASK_WAIT) { // no answer: they get on with it
+        if (!e.ans && num(e.dl) !== dayNum()) { // a day the app is open on (an old letter without the count starts at 1)
+            e.dl = dayNum();
+            e.dn = num(e.dn) + 1;
+            saveSoon();
+        }
+        if (!e.ans && num(e.dn) > ASK_DAYS) { // no answer in ten days: they get on with it
             e.c = "x";
             e.ans = t;
             saveSoon();
@@ -21211,7 +21221,7 @@ function askTick(t) {
         return false;
     const from = askFrom(x.f[0]), text = askText(x.f.slice(1).join(" | "));
     A.at = t;
-    A.log.push({ id: x.k, from, c: "", at: t, ans: 0, back: 0, tr: 0 });
+    A.log.push({ id: x.k, from, c: "", at: t, ans: 0, back: 0, tr: 0, dn: 1, dl: dayNum() });
     S.flags.letterInDay = dayNum();
     lineCount("ask_letters", x.raw);
     S.post.inbox.push({ from, text, at: t, read: 0, ask: x.k });
@@ -38401,6 +38411,47 @@ function welcome(prevSeen, isNew) {
         else
             say("greet");
     }
+    if (away > AWAY_CARD)
+        setTimeout(() => awayCard(away), 6000); // (after the post that came while away has been delivered)
+}
+
+/* Back after days away (group 79): a quiet card with what kept: letters in the rack, a question that wants an answer
+   soon, and the task that has waited longest. Shown once, when nothing else is on screen; only if there's something */
+const AWAY_CARD = 2 * 864e5;
+function awayItems() {
+    const out = [], inbox = (S.post && S.post.inbox) || [], unread = inbox.filter(x => !x.read), q = askOpen();
+    if (unread.length) {
+        const who = [...new Set(unread.slice().reverse().map(x => x.from))].slice(0, 3);
+        out.push({ k: "letters", t: `${unread.length === 1 ? "A letter" : unread.length + " letters"} in the rack in the nook, from ${new Set(unread.map(x => x.from)).size > who.length ? who.join("; ") + " and others" : who.length < 3 ? who.join(" and ") : who.slice(0, -1).join("; ") + " and " + who[2]}.` });
+    }
+    if (q) {
+        const n = askLeft(q);
+        out.push({ k: "ask", t: `${q.from.charAt(0).toUpperCase() + q.from.slice(1)} asked something. ${n === 1 ? "Today's the last day to answer" : n + " days left to answer"}; the days only count when you're here.` });
+    }
+    const old = openTasks().slice().sort((a, b) => a.c - b.c)[0];
+    if (old)
+        out.push({ k: "task", t: `Waiting longest: “${old.t}”, for ${fmtAge(Date.now() - old.c)}. No hurry.` });
+    return out;
+}
+function awayCard(away, tries) {
+    if (!S || floorTaken() || !$("ritual").hidden || document.body.classList.contains("sheet") || document.hidden) {
+        if ((tries || 0) < 24)
+            setTimeout(() => awayCard(away, (tries || 0) + 1), 5000);
+        return;
+    }
+    const items = awayItems();
+    if (!items.length)
+        return;
+    const btns = [["Thanks", "", closeRitual]];
+    if (items[0].k === "letters" || items[0].k === "ask")
+        btns.unshift(["To the rack", "ghost", () => {
+            closeRitual();
+            setView("garden");
+            setTimeout(() => gardenHits.letters && requestObj("gletters", gardenHits.letters.cx, gardenHits.letters.y), 150);
+        }]);
+    openRitual("While you were away", `You were gone ${fmtAge(away)}. I kept a few things for you.`,
+        `<ul class="awaylist">${items.map(x => `<li data-away="${x.k}">${esc(homeTxt(x.t))}</li>`).join("")}</ul>`, btns);
+    sfx("card");
 }
 
 /* the easel isn't there from the start (jot, 25-10-2026): Mite unpacks it a day into a game. Old saves have it */
