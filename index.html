@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 17-11-2026 -->
+<!-- Small Things, shared build of 18-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -9881,7 +9881,9 @@ function simWeather(d) {
     const cloud = r < clearP ? r / clearP * .35 : .35 + .65 * (r - clearP) / (1 - clearP);
     const rain = r > 1 - rainP ? clamp((r - (1 - rainP)) / rainP + .15, 0, 1) : 0;
     const temp = CLIM.temp[m] + (vnoise("wt", ts / 24) - .5) * 7 + Math.sin((d.getHours() - 9) / 24 * Math.PI * 2) * 3 - (rain ? 1.5 : 0);
-    return { cloud, rain, temp, snow: rain > 0 && temp < 1, src: "sim" };
+    const snow = rain > 0 && temp < 1; // a thunderstorm: some of the heaviest rain hours, more of them in summer (group 80)
+    const storm = rain >= .7 && !snow && vnoise("ts", ts / 3) > (m >= 4 && m <= 8 ? .55 : .8) ? 1 : 0;
+    return { cloud, rain, temp, snow, storm, src: "sim" };
 }
 let liveWx = null, wxCache = null, wxAt = 0;
 function parseLoc(v) {
@@ -9910,7 +9912,7 @@ async function fetchWeather() {
         if (![cc, pr, code, tp].every(Number.isFinite))
             throw 0;
         const wet = pr > 0 || (code >= 51 && code <= 99);
-        liveWx = { cloud: clamp(cc / 100, 0, 1), rain: wet ? clamp(.25 + pr / 3, 0, 1) : 0, temp: clamp(tp, -60, 60), snow: (code >= 71 && code <= 77) || code === 85 || code === 86, at: Date.now(), src: "live" };
+        liveWx = { cloud: clamp(cc / 100, 0, 1), rain: wet ? clamp(.25 + pr / 3, 0, 1) : 0, temp: clamp(tp, -60, 60), snow: (code >= 71 && code <= 77) || code === 85 || code === 86, storm: code >= 95 && code <= 99 ? 1 : 0, at: Date.now(), src: "live" };
         wxAt = 0;
     }
     catch (e) {
@@ -9930,7 +9932,7 @@ function weather() {
     return wxCache;
 }
 function wxName(w) {
-    return w.snow ? "snow" : w.rain > .6 ? "rain" : w.rain > 0 ? "drizzle" : w.cloud < .25 ? "clear" : w.cloud < .55 ? "some clouds" : w.cloud < .85 ? "cloudy" : "grey";
+    return w.snow ? "snow" : w.storm && w.rain > 0 ? "thunderstorm" : w.rain > .6 ? "rain" : w.rain > 0 ? "drizzle" : w.cloud < .25 ? "clear" : w.cloud < .55 ? "some clouds" : w.cloud < .85 ? "cloudy" : "grey";
 }
 function travelling() {
     const d = new Date(), h = d.getHours();
@@ -14595,6 +14597,44 @@ function rainHash(i, k) {
 function rainCounts(amt) {
     return { far: Math.round(10 + amt * 20), glass: Math.round(5 + amt * 9) };
 }
+/* Lightning (group 80, owner's pick 17-11-2026): in thunderstorm weather only, now and then a short double flash.
+   The same moment for every window and the room light (from the clock, no state). Reduced motion: none. */
+const FLASH_SLOT = 13;
+function flashAt(ms) {
+    if (reduced)
+        return { a: 0, slot: 0 };
+    const w = weather();
+    if (!w.storm || !(w.rain > 0) || w.snow)
+        return { a: 0, slot: 0 };
+    const t = ms / 1000, slot = Math.floor(t / FLASH_SLOT);
+    if (rainHash(slot, 31) > .5)
+        return { a: 0, slot }; // about one slot in two has a flash: one every ~25 s
+    const dt = t - slot * FLASH_SLOT - (1 + rainHash(slot, 32) * (FLASH_SLOT - 3));
+    const p1 = dt >= 0 && dt < .14 ? 1 - dt / .14 : 0, p2 = dt >= .22 && dt < .5 ? .75 * (1 - (dt - .22) / .28) : 0;
+    return { a: Math.max(p1, p2), slot };
+}
+function flashAmt() {
+    return flashAt(Date.now()).a;
+}
+function drawFlash(x0, y0, w, h, dk) { // on the glass: the sky goes white-blue, and at the peak a bolt far off
+    const f = flashAt(Date.now());
+    if (f.a <= 0)
+        return;
+    cx.fillStyle = `rgba(206,220,255,${f.a * (.28 + dk * .22)})`;
+    cx.fillRect(x0, y0, w, h);
+    if (f.a < .6)
+        return;
+    const px = PX, snap = v => Math.round(v / px) * px;
+    let x = x0 + w * (.2 + rainHash(f.slot, 33) * .6), y = y0;
+    for (let i = 0; y < y0 + h * .85; i++) {
+        cx.fillStyle = `rgba(150,170,220,${f.a * .5})`; // a soft edge, so it shows against the lit sky
+        cx.fillRect(snap(x) - px, snap(y), px * 3, px * 2);
+        cx.fillStyle = `rgba(255,252,236,${f.a})`;
+        cx.fillRect(snap(x), snap(y), px, px * 2);
+        y += px * 2;
+        x += (rainHash(f.slot * 7 + i, 34) - .5) * px * 3;
+    }
+}
 function drawRain(x0, y0, w, h, tsec, amt, dk) {
     const sp = reduced ? .15 : 1, px = PX, snap = v => Math.round(v / px) * px, n = rainCounts(amt);
     cx.fillStyle = `rgba(86,96,114,${.16 + amt * .16})`; // the grey veil, heavier the harder it rains
@@ -14621,6 +14661,7 @@ function drawRain(x0, y0, w, h, tsec, amt, dk) {
             cx.fillRect(snap(xx), snap(yy), px, px * 2);
         }
     }
+    drawFlash(x0, y0, w, h, dk);
 }
 function drawWindow(rm, sky, d, hf, tsec, dt, dk, arr = wparts, shutters = true) {
     const { wx, wy, wr } = rm;
@@ -33595,6 +33636,16 @@ function frame(now) {
             cx.fillRect(-W, 0, W * 3, H);
             cx.restore();
         });
+        { // lightning lights up the rooms for a moment, more in the dark (room.js; group 80)
+            const fa = flashAmt();
+            if (fa > 0) {
+                cx.save();
+                cx.globalCompositeOperation = "lighter";
+                cx.fillStyle = `rgba(150,165,200,${fa * (.06 + .22 * Math.max(sky.dark, S.lightsOut ? 1 : nl))})`;
+                cx.fillRect(0, 0, W, H);
+                cx.restore();
+            }
+        }
         catEyeGlow(S.lightsOut ? 1 : Math.max(sky.dark * .8, nl), now); // Midnightcat's eyes, over the dark (cat.js)
         if (anom && anom.type === "eyes" && !anom.resolved && (sky.dark > .15 || S.lightsOut || nl > 0)) // the eyes shine through the dark (anomalies.js)
             withRoom(anom.room, () => drawEyePairs(anom, .7));
