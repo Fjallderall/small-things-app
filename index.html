@@ -9340,6 +9340,11 @@ function sfx(kind, o = {}) {
             tone(110, t, 1.6, { vol: .07, glide: .8 });
             tone(164.8, t + .2, 1.4, { vol: .04 });
             break;
+        case "anom": // something strange has arrived: a faint shimmer, then a low tritone, rising a little (anomalies.js)
+            nburst(t, .5, { f: 5200, q: 3, vol: .012 });
+            tone(233.08, t + .05, 1.4, { vol: .055, type: "triangle", atk: .25 });
+            tone(329.63, t + .35, 1.6, { vol: .045, atk: .3, glide: 1.03 });
+            break;
         case "card":
             nburst(t, .09, { f: 2400, q: .8, vol: .025 });
             tone(PENT[4], t + .05, .5, { vol: .045, type: "triangle" });
@@ -19722,6 +19727,7 @@ const ORIGAMI = [
 ];
 /* how the room tints while each one is here (the red vignette is for the eerie ones) */
 const ANOM_EERIE = { figure: 1.3, double: 1.2, hand: 1.1, drips: 1, space: .3, deep: .35, door: 1, phone: 1, eyes: 1, tentacle: .75, letter: .5, moth: .45, chair: .25, ghost: .15, cloud: .15, report: .7, sheet: .8, coat: .85, lantern: .6 };
+const ANOM_STAY = 1.5; // they stay half as long again before leaving on their own (18-11-2026, owner: she missed some)
 const ANOM_LIFE = { figure: 20, double: 18, hand: 16, drips: 22,  tentacle: 12.5, chair: 14, ghost: 16, cloud: 20, moth: 22, letter: 24, report: 22, sheet: 18, coat: 18, lantern: 20 };
 /* where the window (for the ghost) and the light (for the moth) are in a room */
 function anomGeo(rmName) {
@@ -19746,7 +19752,7 @@ function anomalyInterval() {
         k *= .8;
     if (isHalloween(d))
         k *= .75;
-    return Math.max(s === 2 ? 4 * 60e3 : 9 * 60e3, rnd(600e3, 1500e3) * k); // never bunched up (jot, 25-10-2026: three in 15 min)
+    return Math.max(s === 2 ? 4 * 60e3 : 9 * 60e3, rnd(540e3, 1020e3) * k); // never bunched up (jot, 25-10-2026: three in 15 min); since 18-11-2026 the long waits are shorter (owner: she missed some): 9-17 min, ~13 on average (was 10-25, ~17)
 }
 function anomX(lo, hi) { // away from Mite, and from Midnightcat when she's in this room (else her hit box takes the tap)
     const catX = cat.ready && cat.room === view ? cat.x : null;
@@ -19778,7 +19784,7 @@ function spawnAnom(dark, force) { // (force: this kind, for tests)
         }
     if (force)
         type = force;
-    const rm = anomGeo(view), base = { type, room: view, t: 0, life: ANOM_LIFE[type] || 24 };
+    const rm = anomGeo(view), base = { type, room: view, t: 0, life: (ANOM_LIFE[type] || 24) * ANOM_STAY };
     if (type === "door")
         anom = Object.assign(base, { x: anomX(.22, .78), y: GY - R * .7 });
     else if (type === "phone")
@@ -19819,18 +19825,27 @@ function spawnAnom(dark, force) { // (force: this kind, for tests)
         anom = Object.assign(base, { x: -1e4, y: -1e4 });
         (type === "deep" ? deepStart : spaceStart)(anom);
         eerie = ANOM_EERIE[type];
+        anomNotice(anom);
         return;
     }
     else
         anom = Object.assign(base, { x: rm.lx, y: rm.ly, cx0: rm.lx, cy0: rm.ly });
     eerie = ANOM_EERIE[type] ?? 1;
     const me = anom;
+    anomNotice(me);
     setTimeout(() => {
         if (anom !== me || me.resolved) // (gone already, or dealt with: its omen would land on the next one)
             return;
         if (!hint("anom", "Something's here. Tap it and I'll deal with it."))
             say("omen", { anom: type }, { still: () => anom === me && !me.resolved }); // (if it has to wait its turn, it's only said while this one's still here: jot mvo8gej0mjwfj)
     }, 900);
+}
+/* so it isn't missed (18-11-2026): a sound as it arrives, and Mite turns and points at it for a moment (not at a
+   planeshift: that's every window at once) */
+function anomNotice(a) {
+    sfx("anom");
+    if (!SHIFTS.includes(a.type) && a.x > -1e3 && a.room === view && pet.beh !== "sleep" && !(pet.ground > 0))
+        pointAt = { until: performance.now() + 2600, dir: Math.sign(a.x - pet.x) || 1 };
 }
 /* Mite has picked up the phone (the "anomphone" interaction): listen, say what was said, hang up. Returns how long */
 function answerPhone(a, side) {
