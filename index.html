@@ -11029,6 +11029,8 @@ const pet = { ground: 0,
         this.start(name, extra);
     },
     start(name, extra) {
+        if (anomHere() && ((view === "archive" && !ARCHIVE_OK.has(name)) || (view === "garden" && !GARDEN_OK.has(name)) || (view === "room" && GARDEN_ONLY.has(name))))
+            name = "idle", extra = undefined; // (it would take Mite, and the view, away from something strange: stay. A tap that sends Mite elsewhere goes straight to the door walk and isn't stopped)
         if (view === "archive" && !ARCHIVE_OK.has(name)) {
             extra = { next: name, nextExtra: extra };
             name = "toWagon";
@@ -11136,7 +11138,8 @@ function goTo(b, p, po, dt, tx, face, act) {
 /* a behaviour that walks Mite out of one room and into the next: o.out is where it leaves (an edge), o.room the room
    it arrives in, o.enter puts it at the right spot there, o.stop is where it stops. b.then runs on arrival */
 function doorWalk(o) {
-    return { d: [60, 60], w: o.w || (c => 0), init(b) {
+    const w = o.w || (c => 0);
+    return { d: [60, 60], w: c => anomHere() ? 0 : w(c), init(b) {
             b.ph = "out";
             b.door = true; // the view follows (camera.js)
         }, step(b, p, t, po, dt) {
@@ -12522,7 +12525,7 @@ function chooseGardenBeh() {
     c.late = isLate(c.h);
     if (S.lightsOut || c.late)
         return pet.start("sleep");
-    if (performance.now() - gardenSince > rnd(70e3, 140e3))
+    if (performance.now() - gardenSince > rnd(70e3, 140e3) && !anomHere())
         return pet.start("fromGarden");
     const opts = [["idle", 3], ["wander", 1.4], ["floorwalk", .7], ["gwater", BEH.gwater.w(c)], ["write", BEH.write.w(c)], ["armread", BEH.armread.w(c)], ["readletter", BEH.readletter.w(c)], ["lookAround", .6], ["stretch", .3], ["yawn", c.dark > .5 ? .8 : .3], ["catvisit", BEH.catvisit.w(c) * 2], ["ndoorlisten", own("ndoor") ? BEH.listen.w(c) * 1.5 : 0], ["ndoorbowl", bowlDue() ? 5 : 0], ["listen", BEH.listen.w(c) * .5], ["nookup", .5], ["fbookchair", BEH.fbookchair.w(c)]].filter(([k, w]) => BEH[k] && w > 0 && k !== pet.beh);
     let r = Math.random() * opts.reduce((a, o) => a + o[1], 0);
@@ -18440,7 +18443,7 @@ function explainTerm() {
 }
 let archiveTaskLast = "";
 function chooseArchiveBeh() {
-    if (performance.now() - archiveSince > rnd(70e3, 120e3)) {
+    if (performance.now() - archiveSince > rnd(70e3, 120e3) && !anomHere()) {
         pet.start("toWagon");
         return;
     }
@@ -19839,6 +19842,12 @@ function spawnAnom(dark, force) { // (force: this kind, for tests)
         if (!hint("anom", "Something's here. Tap it and I'll deal with it."))
             say("omen", { anom: type }, { still: () => anom === me && !me.resolved }); // (if it has to wait its turn, it's only said while this one's still here: jot mvo8gej0mjwfj)
     }, 900);
+}
+/* something strange is in the room Mite is in: Mite stays put until it's dealt with or gone, so the view (which
+   follows Mite) doesn't wander off and leave only the tint behind (18-11-2026, owner: "it looks like there is an
+   anomaly coming in, but I don't see it"). Not for a planeshift: that's at every window. */
+function anomHere() {
+    return !!anom && !anom.resolved && anom.room === view && !SHIFTS.includes(anom.type);
 }
 /* so it isn't missed (18-11-2026): a sound as it arrives, and Mite turns and points at it for a moment (not at a
    planeshift: that's every window at once) */
@@ -33531,7 +33540,7 @@ function frame(now) {
         }
     }
     // anomalies
-    if (!anom && !gold && now > nextAnom && !document.hidden && strangeness() > 0) {
+    if (!anom && !gold && now > nextAnom && !document.hidden && strangeness() > 0 && !(pet.b && pet.b.door)) { // (not while Mite walks through a door: it would start behind the view)
         const hd = new Date();
         spawnAnom(skyAt(hd.getHours() + hd.getMinutes() / 60).dark);
     }
@@ -33551,7 +33560,7 @@ function frame(now) {
             nextAnom = now + anomalyInterval();
         }
     }
-    eerie = anom && !anom.resolved ? Math.max(.28 * (ANOM_EERIE[anom.type] ?? 1), eerie - dt * .3) : Math.max(0, eerie - dt * .4);
+    eerie = anom && !anom.resolved && (SHIFTS.includes(anom.type) || roomOnScreen(anom.room)) ? Math.max(.28 * (ANOM_EERIE[anom.type] ?? 1), eerie - dt * .3) : Math.max(0, eerie - dt * .4);
     if (game && game.id === "leaves") {
         if (Math.random() < dt * 2.6)
             addP({ type: "cleaf", x: rnd(W * .08, W * .92), y: -10, vx: rnd(-10, 10), vy: rnd(42, 72), max: 9, rot: rnd(0, 6), vr: rnd(-2, 2), size: rnd(8, 11), col: choice(["#e3a83a", "#d9772e", "#c9562f", "#f0c45a"]) });
