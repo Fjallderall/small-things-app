@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script>if ("serviceWorker" in navigator && location.protocol === "https:" && location.hostname !== "localhost") addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-<!-- Small Things, shared build of 18-11-2026 -->
+<!-- Small Things, shared build of 19-11-2026 -->
 <style>[hidden]{display:none!important}body{margin:0}</style>
 </head>
 <body>
@@ -840,6 +840,12 @@ body.pixel{--boxlh:24px;--boxfs:16px}
 .awaylist{margin:4px 0 0;padding:0 0 0 18px;display:flex;flex-direction:column;gap:8px;text-align:left;line-height:1.4}
 .askans{display:flex;flex-direction:column;gap:8px;margin-top:12px}.askans .btn{width:100%;text-align:left;white-space:normal}
 .leftart{display:block;height:auto;image-rendering:pixelated;margin:4px 0}
+/* a "new" tag, tapped: it rounds into a bubble, lifts, and pops into pixels (popNewTag, collection.js) */
+.itemnew.popping{animation:newpop .55s steps(7) forwards;pointer-events:none}
+@keyframes newpop{0%{transform:none}35%{transform:translateY(-3px) scale(1.12);border-radius:999px;background:rgba(242,193,78,.25);color:transparent;box-shadow:inset 0 0 0 1px #f2c14e,inset 2px 2px 0 rgba(255,255,255,.7)}70%{transform:translateY(-6px) scale(1.3);border-radius:999px;background:transparent;color:transparent;box-shadow:inset 0 0 0 1px rgba(242,193,78,.6)}100%{transform:translateY(-7px) scale(1.4);opacity:0;color:transparent;background:transparent}}
+.newbit{position:fixed;width:3px;height:3px;z-index:999;pointer-events:none;opacity:0;animation:newbit .5s steps(5) forwards}
+@keyframes newbit{0%{opacity:1;transform:none}100%{opacity:0;transform:translate(var(--dx),var(--dy))}}
+@media (prefers-reduced-motion:reduce){.itemnew.popping{animation:newfade .3s forwards}@keyframes newfade{to{opacity:0}}}
 
 </style>
 <div class="app">
@@ -6486,7 +6492,7 @@ const DEV_JOTS = ["mvfsfqez87kre", "mvfsgauw2hl3s", "mvjp8qk7vpvea", "mvjp9teytu
     "mw5o58hdcib1g", "mw86hsvax4p7h", // (group 68: the character list, 07-11-2026)
     "mwcqosbmiaz3e", "mwcqz3yqebm59", // group 75 (12-11-2026)
     "mwj0fbj8ywicz", "mwj0g5x7i1aj6", // group 77 (16-11-2026)
-    "mwm4eiqaujksm"]; // group 82 (18-11-2026)
+    "mwm4eiqaujksm", "mwmd4mlv2prpu", "mwmddl77g5b7x", "mwmdhuleutvll"]; // group 82 (18-11-2026)
 
 </script>
 <script>/* js/core/state.js */
@@ -9344,6 +9350,17 @@ function sfx(kind, o = {}) {
             nburst(t, .5, { f: 5200, q: 3, vol: .012 });
             tone(233.08, t + .05, 1.4, { vol: .055, type: "triangle", atk: .25 });
             tone(329.63, t + .35, 1.6, { vol: .045, atk: .3, glide: 1.03 });
+            break;
+        case "chime": // a will-o'-wisp caught at last: a small bell, three notes up, a little detuned so it shimmers (jot mwmddl77g5b7x)
+            [5, 7, 9].forEach((i, k) => {
+                tone(PENT[i], t + k * .09, 1.6, { vol: .045 - k * .006 });
+                tone(PENT[i] * 2.003, t + k * .09, .9, { vol: .012 });
+            });
+            break;
+        case "crunch": // a moss spore caught: two soft steps on snow, each a cluster of tiny crackles
+            for (let st = 0; st < 2; st++)
+                for (let i = 0; i < 5; i++)
+                    nburst(t + st * .2 + i * .014 + Math.random() * .01, .05 + Math.random() * .03, { f: 1500 + Math.random() * 1700, q: 1.4, vol: .05 - i * .006, bus: Snd.fx });
             break;
         case "card":
             nburst(t, .09, { f: 2400, q: .8, vol: .025 });
@@ -16506,10 +16523,13 @@ function scopeFrame(now) {
  * wall.js - The back wall: posters, certificates and oddities in the slots either side of the window.
  */
 let wallHits = [];
+/* how far up the pieces sit (in R) and how large (x the old size): jot mwmdb6q9hmgdy */
+let WALL_ADJ = { up: 0, k: 1 };
+const wallSz = () => clamp(R * .62, 16, R * .9) * WALL_ADJ.k;
 /* the spots for wall pieces: three columns each side of the window, in rows below the origami strings (so nothing
    hangs in front of a poster), as many rows as fit above the balcony */
 function wallSlots() {
-    const rm = room(), sz = clamp(R * .62, 16, R * .9), bot = Math.min(GY - R * 2.75, rm.wy + rm.wr * 1.6);
+    const rm = room(), sz = wallSz(), bot = Math.min(GY - R * 2.75, rm.wy + rm.wr * 1.6) - R * WALL_ADJ.up;
     const top = Math.min(bot - sz * 1.2, Math.max(H * .12 + R * .45, R * 1.3, (typeof origamiLow === "function" ? origamiLow() : 0) + sz * .85));
     const out = [];
     const span = bot - top, nr = clamp(Math.floor(span / (sz * 1.3)) + 1, 1, 3);
@@ -16537,7 +16557,7 @@ function drawWall(rm, dk, tsec) {
     const sw = seasWall(); // this season's wall piece (seasonal.js) gets a slot: if the wall is full, the last piece makes room for it
     let items = WALL.filter(w => own(w.id));
     items = items.length + sw.length > slots.length ? items.slice(0, Math.max(0, slots.length - sw.length)).concat(sw) : items.concat(sw);
-    const sz = clamp(R * .62, 16, R * .9);
+    const sz = wallSz();
     items.slice(0, slots.length).forEach((w, i) => {
         const { x, y } = slots[i];
         wallHits.push({ id: w.id, x: x - sz * .6, y: y - sz * .7, w: sz * 1.2, h: sz * 1.4, cx: x });
@@ -23973,7 +23993,7 @@ function drifterTap(p, rmName = "room") {
     const col = { seed: "#f6f1e2", motes: "#ffe29a", spore: "#bdf08c", wisp: "#cfe2ff", page: "#f3ead6", steam: "#f0f0eb", snow: "#f4f8ff" }[d.k];
     for (let i = 0; i < 8; i++)
         addP({ type: "spark", x: d.x, y: d.y, vx: rnd(-60, 60), vy: rnd(-70, 10), g: d.k === "page" ? 80 : -10, max: .7, col, size: 2 });
-    sfx(d.k === "page" ? "sweep" : "soft");
+    sfx(d.k === "page" ? "sweep" : d.k === "wisp" ? "chime" : d.k === "spore" ? "crunch" : "soft");
     d.life = Math.min(d.life, d.t + .4);
     const line = compose("drift_" + d.k);
     if (line)
@@ -27860,7 +27880,7 @@ function possumName() {
 /* ph: hang (asleep), lower, raise (on its tail, to and from the nook's platform), fly, flyup (its tail a
    propeller), walk, eat, sit, dead. x is the middle; in hang/lower/raise
    hy is the sprite's top, otherwise fy is where its feet are */
-const possum = { talkUntil: 0, chat: false, goal: "garden", goalUntil: 0, ready: false, room: "garden", x: 0, fy: 0, hy: 0, tx: 0, ty: 0, dir: 1, ph: "hang", until: 0, meal: null, ate: 0, said: false, fed: null };
+const possum = { talkUntil: 0, chat: false, goal: "garden", goalUntil: 0, ready: false, room: "garden", x: 0, fy: 0, hy: 0, tx: 0, ty: 0, dir: 1, ph: "hang", until: 0, meal: null, ate: 0, said: false, fed: null, mealAt: 0 };
 /* when the tray comes out, Mite puts one cookie aside for the possum, by the oven, for a while: so it gets one even
    if it wasn't there yet when the tray came out (it was asleep up on its beam, say). The possum waits by the oven
    until Mite comes over and gives it (givecookie, behaviours.js); it never just takes it */
@@ -28285,6 +28305,7 @@ function possumTick(dt, now) {
                     p.meal = null;
                     p.ph = "sit";
                     p.until = now + rnd(800, 1500);
+                    p.mealAt = now + rnd(BASKET_GAP[0], BASKET_GAP[1]); // (fed: the next supper is a while off)
                 }
                 return;
             }
@@ -28422,7 +28443,7 @@ function possumTick(dt, now) {
         return;
     }
     // awake, and something in its basket up on the nook's platform: supper (basket.js)
-    if (possumAwake() && basketN() && p.ate < 14 && !p.carry && !possumCookies() && p.room === "garden") {
+    if (possumAwake() && basketTime() && p.ate < 14 && !p.carry && !possumCookies() && p.room === "garden") {
         const b = basketGeo(), lg = nookLoftGeo(), tx = b.right + u * 5;
         if (Math.abs(p.x - tx) < 3 && Math.abs(p.fy - lg.balY) < 2) {
             Object.assign(p, { ph: "eat", meal: "basket", dir: -1, until: now + rnd(1400, 2200) });
@@ -28439,7 +28460,7 @@ function possumTick(dt, now) {
         p.goalUntil = now + rnd(120e3, 240e3);
     }
     const cs = !p.carry && !possumAwake() ? possumCurlSpot() : null; // (curled up somewhere today, not on the beam)
-    const goal = p.carry || p.ballGot ? "garden" : possumCookies() ? "room" : possumHungry() ? messRoom((S.mess || []).find(m => messRoom(m) === p.room) || S.mess[0]) : cs ? cs.room : !possumAwake() || basketN() ? "garden" : p.goal; // (its basket's in the nook) // (mess: in this room first, else wherever it is)
+    const goal = p.carry || p.ballGot ? "garden" : possumCookies() ? "room" : possumHungry() ? messRoom((S.mess || []).find(m => messRoom(m) === p.room) || S.mess[0]) : cs ? cs.room : !possumAwake() || basketTime() ? "garden" : p.goal; // (its basket's in the nook) // (mess: in this room first, else wherever it is)
     if (p.room !== goal) {
         const dir = Math.sign(ROOM_X[goal] - ROOM_X[p.room]);
         if (dir < 0 ? p.x < -u * 10 : p.x > W + u * 10) { // through into the next room
@@ -28702,6 +28723,15 @@ function basketGeo() {
     return { x, y: lg.balY, w, h, cx: x + w / 2, right: x + w };
 }
 const basketN = () => ((S.basket && S.basket.t) || []).length;
+/* the possum doesn't rush up the moment something lands in it: it has supper now and then (jot mwmd4mlv2prpu).
+   After a meal the next is 4-9 minutes off (possum.mealAt, not saved); the first of a visit comes after 1-3 */
+const BASKET_GAP = [240e3, 540e3];
+function basketTime() {
+    const now = performance.now();
+    if (!possum.mealAt)
+        possum.mealAt = now + rnd(60e3, 180e3);
+    return basketN() > 0 && now >= possum.mealAt;
+}
 /* something into the basket: it floats over from where it was (room coordinates in its room) */
 function basketAdd(kind, room, x, y, col) {
     if (!possumHere())
@@ -36758,6 +36788,37 @@ function renderSched() {
         renderSched();
     });
 }
+/* tapping something with a "new" tag (Collections, the shop, a fold's heading): the tag lifts into a bubble and pops
+   into a few pixels (jot mwmdhuleutvll). Only the one tag of the thing tapped; reduced motion: it just fades */
+function popNewTag(tag) {
+    if (!tag || tag.dataset.pop)
+        return;
+    tag.dataset.pop = 1;
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const r = tag.getBoundingClientRect(), cols = ["#f2c14e", "#fff6d8", "#cfe2ff"];
+        for (let i = 0; i < 7; i++) {
+            const d = document.createElement("i"), a = i / 7 * Math.PI * 2 + Math.random() * .5, dist = 14 + Math.random() * 12;
+            d.className = "newbit";
+            d.style.cssText = `left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;background:${cols[i % 3]};--dx:${Math.round(Math.cos(a) * dist)}px;--dy:${Math.round(Math.sin(a) * dist - 6)}px;animation-delay:.26s`;
+            document.body.appendChild(d);
+            setTimeout(() => d.remove(), 900);
+        }
+    }
+    tag.classList.add("popping");
+    setTimeout(() => tag.remove(), 560);
+}
+document.addEventListener("click", e => {
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t)
+        return;
+    const own = t.closest(".itemnew");
+    if (own)
+        return popNewTag(own);
+    const thing = t.closest(COL_ITEMS + ", .bld, summary, .chipbtn"); // (the thing tapped: a row, a word, a fold's heading, a tab)
+    const tag = thing && thing.querySelector(":scope .itemnew:not([data-pop])");
+    if (tag && (tag.closest("details") === thing.closest("details") || thing.tagName === "SUMMARY"))
+        popNewTag(tag);
+}, true);
 
 </script>
 <script>/* js/ui/tabs.js */
